@@ -9,17 +9,16 @@ public struct ReactionHandler: Sendable {
         logger.logLevel = .info
         return logger
     }()
-    
+
     public init(deepL: DeepLClient) {
         self.deepL = deepL
     }
-    
+
     public func handleReactionAdded(
         client: any APIProtocol,
-        event: ReactionAddedEvent
+        event: ReactionAddedEvent,
     ) async throws {
-        
-        // Only handle message reactions  
+        // Only handle message reactions
         guard let item = event.item,
               item._type == "message",
               let channelId = item.channel,
@@ -32,8 +31,8 @@ public struct ReactionHandler: Sendable {
             body: .json(.init(
                 channel: channelId,
                 inclusive: true,
-                ts: messageTs
-            ))
+                ts: messageTs,
+            )),
         )
 
         let response = try replies.ok.body.json
@@ -43,21 +42,21 @@ public struct ReactionHandler: Sendable {
               let messageText = originalMessage.text else {
             return
         }
-        
+
         // Translate the text
         guard let translatedText = try await deepL.translate(
             text: messageText,
-            targetLanguage: language
+            targetLanguage: language,
         ) else {
             logger.error("Translation failed - DeepL returned nil")
             return
         }
-        
+
         // Check if translation already posted in thread (use the same messages we just fetched)
         if isAlreadyPosted(messages: messages, originalMessageTs: originalMessage.ts, translatedText: translatedText) {
             return
         }
-        
+
         let threadTs = originalMessage.threadTs ?? originalMessage.ts
 
         // Post translation in thread
@@ -65,17 +64,17 @@ public struct ReactionHandler: Sendable {
             body: .json(.init(
                 channel: channelId,
                 text: translatedText,
-                threadTs: threadTs ?? messageTs
-            ))
+                threadTs: threadTs ?? messageTs,
+            )),
         )
     }
-    
+
     private func isAlreadyPosted(
         messages: [Message],
         originalMessageTs: String?,
-        translatedText: String
+        translatedText: String,
     ) -> Bool {
-        return messages.contains { message in
+        messages.contains { message in
             message.ts != originalMessageTs && message.text == translatedText
         }
     }
