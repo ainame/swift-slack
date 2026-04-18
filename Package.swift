@@ -31,7 +31,7 @@ let webAPITraits: [String] = [
     "WebAPI_Stars",
     "WebAPI_Team",
     "WebAPI_Tooling",
-    "WebAPI_Users"
+    "WebAPI_Users",
 ]
 
 var traits: [Trait] = webAPITraits.map { .trait(name: $0) }
@@ -78,7 +78,7 @@ let package = Package(
                 .target(name: "SlackApp"),
                 .target(name: "SlackClient"),
                 .target(name: "SlackBlockKit"),
-            ]
+            ],
         ),
         .target(
             name: "SlackClient",
@@ -90,8 +90,8 @@ let package = Package(
             ],
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency"),
-                .unsafeFlags(["-Xfrontend", "-disable-availability-checking"], .when(configuration: .debug))
-            ]
+                .unsafeFlags(["-Xfrontend", "-disable-availability-checking"], .when(configuration: .debug)),
+            ],
         ),
         .testTarget(
             name: "SlackClientTests",
@@ -110,17 +110,17 @@ let package = Package(
                 .product(name: "ServiceLifecycle", package: "swift-service-lifecycle"),
                 .product(
                     name: "WSClient", package: "swift-websocket",
-                    condition: .when(traits: ["SocketMode"])
+                    condition: .when(traits: ["SocketMode"]),
                 ),
                 .product(
                     name: "Hummingbird", package: "hummingbird",
-                    condition: .when(traits: ["HummingbirdHTTPAdapter"])
+                    condition: .when(traits: ["HummingbirdHTTPAdapter"]),
                 ),
             ],
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency"),
-                .unsafeFlags(["-Xfrontend", "-disable-availability-checking"], .when(configuration: .debug))
-            ]
+                .unsafeFlags(["-Xfrontend", "-disable-availability-checking"], .when(configuration: .debug)),
+            ],
         ),
         .testTarget(
             name: "SlackAppTests",
@@ -136,46 +136,46 @@ let package = Package(
             dependencies: [
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .target(name: "SlackBlockKit"),
-            ]
+            ],
         ),
         .target(
             name: "SlackBlockKit",
             dependencies: [
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
-            ]
+            ],
         ),
         .testTarget(
             name: "SlackBlockKitTests",
-            dependencies: ["SlackBlockKit"]
+            dependencies: ["SlackBlockKit"],
         ),
         .target(
             name: "SlackBlockKitDSL",
             dependencies: [
                 .target(name: "SlackBlockKit"),
-            ]
+            ],
         ),
         .testTarget(
             name: "SlackBlockKitDSLTests",
-            dependencies: ["SlackBlockKitDSL"]
+            dependencies: ["SlackBlockKitDSL"],
         ),
         // renovate: datasource=github-release-attachments depName=nicklockwood/SwiftFormat versioning=semver
         .binaryTarget(
             name: "swiftformat",
             url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.61.0/swiftformat.artifactbundle.zip",
-            checksum: "3d6d8a321d9cf17c2841652f19e39cde37ced02e6b7dfc65486402f9941f9e49"
+            checksum: "3d6d8a321d9cf17c2841652f19e39cde37ced02e6b7dfc65486402f9941f9e49",
         ),
         .plugin(
             name: "SwiftFormatPlugin",
             capability: .command(
                 intent: .custom(
                     verb: "swiftformat",
-                    description: "Formats Swift source files using SwiftFormat"
+                    description: "Formats Swift source files using SwiftFormat",
                 ),
                 permissions: [
-                    .writeToPackageDirectory(reason: "This command reformats source files")
-                ]
+                    .writeToPackageDirectory(reason: "This command reformats source files"),
+                ],
             ),
-            dependencies: ["swiftformat"]
+            dependencies: ["swiftformat"],
         ),
-    ]
+    ],
 )

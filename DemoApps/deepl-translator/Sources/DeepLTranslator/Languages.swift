@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Languages {
+public enum Languages {
     public static let langToReaction: [String: String] = [
         "en": ":flag-us:",
         "ja": ":flag-jp:",
@@ -28,9 +28,9 @@ public struct Languages {
         "sl": ":flag-si:",
         "sv": ":flag-se:",
         "tr": ":flag-tr:",
-        "uk": ":flag-ua:"
+        "uk": ":flag-ua:",
     ]
-    
+
     public static let langToName: [String: String] = [
         "en": "English",
         "ja": "Japanese",
@@ -58,9 +58,9 @@ public struct Languages {
         "sl": "Slovenian",
         "sv": "Swedish",
         "tr": "Turkish",
-        "uk": "Ukrainian"
+        "uk": "Ukrainian",
     ]
-    
+
     // Maps country codes and reaction names to language codes
     public static let reactionToLang: [String: String] = [
         // Direct language mappings
@@ -88,7 +88,7 @@ public struct Languages {
         "se": "sv",
         "tr": "tr",
         "ua": "uk",
-        
+
         // Country code mappings
         "us": "en",
         "gb": "en",
@@ -160,32 +160,32 @@ public struct Languages {
         "re": "fr",
         "sm": "it",
         "va": "it",
-        "li": "de"
+        "li": "de",
     ]
-    
+
     public static func languageFromReaction(_ reaction: String) -> String? {
         // Handle flag-XX format
         if reaction.hasPrefix("flag-") {
             let countryCode = String(reaction.dropFirst(5))
             return reactionToLang[countryCode]
         }
-        
+
         // Handle :flag-XX: format
         if reaction.hasPrefix(":flag-") && reaction.hasSuffix(":") {
             let countryCode = String(reaction.dropFirst(6).dropLast(1))
             return reactionToLang[countryCode]
         }
-        
+
         // Handle :XX: format (emoji shortcode)
         if reaction.hasPrefix(":") && reaction.hasSuffix(":") {
             let countryCode = String(reaction.dropFirst(1).dropLast(1))
             return reactionToLang[countryCode]
         }
-        
+
         // Direct reaction name or country code
         return reactionToLang[reaction]
     }
-    
+
     public static func getOrderedLanguages(from env: String?) -> [String] {
         let defaultOrder = "en,ja,zh,de,fr,it,es,nl,pl,pt,ru,bg,cs,da,el,et,fi,hu,id,lt,ro,sk,sl,sv,tr,uk"
         let order = env ?? defaultOrder

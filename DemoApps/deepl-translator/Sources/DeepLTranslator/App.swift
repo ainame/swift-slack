@@ -41,7 +41,7 @@ struct DeepLTranslatorApp {
         let deepL = DeepLClient(
             httpClient: httpClient,
             authKey: environment.deepLAPIKey,
-            isFreePlan: environment.isFreePlan
+            isFreePlan: environment.isFreePlan,
         )
         let reactionHandler = ReactionHandler(deepL: deepL)
 
@@ -53,13 +53,13 @@ struct DeepLTranslatorApp {
             try await context.ack()
             let modal = TranslationModal.buildNewModal(
                 defaultLang: environment.defaultLanguage,
-                languages: environment.runnerLanguages
+                languages: environment.runnerLanguages,
             )
             _ = try await context.client.viewsOpen(
                 body: .json(.init(
                     triggerId: payload.triggerId,
-                    view: modal
-                ))
+                    view: modal,
+                )),
             )
         }
 
@@ -82,7 +82,7 @@ struct DeepLTranslatorApp {
                     channelId: channelId,
                     threadTs: payload.message.threadTs ?? messageTs,
                     text: text,
-                    language: environment.defaultLanguage
+                    language: environment.defaultLanguage,
                 )
             } catch {
                 logger.error(
@@ -90,8 +90,8 @@ struct DeepLTranslatorApp {
                     metadata: [
                         "channel": "\(channelId)",
                         "threadTs": "\(payload.message.threadTs ?? messageTs)",
-                        "error": "\(error)"
-                    ]
+                        "error": "\(error)",
+                    ],
                 )
             }
         }
@@ -115,31 +115,31 @@ struct DeepLTranslatorApp {
             let resultView = TranslationModal.buildResultView(
                 lang: langValue,
                 originalText: textValue,
-                translatedText: translatedText
+                translatedText: translatedText,
             )
 
             _ = try await context.client.viewsUpdate(
                 body: .json(.init(
                     viewId: payload.view.id,
-                    view: resultView
-                ))
+                    view: resultView,
+                )),
             )
         }
 
         // Handle reaction events
-        router.onEvent(ReactionAddedEvent.self) { context, envelope, event in
+        router.onEvent(ReactionAddedEvent.self) { context, _, event in
             try await reactionHandler.handleReactionAdded(
                 client: context.client,
-                event: event
+                event: event,
             )
         }
 
         logger.info("DeepL Translator bot is running!")
 
-        let app = SlackApp(
-            configuration: try configuration(from: environment),
+        let app = try SlackApp(
+            configuration: configuration(from: environment),
             router: router,
-            mode: runtimeMode(from: environment)
+            mode: runtimeMode(from: environment),
         )
 
         do {
@@ -167,35 +167,35 @@ struct DeepLTranslatorApp {
             "SLACK_BOT_TOKEN",
             "SLACK_APP_TOKEN",
             "SLACK_SIGNING_SECRET",
-            "DEEPL_API_KEY"
+            "DEEPL_API_KEY",
         ]
 
         let fileProvider = try await EnvironmentVariablesProvider(
             environmentFilePath: FilePath(envFilePath),
             allowMissing: true,
-            secretsSpecifier: .specific(secrets)
+            secretsSpecifier: .specific(secrets),
         )
         let configuration = ConfigReader(
             providers: [
                 EnvironmentVariablesProvider(secretsSpecifier: .specific(secrets)),
                 fileProvider,
-            ]
+            ],
         )
 
         let runnerLanguages = Languages.getOrderedLanguages(
-            from: normalized(configuration.string(forKey: "DEEPL_RUNNER_LANGUAGES"))
+            from: normalized(configuration.string(forKey: "DEEPL_RUNNER_LANGUAGES")),
         )
 
-        return Environment(
-            slackToken: try requiredString("SLACK_BOT_TOKEN", in: configuration, isSecret: true),
-            deepLAPIKey: try requiredString("DEEPL_API_KEY", in: configuration, isSecret: true),
+        return try Environment(
+            slackToken: requiredString("SLACK_BOT_TOKEN", in: configuration, isSecret: true),
+            deepLAPIKey: requiredString("DEEPL_API_KEY", in: configuration, isSecret: true),
             isFreePlan: configuration.bool(forKey: "DEEPL_FREE_API_PLAN", default: false),
             runnerLanguages: runnerLanguages,
             defaultLanguage: runnerLanguages.first ?? "en",
             slackAppToken: normalized(configuration.string(forKey: "SLACK_APP_TOKEN", isSecret: true)),
             signingSecret: normalized(configuration.string(forKey: "SLACK_SIGNING_SECRET", isSecret: true)),
             host: normalized(configuration.string(forKey: "HOST", default: "0.0.0.0")) ?? "0.0.0.0",
-            port: configuration.int(forKey: "PORT", default: 8080)
+            port: configuration.int(forKey: "PORT", default: 8080),
         )
     }
 
@@ -225,7 +225,7 @@ struct DeepLTranslatorApp {
         return .init(
             userAgent: "DeepLTranslator/1.0",
             token: environment.slackToken,
-            signingSecret: signingSecret
+            signingSecret: signingSecret,
         )
         #else
         guard let appToken = environment.slackAppToken else {
@@ -237,7 +237,7 @@ struct DeepLTranslatorApp {
         return .init(
             userAgent: "DeepLTranslator/1.0",
             appToken: appToken,
-            token: environment.slackToken
+            token: environment.slackToken,
         )
         #endif
     }
@@ -256,7 +256,7 @@ struct DeepLTranslatorApp {
         channelId: String,
         threadTs: String,
         text: String,
-        language: String
+        language: String,
     ) async throws {
         guard let translatedText = try await deepL.translate(text: text, targetLanguage: language) else {
             logger.error("Translation failed - DeepL returned nil")
@@ -267,8 +267,8 @@ struct DeepLTranslatorApp {
             body: .json(.init(
                 channel: channelId,
                 text: translatedText,
-                threadTs: threadTs
-            ))
+                threadTs: threadTs,
+            )),
         )
     }
 }
