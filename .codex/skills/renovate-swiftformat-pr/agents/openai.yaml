@@ -1,0 +1,4 @@
+interface:
+  display_name: "Renovate SwiftFormat PR"
+  short_description: "Apply SwiftFormat fixes and push them to Renovate PRs"
+  default_prompt: "Use $renovate-swiftformat-pr to check out a Renovate SwiftFormat update PR, apply formatting to the changed files, validate the result, commit it, and push it back to the PR branch."
