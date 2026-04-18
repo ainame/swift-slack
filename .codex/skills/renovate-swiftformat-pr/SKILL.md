@@ -20,16 +20,18 @@ Use this skill to finish `swift-slack` Renovate PRs that bump `nicklockwood/Swif
 
 1. Resolve the PR head branch and repository.
    - Read `git status -sb` and confirm the worktree is clean enough to operate safely.
-   - Inspect the PR metadata to get the exact `head.ref` and `head.repo.clone_url`.
-   - Prefer `gh pr view <number> --json headRefName,headRepository,headRepositoryOwner,url` when `gh` is authenticated.
-   - If `gh` auth is unavailable, use the public GitHub API with `curl https://api.github.com/repos/<owner>/<repo>/pulls/<number>` and read `head.ref` plus `head.repo.clone_url`.
+   - Inspect the PR metadata to get the exact `head.ref`, `head.repo.clone_url`, `base.ref`, and base repository details.
+   - Prefer `gh pr view <number> --json headRefName,headRepository,headRepositoryOwner,baseRefName,baseRepository,url` when `gh` is authenticated.
+   - If `gh` auth is unavailable, use the public GitHub API with `curl https://api.github.com/repos/<owner>/<repo>/pulls/<number>` and read `head.ref`, `head.repo.clone_url`, `base.ref`, and the base repo clone URL.
    - Do not assume the local `origin` remote matches the PR repository.
 2. Check out the PR branch locally.
-   - Fetch the PR head into a temporary local branch, for example `git fetch <clone_url> pull/<number>/head:pr-<number>`.
+   - Fetch the PR head into a temporary local branch from the actual head repository, for example `git fetch <head.repo.clone_url> refs/heads/<head.ref>:pr-<number>`.
+   - Use the base repository's `pull/<number>/head` ref only when fetching from the base repository remote, not from the fork.
    - Switch to that local branch.
    - Re-check `git status -sb` before formatting.
 3. Identify the files that need formatting.
-   - Inspect the PR diff against its base branch.
+   - Fetch or resolve the current base branch locally before diffing, for example `git fetch <base-repo> <base.ref>` or by updating a matching configured remote.
+   - Inspect the PR diff against the fetched base branch.
    - Prefer formatting only the Swift files and `Package.swift` changed by the PR or by the formatter follow-up.
    - Ignore markdown-only changes unless the repository has a formatter step that intentionally rewrites them.
 4. Run the repository-native formatter path first.
@@ -50,13 +52,16 @@ Use this skill to finish `swift-slack` Renovate PRs that bump `nicklockwood/Swif
    - Do not mix unrelated local changes into the commit.
 8. Push back to the PR head branch.
    - Push to the actual PR head repo and ref, even if local `origin` points somewhere else.
-   - Prefer `git push <head.repo.clone_url> HEAD:<head.ref>` when the remote configuration is ambiguous.
+   - Prefer pushing through an existing configured remote when it already points at the PR head repository and uses a working auth scheme.
+   - Fall back to a direct URL push only after confirming the URL matches the available credentials, for example HTTPS vs SSH.
+   - Use `git push <remote> HEAD:<head.ref>` or `git push <auth-compatible-url> HEAD:<head.ref>` depending on which path is actually authenticated.
    - Confirm the push updated the PR head SHA.
 
 ## Guardrails
 
 - Do not push to `main` or another default branch.
 - Do not assume the repo's `make format` target covers every Swift source tree.
+- Do not mix base-repo-only refs such as `pull/<number>/head` with a fork clone URL.
 - Do not skip `make format` and jump straight to direct `swiftformat` unless you have already confirmed the repo entrypoint is insufficient for the changed files.
 - Do not rewrite the PR beyond formatter output unless the user explicitly asks for code fixes.
 - Do not use `git add -A` when the worktree contains unrelated changes.
@@ -66,10 +71,11 @@ Use this skill to finish `swift-slack` Renovate PRs that bump `nicklockwood/Swif
 ## Useful Commands
 
 - `git status -sb`
-- `git diff --stat <base>...HEAD`
-- `gh pr view <number> --json headRefName,headRepository,headRepositoryOwner,url`
+- `git fetch <head.repo.clone_url> refs/heads/<head.ref>:pr-<number>`
+- `git fetch <base-repo> <base.ref>`
+- `git diff --stat <fetched-base-ref>...HEAD`
+- `gh pr view <number> --json headRefName,headRepository,headRepositoryOwner,baseRefName,baseRepository,url`
 - `curl -fsSL https://api.github.com/repos/<owner>/<repo>/pulls/<number>`
-- `git fetch <clone_url> pull/<number>/head:pr-<number>`
 - `git checkout pr-<number>`
 - `make format`
 - `swiftformat --config .swiftformat <files...>`
@@ -77,7 +83,8 @@ Use this skill to finish `swift-slack` Renovate PRs that bump `nicklockwood/Swif
 - `swift test`
 - `git add <files...>`
 - `git commit -m "Apply SwiftFormat to Renovate update"`
-- `git push <clone_url> HEAD:<head.ref>`
+- `git push <remote> HEAD:<head.ref>`
+- `git push <auth-compatible-url> HEAD:<head.ref>`
 
 ## Output
 
