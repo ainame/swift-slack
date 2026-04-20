@@ -12010,6 +12010,14 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/admin.users.list/POST/requestBody/json/only_guests`.
                     public var onlyGuests: Swift.Bool?
+                    /// If true, only admin users will be returned (excludes owners). Returns all admins and owners when combined with include_owners. Cannot be used together with only_guests.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.users.list/POST/requestBody/json/include_admins`.
+                    public var includeAdmins: Swift.Bool?
+                    /// If true, only owner users will be returned. Cannot be used together with only_guests.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.users.list/POST/requestBody/json/include_owners`.
+                    public var includeOwners: Swift.Bool?
                     /// Limit for how many users to be retrieved per page.
                     ///
                     /// - Remark: Generated from `#/paths/admin.users.list/POST/requestBody/json/limit`.
@@ -12023,6 +12031,9 @@ extension Operations {
                     ///   - includeDeactivatedUserWorkspaces: Only applies with org token and no team_id. If true, return workspaces for a user even if they may be deactivated on them. If false,
                     /// return workspaces for a user only when user is active on them. Default is false.
                     ///   - onlyGuests: If true, returns only guests and their expiration dates that belong to the team_id.
+                    ///   - includeAdmins: If true, only admin users will be returned (excludes owners). Returns all admins and owners when combined with include_owners. Cannot be used together with
+                    /// only_guests.
+                    ///   - includeOwners: If true, only owner users will be returned. Cannot be used together with only_guests.
                     ///   - limit: Limit for how many users to be retrieved per page.
                     public init(
                         teamId: Swift.String? = nil,
@@ -12030,6 +12041,8 @@ extension Operations {
                         isActive: Swift.Bool? = nil,
                         includeDeactivatedUserWorkspaces: Swift.Bool? = nil,
                         onlyGuests: Swift.Bool? = nil,
+                        includeAdmins: Swift.Bool? = nil,
+                        includeOwners: Swift.Bool? = nil,
                         limit: Swift.Int? = nil,
                     ) {
                         self.teamId = teamId
@@ -12037,6 +12050,8 @@ extension Operations {
                         self.isActive = isActive
                         self.includeDeactivatedUserWorkspaces = includeDeactivatedUserWorkspaces
                         self.onlyGuests = onlyGuests
+                        self.includeAdmins = includeAdmins
+                        self.includeOwners = includeOwners
                         self.limit = limit
                     }
 
@@ -12046,6 +12061,8 @@ extension Operations {
                         case isActive = "is_active"
                         case includeDeactivatedUserWorkspaces = "include_deactivated_user_workspaces"
                         case onlyGuests = "only_guests"
+                        case includeAdmins = "include_admins"
+                        case includeOwners = "include_owners"
                         case limit
                     }
                 }
