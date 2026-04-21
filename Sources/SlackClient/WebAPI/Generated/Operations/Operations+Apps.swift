@@ -337,16 +337,26 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/apps.manifest.create/POST/requestBody/json/manifest`.
                     public var manifest: OpenAPIRuntime.OpenAPIObjectContainer
+                    /// When called with an org token, which specific team to create app on.
+                    ///
+                    /// - Remark: Generated from `#/paths/apps.manifest.create/POST/requestBody/json/team_id`.
+                    public var teamId: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
                     ///   - manifest: A JSON app manifest encoded as a string. This manifest must use a valid app manifest schema - read our guide to creating one.
-                    public init(manifest: OpenAPIRuntime.OpenAPIObjectContainer) {
+                    ///   - teamId: When called with an org token, which specific team to create app on.
+                    public init(
+                        manifest: OpenAPIRuntime.OpenAPIObjectContainer,
+                        teamId: Swift.String? = nil,
+                    ) {
                         self.manifest = manifest
+                        self.teamId = teamId
                     }
 
                     public enum CodingKeys: String, CodingKey {
                         case manifest
+                        case teamId = "team_id"
                     }
                 }
 

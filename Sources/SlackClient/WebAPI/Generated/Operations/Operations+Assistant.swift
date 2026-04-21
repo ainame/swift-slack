@@ -49,6 +49,18 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/assistant.threads.setStatus/POST/requestBody/json/loading_messages`.
                     public var loadingMessages: OpenAPIRuntime.OpenAPIArrayContainer?
+                    /// Emoji to use as the icon for this message. Overrides icon_url.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.threads.setStatus/POST/requestBody/json/icon_emoji`.
+                    public var iconEmoji: Swift.String?
+                    /// Image URL to use as the icon for this message.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.threads.setStatus/POST/requestBody/json/icon_url`.
+                    public var iconUrl: Swift.String?
+                    /// The bot's username to display.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.threads.setStatus/POST/requestBody/json/username`.
+                    public var username: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -56,16 +68,25 @@ extension Operations {
                     ///   - threadTs: Message timestamp of the thread of where to set the status.
                     ///   - status: Status of the specified bot user, e.g., 'is thinking...'. A two minute timeout applies, which will cause the status to be removed if no message has been sent.
                     ///   - loadingMessages: The list of messages to rotate through as a loading indicator. Maximum of 10 messages.
+                    ///   - iconEmoji: Emoji to use as the icon for this message. Overrides icon_url.
+                    ///   - iconUrl: Image URL to use as the icon for this message.
+                    ///   - username: The bot's username to display.
                     public init(
                         channelId: Swift.String,
                         threadTs: Swift.String,
                         status: Swift.String,
                         loadingMessages: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
+                        iconEmoji: Swift.String? = nil,
+                        iconUrl: Swift.String? = nil,
+                        username: Swift.String? = nil,
                     ) {
                         self.channelId = channelId
                         self.threadTs = threadTs
                         self.status = status
                         self.loadingMessages = loadingMessages
+                        self.iconEmoji = iconEmoji
+                        self.iconUrl = iconUrl
+                        self.username = username
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -73,6 +94,9 @@ extension Operations {
                         case threadTs = "thread_ts"
                         case status
                         case loadingMessages = "loading_messages"
+                        case iconEmoji = "icon_emoji"
+                        case iconUrl = "icon_url"
+                        case username
                     }
                 }
 

@@ -1085,7 +1085,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.appendStream/POST/requestBody/json/channel`.
                     public var channel: Swift.String
-                    /// Array of streaming chunks that can contain either markdown text or task updates.
+                    /// Array of streaming chunks.
                     ///
                     /// - Remark: Generated from `#/paths/chat.appendStream/POST/requestBody/json/chunks`.
                     public var chunks: OpenAPIRuntime.OpenAPIArrayContainer?
@@ -1101,7 +1101,7 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - channel: An encoded ID that represents a channel, private group, or DM.
-                    ///   - chunks: Array of streaming chunks that can contain either markdown text or task updates.
+                    ///   - chunks: Array of streaming chunks.
                     ///   - ts: The timestamp of the streaming message.
                     ///   - markdownText: Accepts message text formatted in markdown. Limit this field to 12,000 characters. This text is what will be appended to the message received so far.
                     public init(
@@ -2089,7 +2089,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/channel`.
                     public var channel: Swift.String
-                    /// Array of streaming chunks that can contain either markdown text or task updates.
+                    /// Array of streaming chunks.
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/chunks`.
                     public var chunks: OpenAPIRuntime.OpenAPIArrayContainer?
@@ -2114,17 +2114,32 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/task_display_mode`.
                     public var taskDisplayMode: Swift.String?
+                    /// Emoji to use as the icon for this message. Overrides icon_url.
+                    ///
+                    /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/icon_emoji`.
+                    public var iconEmoji: Swift.String?
+                    /// Image URL to use as the icon for this message.
+                    ///
+                    /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/icon_url`.
+                    public var iconUrl: Swift.String?
+                    /// The bot's username to display.
+                    ///
+                    /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/username`.
+                    public var username: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
                     ///   - channel: An encoded ID that represents a channel thread or DM.
-                    ///   - chunks: Array of streaming chunks that can contain either markdown text or task updates.
+                    ///   - chunks: Array of streaming chunks.
                     ///   - markdownText: Accepts message text formatted in markdown. Limit this field to 12,000 characters.
                     ///   - threadTs: Provide another message's ts value to reply to. Streamed messages should always be replies to a user request.
                     ///   - recipientUserId: The encoded ID of the user to receive the streaming text. Required when streaming to channels.
                     ///   - recipientTeamId: The encoded ID of the team the user receiving the streaming text belongs to. Required when streaming to channels.
                     ///   - taskDisplayMode: Specifies how tasks are displayed in the message. A timeline displays individual tasks with text in sequential order, and plan displays all tasks together,
                     /// with the first tasks's placement determining the placement of the rest of the tasks.
+                    ///   - iconEmoji: Emoji to use as the icon for this message. Overrides icon_url.
+                    ///   - iconUrl: Image URL to use as the icon for this message.
+                    ///   - username: The bot's username to display.
                     public init(
                         channel: Swift.String,
                         chunks: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
@@ -2133,6 +2148,9 @@ extension Operations {
                         recipientUserId: Swift.String? = nil,
                         recipientTeamId: Swift.String? = nil,
                         taskDisplayMode: Swift.String? = nil,
+                        iconEmoji: Swift.String? = nil,
+                        iconUrl: Swift.String? = nil,
+                        username: Swift.String? = nil,
                     ) {
                         self.channel = channel
                         self.chunks = chunks
@@ -2141,6 +2159,9 @@ extension Operations {
                         self.recipientUserId = recipientUserId
                         self.recipientTeamId = recipientTeamId
                         self.taskDisplayMode = taskDisplayMode
+                        self.iconEmoji = iconEmoji
+                        self.iconUrl = iconUrl
+                        self.username = username
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -2151,6 +2172,9 @@ extension Operations {
                         case recipientUserId = "recipient_user_id"
                         case recipientTeamId = "recipient_team_id"
                         case taskDisplayMode = "task_display_mode"
+                        case iconEmoji = "icon_emoji"
+                        case iconUrl = "icon_url"
+                        case username
                     }
                 }
 
@@ -2287,7 +2311,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.stopStream/POST/requestBody/json/channel`.
                     public var channel: Swift.String
-                    /// Array of streaming chunks that can contain either markdown text or task updates.
+                    /// Array of streaming chunks.
                     ///
                     /// - Remark: Generated from `#/paths/chat.stopStream/POST/requestBody/json/chunks`.
                     public var chunks: OpenAPIRuntime.OpenAPIArrayContainer?
@@ -2312,7 +2336,7 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - channel: An encoded ID that represents a channel, private group, or DM.
-                    ///   - chunks: Array of streaming chunks that can contain either markdown text or task updates.
+                    ///   - chunks: Array of streaming chunks.
                     ///   - ts: The timestamp of the streaming message.
                     ///   - markdownText: Accepts message text formatted in markdown. Limit this field to 12,000 characters.
                     ///   - blocks: A list of blocks that will be rendered at the bottom of the finalized message.
