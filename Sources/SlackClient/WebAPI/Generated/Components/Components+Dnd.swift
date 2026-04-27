@@ -23,6 +23,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/DndEndDndResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/DndEndDndResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `DndEndDndResponse`.
         ///
         /// - Parameters:
@@ -30,16 +32,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -47,6 +52,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -68,6 +74,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/DndEndSnoozeResponse/snooze_enabled`.
         public var snoozeEnabled: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/DndEndSnoozeResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `DndEndSnoozeResponse`.
         ///
         /// - Parameters:
@@ -79,6 +87,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - snoozeEnabled:
+        ///   - warning:
         public init(
             dndEnabled: Swift.Bool? = nil,
             error: Swift.String? = nil,
@@ -88,6 +97,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             snoozeEnabled: Swift.Bool? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.dndEnabled = dndEnabled
             self.error = error
@@ -97,6 +107,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.snoozeEnabled = snoozeEnabled
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -108,6 +119,7 @@ extension Components.Schemas {
             case ok
             case provided
             case snoozeEnabled = "snooze_enabled"
+            case warning
         }
     }
 
@@ -127,6 +139,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/DndInfoResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/DndInfoResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `DndInfoResponse`.
         ///
         /// - Parameters:
@@ -137,6 +151,7 @@ extension Components.Schemas {
         ///   - nextDndStartTs:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             dndEnabled: Swift.Bool? = nil,
             error: Swift.String? = nil,
@@ -145,6 +160,7 @@ extension Components.Schemas {
             nextDndStartTs: Swift.Int? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.dndEnabled = dndEnabled
             self.error = error
@@ -153,6 +169,7 @@ extension Components.Schemas {
             self.nextDndStartTs = nextDndStartTs
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -163,6 +180,7 @@ extension Components.Schemas {
             case nextDndStartTs = "next_dnd_start_ts"
             case ok
             case provided
+            case warning
         }
     }
 
@@ -184,6 +202,8 @@ extension Components.Schemas {
         public var snoozeIsIndefinite: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/DndSetSnoozeResponse/snooze_remaining`.
         public var snoozeRemaining: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/DndSetSnoozeResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `DndSetSnoozeResponse`.
         ///
         /// - Parameters:
@@ -195,6 +215,7 @@ extension Components.Schemas {
         ///   - snoozeEndtime:
         ///   - snoozeIsIndefinite:
         ///   - snoozeRemaining:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
@@ -204,6 +225,7 @@ extension Components.Schemas {
             snoozeEndtime: Swift.Int? = nil,
             snoozeIsIndefinite: Swift.Bool? = nil,
             snoozeRemaining: Swift.Int? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
@@ -213,6 +235,7 @@ extension Components.Schemas {
             self.snoozeEndtime = snoozeEndtime
             self.snoozeIsIndefinite = snoozeIsIndefinite
             self.snoozeRemaining = snoozeRemaining
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -224,6 +247,7 @@ extension Components.Schemas {
             case snoozeEndtime = "snooze_endtime"
             case snoozeIsIndefinite = "snooze_is_indefinite"
             case snoozeRemaining = "snooze_remaining"
+            case warning
         }
     }
 
@@ -239,6 +263,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/DndTeamInfoResponse/users`.
         public var users: OpenAPIRuntime.OpenAPIObjectContainer?
+        /// - Remark: Generated from `#/components/schemas/DndTeamInfoResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `DndTeamInfoResponse`.
         ///
         /// - Parameters:
@@ -247,18 +273,21 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - users:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             users: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
             self.users = users
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -267,6 +296,7 @@ extension Components.Schemas {
             case ok
             case provided
             case users
+            case warning
         }
     }
 }
