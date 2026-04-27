@@ -33,6 +33,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `TeamAccessLogsResponse`.
         ///
         /// - Parameters:
@@ -43,6 +45,7 @@ extension Components.Schemas {
         ///   - paging:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             logins: [SlackModels.Login]? = nil,
@@ -51,6 +54,7 @@ extension Components.Schemas {
             paging: SlackModels.Paging? = nil,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.logins = logins
@@ -59,6 +63,7 @@ extension Components.Schemas {
             self.paging = paging
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -69,6 +74,7 @@ extension Components.Schemas {
             case paging
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -86,6 +92,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `TeamBillableInfoResponse`.
         ///
         /// - Parameters:
@@ -95,6 +103,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             billableInfo: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
             error: Swift.String? = nil,
@@ -102,6 +111,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.billableInfo = billableInfo
             self.error = error
@@ -109,6 +119,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -118,6 +129,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -133,6 +145,8 @@ extension Components.Schemas {
         public var plan: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `TeamBillingInfoResponse`.
         ///
         /// - Parameters:
@@ -141,18 +155,21 @@ extension Components.Schemas {
         ///   - ok:
         ///   - plan:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             plan: Swift.String? = nil,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.plan = plan
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -161,6 +178,7 @@ extension Components.Schemas {
             case ok
             case plan
             case provided
+            case warning
         }
     }
 
@@ -176,6 +194,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsDisconnectResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsDisconnectResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `TeamExternalTeamsDisconnectResponse`.
         ///
         /// - Parameters:
@@ -184,18 +204,21 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -204,6 +227,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -223,6 +247,8 @@ extension Components.Schemas {
         public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/total_count`.
         public var totalCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `TeamExternalTeamsListResponse`.
         ///
         /// - Parameters:
@@ -233,6 +259,7 @@ extension Components.Schemas {
         ///   - provided:
         ///   - responseMetadata:
         ///   - totalCount:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
@@ -241,6 +268,7 @@ extension Components.Schemas {
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
             totalCount: Swift.Int? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
@@ -249,6 +277,7 @@ extension Components.Schemas {
             self.provided = provided
             self.responseMetadata = responseMetadata
             self.totalCount = totalCount
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -259,6 +288,7 @@ extension Components.Schemas {
             case provided
             case responseMetadata = "response_metadata"
             case totalCount = "total_count"
+            case warning
         }
     }
 
@@ -274,6 +304,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamInfoResponse/team`.
         public var team: SlackModels.Team?
+        /// - Remark: Generated from `#/components/schemas/TeamInfoResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `TeamInfoResponse`.
         ///
         /// - Parameters:
@@ -282,18 +314,21 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - team:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             team: SlackModels.Team? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
             self.team = team
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -302,6 +337,7 @@ extension Components.Schemas {
             case ok
             case provided
             case team
+            case warning
         }
     }
 
@@ -319,6 +355,8 @@ extension Components.Schemas {
         public var paging: SlackModels.Paging?
         /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `TeamIntegrationLogsResponse`.
         ///
         /// - Parameters:
@@ -328,6 +366,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - paging:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             logs: [SlackModels.Log]? = nil,
@@ -335,6 +374,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             paging: SlackModels.Paging? = nil,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.logs = logs
@@ -342,6 +382,7 @@ extension Components.Schemas {
             self.ok = ok
             self.paging = paging
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -351,6 +392,7 @@ extension Components.Schemas {
             case ok
             case paging
             case provided
+            case warning
         }
     }
 
@@ -372,6 +414,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/who_can_post_general`.
         public var whoCanPostGeneral: Swift.String?
         /// Creates a new `TeamPreferencesListResponse`.
@@ -385,6 +429,7 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         ///   - whoCanPostGeneral:
         public init(
             allowMessageDeletion: Swift.Bool? = nil,
@@ -395,6 +440,7 @@ extension Components.Schemas {
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
             whoCanPostGeneral: Swift.String? = nil,
         ) {
             self.allowMessageDeletion = allowMessageDeletion
@@ -405,6 +451,7 @@ extension Components.Schemas {
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
             self.whoCanPostGeneral = whoCanPostGeneral
         }
 
@@ -417,6 +464,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
             case whoCanPostGeneral = "who_can_post_general"
         }
     }
@@ -433,6 +481,8 @@ extension Components.Schemas {
         public var profile: SlackModels.TeamProfile?
         /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `TeamProfileGetResponse`.
         ///
         /// - Parameters:
@@ -441,18 +491,21 @@ extension Components.Schemas {
         ///   - ok:
         ///   - profile:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             profile: SlackModels.TeamProfile? = nil,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.profile = profile
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -461,6 +514,7 @@ extension Components.Schemas {
             case ok
             case profile
             case provided
+            case warning
         }
     }
 }

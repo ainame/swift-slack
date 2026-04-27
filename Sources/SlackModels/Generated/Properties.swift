@@ -27,6 +27,8 @@ public struct Properties: Codable, Hashable, Sendable {
     public var tabz: [Tab]?
     /// - Remark: Generated from `#/components/schemas/Properties/threads_restricted_to`.
     public var threadsRestrictedTo: ThreadsRestrictedTo?
+    /// - Remark: Generated from `#/components/schemas/Properties/use_case`.
+    public var useCase: Swift.String?
     /// Creates a new `Properties`.
     ///
     /// - Parameters:
@@ -38,6 +40,7 @@ public struct Properties: Codable, Hashable, Sendable {
     ///   - tabs:
     ///   - tabz:
     ///   - threadsRestrictedTo:
+    ///   - useCase:
     public init(
         canvas: Canvas? = nil,
         huddlesRestricted: Swift.Bool? = nil,
@@ -47,6 +50,7 @@ public struct Properties: Codable, Hashable, Sendable {
         tabs: [Tab]? = nil,
         tabz: [Tab]? = nil,
         threadsRestrictedTo: ThreadsRestrictedTo? = nil,
+        useCase: Swift.String? = nil,
     ) {
         self.canvas = canvas
         self.huddlesRestricted = huddlesRestricted
@@ -56,6 +60,7 @@ public struct Properties: Codable, Hashable, Sendable {
         self.tabs = tabs
         self.tabz = tabz
         self.threadsRestrictedTo = threadsRestrictedTo
+        self.useCase = useCase
     }
 
     public enum CodingKeys: String, CodingKey {
@@ -67,5 +72,6 @@ public struct Properties: Codable, Hashable, Sendable {
         case tabs
         case tabz
         case threadsRestrictedTo = "threads_restricted_to"
+        case useCase = "use_case"
     }
 }

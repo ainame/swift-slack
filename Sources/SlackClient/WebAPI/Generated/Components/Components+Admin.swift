@@ -31,6 +31,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminAppsActivitiesListResponse`.
         ///
         /// - Parameters:
@@ -40,6 +42,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             activities: [SlackModels.Activity]? = nil,
             error: Swift.String? = nil,
@@ -47,6 +50,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.activities = activities
             self.error = error
@@ -54,6 +58,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -63,6 +68,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -221,6 +227,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminAppsConfigLookupResponse`.
         ///
         /// - Parameters:
@@ -230,6 +238,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             configs: [SlackModels.Config]? = nil,
             error: Swift.String? = nil,
@@ -237,6 +246,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.configs = configs
             self.error = error
@@ -244,6 +254,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -253,6 +264,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -266,6 +278,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsConfigSetResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigSetResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminAppsConfigSetResponse`.
         ///
         /// - Parameters:
@@ -273,16 +287,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -290,6 +307,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -305,6 +323,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminAppsRequestsCancelResponse`.
         ///
         /// - Parameters:
@@ -313,18 +333,21 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -333,6 +356,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -765,6 +789,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminBarriersListResponse`.
         ///
         /// - Parameters:
@@ -773,18 +799,21 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             barriers: [SlackModels.Barrier]? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.barriers = barriers
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -793,6 +822,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -892,6 +922,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminConversationsBulkArchiveResponse`.
         ///
         /// - Parameters:
@@ -902,6 +934,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             bulkActionId: Swift.String? = nil,
             error: Swift.String? = nil,
@@ -910,6 +943,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.bulkActionId = bulkActionId
             self.error = error
@@ -918,6 +952,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -928,6 +963,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -947,6 +983,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminConversationsBulkDeleteResponse`.
         ///
         /// - Parameters:
@@ -957,6 +995,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             bulkActionId: Swift.String? = nil,
             error: Swift.String? = nil,
@@ -965,6 +1004,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.bulkActionId = bulkActionId
             self.error = error
@@ -973,6 +1013,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -983,6 +1024,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -1002,6 +1044,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminConversationsBulkMoveResponse`.
         ///
         /// - Parameters:
@@ -1012,6 +1056,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             bulkActionId: Swift.String? = nil,
             error: Swift.String? = nil,
@@ -1020,6 +1065,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.bulkActionId = bulkActionId
             self.error = error
@@ -1028,6 +1074,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -1038,6 +1085,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -1135,6 +1183,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminConversationsCreateResponse`.
         ///
         /// - Parameters:
@@ -1144,6 +1194,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             channelId: Swift.String? = nil,
             error: Swift.String? = nil,
@@ -1151,6 +1202,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.channelId = channelId
             self.error = error
@@ -1158,6 +1210,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -1167,6 +1220,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -1254,6 +1308,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminConversationsEkmListOriginalConnectedChannelInfoResponse`.
         ///
         /// - Parameters:
@@ -1261,16 +1317,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -1278,6 +1337,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -1735,6 +1795,8 @@ extension Components.Schemas {
         public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/total_count`.
         public var totalCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminConversationsSearchResponse`.
         ///
         /// - Parameters:
@@ -1746,6 +1808,7 @@ extension Components.Schemas {
         ///   - provided:
         ///   - responseMetadata:
         ///   - totalCount:
+        ///   - warning:
         public init(
             conversations: [SlackModels.Conversation]? = nil,
             error: Swift.String? = nil,
@@ -1755,6 +1818,7 @@ extension Components.Schemas {
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
             totalCount: Swift.Int? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.conversations = conversations
             self.error = error
@@ -1764,6 +1828,7 @@ extension Components.Schemas {
             self.provided = provided
             self.responseMetadata = responseMetadata
             self.totalCount = totalCount
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -1775,6 +1840,7 @@ extension Components.Schemas {
             case provided
             case responseMetadata = "response_metadata"
             case totalCount = "total_count"
+            case warning
         }
     }
 
@@ -2032,6 +2098,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminEmojiListResponse`.
         ///
         /// - Parameters:
@@ -2041,6 +2109,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             emoji: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
             error: Swift.String? = nil,
@@ -2048,6 +2117,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.emoji = emoji
             self.error = error
@@ -2055,6 +2125,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2064,6 +2135,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -2167,6 +2239,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminFunctionsListResponse`.
         ///
         /// - Parameters:
@@ -2176,6 +2250,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             functions: [SlackModels.Function]? = nil,
@@ -2183,6 +2258,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.functions = functions
@@ -2190,6 +2266,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2199,6 +2276,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -2220,6 +2298,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminFunctionsPermissionsLookupResponse`.
         ///
         /// - Parameters:
@@ -2231,6 +2311,7 @@ extension Components.Schemas {
         ///   - permissions:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             errors: SlackModels.Errors? = nil,
@@ -2240,6 +2321,7 @@ extension Components.Schemas {
             permissions: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.errors = errors
@@ -2249,6 +2331,7 @@ extension Components.Schemas {
             self.permissions = permissions
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2260,6 +2343,7 @@ extension Components.Schemas {
             case permissions
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -2316,6 +2400,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApproveResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApproveResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminInviteRequestsApproveResponse`.
         ///
         /// - Parameters:
@@ -2323,16 +2409,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2340,6 +2429,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -2357,6 +2447,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminInviteRequestsApprovedListResponse`.
         ///
         /// - Parameters:
@@ -2366,6 +2458,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             approvedRequests: [SlackModels.ApprovedRequest]? = nil,
             error: Swift.String? = nil,
@@ -2373,6 +2466,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.approvedRequests = approvedRequests
             self.error = error
@@ -2380,6 +2474,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2389,6 +2484,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -2406,6 +2502,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminInviteRequestsDeniedListResponse`.
         ///
         /// - Parameters:
@@ -2415,6 +2513,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             deniedRequests: [SlackModels.DeniedRequest]? = nil,
             error: Swift.String? = nil,
@@ -2422,6 +2521,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.deniedRequests = deniedRequests
             self.error = error
@@ -2429,6 +2529,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2438,6 +2539,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -2451,6 +2553,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDenyResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDenyResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminInviteRequestsDenyResponse`.
         ///
         /// - Parameters:
@@ -2458,16 +2562,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2475,6 +2582,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -2492,6 +2600,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminInviteRequestsListResponse`.
         ///
         /// - Parameters:
@@ -2501,6 +2611,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             inviteRequests: [SlackModels.InviteRequest]? = nil,
@@ -2508,6 +2619,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.inviteRequests = inviteRequests
@@ -2515,6 +2627,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2524,6 +2637,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -2584,6 +2698,8 @@ extension Components.Schemas {
         public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/role_assignments`.
         public var roleAssignments: [SlackModels.RoleAssignment]?
+        /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminRolesListAssignmentsResponse`.
         ///
         /// - Parameters:
@@ -2593,6 +2709,7 @@ extension Components.Schemas {
         ///   - provided:
         ///   - responseMetadata:
         ///   - roleAssignments:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
@@ -2600,6 +2717,7 @@ extension Components.Schemas {
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
             roleAssignments: [SlackModels.RoleAssignment]? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
@@ -2607,6 +2725,7 @@ extension Components.Schemas {
             self.provided = provided
             self.responseMetadata = responseMetadata
             self.roleAssignments = roleAssignments
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2616,6 +2735,7 @@ extension Components.Schemas {
             case provided
             case responseMetadata = "response_metadata"
             case roleAssignments = "role_assignments"
+            case warning
         }
     }
 
@@ -2670,6 +2790,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminTeamsAdminsListResponse`.
         ///
         /// - Parameters:
@@ -2679,6 +2801,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             adminIds: [Swift.String]? = nil,
             error: Swift.String? = nil,
@@ -2686,6 +2809,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.adminIds = adminIds
             self.error = error
@@ -2693,6 +2817,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2702,6 +2827,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -2768,6 +2894,8 @@ extension Components.Schemas {
         public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/teams`.
         public var teams: [SlackModels.Team]?
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminTeamsListResponse`.
         ///
         /// - Parameters:
@@ -2777,6 +2905,7 @@ extension Components.Schemas {
         ///   - provided:
         ///   - responseMetadata:
         ///   - teams:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
@@ -2784,6 +2913,7 @@ extension Components.Schemas {
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
             teams: [SlackModels.Team]? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
@@ -2791,6 +2921,7 @@ extension Components.Schemas {
             self.provided = provided
             self.responseMetadata = responseMetadata
             self.teams = teams
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2800,6 +2931,7 @@ extension Components.Schemas {
             case provided
             case responseMetadata = "response_metadata"
             case teams
+            case warning
         }
     }
 
@@ -2817,6 +2949,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminTeamsOwnersListResponse`.
         ///
         /// - Parameters:
@@ -2826,6 +2960,7 @@ extension Components.Schemas {
         ///   - ownerIds:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
@@ -2833,6 +2968,7 @@ extension Components.Schemas {
             ownerIds: [Swift.String]? = nil,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
@@ -2840,6 +2976,7 @@ extension Components.Schemas {
             self.ownerIds = ownerIds
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2849,6 +2986,7 @@ extension Components.Schemas {
             case ownerIds = "owner_ids"
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -2864,6 +3002,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsInfoResponse/team`.
         public var team: SlackModels.Team?
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsInfoResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminTeamsSettingsInfoResponse`.
         ///
         /// - Parameters:
@@ -2872,18 +3012,21 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - team:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             team: SlackModels.Team? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
             self.team = team
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -2892,6 +3035,7 @@ extension Components.Schemas {
             case ok
             case provided
             case team
+            case warning
         }
     }
 
@@ -3229,6 +3373,8 @@ extension Components.Schemas {
         public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/users`.
         public var users: [SlackModels.User]?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminUsersListResponse`.
         ///
         /// - Parameters:
@@ -3238,6 +3384,7 @@ extension Components.Schemas {
         ///   - provided:
         ///   - responseMetadata:
         ///   - users:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
@@ -3245,6 +3392,7 @@ extension Components.Schemas {
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
             users: [SlackModels.User]? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
@@ -3252,6 +3400,7 @@ extension Components.Schemas {
             self.provided = provided
             self.responseMetadata = responseMetadata
             self.users = users
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -3261,6 +3410,7 @@ extension Components.Schemas {
             case provided
             case responseMetadata = "response_metadata"
             case users
+            case warning
         }
     }
 
@@ -3444,6 +3594,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminUsersSessionListResponse`.
         ///
         /// - Parameters:
@@ -3453,6 +3605,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             activeSessions: [SlackModels.ActiveSession]? = nil,
             error: Swift.String? = nil,
@@ -3460,6 +3613,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.activeSessions = activeSessions
             self.error = error
@@ -3467,6 +3621,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -3476,6 +3631,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -3748,6 +3904,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersUnsupportedVersionsExportResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersUnsupportedVersionsExportResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AdminUsersUnsupportedVersionsExportResponse`.
         ///
         /// - Parameters:
@@ -3755,16 +3913,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -3772,6 +3933,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 }

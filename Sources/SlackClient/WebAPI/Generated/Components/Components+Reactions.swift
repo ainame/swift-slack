@@ -27,6 +27,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ReactionsAddResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ReactionsAddResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `ReactionsAddResponse`.
         ///
         /// - Parameters:
@@ -34,16 +36,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -51,6 +56,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -174,6 +180,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ReactionsRemoveResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ReactionsRemoveResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `ReactionsRemoveResponse`.
         ///
         /// - Parameters:
@@ -181,16 +189,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -198,6 +209,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 }

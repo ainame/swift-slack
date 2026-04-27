@@ -27,6 +27,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/response_metadata`.
+        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/url`.
         public var url: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/warning`.
@@ -38,6 +40,7 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         ///   - url:
         ///   - warning:
         public init(
@@ -45,6 +48,7 @@ extension Components.Schemas {
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            responseMetadata: SlackModels.ResponseMetadata? = nil,
             url: Swift.String? = nil,
             warning: Swift.String? = nil,
         ) {
@@ -52,6 +56,7 @@ extension Components.Schemas {
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
             self.url = url
             self.warning = warning
         }
@@ -61,6 +66,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case responseMetadata = "response_metadata"
             case url
             case warning
         }
@@ -139,6 +145,8 @@ extension Components.Schemas {
         public var teamDomain: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/team_id`.
         public var teamId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AppsManifestCreateResponse`.
         ///
         /// - Parameters:
@@ -153,6 +161,7 @@ extension Components.Schemas {
         ///   - responseMetadata:
         ///   - teamDomain:
         ///   - teamId:
+        ///   - warning:
         public init(
             appId: Swift.String? = nil,
             credentials: SlackModels.Credentials? = nil,
@@ -165,6 +174,7 @@ extension Components.Schemas {
             responseMetadata: SlackModels.ResponseMetadata? = nil,
             teamDomain: Swift.String? = nil,
             teamId: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.appId = appId
             self.credentials = credentials
@@ -177,6 +187,7 @@ extension Components.Schemas {
             self.responseMetadata = responseMetadata
             self.teamDomain = teamDomain
             self.teamId = teamId
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -191,6 +202,7 @@ extension Components.Schemas {
             case responseMetadata = "response_metadata"
             case teamDomain = "team_domain"
             case teamId = "team_id"
+            case warning
         }
     }
 
@@ -204,6 +216,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AppsManifestDeleteResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AppsManifestDeleteResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AppsManifestDeleteResponse`.
         ///
         /// - Parameters:
@@ -211,16 +225,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -228,6 +245,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -243,6 +261,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AppsManifestExportResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AppsManifestExportResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AppsManifestExportResponse`.
         ///
         /// - Parameters:
@@ -251,18 +271,21 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             manifest: SlackModels.Manifest? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.manifest = manifest
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -271,6 +294,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -288,6 +312,8 @@ extension Components.Schemas {
         public var permissionsUpdated: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/AppsManifestUpdateResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AppsManifestUpdateResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AppsManifestUpdateResponse`.
         ///
         /// - Parameters:
@@ -297,6 +323,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - permissionsUpdated:
         ///   - provided:
+        ///   - warning:
         public init(
             appId: Swift.String? = nil,
             error: Swift.String? = nil,
@@ -304,6 +331,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             permissionsUpdated: Swift.Bool? = nil,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.appId = appId
             self.error = error
@@ -311,6 +339,7 @@ extension Components.Schemas {
             self.ok = ok
             self.permissionsUpdated = permissionsUpdated
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -320,6 +349,7 @@ extension Components.Schemas {
             case ok
             case permissionsUpdated = "permissions_updated"
             case provided
+            case warning
         }
     }
 
@@ -337,6 +367,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AppsManifestValidateResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AppsManifestValidateResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `AppsManifestValidateResponse`.
         ///
         /// - Parameters:
@@ -346,6 +378,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             errors: [SlackModels._Error]? = nil,
@@ -353,6 +386,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.errors = errors
@@ -360,6 +394,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -369,6 +404,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 

@@ -33,6 +33,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `UsersConversationsResponse`.
         ///
         /// - Parameters:
@@ -43,6 +45,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             arg: Swift.String? = nil,
             channels: [SlackModels.Channel]? = nil,
@@ -51,6 +54,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.arg = arg
             self.channels = channels
@@ -59,6 +63,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -69,6 +74,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -82,6 +88,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsersDeletePhotoResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersDeletePhotoResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `UsersDeletePhotoResponse`.
         ///
         /// - Parameters:
@@ -89,16 +97,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -106,6 +117,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -481,6 +493,8 @@ extension Components.Schemas {
         public var profile: SlackModels.Profile?
         /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `UsersProfileGetResponse`.
         ///
         /// - Parameters:
@@ -489,18 +503,21 @@ extension Components.Schemas {
         ///   - ok:
         ///   - profile:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             profile: SlackModels.Profile? = nil,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.profile = profile
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -509,6 +526,7 @@ extension Components.Schemas {
             case ok
             case profile
             case provided
+            case warning
         }
     }
 
@@ -526,6 +544,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/username`.
         public var username: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `UsersProfileSetResponse`.
         ///
         /// - Parameters:
@@ -535,6 +555,7 @@ extension Components.Schemas {
         ///   - profile:
         ///   - provided:
         ///   - username:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
@@ -542,6 +563,7 @@ extension Components.Schemas {
             profile: SlackModels.Profile? = nil,
             provided: Swift.String? = nil,
             username: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
@@ -549,6 +571,7 @@ extension Components.Schemas {
             self.profile = profile
             self.provided = provided
             self.username = username
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -558,6 +581,7 @@ extension Components.Schemas {
             case profile
             case provided
             case username
+            case warning
         }
     }
 
@@ -571,6 +595,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsersSetActiveResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersSetActiveResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `UsersSetActiveResponse`.
         ///
         /// - Parameters:
@@ -578,16 +604,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -595,6 +624,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -610,6 +640,8 @@ extension Components.Schemas {
         public var profile: SlackModels.Profile?
         /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `UsersSetPhotoResponse`.
         ///
         /// - Parameters:
@@ -618,18 +650,21 @@ extension Components.Schemas {
         ///   - ok:
         ///   - profile:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             profile: SlackModels.Profile? = nil,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.profile = profile
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -638,6 +673,7 @@ extension Components.Schemas {
             case ok
             case profile
             case provided
+            case warning
         }
     }
 
@@ -651,6 +687,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsersSetPresenceResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersSetPresenceResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `UsersSetPresenceResponse`.
         ///
         /// - Parameters:
@@ -658,16 +696,19 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -675,6 +716,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 }

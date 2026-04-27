@@ -25,6 +25,8 @@ public struct Settings: Codable, Hashable, Sendable {
     public var hermesAppType: Swift.String?
     /// - Remark: Generated from `#/components/schemas/Settings/interactivity`.
     public var interactivity: Interactivity?
+    /// - Remark: Generated from `#/components/schemas/Settings/is_mcp_enabled`.
+    public var isMcpEnabled: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/Settings/long_description`.
     public var longDescription: Swift.String?
     /// - Remark: Generated from `#/components/schemas/Settings/org_deploy_enabled`.
@@ -43,6 +45,7 @@ public struct Settings: Codable, Hashable, Sendable {
     ///   - functionRuntime:
     ///   - hermesAppType:
     ///   - interactivity:
+    ///   - isMcpEnabled:
     ///   - longDescription:
     ///   - orgDeployEnabled:
     ///   - socketModeEnabled:
@@ -55,6 +58,7 @@ public struct Settings: Codable, Hashable, Sendable {
         functionRuntime: Swift.String? = nil,
         hermesAppType: Swift.String? = nil,
         interactivity: Interactivity? = nil,
+        isMcpEnabled: Swift.Bool? = nil,
         longDescription: Swift.String? = nil,
         orgDeployEnabled: Swift.Bool? = nil,
         socketModeEnabled: Swift.Bool? = nil,
@@ -67,6 +71,7 @@ public struct Settings: Codable, Hashable, Sendable {
         self.functionRuntime = functionRuntime
         self.hermesAppType = hermesAppType
         self.interactivity = interactivity
+        self.isMcpEnabled = isMcpEnabled
         self.longDescription = longDescription
         self.orgDeployEnabled = orgDeployEnabled
         self.socketModeEnabled = socketModeEnabled
@@ -81,6 +86,7 @@ public struct Settings: Codable, Hashable, Sendable {
         case functionRuntime = "function_runtime"
         case hermesAppType = "hermes_app_type"
         case interactivity
+        case isMcpEnabled = "is_mcp_enabled"
         case longDescription = "long_description"
         case orgDeployEnabled = "org_deploy_enabled"
         case socketModeEnabled = "socket_mode_enabled"
