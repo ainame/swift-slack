@@ -461,6 +461,14 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/admin.apps.approve/POST/requestBody/json/enterprise_id`.
                     public var enterpriseId: Swift.String?
+                    /// User scopes to approve for the app.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.approve/POST/requestBody/json/user_scopes`.
+                    public var userScopes: Swift.String?
+                    /// Bot scopes to approve for the app.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.approve/POST/requestBody/json/bot_scopes`.
+                    public var botScopes: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -468,16 +476,22 @@ extension Operations {
                     ///   - requestId: The id of the request to approve.
                     ///   - teamId: The ID of the workspace to approve the app on.
                     ///   - enterpriseId: The ID of the enterprise to approve the app on.
+                    ///   - userScopes: User scopes to approve for the app.
+                    ///   - botScopes: Bot scopes to approve for the app.
                     public init(
                         appId: Swift.String? = nil,
                         requestId: Swift.String? = nil,
                         teamId: Swift.String? = nil,
                         enterpriseId: Swift.String? = nil,
+                        userScopes: Swift.String? = nil,
+                        botScopes: Swift.String? = nil,
                     ) {
                         self.appId = appId
                         self.requestId = requestId
                         self.teamId = teamId
                         self.enterpriseId = enterpriseId
+                        self.userScopes = userScopes
+                        self.botScopes = botScopes
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -485,6 +499,8 @@ extension Operations {
                         case requestId = "request_id"
                         case teamId = "team_id"
                         case enterpriseId = "enterprise_id"
+                        case userScopes = "user_scopes"
+                        case botScopes = "bot_scopes"
                     }
                 }
 
