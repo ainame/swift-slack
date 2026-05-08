@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.10.0] - 2026-05-08
+
+### Added
+
+* Updated Slack API schemas with newly generated Web API operations for Admin, Apps, Assistant, and Chat API surfaces - [#102](https://github.com/ainame/swift-slack/pull/102), [#105](https://github.com/ainame/swift-slack/pull/105)
+* Expanded generated Slack component and shared model coverage across Admin, Apps, Bots, Conversations, DND, Files, Reactions, Team, Users, and shared model types - [#104](https://github.com/ainame/swift-slack/pull/104)
+
+### Changed
+
+* Cleaned up the DeepL translator demo, including shortcut-flow documentation, default-language handling in the translation modal, and unused code removal - [#99](https://github.com/ainame/swift-slack/pull/99)
+* Updated the SwiftFormat binary target to `0.61.0` and refreshed the demo formatting produced by that toolchain - [#100](https://github.com/ainame/swift-slack/pull/100)
+* Updated the DocC publishing workflow to `actions/upload-pages-artifact@v5` - [#101](https://github.com/ainame/swift-slack/pull/101)
+* Updated the Ruby toolchain reference to `4.0.3` - [#103](https://github.com/ainame/swift-slack/pull/103)
+* Updated README package-version examples for the previous release cycle - [#96](https://github.com/ainame/swift-slack/pull/96)
+
+### Fixed
+
+* Fixed Renovate updates for the SwiftFormat binary target by using release-attachment metadata for checksum replacement and removing the post-upgrade checksum script - [#97](https://github.com/ainame/swift-slack/pull/97)
+* Fixed Renovate SwiftFormat replacement formatting so version and checksum updates do not capture extra newlines in `Package.swift` - [#98](https://github.com/ainame/swift-slack/pull/98)
+
 ## [0.9.0] - 2026-04-01
 
 ### Added
