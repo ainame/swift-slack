@@ -33,10 +33,10 @@ extension Operations {
             @frozen public enum Body: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/bookmarks.add/POST/requestBody/json`.
                 public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Channel to add bookmark in.
+                    /// Channel to add bookmark in. Required for public channels.
                     ///
                     /// - Remark: Generated from `#/paths/bookmarks.add/POST/requestBody/json/channel_id`.
-                    public var channelId: Swift.String
+                    public var channelId: Swift.String?
                     /// Title for the bookmark.
                     ///
                     /// - Remark: Generated from `#/paths/bookmarks.add/POST/requestBody/json/title`.
@@ -68,7 +68,7 @@ extension Operations {
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
-                    ///   - channelId: Channel to add bookmark in.
+                    ///   - channelId: Channel to add bookmark in. Required for public channels.
                     ///   - title: Title for the bookmark.
                     ///   - link: Link to bookmark.
                     ///   - _type: Type of the bookmark i.e link.
@@ -77,7 +77,7 @@ extension Operations {
                     ///   - accessLevel: The level that we are setting the file's permission to (read or write).
                     ///   - parentId: Id of this bookmark's parent.
                     public init(
-                        channelId: Swift.String,
+                        channelId: Swift.String? = nil,
                         title: Swift.String,
                         link: Swift.String? = nil,
                         _type: Swift.String,
@@ -237,14 +237,14 @@ extension Operations {
             @frozen public enum Body: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/bookmarks.edit/POST/requestBody/json`.
                 public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Channel to update bookmark in.
+                    /// Channel to update bookmark in. Required for public channels.
                     ///
                     /// - Remark: Generated from `#/paths/bookmarks.edit/POST/requestBody/json/channel_id`.
-                    public var channelId: Swift.String
-                    /// Bookmark to update.
+                    public var channelId: Swift.String?
+                    /// Bookmark to update. Required for public channels.
                     ///
                     /// - Remark: Generated from `#/paths/bookmarks.edit/POST/requestBody/json/bookmark_id`.
-                    public var bookmarkId: Swift.String
+                    public var bookmarkId: Swift.String?
                     /// Title for the bookmark.
                     ///
                     /// - Remark: Generated from `#/paths/bookmarks.edit/POST/requestBody/json/title`.
@@ -260,14 +260,14 @@ extension Operations {
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
-                    ///   - channelId: Channel to update bookmark in.
-                    ///   - bookmarkId: Bookmark to update.
+                    ///   - channelId: Channel to update bookmark in. Required for public channels.
+                    ///   - bookmarkId: Bookmark to update. Required for public channels.
                     ///   - title: Title for the bookmark.
                     ///   - link: Link to bookmark.
                     ///   - emoji: Emoji tag to apply to the link.
                     public init(
-                        channelId: Swift.String,
-                        bookmarkId: Swift.String,
+                        channelId: Swift.String? = nil,
+                        bookmarkId: Swift.String? = nil,
                         title: Swift.String? = nil,
                         link: Swift.String? = nil,
                         emoji: Swift.String? = nil,
@@ -417,15 +417,15 @@ extension Operations {
             @frozen public enum Body: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/bookmarks.list/POST/requestBody/json`.
                 public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Channel to list bookmarks in.
+                    /// Channel to list bookmarks in. Required for public channels.
                     ///
                     /// - Remark: Generated from `#/paths/bookmarks.list/POST/requestBody/json/channel_id`.
-                    public var channelId: Swift.String
+                    public var channelId: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
-                    ///   - channelId: Channel to list bookmarks in.
-                    public init(channelId: Swift.String) {
+                    ///   - channelId: Channel to list bookmarks in. Required for public channels.
+                    public init(channelId: Swift.String? = nil) {
                         self.channelId = channelId
                     }
 
@@ -563,14 +563,14 @@ extension Operations {
             @frozen public enum Body: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/bookmarks.remove/POST/requestBody/json`.
                 public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Channel to remove bookmark.
+                    /// Channel to remove bookmark. Required for public channels.
                     ///
                     /// - Remark: Generated from `#/paths/bookmarks.remove/POST/requestBody/json/channel_id`.
-                    public var channelId: Swift.String
-                    /// Bookmark to remove.
+                    public var channelId: Swift.String?
+                    /// Bookmark to remove. Required for public channels.
                     ///
                     /// - Remark: Generated from `#/paths/bookmarks.remove/POST/requestBody/json/bookmark_id`.
-                    public var bookmarkId: Swift.String
+                    public var bookmarkId: Swift.String?
                     /// Quip section ID to unbookmark.
                     ///
                     /// - Remark: Generated from `#/paths/bookmarks.remove/POST/requestBody/json/quip_section_id`.
@@ -578,12 +578,12 @@ extension Operations {
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
-                    ///   - channelId: Channel to remove bookmark.
-                    ///   - bookmarkId: Bookmark to remove.
+                    ///   - channelId: Channel to remove bookmark. Required for public channels.
+                    ///   - bookmarkId: Bookmark to remove. Required for public channels.
                     ///   - quipSectionId: Quip section ID to unbookmark.
                     public init(
-                        channelId: Swift.String,
-                        bookmarkId: Swift.String,
+                        channelId: Swift.String? = nil,
+                        bookmarkId: Swift.String? = nil,
                         quipSectionId: Swift.String? = nil,
                     ) {
                         self.channelId = channelId
