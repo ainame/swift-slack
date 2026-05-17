@@ -2109,8 +2109,8 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/recipient_team_id`.
                     public var recipientTeamId: Swift.String?
-                    /// Specifies how tasks are displayed in the message. A timeline displays individual tasks with text in sequential order, and plan displays all tasks together, with the first
-                    /// tasks's placement determining the placement of the rest of the tasks.
+                    /// Specifies how tasks are displayed in the message. A timeline displays individual tasks with text in sequential order, plan displays all tasks together, with the first tasks's
+                    /// placement determining the placement of the rest of the tasks, and dense collapses consecutive tool calls into a single summarized task card.
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/task_display_mode`.
                     public var taskDisplayMode: Swift.String?
@@ -2135,8 +2135,8 @@ extension Operations {
                     ///   - threadTs: Provide another message's ts value to reply to. Streamed messages should always be replies to a user request.
                     ///   - recipientUserId: The encoded ID of the user to receive the streaming text. Required when streaming to channels.
                     ///   - recipientTeamId: The encoded ID of the team the user receiving the streaming text belongs to. Required when streaming to channels.
-                    ///   - taskDisplayMode: Specifies how tasks are displayed in the message. A timeline displays individual tasks with text in sequential order, and plan displays all tasks together,
-                    /// with the first tasks's placement determining the placement of the rest of the tasks.
+                    ///   - taskDisplayMode: Specifies how tasks are displayed in the message. A timeline displays individual tasks with text in sequential order, plan displays all tasks together,
+                    /// with the first tasks's placement determining the placement of the rest of the tasks, and dense collapses consecutive tool calls into a single summarized task card.
                     ///   - iconEmoji: Emoji to use as the icon for this message. Overrides icon_url.
                     ///   - iconUrl: Image URL to use as the icon for this message.
                     ///   - username: The bot's username to display.
@@ -2497,15 +2497,15 @@ extension Operations {
             @frozen public enum Body: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/chat.unfurl/POST/requestBody/json`.
                 public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Channel ID of the message. Both channel and ts must be provided together, or unfurl_id and source must be provided together.
+                    /// Channel ID of the message. Both channel and ts must be provided together, or unfurl_id and source must be provided together. Required for public channels.
                     ///
                     /// - Remark: Generated from `#/paths/chat.unfurl/POST/requestBody/json/channel`.
                     public var channel: Swift.String?
-                    /// Timestamp of the message to add unfurl behavior to.
+                    /// Timestamp of the message to add unfurl behavior to. Required for public channels.
                     ///
                     /// - Remark: Generated from `#/paths/chat.unfurl/POST/requestBody/json/ts`.
                     public var ts: Swift.String?
-                    /// URL-encoded JSON map with keys set to URLs featured in the the message, pointing to their unfurl blocks or message attachments. Either unfurls or metadata must be provided.
+                    /// URL-encoded JSON map with keys set to URLs featured in the the message, pointing to their unfurl blocks or message attachments. Required for public channels.
                     ///
                     /// - Remark: Generated from `#/paths/chat.unfurl/POST/requestBody/json/unfurls`.
                     public var unfurls: OpenAPIRuntime.OpenAPIObjectContainer?
@@ -2536,17 +2536,12 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.unfurl/POST/requestBody/json/source`.
                     public var source: Swift.String?
-                    /// JSON object with an entities field providing an array of Work Object entities. Either unfurls or metadata must be provided.
-                    ///
-                    /// - Remark: Generated from `#/paths/chat.unfurl/POST/requestBody/json/metadata`.
-                    public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
-                    ///   - channel: Channel ID of the message. Both channel and ts must be provided together, or unfurl_id and source must be provided together.
-                    ///   - ts: Timestamp of the message to add unfurl behavior to.
-                    ///   - unfurls: URL-encoded JSON map with keys set to URLs featured in the the message, pointing to their unfurl blocks or message attachments. Either unfurls or metadata must be
-                    /// provided.
+                    ///   - channel: Channel ID of the message. Both channel and ts must be provided together, or unfurl_id and source must be provided together. Required for public channels.
+                    ///   - ts: Timestamp of the message to add unfurl behavior to. Required for public channels.
+                    ///   - unfurls: URL-encoded JSON map with keys set to URLs featured in the the message, pointing to their unfurl blocks or message attachments. Required for public channels.
                     ///   - userAuthMessage: Provide a simply-formatted string to send as an ephemeral message to the user as invitation to authenticate further and enable full unfurling behavior.
                     /// Provides two buttons, Not now or Never ask me again.
                     ///   - userAuthRequired: Set to true or 1 to indicate the user must install your Slack app to trigger unfurls for this domain.
@@ -2556,7 +2551,6 @@ extension Operations {
                     ///   - unfurlId: The ID of the link to unfurl. Both unfurl_id and source must be provided together, or channel and ts must be provided together.
                     ///   - source: The source of the link to unfurl. The source may either be composer, when the link is inside the message composer, or conversations_history, when the link has been
                     /// posted to a conversation.
-                    ///   - metadata: JSON object with an entities field providing an array of Work Object entities. Either unfurls or metadata must be provided.
                     public init(
                         channel: Swift.String? = nil,
                         ts: Swift.String? = nil,
@@ -2567,7 +2561,6 @@ extension Operations {
                         userAuthBlocks: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
                         unfurlId: Swift.String? = nil,
                         source: Swift.String? = nil,
-                        metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
                     ) {
                         self.channel = channel
                         self.ts = ts
@@ -2578,7 +2571,6 @@ extension Operations {
                         self.userAuthBlocks = userAuthBlocks
                         self.unfurlId = unfurlId
                         self.source = source
-                        self.metadata = metadata
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -2591,7 +2583,6 @@ extension Operations {
                         case userAuthBlocks = "user_auth_blocks"
                         case unfurlId = "unfurl_id"
                         case source
-                        case metadata
                     }
                 }
 

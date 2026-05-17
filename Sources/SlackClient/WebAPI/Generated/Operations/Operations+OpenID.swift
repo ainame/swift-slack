@@ -57,6 +57,10 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/openid.connect.token/POST/requestBody/json/refresh_token`.
                     public var refreshToken: Swift.String?
+                    /// PKCE code verifier (RFC 7636). Required when the authorization request included a code_challenge.
+                    ///
+                    /// - Remark: Generated from `#/paths/openid.connect.token/POST/requestBody/json/code_verifier`.
+                    public var codeVerifier: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -66,6 +70,7 @@ extension Operations {
                     ///   - redirectUri: This must match the originally submitted URI (if one was sent).
                     ///   - grantType: The grant_type param as described in the OAuth spec.
                     ///   - refreshToken: The refresh_token param as described in the OAuth spec.
+                    ///   - codeVerifier: PKCE code verifier (RFC 7636). Required when the authorization request included a code_challenge.
                     public init(
                         clientId: Swift.String? = nil,
                         clientSecret: Swift.String? = nil,
@@ -73,6 +78,7 @@ extension Operations {
                         redirectUri: Swift.String? = nil,
                         grantType: Swift.String? = nil,
                         refreshToken: Swift.String? = nil,
+                        codeVerifier: Swift.String? = nil,
                     ) {
                         self.clientId = clientId
                         self.clientSecret = clientSecret
@@ -80,6 +86,7 @@ extension Operations {
                         self.redirectUri = redirectUri
                         self.grantType = grantType
                         self.refreshToken = refreshToken
+                        self.codeVerifier = codeVerifier
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -89,6 +96,7 @@ extension Operations {
                         case redirectUri = "redirect_uri"
                         case grantType = "grant_type"
                         case refreshToken = "refresh_token"
+                        case codeVerifier = "code_verifier"
                     }
                 }
 

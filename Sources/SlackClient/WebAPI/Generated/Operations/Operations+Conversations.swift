@@ -227,7 +227,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/conversations.approveSharedInvite/POST/requestBody/json/invite_id`.
                     public var inviteId: Swift.String
-                    /// The team or enterprise id of the other party involved in the invitation you are approving.
+                    /// The team or enterprise ID of the receiving party involved in the invitation you are approving.
                     ///
                     /// - Remark: Generated from `#/paths/conversations.approveSharedInvite/POST/requestBody/json/target_team`.
                     public var targetTeam: Swift.String?
@@ -235,7 +235,7 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - inviteId: ID of the shared channel invite to approve.
-                    ///   - targetTeam: The team or enterprise id of the other party involved in the invitation you are approving.
+                    ///   - targetTeam: The team or enterprise ID of the receiving party involved in the invitation you are approving.
                     public init(
                         inviteId: Swift.String,
                         targetTeam: Swift.String? = nil,
