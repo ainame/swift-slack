@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.11.0] - 2026-05-19
+
+### Added
+
+* Updated Slack API schemas with newly generated Web API operations for Bookmarks, Chat, Conversations, and OpenID API surfaces - [#110](https://github.com/ainame/swift-slack/pull/110)
+
+### Changed
+
+* Updated the Ruby toolchain reference to `4.0.4` - [#106](https://github.com/ainame/swift-slack/pull/106)
+* Updated README package-version examples for the `0.11.0` release.
+
+### Fixed
+
+* Fixed SwiftFormat processing for the generated Web API protocol by preserving formatter-disable directives around `APIProtocol.swift` - [#107](https://github.com/ainame/swift-slack/pull/107), [#108](https://github.com/ainame/swift-slack/pull/108), [#109](https://github.com/ainame/swift-slack/pull/109)
+
 ## [0.10.0] - 2026-05-08
 
 ### Added
