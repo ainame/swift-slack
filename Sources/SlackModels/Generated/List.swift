@@ -33,6 +33,8 @@ public struct List: Codable, Hashable, Sendable {
     public var isAiSuggested: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/List/is_external`.
     public var isExternal: Swift.Bool?
+    /// - Remark: Generated from `#/components/schemas/List/is_modified_by_ai`.
+    public var isModifiedByAi: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/List/is_public`.
     public var isPublic: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/List/is_restricted_sharing_enabled`.
@@ -99,6 +101,7 @@ public struct List: Codable, Hashable, Sendable {
     ///   - id:
     ///   - isAiSuggested:
     ///   - isExternal:
+    ///   - isModifiedByAi:
     ///   - isPublic:
     ///   - isRestrictedSharingEnabled:
     ///   - isStarred:
@@ -137,6 +140,7 @@ public struct List: Codable, Hashable, Sendable {
         id: Swift.String? = nil,
         isAiSuggested: Swift.Bool? = nil,
         isExternal: Swift.Bool? = nil,
+        isModifiedByAi: Swift.Bool? = nil,
         isPublic: Swift.Bool? = nil,
         isRestrictedSharingEnabled: Swift.Bool? = nil,
         isStarred: Swift.Bool? = nil,
@@ -175,6 +179,7 @@ public struct List: Codable, Hashable, Sendable {
         self.id = id
         self.isAiSuggested = isAiSuggested
         self.isExternal = isExternal
+        self.isModifiedByAi = isModifiedByAi
         self.isPublic = isPublic
         self.isRestrictedSharingEnabled = isRestrictedSharingEnabled
         self.isStarred = isStarred
@@ -215,6 +220,7 @@ public struct List: Codable, Hashable, Sendable {
         case id
         case isAiSuggested = "is_ai_suggested"
         case isExternal = "is_external"
+        case isModifiedByAi = "is_modified_by_ai"
         case isPublic = "is_public"
         case isRestrictedSharingEnabled = "is_restricted_sharing_enabled"
         case isStarred = "is_starred"
