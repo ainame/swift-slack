@@ -445,6 +445,10 @@ extension Operations {
             @frozen public enum Body: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/admin.apps.approve/POST/requestBody/json`.
                 public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// Auto-create an Admin-Approved App automation rule that pre-approves future child app installs from this manager app.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.approve/POST/requestBody/json/allow_child_auto_install`.
+                    public var allowChildAutoInstall: Swift.Bool?
                     /// The id of the app to approve.
                     ///
                     /// - Remark: Generated from `#/paths/admin.apps.approve/POST/requestBody/json/app_id`.
@@ -472,6 +476,7 @@ extension Operations {
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
+                    ///   - allowChildAutoInstall: Auto-create an Admin-Approved App automation rule that pre-approves future child app installs from this manager app.
                     ///   - appId: The id of the app to approve.
                     ///   - requestId: The id of the request to approve.
                     ///   - teamId: The ID of the workspace to approve the app on.
@@ -479,6 +484,7 @@ extension Operations {
                     ///   - userScopes: User scopes to approve for the app.
                     ///   - botScopes: Bot scopes to approve for the app.
                     public init(
+                        allowChildAutoInstall: Swift.Bool? = nil,
                         appId: Swift.String? = nil,
                         requestId: Swift.String? = nil,
                         teamId: Swift.String? = nil,
@@ -486,6 +492,7 @@ extension Operations {
                         userScopes: Swift.String? = nil,
                         botScopes: Swift.String? = nil,
                     ) {
+                        self.allowChildAutoInstall = allowChildAutoInstall
                         self.appId = appId
                         self.requestId = requestId
                         self.teamId = teamId
@@ -495,6 +502,7 @@ extension Operations {
                     }
 
                     public enum CodingKeys: String, CodingKey {
+                        case allowChildAutoInstall = "allow_child_auto_install"
                         case appId = "app_id"
                         case requestId = "request_id"
                         case teamId = "team_id"
