@@ -222,7 +222,7 @@ extension Client {
         )
     }
 
-    /// Permanently deletes an app created through app manifests
+    /// Permanently deletes an app created through app manifests. When called with a manager app token, this method can only delete apps that were created by that manager app.
     ///
     /// - Remark: HTTP `POST /apps.manifest.delete`.
     /// - Remark: Generated from `#/paths//apps.manifest.delete/post(appsManifestDelete)`.
@@ -291,7 +291,7 @@ extension Client {
         )
     }
 
-    /// Export an app manifest from an existing app
+    /// Export an app manifest from an existing app. When called with a manager app token, this method can only export apps that were created by that manager app.
     ///
     /// - Remark: HTTP `POST /apps.manifest.export`.
     /// - Remark: Generated from `#/paths//apps.manifest.export/post(appsManifestExport)`.
@@ -360,7 +360,7 @@ extension Client {
         )
     }
 
-    /// Update an app from an app manifest
+    /// Update an app from an app manifest. When called with a manager app token, this method can only update apps that were created by that manager app.
     ///
     /// - Remark: HTTP `POST /apps.manifest.update`.
     /// - Remark: Generated from `#/paths//apps.manifest.update/post(appsManifestUpdate)`.

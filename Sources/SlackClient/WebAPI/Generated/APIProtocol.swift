@@ -501,17 +501,17 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /apps.manifest.create`.
     /// - Remark: Generated from `#/paths//apps.manifest.create/post(appsManifestCreate)`.
     func appsManifestCreate(_ input: Operations.AppsManifestCreate.Input) async throws -> Operations.AppsManifestCreate.Output
-    /// Permanently deletes an app created through app manifests
+    /// Permanently deletes an app created through app manifests. When called with a manager app token, this method can only delete apps that were created by that manager app.
     ///
     /// - Remark: HTTP `POST /apps.manifest.delete`.
     /// - Remark: Generated from `#/paths//apps.manifest.delete/post(appsManifestDelete)`.
     func appsManifestDelete(_ input: Operations.AppsManifestDelete.Input) async throws -> Operations.AppsManifestDelete.Output
-    /// Export an app manifest from an existing app
+    /// Export an app manifest from an existing app. When called with a manager app token, this method can only export apps that were created by that manager app.
     ///
     /// - Remark: HTTP `POST /apps.manifest.export`.
     /// - Remark: Generated from `#/paths//apps.manifest.export/post(appsManifestExport)`.
     func appsManifestExport(_ input: Operations.AppsManifestExport.Input) async throws -> Operations.AppsManifestExport.Output
-    /// Update an app from an app manifest
+    /// Update an app from an app manifest. When called with a manager app token, this method can only update apps that were created by that manager app.
     ///
     /// - Remark: HTTP `POST /apps.manifest.update`.
     /// - Remark: Generated from `#/paths//apps.manifest.update/post(appsManifestUpdate)`.
@@ -2523,7 +2523,7 @@ extension APIProtocol {
             body: body
         ))
     }
-    /// Permanently deletes an app created through app manifests
+    /// Permanently deletes an app created through app manifests. When called with a manager app token, this method can only delete apps that were created by that manager app.
     ///
     /// - Remark: HTTP `POST /apps.manifest.delete`.
     /// - Remark: Generated from `#/paths//apps.manifest.delete/post(appsManifestDelete)`.
@@ -2536,7 +2536,7 @@ extension APIProtocol {
             body: body
         ))
     }
-    /// Export an app manifest from an existing app
+    /// Export an app manifest from an existing app. When called with a manager app token, this method can only export apps that were created by that manager app.
     ///
     /// - Remark: HTTP `POST /apps.manifest.export`.
     /// - Remark: Generated from `#/paths//apps.manifest.export/post(appsManifestExport)`.
@@ -2549,7 +2549,7 @@ extension APIProtocol {
             body: body
         ))
     }
-    /// Update an app from an app manifest
+    /// Update an app from an app manifest. When called with a manager app token, this method can only update apps that were created by that manager app.
     ///
     /// - Remark: HTTP `POST /apps.manifest.update`.
     /// - Remark: Generated from `#/paths//apps.manifest.update/post(appsManifestUpdate)`.
