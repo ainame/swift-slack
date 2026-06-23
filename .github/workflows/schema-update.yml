@@ -29,7 +29,7 @@ jobs:
           toolchain: latest
 
       - name: Cache Swift build
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .build
           key: ${{ runner.os }}-swift-build-${{ hashFiles('Package.swift', 'Package.resolved') }}
