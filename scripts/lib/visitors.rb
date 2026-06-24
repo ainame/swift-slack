@@ -211,6 +211,12 @@ class TypeFixer
               if data[key][prop_name].key?('$ref')
                 data[key][prop_name]['$ref'] = '#/components/schemas/WorkflowConfiguration'
               end
+            when /^priority$/
+              # Channel's priority is a float (eg. 0.123456789), but sample data in
+              # java-slack-sdk always shows it as 0, so quicktype infers integer.
+              if data[key][prop_name]['type'] == 'integer'
+                data[key][prop_name]['type'] = 'number'
+              end
             end
           end
         end

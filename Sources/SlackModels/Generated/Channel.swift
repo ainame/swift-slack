@@ -74,7 +74,7 @@ public struct Channel: Codable, Hashable, Sendable {
     /// - Remark: Generated from `#/components/schemas/Channel/previous_names`.
     public var previousNames: [Swift.String]?
     /// - Remark: Generated from `#/components/schemas/Channel/priority`.
-    public var priority: Swift.Int?
+    public var priority: Swift.Double?
     /// - Remark: Generated from `#/components/schemas/Channel/properties`.
     public var properties: Properties?
     /// - Remark: Generated from `#/components/schemas/Channel/purpose`.
@@ -163,7 +163,7 @@ public struct Channel: Codable, Hashable, Sendable {
         pendingConnectedTeamIds: [Swift.String]? = nil,
         pendingShared: [Swift.String]? = nil,
         previousNames: [Swift.String]? = nil,
-        priority: Swift.Int? = nil,
+        priority: Swift.Double? = nil,
         properties: Properties? = nil,
         purpose: Purpose? = nil,
         sharedTeamIds: [Swift.String]? = nil,
