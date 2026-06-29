@@ -550,26 +550,34 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/views.publish/POST/requestBody/json/hash`.
                     public var hash: Swift.String?
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/paths/views.publish/POST/requestBody/json/interactivity_pointer`.
+                    public var interactivityPointer: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
                     ///   - userId: id of the user you want publish a view to.
                     ///   - view: A view payload. This must be a JSON-encoded string.
                     ///   - hash: A string that represents view state to protect against possible race conditions.
+                    ///   - interactivityPointer:
                     public init(
                         userId: Swift.String,
                         view: SlackBlockKit.View,
                         hash: Swift.String? = nil,
+                        interactivityPointer: Swift.String? = nil,
                     ) {
                         self.userId = userId
                         self.view = view
                         self.hash = hash
+                        self.interactivityPointer = interactivityPointer
                     }
 
                     public enum CodingKeys: String, CodingKey {
                         case userId = "user_id"
                         case view
                         case hash
+                        case interactivityPointer = "interactivity_pointer"
                     }
                 }
 

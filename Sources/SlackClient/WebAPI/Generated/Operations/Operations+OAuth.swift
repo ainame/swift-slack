@@ -63,6 +63,10 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/oauth.v2.access/POST/requestBody/json/refresh_token`.
                     public var refreshToken: Swift.String?
+                    /// Identity assertion JWT authorization grant.
+                    ///
+                    /// - Remark: Generated from `#/paths/oauth.v2.access/POST/requestBody/json/assertion`.
+                    public var assertion: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -75,6 +79,7 @@ extension Operations {
                     ///   - redirectUri: This must match the originally submitted URI (if one was sent).
                     ///   - grantType: The grant_type param as described in the OAuth spec.
                     ///   - refreshToken: The refresh_token param as described in the OAuth spec.
+                    ///   - assertion: Identity assertion JWT authorization grant.
                     public init(
                         clientId: Swift.String? = nil,
                         clientSecret: Swift.String? = nil,
@@ -83,6 +88,7 @@ extension Operations {
                         redirectUri: Swift.String? = nil,
                         grantType: Swift.String? = nil,
                         refreshToken: Swift.String? = nil,
+                        assertion: Swift.String? = nil,
                     ) {
                         self.clientId = clientId
                         self.clientSecret = clientSecret
@@ -91,6 +97,7 @@ extension Operations {
                         self.redirectUri = redirectUri
                         self.grantType = grantType
                         self.refreshToken = refreshToken
+                        self.assertion = assertion
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -101,6 +108,7 @@ extension Operations {
                         case redirectUri = "redirect_uri"
                         case grantType = "grant_type"
                         case refreshToken = "refresh_token"
+                        case assertion
                     }
                 }
 
