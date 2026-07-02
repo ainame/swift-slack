@@ -23,6 +23,9 @@ jobs:
         with:
           ruby-version-file: .ruby-version
 
+      - name: Update apt package index
+        run: sudo apt-get update
+
       - name: Setup Swiftly
         uses: vapor/swiftly-action@v0.2
         with:

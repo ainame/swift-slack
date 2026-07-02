@@ -31,6 +31,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Update apt package index
+        run: sudo apt-get update
+
       - name: Install Swift
         uses: vapor/swiftly-action@v0.2.0
         with:
