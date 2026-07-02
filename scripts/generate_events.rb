@@ -24,7 +24,7 @@ FileUtils.mkdir_p(event_schemas_dir)
 # Before generating JSON schema with quicktype. We need to normalize payload jsons.
 # Some JSONs contain entire payload, others contain only event itself.
 # Extract event if nested.
-events = Dir.glob("#{source_dir}/*.json")
+events = Dir.glob("#{source_dir}/*.json").sort
 events.each do |path|
   model_name = File.basename(path, '.json').sub('Payload', 'Event')
   if UNSUPPORTED_EVENTS.any? { _1 =~ model_name }
@@ -44,7 +44,7 @@ events.each do |path|
 end
 
 # Generate JSON schemas with quicktype
-normalized_events = Dir.glob("#{events_dir}/*.json")
+normalized_events = Dir.glob("#{events_dir}/*.json").sort
 process_in_queue(normalized_events) do |path|
   model_name = File.basename(path, '.json')
   output_path = File.join(event_schemas_dir, "#{model_name}.json")
@@ -74,7 +74,7 @@ visitors = [
   OptionalityFixer.new,
 ]
 
-event_schemas = Dir.glob("#{event_schemas_dir}/*.json")
+event_schemas = Dir.glob("#{event_schemas_dir}/*.json").sort
 event_schemas.each do |path|
   json = JSON.parse(File.read(path))
   visitors.each { _1.walk(json) }
