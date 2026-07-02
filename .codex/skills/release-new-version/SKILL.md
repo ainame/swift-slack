@@ -48,9 +48,9 @@ Use two phases. Stop after Phase A unless the release metadata PR has already be
    - Convert the unreleased section into a dated release section, or add a new release section if the changelog format differs.
    - Keep the version string exact and never prepend `v`.
    - Keep the changelog aligned with the commits expected to be on the tagged `main` commit.
-   - Include the PR number and GitHub PR link in every `CHANGELOG.md` release-note bullet, using the format `- [#123](https://github.com/owner/repo/pull/123)`.
-   - If one changelog bullet summarizes multiple PRs, include a linked PR reference for each PR covered by that bullet.
-   - Do not leave bare PR numbers such as `#123` in newly written changelog entries.
+   - Include the PR number in every `CHANGELOG.md` release-note bullet using GitHub-native references such as `- #123`.
+   - If one changelog bullet summarizes multiple PRs, include a `#123`-style reference for each PR covered by that bullet.
+   - Prefer bare `#123` references over full Markdown links for same-repository PRs.
    - Update README package dependency examples to the new release version.
    - Keep `AGENTS.md` and this skill aligned with the CalVer policy if the policy changes.
    - Keep `scripts/release.rb` validating `YYYY.M.PATCH` and suggesting the next monthly release counter.
