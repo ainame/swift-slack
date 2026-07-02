@@ -303,12 +303,13 @@ class PackageConfigurationManager
 
     # Generate WebAPI trait names
     webapi_trait_names = groups.map { |group| "WebAPI_#{GroupNameFormatter.capitalize_group_name(group)}" }
+    webapi_trait_lines = webapi_trait_names.map { |name| "    \"#{name}\"," }.join("\n")
 
     # Generate the traits list variable definition
     traits_list_definition = <<~SWIFT
       // BEGIN: Generated WebAPI traits - Do not edit manually
       let webAPITraits: [String] = [
-      #{webapi_trait_names.map { |name| "\"#{name}\"," }.join("\n    ")}
+      #{webapi_trait_lines}
       ]
 
       var traits: [Trait] = webAPITraits.map { .trait(name: $0) }
