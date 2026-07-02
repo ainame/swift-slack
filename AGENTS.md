@@ -5,7 +5,10 @@ Shared guidance for coding agents working in this repository.
 ## Repository Conventions
 
 - Make git commits for each meaningful change.
-- Create release tags without a `v` prefix (for example `0.0.4`).
+- Use calendar versioning for releases in the form `YYYY.M.PATCH` (for example `2026.7.0`).
+- Treat `PATCH` as the release counter within the month, not as a SemVer compatibility signal.
+- Reset `PATCH` to `0` for the first release in each month, then increment it for additional releases in that month.
+- Create release tags without a `v` prefix (for example `2026.7.0`).
 - Do not use `swift-actions/setup-swift@v2` in GitHub Actions.
 - Run `swift build` or `swift test` when verification is needed.
 - Do not push directly to `main`; use branches and PRs.

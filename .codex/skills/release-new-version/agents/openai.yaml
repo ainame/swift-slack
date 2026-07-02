@@ -1,4 +1,4 @@
 interface:
   display_name: "Release New Version"
-  short_description: "Tag and publish a GitHub release"
-  default_prompt: "Use $release-new-version to prepare the changelog, tag from main, and publish the GitHub release."
+  short_description: "Prepare CalVer releases through PRs"
+  default_prompt: "Use $release-new-version to prepare a CalVer changelog update, PR branch, tag, and GitHub release."
