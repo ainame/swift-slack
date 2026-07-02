@@ -12,22 +12,22 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ### Added
 
-* Updated Slack API schemas with newly generated Web API operations and shared model coverage.
+* Updated Slack API schemas with newly generated Web API operations and shared model coverage - [#112](https://github.com/ainame/swift-slack/pull/112), [#113](https://github.com/ainame/swift-slack/pull/113), [#115](https://github.com/ainame/swift-slack/pull/115), [#118](https://github.com/ainame/swift-slack/pull/118)
 
 ### Changed
 
-* Adopted calendar versioning in the form `YYYY.M.PATCH`, starting with this release.
-* Updated README package-version examples for the `2026.7.0` release.
-* Updated the Ruby toolchain reference to `4.0.5`.
-* Tightened the release workflow guidance to keep tag and GitHub release publication on merged `main` commits.
-* Updated GitHub Actions checkout and cache actions.
-* Updated GitHub Actions Swiftly setup and refreshed the apt index before Swiftly installation.
+* Adopted calendar versioning in the form `YYYY.M.PATCH`, starting with this release - [#119](https://github.com/ainame/swift-slack/pull/119)
+* Updated README package-version examples for the `2026.7.0` release - [#119](https://github.com/ainame/swift-slack/pull/119)
+* Updated the Ruby toolchain reference to `4.0.5` - [#111](https://github.com/ainame/swift-slack/pull/111)
+* Tightened the release workflow guidance to keep tag and GitHub release publication on merged `main` commits and require linked PR references in changelog entries - [#119](https://github.com/ainame/swift-slack/pull/119), [#120](https://github.com/ainame/swift-slack/pull/120)
+* Updated GitHub Actions checkout and cache actions - [#114](https://github.com/ainame/swift-slack/pull/114), [#116](https://github.com/ainame/swift-slack/pull/116)
+* Updated GitHub Actions Swiftly setup and refreshed the apt index before Swiftly installation - [#118](https://github.com/ainame/swift-slack/pull/118)
 
 ### Fixed
 
-* Fixed generated channel priority property typing.
-* Fixed Web API trait template generation and indentation.
-* Removed stale generated schema output from the generation pipeline.
+* Fixed generated channel priority property typing - [#117](https://github.com/ainame/swift-slack/pull/117)
+* Fixed Web API trait template generation and indentation - [#118](https://github.com/ainame/swift-slack/pull/118)
+* Removed stale generated schema output from the generation pipeline - [#118](https://github.com/ainame/swift-slack/pull/118)
 
 ## [0.11.0] - 2026-05-19
 
