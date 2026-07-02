@@ -25,11 +25,11 @@ UNSUPPORTED_METHODS = [
 ]
 
 api_ref_dir = './vendor/slack-api-ref/methods/'
-api_ref_paths = Dir.glob("#{api_ref_dir}/**/*.json")
+api_ref_paths = Dir.glob("#{api_ref_dir}/**/*.json").sort
 
 json_logs = './vendor/java-slack-sdk/json-logs'
 api_dir = "#{json_logs}/samples/api/"
-sample_json_paths = Dir.glob("#{api_dir}*.json")
+sample_json_paths = Dir.glob("#{api_dir}*.json").sort
 
 output_dir = './.tmp/WebAPI'
 FileUtils.mkdir_p(File.join(output_dir, 'schemas'))
@@ -43,7 +43,7 @@ def main(api_ref_paths, sample_json_paths, output_dir)
   end
 
   # Load generated schemas and put them in #components/schemas section
-  schema_paths = Dir.glob("#{output_dir}/schemas/*.json")
+  schema_paths = Dir.glob("#{output_dir}/schemas/*.json").sort
   schema_paths.each do |path|
     json = JSON.parse(File.read(path))
     openapi['components']['schemas'].merge!(json['definitions'])

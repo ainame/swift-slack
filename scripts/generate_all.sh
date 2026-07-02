@@ -17,6 +17,12 @@ if [ ! -e "${DEPS_DIR}/java-slack-sdk/.git" ] || [ ! -e "${DEPS_DIR}/slack-api-r
     exit 1
 fi
 
+rm -rf "${TMP_DIR}/WebAPI" \
+    "${TMP_DIR}/Events" \
+    "Sources/SlackClient/WebAPI/Generated" \
+    "Sources/SlackApp/Events/Generated" \
+    "Sources/SlackModels/Generated"
+
 mkdir -p "${TMP_DIR}/WebAPI"
 mkdir -p "${TMP_DIR}/Events"
 
