@@ -19,10 +19,13 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 * Adopted calendar versioning in the form `YYYY.M.PATCH`, starting with this release.
 * Updated README package-version examples for the `2026.7.0` release.
 * Updated the Ruby toolchain reference to `4.0.5`.
+* Tightened the release workflow guidance to keep tag and GitHub release publication on merged `main` commits.
+* Updated GitHub Actions checkout and cache actions.
 * Updated GitHub Actions Swiftly setup and refreshed the apt index before Swiftly installation.
 
 ### Fixed
 
+* Fixed generated channel priority property typing.
 * Fixed Web API trait template generation and indentation.
 * Removed stale generated schema output from the generation pipeline.
 
