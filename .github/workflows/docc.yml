@@ -35,7 +35,7 @@ jobs:
         run: sudo apt-get update
 
       - name: Install Swift
-        uses: vapor/swiftly-action@v0.2.0
+        uses: vapor/swiftly-action@v0.2.1
         with:
           toolchain: latest
 
