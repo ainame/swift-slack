@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'json'
+require 'date'
 require 'time'
 
 def main
@@ -18,10 +19,8 @@ def main
     exit unless STDIN.gets.to_s.strip.downcase == 'y'
   end
 
-  # Test and build
-  puts "Running tests..."
-  system('swift test') or abort "Tests failed"
   system('swift build') or abort "Build failed"
+  system('swift test') or abort "Tests failed"
 
   # Create tag and release
   system("git tag -a #{new_tag} -m 'Release #{new_tag}'")
@@ -53,13 +52,33 @@ def get_version(version = nil)
   puts "Latest tag: #{latest_tag.empty? ? 'none' : latest_tag}"
 
   if version.nil?
-    print "New version (e.g., 0.1.0): "
+    print "New version (e.g., #{suggest_next_calver}): "
     version = STDIN.gets.to_s.strip
   end
-  
-  abort "Invalid version format" unless version =~ /^\d+\.\d+\.\d+$/
+
+  unless valid_calver?(version)
+    abort "Invalid version format. Use YYYY.M.PATCH, for example #{suggest_next_calver}"
+  end
 
   [version, latest_tag]
+end
+
+def valid_calver?(version)
+  version =~ /^\d{4}\.([1-9]|1[0-2])\.\d+$/
+end
+
+def suggest_next_calver(today = Date.today)
+  year = today.year
+  month = today.month
+  prefix = "#{year}.#{month}."
+  patches = `git tag --list '#{prefix}*'`
+    .lines
+    .map(&:strip)
+    .map { |tag| tag[/^#{Regexp.escape(prefix)}(\d+)$/, 1] }
+    .compact
+    .map(&:to_i)
+
+  "#{prefix}#{patches.empty? ? 0 : patches.max + 1}"
 end
 
 # Generate changelog

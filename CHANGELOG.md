@@ -3,9 +3,28 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project uses calendar versioning in the form `YYYY.M.PATCH`.
+The `PATCH` segment is a release counter within the month, not a SemVer compatibility signal.
 
 ## Unreleased
+
+## [2026.7.0] - 2026-07-02
+
+### Added
+
+* Updated Slack API schemas with newly generated Web API operations and shared model coverage.
+
+### Changed
+
+* Adopted calendar versioning in the form `YYYY.M.PATCH`, starting with this release.
+* Updated README package-version examples for the `2026.7.0` release.
+* Updated the Ruby toolchain reference to `4.0.5`.
+* Updated GitHub Actions Swiftly setup and refreshed the apt index before Swiftly installation.
+
+### Fixed
+
+* Fixed Web API trait template generation and indentation.
+* Removed stale generated schema output from the generation pipeline.
 
 ## [0.11.0] - 2026-05-19
 
