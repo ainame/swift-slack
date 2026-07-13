@@ -62,6 +62,18 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/files.completeUploadExternal/POST/requestBody/json/blocks`.
                     public var blocks: [SlackBlockKit.Block]?
+                    /// Set your bot's user name for the file share message. Requires the chat:write.customize scope.
+                    ///
+                    /// - Remark: Generated from `#/paths/files.completeUploadExternal/POST/requestBody/json/username`.
+                    public var username: Swift.String?
+                    /// URL to an image to use as the icon for the file share message. Requires the chat:write.customize scope.
+                    ///
+                    /// - Remark: Generated from `#/paths/files.completeUploadExternal/POST/requestBody/json/icon_url`.
+                    public var iconUrl: Swift.String?
+                    /// Emoji to use as the icon for the file share message. Overrides icon_url. Requires the chat:write.customize scope.
+                    ///
+                    /// - Remark: Generated from `#/paths/files.completeUploadExternal/POST/requestBody/json/icon_emoji`.
+                    public var iconEmoji: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -72,6 +84,9 @@ extension Operations {
                     ///   - channels: Comma-separated string of channel IDs or user IDs where the file will be shared.
                     ///   - initialComment: The message text introducing the file in specified channels.
                     ///   - blocks: A JSON-based array of structured rich text blocks, presented as a URL-encoded string. If the initial_comment field is provided, the blocks field is ignored.
+                    ///   - username: Set your bot's user name for the file share message. Requires the chat:write.customize scope.
+                    ///   - iconUrl: URL to an image to use as the icon for the file share message. Requires the chat:write.customize scope.
+                    ///   - iconEmoji: Emoji to use as the icon for the file share message. Overrides icon_url. Requires the chat:write.customize scope.
                     public init(
                         files: OpenAPIRuntime.OpenAPIArrayContainer,
                         channelId: Swift.String? = nil,
@@ -79,6 +94,9 @@ extension Operations {
                         channels: Swift.String? = nil,
                         initialComment: Swift.String? = nil,
                         blocks: [SlackBlockKit.Block]? = nil,
+                        username: Swift.String? = nil,
+                        iconUrl: Swift.String? = nil,
+                        iconEmoji: Swift.String? = nil,
                     ) {
                         self.files = files
                         self.channelId = channelId
@@ -86,6 +104,9 @@ extension Operations {
                         self.channels = channels
                         self.initialComment = initialComment
                         self.blocks = blocks
+                        self.username = username
+                        self.iconUrl = iconUrl
+                        self.iconEmoji = iconEmoji
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -95,6 +116,9 @@ extension Operations {
                         case channels
                         case initialComment = "initial_comment"
                         case blocks
+                        case username
+                        case iconUrl = "icon_url"
+                        case iconEmoji = "icon_emoji"
                     }
                 }
 
