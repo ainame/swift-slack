@@ -13,6 +13,308 @@ import struct Foundation.URL
 
 #if WebAPI_Assistant
 extension Operations {
+    public enum AssistantSearchContext {
+        public static let id: Swift.String = "assistantSearchContext"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/assistant.search.context/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AssistantSearchContext.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AssistantSearchContext.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AssistantSearchContext.Input.Headers
+            /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// User prompt or search query.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/query`.
+                    public var query: Swift.String
+                    /// Send action_token as received in a message event.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/action_token`.
+                    public var actionToken: Swift.String?
+                    /// Mix and match channel types by providing a comma-separated list of any combination of public_channel, private_channel, mpim, im.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/channel_types`.
+                    public var channelTypes: OpenAPIRuntime.OpenAPIArrayContainer?
+                    /// Content types to include, a comma-separated list of any combination of messages, files, channels, users.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/content_types`.
+                    public var contentTypes: OpenAPIRuntime.OpenAPIArrayContainer?
+                    /// Whether the results should include bots.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/include_bots`.
+                    public var includeBots: Swift.Bool?
+                    /// Whether to include deleted users in the user search results. Defaults to false.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/include_deleted_users`.
+                    public var includeDeletedUsers: Swift.Bool?
+                    /// UNIX timestamp filter. If present, filters for results before this date.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/before`.
+                    public var before: Swift.Int?
+                    /// UNIX timestamp filter. If present, filters for results after this date.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/after`.
+                    public var after: Swift.Int?
+                    /// Whether to include context messages surrounding the main message result. Defaults to false if unspecified.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/include_context_messages`.
+                    public var includeContextMessages: Swift.Bool?
+                    /// Context channel ID to support scoping the search when applicable.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/context_channel_id`.
+                    public var contextChannelId: Swift.String?
+                    /// The cursor returned by the API. Leave this blank for the first request and use this to get the next page of results.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/cursor`.
+                    public var cursor: Swift.String?
+                    /// Number of results to return, up to a max of 20. Defaults to 20.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/limit`.
+                    public var limit: Swift.Int?
+                    /// The field to sort the results by. Defaults to score. Can be one of: score, timestamp.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/sort`.
+                    public var sort: Swift.String?
+                    /// The direction to sort the results by. Defaults to desc.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/sort_dir`.
+                    public var sortDir: Swift.String?
+                    /// Whether to return the message blocks in the response.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/include_message_blocks`.
+                    public var includeMessageBlocks: Swift.Bool?
+                    /// Whether to highlight the search query in the results. Defaults to false if unspecified.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/highlight`.
+                    public var highlight: Swift.Bool?
+                    /// A list of term clauses. A term clause is a string with search terms. Search results returned will match every term clause specified (i.e., conjunctive normal form).
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/term_clauses`.
+                    public var termClauses: OpenAPIRuntime.OpenAPIArrayContainer?
+                    /// A string containing only modifiers in the format of modifier:value. Search results returned will match the modifier value. For now modifiers only affect term clauses.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/modifiers`.
+                    public var modifiers: Swift.String?
+                    /// Whether to include archived channels in the search results.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/include_archived_channels`.
+                    public var includeArchivedChannels: Swift.Bool?
+                    /// Whether to disable semantic search. When true, only keyword-based search is used. Defaults to false.
+                    ///
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/json/disable_semantic_search`.
+                    public var disableSemanticSearch: Swift.Bool?
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - query: User prompt or search query.
+                    ///   - actionToken: Send action_token as received in a message event.
+                    ///   - channelTypes: Mix and match channel types by providing a comma-separated list of any combination of public_channel, private_channel, mpim, im.
+                    ///   - contentTypes: Content types to include, a comma-separated list of any combination of messages, files, channels, users.
+                    ///   - includeBots: Whether the results should include bots.
+                    ///   - includeDeletedUsers: Whether to include deleted users in the user search results. Defaults to false.
+                    ///   - before: UNIX timestamp filter. If present, filters for results before this date.
+                    ///   - after: UNIX timestamp filter. If present, filters for results after this date.
+                    ///   - includeContextMessages: Whether to include context messages surrounding the main message result. Defaults to false if unspecified.
+                    ///   - contextChannelId: Context channel ID to support scoping the search when applicable.
+                    ///   - cursor: The cursor returned by the API. Leave this blank for the first request and use this to get the next page of results.
+                    ///   - limit: Number of results to return, up to a max of 20. Defaults to 20.
+                    ///   - sort: The field to sort the results by. Defaults to score. Can be one of: score, timestamp.
+                    ///   - sortDir: The direction to sort the results by. Defaults to desc.
+                    ///   - includeMessageBlocks: Whether to return the message blocks in the response.
+                    ///   - highlight: Whether to highlight the search query in the results. Defaults to false if unspecified.
+                    ///   - termClauses: A list of term clauses. A term clause is a string with search terms. Search results returned will match every term clause specified (i.e., conjunctive normal
+                    /// form).
+                    ///   - modifiers: A string containing only modifiers in the format of modifier:value. Search results returned will match the modifier value. For now modifiers only affect term
+                    /// clauses.
+                    ///   - includeArchivedChannels: Whether to include archived channels in the search results.
+                    ///   - disableSemanticSearch: Whether to disable semantic search. When true, only keyword-based search is used. Defaults to false.
+                    public init(
+                        query: Swift.String,
+                        actionToken: Swift.String? = nil,
+                        channelTypes: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
+                        contentTypes: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
+                        includeBots: Swift.Bool? = nil,
+                        includeDeletedUsers: Swift.Bool? = nil,
+                        before: Swift.Int? = nil,
+                        after: Swift.Int? = nil,
+                        includeContextMessages: Swift.Bool? = nil,
+                        contextChannelId: Swift.String? = nil,
+                        cursor: Swift.String? = nil,
+                        limit: Swift.Int? = nil,
+                        sort: Swift.String? = nil,
+                        sortDir: Swift.String? = nil,
+                        includeMessageBlocks: Swift.Bool? = nil,
+                        highlight: Swift.Bool? = nil,
+                        termClauses: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
+                        modifiers: Swift.String? = nil,
+                        includeArchivedChannels: Swift.Bool? = nil,
+                        disableSemanticSearch: Swift.Bool? = nil,
+                    ) {
+                        self.query = query
+                        self.actionToken = actionToken
+                        self.channelTypes = channelTypes
+                        self.contentTypes = contentTypes
+                        self.includeBots = includeBots
+                        self.includeDeletedUsers = includeDeletedUsers
+                        self.before = before
+                        self.after = after
+                        self.includeContextMessages = includeContextMessages
+                        self.contextChannelId = contextChannelId
+                        self.cursor = cursor
+                        self.limit = limit
+                        self.sort = sort
+                        self.sortDir = sortDir
+                        self.includeMessageBlocks = includeMessageBlocks
+                        self.highlight = highlight
+                        self.termClauses = termClauses
+                        self.modifiers = modifiers
+                        self.includeArchivedChannels = includeArchivedChannels
+                        self.disableSemanticSearch = disableSemanticSearch
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case query
+                        case actionToken = "action_token"
+                        case channelTypes = "channel_types"
+                        case contentTypes = "content_types"
+                        case includeBots = "include_bots"
+                        case includeDeletedUsers = "include_deleted_users"
+                        case before
+                        case after
+                        case includeContextMessages = "include_context_messages"
+                        case contextChannelId = "context_channel_id"
+                        case cursor
+                        case limit
+                        case sort
+                        case sortDir = "sort_dir"
+                        case includeMessageBlocks = "include_message_blocks"
+                        case highlight
+                        case termClauses = "term_clauses"
+                        case modifiers
+                        case includeArchivedChannels = "include_archived_channels"
+                        case disableSemanticSearch = "disable_semantic_search"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/assistant.search.context/POST/requestBody/content/application\/json`.
+                case json(Operations.AssistantSearchContext.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AssistantSearchContext.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AssistantSearchContext.Input.Headers = .init(),
+                body: Operations.AssistantSearchContext.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/assistant.search.context/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/assistant.search.context/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AssistantSearchContextResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AssistantSearchContextResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AssistantSearchContext.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AssistantSearchContext.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//assistant.search.context/post(assistantSearchContext)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AssistantSearchContext.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AssistantSearchContext.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
     public enum AssistantThreadsSetStatus {
         public static let id: Swift.String = "assistantThreadsSetStatus"
         public struct Input: Sendable, Hashable {

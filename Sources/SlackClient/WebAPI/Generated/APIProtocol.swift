@@ -114,6 +114,16 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.apps.uninstall`.
     /// - Remark: Generated from `#/paths//admin.apps.uninstall/post(adminAppsUninstall)`.
     func adminAppsUninstall(_ input: Operations.AdminAppsUninstall.Input) async throws -> Operations.AdminAppsUninstall.Output
+    /// API to allow Enterprise org admins to read the allow list of IP blocks and ASNs from the enterprise configuration.
+    ///
+    /// - Remark: HTTP `POST /admin.audit.anomaly.allow.getItem`.
+    /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.getItem/post(adminAuditAnomalyAllowGetItem)`.
+    func adminAuditAnomalyAllowGetItem(_ input: Operations.AdminAuditAnomalyAllowGetItem.Input) async throws -> Operations.AdminAuditAnomalyAllowGetItem.Output
+    /// API to allow Enterprise org admins to write/overwrite the allow list of IP blocks and ASNs from the enterprise configuration.
+    ///
+    /// - Remark: HTTP `POST /admin.audit.anomaly.allow.updateItem`.
+    /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.updateItem/post(adminAuditAnomalyAllowUpdateItem)`.
+    func adminAuditAnomalyAllowUpdateItem(_ input: Operations.AdminAuditAnomalyAllowUpdateItem.Input) async throws -> Operations.AdminAuditAnomalyAllowUpdateItem.Output
     /// Assign entities to a particular authentication policy.
     ///
     /// - Remark: HTTP `POST /admin.auth.policy.assignEntities`.
@@ -219,6 +229,11 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.conversations.invite`.
     /// - Remark: Generated from `#/paths//admin.conversations.invite/post(adminConversationsInvite)`.
     func adminConversationsInvite(_ input: Operations.AdminConversationsInvite.Input) async throws -> Operations.AdminConversationsInvite.Output
+    /// Link a Salesforce record to a channel
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.linkObjects`.
+    /// - Remark: Generated from `#/paths//admin.conversations.linkObjects/post(adminConversationsLinkObjects)`.
+    func adminConversationsLinkObjects(_ input: Operations.AdminConversationsLinkObjects.Input) async throws -> Operations.AdminConversationsLinkObjects.Output
     /// Returns channels on the given team using the filters.
     ///
     /// - Remark: HTTP `POST /admin.conversations.lookup`.
@@ -274,6 +289,11 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.conversations.unarchive`.
     /// - Remark: Generated from `#/paths//admin.conversations.unarchive/post(adminConversationsUnarchive)`.
     func adminConversationsUnarchive(_ input: Operations.AdminConversationsUnarchive.Input) async throws -> Operations.AdminConversationsUnarchive.Output
+    /// Unlink a Salesforce record from a channel
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.unlinkObjects`.
+    /// - Remark: Generated from `#/paths//admin.conversations.unlinkObjects/post(adminConversationsUnlinkObjects)`.
+    func adminConversationsUnlinkObjects(_ input: Operations.AdminConversationsUnlinkObjects.Input) async throws -> Operations.AdminConversationsUnlinkObjects.Output
     /// Add an emoji.
     ///
     /// - Remark: HTTP `POST /admin.emoji.add`.
@@ -484,12 +504,17 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.users.unsupportedVersions.export`.
     /// - Remark: Generated from `#/paths//admin.users.unsupportedVersions.export/post(adminUsersUnsupportedVersionsExport)`.
     func adminUsersUnsupportedVersionsExport(_ input: Operations.AdminUsersUnsupportedVersionsExport.Input) async throws -> Operations.AdminUsersUnsupportedVersionsExport.Output
+    /// Delete external auth tokens only on the Slack side
+    ///
+    /// - Remark: HTTP `POST /apps.auth.external.delete`.
+    /// - Remark: Generated from `#/paths//apps.auth.external.delete/post(appsAuthExternalDelete)`.
+    #endif
+    #if WebAPI_Apps
+    func appsAuthExternalDelete(_ input: Operations.AppsAuthExternalDelete.Input) async throws -> Operations.AppsAuthExternalDelete.Output
     /// Generate a temporary Socket Mode WebSocket URL that your app can connect to in order to receive events and interactive payloads over.
     ///
     /// - Remark: HTTP `POST /apps.connections.open`.
     /// - Remark: Generated from `#/paths//apps.connections.open/post(appsConnectionsOpen)`.
-    #endif
-    #if WebAPI_Apps
     func appsConnectionsOpen(_ input: Operations.AppsConnectionsOpen.Input) async throws -> Operations.AppsConnectionsOpen.Output
     /// Get a list of authorizations for the given event context. Each authorization represents an app installation that the event is visible to.
     ///
@@ -531,12 +556,17 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /apps.user.connection.update`.
     /// - Remark: Generated from `#/paths//apps.user.connection.update/post(appsUserConnectionUpdate)`.
     func appsUserConnectionUpdate(_ input: Operations.AppsUserConnectionUpdate.Input) async throws -> Operations.AppsUserConnectionUpdate.Output
+    /// Searches messages, files, channels and users across your Slack organization.
+    ///
+    /// - Remark: HTTP `POST /assistant.search.context`.
+    /// - Remark: Generated from `#/paths//assistant.search.context/post(assistantSearchContext)`.
+    #endif
+    #if WebAPI_Assistant
+    func assistantSearchContext(_ input: Operations.AssistantSearchContext.Input) async throws -> Operations.AssistantSearchContext.Output
     /// Set the status for an AI assistant thread.
     ///
     /// - Remark: HTTP `POST /assistant.threads.setStatus`.
     /// - Remark: Generated from `#/paths//assistant.threads.setStatus/post(assistantThreadsSetStatus)`.
-    #endif
-    #if WebAPI_Assistant
     func assistantThreadsSetStatus(_ input: Operations.AssistantThreadsSetStatus.Input) async throws -> Operations.AssistantThreadsSetStatus.Output
     /// Set suggested prompts for the given assistant thread
     ///
@@ -849,12 +879,22 @@ public protocol APIProtocol: Sendable {
     #endif
     #if WebAPI_Emoji
     func emojiList(_ input: Operations.EmojiList.Input) async throws -> Operations.EmojiList.Output
+    /// Acknowledge a comment mutation (edit, delete, or post) on a work object entity. Apps call this endpoint to confirm they have processed a comment action, and the backend emits a dedicated RTM event to the user.
+    ///
+    /// - Remark: HTTP `POST /entity.acknowledgeCommentAction`.
+    /// - Remark: Generated from `#/paths//entity.acknowledgeCommentAction/post(entityAcknowledgeCommentAction)`.
+    #endif
+    #if WebAPI_Entity
+    func entityAcknowledgeCommentAction(_ input: Operations.EntityAcknowledgeCommentAction.Input) async throws -> Operations.EntityAcknowledgeCommentAction.Output
+    /// Provide comments for work objects. Apps call this endpoint to send per-user flexpane comment data to the client.
+    ///
+    /// - Remark: HTTP `POST /entity.presentComments`.
+    /// - Remark: Generated from `#/paths//entity.presentComments/post(entityPresentComments)`.
+    func entityPresentComments(_ input: Operations.EntityPresentComments.Input) async throws -> Operations.EntityPresentComments.Output
     /// Provide custom flexpane behavior for Work Objects. Apps call this endpoint to send per-user flexpane metadata to the client.
     ///
     /// - Remark: HTTP `POST /entity.presentDetails`.
     /// - Remark: Generated from `#/paths//entity.presentDetails/post(entityPresentDetails)`.
-    #endif
-    #if WebAPI_Entity
     func entityPresentDetails(_ input: Operations.EntityPresentDetails.Input) async throws -> Operations.EntityPresentDetails.Output
     /// Finishes an upload started with files.getUploadURLExternal
     ///
@@ -1520,6 +1560,32 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// API to allow Enterprise org admins to read the allow list of IP blocks and ASNs from the enterprise configuration.
+    ///
+    /// - Remark: HTTP `POST /admin.audit.anomaly.allow.getItem`.
+    /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.getItem/post(adminAuditAnomalyAllowGetItem)`.
+    public func adminAuditAnomalyAllowGetItem(
+        headers: Operations.AdminAuditAnomalyAllowGetItem.Input.Headers = .init(),
+        body: Operations.AdminAuditAnomalyAllowGetItem.Input.Body? = nil
+    ) async throws -> Operations.AdminAuditAnomalyAllowGetItem.Output {
+        try await adminAuditAnomalyAllowGetItem(Operations.AdminAuditAnomalyAllowGetItem.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// API to allow Enterprise org admins to write/overwrite the allow list of IP blocks and ASNs from the enterprise configuration.
+    ///
+    /// - Remark: HTTP `POST /admin.audit.anomaly.allow.updateItem`.
+    /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.updateItem/post(adminAuditAnomalyAllowUpdateItem)`.
+    public func adminAuditAnomalyAllowUpdateItem(
+        headers: Operations.AdminAuditAnomalyAllowUpdateItem.Input.Headers = .init(),
+        body: Operations.AdminAuditAnomalyAllowUpdateItem.Input.Body
+    ) async throws -> Operations.AdminAuditAnomalyAllowUpdateItem.Output {
+        try await adminAuditAnomalyAllowUpdateItem(Operations.AdminAuditAnomalyAllowUpdateItem.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Assign entities to a particular authentication policy.
     ///
     /// - Remark: HTTP `POST /admin.auth.policy.assignEntities`.
@@ -1793,6 +1859,19 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// Link a Salesforce record to a channel
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.linkObjects`.
+    /// - Remark: Generated from `#/paths//admin.conversations.linkObjects/post(adminConversationsLinkObjects)`.
+    public func adminConversationsLinkObjects(
+        headers: Operations.AdminConversationsLinkObjects.Input.Headers = .init(),
+        body: Operations.AdminConversationsLinkObjects.Input.Body
+    ) async throws -> Operations.AdminConversationsLinkObjects.Output {
+        try await adminConversationsLinkObjects(Operations.AdminConversationsLinkObjects.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Returns channels on the given team using the filters.
     ///
     /// - Remark: HTTP `POST /admin.conversations.lookup`.
@@ -1932,6 +2011,19 @@ extension APIProtocol {
         body: Operations.AdminConversationsUnarchive.Input.Body
     ) async throws -> Operations.AdminConversationsUnarchive.Output {
         try await adminConversationsUnarchive(Operations.AdminConversationsUnarchive.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Unlink a Salesforce record from a channel
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.unlinkObjects`.
+    /// - Remark: Generated from `#/paths//admin.conversations.unlinkObjects/post(adminConversationsUnlinkObjects)`.
+    public func adminConversationsUnlinkObjects(
+        headers: Operations.AdminConversationsUnlinkObjects.Input.Headers = .init(),
+        body: Operations.AdminConversationsUnlinkObjects.Input.Body
+    ) async throws -> Operations.AdminConversationsUnlinkObjects.Output {
+        try await adminConversationsUnlinkObjects(Operations.AdminConversationsUnlinkObjects.Input(
             headers: headers,
             body: body
         ))
@@ -2482,12 +2574,25 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// Delete external auth tokens only on the Slack side
+    ///
+    /// - Remark: HTTP `POST /apps.auth.external.delete`.
+    /// - Remark: Generated from `#/paths//apps.auth.external.delete/post(appsAuthExternalDelete)`.
+    #endif
+    #if WebAPI_Apps
+    public func appsAuthExternalDelete(
+        headers: Operations.AppsAuthExternalDelete.Input.Headers = .init(),
+        body: Operations.AppsAuthExternalDelete.Input.Body
+    ) async throws -> Operations.AppsAuthExternalDelete.Output {
+        try await appsAuthExternalDelete(Operations.AppsAuthExternalDelete.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Generate a temporary Socket Mode WebSocket URL that your app can connect to in order to receive events and interactive payloads over.
     ///
     /// - Remark: HTTP `POST /apps.connections.open`.
     /// - Remark: Generated from `#/paths//apps.connections.open/post(appsConnectionsOpen)`.
-    #endif
-    #if WebAPI_Apps
     public func appsConnectionsOpen(
         headers: Operations.AppsConnectionsOpen.Input.Headers = .init(),
         body: Operations.AppsConnectionsOpen.Input.Body? = nil
@@ -2601,12 +2706,25 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// Searches messages, files, channels and users across your Slack organization.
+    ///
+    /// - Remark: HTTP `POST /assistant.search.context`.
+    /// - Remark: Generated from `#/paths//assistant.search.context/post(assistantSearchContext)`.
+    #endif
+    #if WebAPI_Assistant
+    public func assistantSearchContext(
+        headers: Operations.AssistantSearchContext.Input.Headers = .init(),
+        body: Operations.AssistantSearchContext.Input.Body
+    ) async throws -> Operations.AssistantSearchContext.Output {
+        try await assistantSearchContext(Operations.AssistantSearchContext.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Set the status for an AI assistant thread.
     ///
     /// - Remark: HTTP `POST /assistant.threads.setStatus`.
     /// - Remark: Generated from `#/paths//assistant.threads.setStatus/post(assistantThreadsSetStatus)`.
-    #endif
-    #if WebAPI_Assistant
     public func assistantThreadsSetStatus(
         headers: Operations.AssistantThreadsSetStatus.Input.Headers = .init(),
         body: Operations.AssistantThreadsSetStatus.Input.Body
@@ -3399,12 +3517,38 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// Acknowledge a comment mutation (edit, delete, or post) on a work object entity. Apps call this endpoint to confirm they have processed a comment action, and the backend emits a dedicated RTM event to the user.
+    ///
+    /// - Remark: HTTP `POST /entity.acknowledgeCommentAction`.
+    /// - Remark: Generated from `#/paths//entity.acknowledgeCommentAction/post(entityAcknowledgeCommentAction)`.
+    #endif
+    #if WebAPI_Entity
+    public func entityAcknowledgeCommentAction(
+        headers: Operations.EntityAcknowledgeCommentAction.Input.Headers = .init(),
+        body: Operations.EntityAcknowledgeCommentAction.Input.Body
+    ) async throws -> Operations.EntityAcknowledgeCommentAction.Output {
+        try await entityAcknowledgeCommentAction(Operations.EntityAcknowledgeCommentAction.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Provide comments for work objects. Apps call this endpoint to send per-user flexpane comment data to the client.
+    ///
+    /// - Remark: HTTP `POST /entity.presentComments`.
+    /// - Remark: Generated from `#/paths//entity.presentComments/post(entityPresentComments)`.
+    public func entityPresentComments(
+        headers: Operations.EntityPresentComments.Input.Headers = .init(),
+        body: Operations.EntityPresentComments.Input.Body
+    ) async throws -> Operations.EntityPresentComments.Output {
+        try await entityPresentComments(Operations.EntityPresentComments.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Provide custom flexpane behavior for Work Objects. Apps call this endpoint to send per-user flexpane metadata to the client.
     ///
     /// - Remark: HTTP `POST /entity.presentDetails`.
     /// - Remark: Generated from `#/paths//entity.presentDetails/post(entityPresentDetails)`.
-    #endif
-    #if WebAPI_Entity
     public func entityPresentDetails(
         headers: Operations.EntityPresentDetails.Input.Headers = .init(),
         body: Operations.EntityPresentDetails.Input.Body

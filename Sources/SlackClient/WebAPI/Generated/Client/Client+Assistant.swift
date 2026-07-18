@@ -13,6 +13,75 @@ import struct Foundation.URL
 import HTTPTypes
 
 extension Client {
+    /// Searches messages, files, channels and users across your Slack organization.
+    ///
+    /// - Remark: HTTP `POST /assistant.search.context`.
+    /// - Remark: Generated from `#/paths//assistant.search.context/post(assistantSearchContext)`.
+    func assistantSearchContext(_ input: Operations.AssistantSearchContext.Input) async throws -> Operations.AssistantSearchContext.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.AssistantSearchContext.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/assistant.search.context",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.AssistantSearchContext.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.AssistantSearchContextResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
     /// Set the status for an AI assistant thread.
     ///
     /// - Remark: HTTP `POST /assistant.threads.setStatus`.

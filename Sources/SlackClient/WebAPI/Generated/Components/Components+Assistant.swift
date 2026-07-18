@@ -13,6 +13,23 @@ import struct Foundation.URL
 
 #if WebAPI_Assistant
 extension Components.Schemas {
+    /// - Remark: Generated from `#/components/schemas/AssistantSearchContextResponse`.
+    public struct AssistantSearchContextResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AssistantSearchContextResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AssistantSearchContextResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
     /// - Remark: Generated from `#/components/schemas/AssistantThreadsSetStatusResponse`.
     public struct AssistantThreadsSetStatusResponse: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/AssistantThreadsSetStatusResponse/error`.
