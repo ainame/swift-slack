@@ -841,6 +841,146 @@ extension Client {
         )
     }
 
+    /// API to allow Enterprise org admins to read the allow list of IP blocks and ASNs from the enterprise configuration.
+    ///
+    /// - Remark: HTTP `POST /admin.audit.anomaly.allow.getItem`.
+    /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.getItem/post(adminAuditAnomalyAllowGetItem)`.
+    func adminAuditAnomalyAllowGetItem(_ input: Operations.AdminAuditAnomalyAllowGetItem.Input) async throws -> Operations.AdminAuditAnomalyAllowGetItem.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.AdminAuditAnomalyAllowGetItem.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/admin.audit.anomaly.allow.getItem",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case .none:
+                    nil
+                case let .json(value):
+                    try converter.setOptionalRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.AdminAuditAnomalyAllowGetItem.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.AdminAuditAnomalyAllowGetItemResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
+    /// API to allow Enterprise org admins to write/overwrite the allow list of IP blocks and ASNs from the enterprise configuration.
+    ///
+    /// - Remark: HTTP `POST /admin.audit.anomaly.allow.updateItem`.
+    /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.updateItem/post(adminAuditAnomalyAllowUpdateItem)`.
+    func adminAuditAnomalyAllowUpdateItem(_ input: Operations.AdminAuditAnomalyAllowUpdateItem.Input) async throws -> Operations.AdminAuditAnomalyAllowUpdateItem.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.AdminAuditAnomalyAllowUpdateItem.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/admin.audit.anomaly.allow.updateItem",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.AdminAuditAnomalyAllowUpdateItem.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.AdminAuditAnomalyAllowUpdateItemResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
     /// Assign entities to a particular authentication policy.
     ///
     /// - Remark: HTTP `POST /admin.auth.policy.assignEntities`.
@@ -2291,6 +2431,75 @@ extension Client {
         )
     }
 
+    /// Link a Salesforce record to a channel
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.linkObjects`.
+    /// - Remark: Generated from `#/paths//admin.conversations.linkObjects/post(adminConversationsLinkObjects)`.
+    func adminConversationsLinkObjects(_ input: Operations.AdminConversationsLinkObjects.Input) async throws -> Operations.AdminConversationsLinkObjects.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.AdminConversationsLinkObjects.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/admin.conversations.linkObjects",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.AdminConversationsLinkObjects.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.AdminConversationsLinkObjectsResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
     /// Returns channels on the given team using the filters.
     ///
     /// - Remark: HTTP `POST /admin.conversations.lookup`.
@@ -3029,6 +3238,75 @@ extension Client {
                     case "application/json":
                         body = try await converter.getResponseBodyAsJSON(
                             Components.Schemas.AdminConversationsUnarchiveResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
+    /// Unlink a Salesforce record from a channel
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.unlinkObjects`.
+    /// - Remark: Generated from `#/paths//admin.conversations.unlinkObjects/post(adminConversationsUnlinkObjects)`.
+    func adminConversationsUnlinkObjects(_ input: Operations.AdminConversationsUnlinkObjects.Input) async throws -> Operations.AdminConversationsUnlinkObjects.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.AdminConversationsUnlinkObjects.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/admin.conversations.unlinkObjects",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.AdminConversationsUnlinkObjects.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.AdminConversationsUnlinkObjectsResponse.self,
                             from: responseBody,
                             transforming: { value in
                                 .json(value)

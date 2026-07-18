@@ -17,6 +17,23 @@ import SlackModels
 
 #if WebAPI_Apps
 extension Components.Schemas {
+    /// - Remark: Generated from `#/components/schemas/AppsAuthExternalDeleteResponse`.
+    public struct AppsAuthExternalDeleteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AppsAuthExternalDeleteResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AppsAuthExternalDeleteResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
     /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse`.
     public struct AppsConnectionsOpenResponse: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/error`.

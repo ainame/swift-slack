@@ -556,6 +556,40 @@ extension Components.Schemas {
         }
     }
 
+    /// - Remark: Generated from `#/components/schemas/AdminAuditAnomalyAllowGetItemResponse`.
+    public struct AdminAuditAnomalyAllowGetItemResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAuditAnomalyAllowGetItemResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminAuditAnomalyAllowGetItemResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminAuditAnomalyAllowUpdateItemResponse`.
+    public struct AdminAuditAnomalyAllowUpdateItemResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAuditAnomalyAllowUpdateItemResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminAuditAnomalyAllowUpdateItemResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
     /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse`.
     public struct AdminAuthPolicyAssignEntitiesResponse: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse/entity_total_count`.
@@ -1519,6 +1553,23 @@ extension Components.Schemas {
         }
     }
 
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsLinkObjectsResponse`.
+    public struct AdminConversationsLinkObjectsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsLinkObjectsResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminConversationsLinkObjectsResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
     /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse`.
     public struct AdminConversationsLookupResponse: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/channel_ids`.
@@ -1995,6 +2046,23 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsUnlinkObjectsResponse`.
+    public struct AdminConversationsUnlinkObjectsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsUnlinkObjectsResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminConversationsUnlinkObjectsResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
         }
     }
 

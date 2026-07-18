@@ -13,6 +13,374 @@ import struct Foundation.URL
 
 #if WebAPI_Entity
 extension Operations {
+    public enum EntityAcknowledgeCommentAction {
+        public static let id: Swift.String = "entityAcknowledgeCommentAction"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/entity.acknowledgeCommentAction/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.EntityAcknowledgeCommentAction.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.EntityAcknowledgeCommentAction.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.EntityAcknowledgeCommentAction.Input.Headers
+            /// - Remark: Generated from `#/paths/entity.acknowledgeCommentAction/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/entity.acknowledgeCommentAction/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// A reference to the original user action that initiated the comment mutation.
+                    ///
+                    /// - Remark: Generated from `#/paths/entity.acknowledgeCommentAction/POST/requestBody/json/trigger_id`.
+                    public var triggerId: Swift.String
+                    /// The full comment data. Required for edit and post actions. See the comment schema for the full list of properties.
+                    ///
+                    /// - Remark: Generated from `#/paths/entity.acknowledgeCommentAction/POST/requestBody/json/comment`.
+                    public var comment: OpenAPIRuntime.OpenAPIObjectContainer?
+                    /// Error message if the action failed in the app. When present, signals that the mutation could not be completed.
+                    ///
+                    /// - Remark: Generated from `#/paths/entity.acknowledgeCommentAction/POST/requestBody/json/error`.
+                    public var error: Swift.String?
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - triggerId: A reference to the original user action that initiated the comment mutation.
+                    ///   - comment: The full comment data. Required for edit and post actions. See the comment schema for the full list of properties.
+                    ///   - error: Error message if the action failed in the app. When present, signals that the mutation could not be completed.
+                    public init(
+                        triggerId: Swift.String,
+                        comment: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+                        error: Swift.String? = nil,
+                    ) {
+                        self.triggerId = triggerId
+                        self.comment = comment
+                        self.error = error
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case triggerId = "trigger_id"
+                        case comment
+                        case error
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/entity.acknowledgeCommentAction/POST/requestBody/content/application\/json`.
+                case json(Operations.EntityAcknowledgeCommentAction.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.EntityAcknowledgeCommentAction.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.EntityAcknowledgeCommentAction.Input.Headers = .init(),
+                body: Operations.EntityAcknowledgeCommentAction.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/entity.acknowledgeCommentAction/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/entity.acknowledgeCommentAction/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.EntityAcknowledgeCommentActionResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.EntityAcknowledgeCommentActionResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.EntityAcknowledgeCommentAction.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.EntityAcknowledgeCommentAction.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//entity.acknowledgeCommentAction/post(entityAcknowledgeCommentAction)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.EntityAcknowledgeCommentAction.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.EntityAcknowledgeCommentAction.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
+    public enum EntityPresentComments {
+        public static let id: Swift.String = "entityPresentComments"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/entity.presentComments/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.EntityPresentComments.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.EntityPresentComments.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.EntityPresentComments.Input.Headers
+            /// - Remark: Generated from `#/paths/entity.presentComments/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/entity.presentComments/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// Array of comments to present to the user. See the comment schema for the full list of properties.
+                    ///
+                    /// - Remark: Generated from `#/paths/entity.presentComments/POST/requestBody/json/comments`.
+                    public var comments: OpenAPIRuntime.OpenAPIArrayContainer
+                    /// App supplied cursor used for pagination, will be sent in the next request for comments.
+                    ///
+                    /// - Remark: Generated from `#/paths/entity.presentComments/POST/requestBody/json/cursor`.
+                    public var cursor: Swift.String?
+                    /// Indicates whether the user has permissions to post comments.
+                    ///
+                    /// - Remark: Generated from `#/paths/entity.presentComments/POST/requestBody/json/can_post_comment`.
+                    public var canPostComment: Swift.Bool?
+                    /// A reference to the original user action that initiated the request.
+                    ///
+                    /// - Remark: Generated from `#/paths/entity.presentComments/POST/requestBody/json/trigger_id`.
+                    public var triggerId: Swift.String
+                    /// The block action id that will be sent when a delete request is initiated for a comment.
+                    ///
+                    /// - Remark: Generated from `#/paths/entity.presentComments/POST/requestBody/json/delete_action_id`.
+                    public var deleteActionId: Swift.String?
+                    /// Set to true (or 1) to indicate that the user must authenticate to see the comments data.
+                    ///
+                    /// - Remark: Generated from `#/paths/entity.presentComments/POST/requestBody/json/user_auth_required`.
+                    public var userAuthRequired: Swift.Bool?
+                    /// A custom URL to which users are directed for authentication if required.
+                    ///
+                    /// - Remark: Generated from `#/paths/entity.presentComments/POST/requestBody/json/user_auth_url`.
+                    public var userAuthUrl: Swift.String?
+                    ///
+                    ///
+                    /// - Remark: Generated from `#/paths/entity.presentComments/POST/requestBody/json/error`.
+                    public var error: Swift.String?
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - comments: Array of comments to present to the user. See the comment schema for the full list of properties.
+                    ///   - cursor: App supplied cursor used for pagination, will be sent in the next request for comments.
+                    ///   - canPostComment: Indicates whether the user has permissions to post comments.
+                    ///   - triggerId: A reference to the original user action that initiated the request.
+                    ///   - deleteActionId: The block action id that will be sent when a delete request is initiated for a comment.
+                    ///   - userAuthRequired: Set to true (or 1) to indicate that the user must authenticate to see the comments data.
+                    ///   - userAuthUrl: A custom URL to which users are directed for authentication if required.
+                    ///   - error:
+                    public init(
+                        comments: OpenAPIRuntime.OpenAPIArrayContainer,
+                        cursor: Swift.String? = nil,
+                        canPostComment: Swift.Bool? = nil,
+                        triggerId: Swift.String,
+                        deleteActionId: Swift.String? = nil,
+                        userAuthRequired: Swift.Bool? = nil,
+                        userAuthUrl: Swift.String? = nil,
+                        error: Swift.String? = nil,
+                    ) {
+                        self.comments = comments
+                        self.cursor = cursor
+                        self.canPostComment = canPostComment
+                        self.triggerId = triggerId
+                        self.deleteActionId = deleteActionId
+                        self.userAuthRequired = userAuthRequired
+                        self.userAuthUrl = userAuthUrl
+                        self.error = error
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case comments
+                        case cursor
+                        case canPostComment = "can_post_comment"
+                        case triggerId = "trigger_id"
+                        case deleteActionId = "delete_action_id"
+                        case userAuthRequired = "user_auth_required"
+                        case userAuthUrl = "user_auth_url"
+                        case error
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/entity.presentComments/POST/requestBody/content/application\/json`.
+                case json(Operations.EntityPresentComments.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.EntityPresentComments.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.EntityPresentComments.Input.Headers = .init(),
+                body: Operations.EntityPresentComments.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/entity.presentComments/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/entity.presentComments/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.EntityPresentCommentsResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.EntityPresentCommentsResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.EntityPresentComments.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.EntityPresentComments.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//entity.presentComments/post(entityPresentComments)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.EntityPresentComments.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.EntityPresentComments.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
     public enum EntityPresentDetails {
         public static let id: Swift.String = "entityPresentDetails"
         public struct Input: Sendable, Hashable {

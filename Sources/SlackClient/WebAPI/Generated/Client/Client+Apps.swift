@@ -13,6 +13,75 @@ import struct Foundation.URL
 import HTTPTypes
 
 extension Client {
+    /// Delete external auth tokens only on the Slack side
+    ///
+    /// - Remark: HTTP `POST /apps.auth.external.delete`.
+    /// - Remark: Generated from `#/paths//apps.auth.external.delete/post(appsAuthExternalDelete)`.
+    func appsAuthExternalDelete(_ input: Operations.AppsAuthExternalDelete.Input) async throws -> Operations.AppsAuthExternalDelete.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.AppsAuthExternalDelete.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/apps.auth.external.delete",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.AppsAuthExternalDelete.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.AppsAuthExternalDeleteResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
     /// Generate a temporary Socket Mode WebSocket URL that your app can connect to in order to receive events and interactive payloads over.
     ///
     /// - Remark: HTTP `POST /apps.connections.open`.

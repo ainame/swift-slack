@@ -13,6 +13,145 @@ import struct Foundation.URL
 import HTTPTypes
 
 extension Client {
+    /// Acknowledge a comment mutation (edit, delete, or post) on a work object entity. Apps call this endpoint to confirm they have processed a comment action, and the backend emits a dedicated RTM
+    /// event to the user.
+    ///
+    /// - Remark: HTTP `POST /entity.acknowledgeCommentAction`.
+    /// - Remark: Generated from `#/paths//entity.acknowledgeCommentAction/post(entityAcknowledgeCommentAction)`.
+    func entityAcknowledgeCommentAction(_ input: Operations.EntityAcknowledgeCommentAction.Input) async throws -> Operations.EntityAcknowledgeCommentAction.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.EntityAcknowledgeCommentAction.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/entity.acknowledgeCommentAction",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.EntityAcknowledgeCommentAction.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.EntityAcknowledgeCommentActionResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
+    /// Provide comments for work objects. Apps call this endpoint to send per-user flexpane comment data to the client.
+    ///
+    /// - Remark: HTTP `POST /entity.presentComments`.
+    /// - Remark: Generated from `#/paths//entity.presentComments/post(entityPresentComments)`.
+    func entityPresentComments(_ input: Operations.EntityPresentComments.Input) async throws -> Operations.EntityPresentComments.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.EntityPresentComments.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/entity.presentComments",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.EntityPresentComments.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.EntityPresentCommentsResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
     /// Provide custom flexpane behavior for Work Objects. Apps call this endpoint to send per-user flexpane metadata to the client.
     ///
     /// - Remark: HTTP `POST /entity.presentDetails`.

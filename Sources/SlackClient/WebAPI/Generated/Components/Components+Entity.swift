@@ -17,6 +17,40 @@ import SlackModels
 
 #if WebAPI_Entity
 extension Components.Schemas {
+    /// - Remark: Generated from `#/components/schemas/EntityAcknowledgeCommentActionResponse`.
+    public struct EntityAcknowledgeCommentActionResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/EntityAcknowledgeCommentActionResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `EntityAcknowledgeCommentActionResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/EntityPresentCommentsResponse`.
+    public struct EntityPresentCommentsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/EntityPresentCommentsResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `EntityPresentCommentsResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
     /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse`.
     public struct EntityPresentDetailsResponse: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/error`.
