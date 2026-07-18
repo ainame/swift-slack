@@ -42,6 +42,24 @@ def main(api_ref_paths, sample_json_paths, output_dir)
     generate_openapi_component(path, File.join(output_dir, 'schemas'))
   end
 
+  # Some Slack methods intentionally have no response examples in slack-api-ref
+  # and therefore no corresponding java-slack-sdk response fixture. They still
+  # use Slack's standard success envelope, so generate that minimal schema
+  # rather than omitting the operation entirely.
+  fallback_responses_dir = File.join(output_dir, 'fallback-responses')
+  api_ref_paths.each do |path|
+    method_name = File.basename(path, '.json')
+    next if sample_json_paths.any? { File.basename(_1, '.json') == method_name }
+
+    api_ref = JSON.parse(File.read(path))
+    next unless api_ref.dig('response', 'examples') == []
+
+    FileUtils.mkdir_p(fallback_responses_dir)
+    fallback_response_path = File.join(fallback_responses_dir, "#{method_name}.json")
+    File.write(fallback_response_path, JSON.generate({ 'ok' => true }))
+    generate_openapi_component(fallback_response_path, File.join(output_dir, 'schemas'))
+  end
+
   # Load generated schemas and put them in #components/schemas section
   schema_paths = Dir.glob("#{output_dir}/schemas/*.json").sort
   schema_paths.each do |path|
@@ -52,7 +70,7 @@ def main(api_ref_paths, sample_json_paths, output_dir)
   # Generate paths
   paths = {}
   api_ref_paths.each do |path|
-    # endpoints that doesn't have sample response json isn't supported for now.
+    # Methods without a fixture or an explicit empty upstream response are unsupported.
     method_name = File.basename(path, '.json')
     unless schema_paths.any? { File.basename(_1, '.json') == method_name }
       puts "Skip, this method doesn't have response schema #{method_name}"
