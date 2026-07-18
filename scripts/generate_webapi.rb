@@ -97,19 +97,12 @@ def generate_openapi_component(path, output_dir)
 
   if File.exist?(output_path)
     puts "Found #{path} exists. Skip generating schema."
+    json = JSON.parse(File.read(output_path))
   else
-    command = 'npx quicktype --lang schema' \
-              ' --alphabetize-properties' \
-              ' --all-properties-optional' \
-              " --top-level #{model_name}" \
-              " #{path}" \
-              " > #{output_path}"
-    puts "Generating schema: $ #{command}"
-    system(command)
+    json = generate_json_schema(path, output_path, model_name)
   end
 
   # fix json
-  json = JSON.parse(File.read(output_path))
   visitors = [
     InvalidKeysRemover.new,
     ReferenceFixer.new,

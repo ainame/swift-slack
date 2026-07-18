@@ -1,0 +1,10 @@
+{
+  "name": "swift-slack-code-generation",
+  "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "quicktype": "24.0.2"
+  }
+}

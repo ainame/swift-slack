@@ -28,7 +28,7 @@ events = Dir.glob("#{source_dir}/*.json").sort
 events.each do |path|
   model_name = File.basename(path, '.json').sub('Payload', 'Event')
   if UNSUPPORTED_EVENTS.any? { _1 =~ model_name }
-    "Skip #{model_name} unsupported"
+    puts "Skip #{model_name} unsupported"
     next
   end
 
@@ -53,14 +53,7 @@ process_in_queue(normalized_events) do |path|
     next
   end
 
-  command = 'npx quicktype --lang schema' \
-            ' --alphabetize-properties' \
-            ' --all-properties-optional' \
-            " --top-level #{model_name}" \
-            " #{path}" \
-            " > #{output_path}"
-  puts "Generating schema: $ #{command}"
-  system(command)
+  generate_json_schema(path, output_path, model_name)
 end
 
 # Update JSON schemas
