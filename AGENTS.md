@@ -4,14 +4,19 @@ Shared guidance for coding agents working in this repository.
 
 ## Repository Conventions
 
-- Make git commits for each meaningful change.
-- Use calendar versioning for releases in the form `YYYY.M.PATCH` (for example `2026.7.0`).
-- Treat `PATCH` as the release counter within the month, not as a SemVer compatibility signal.
-- Reset `PATCH` to `0` for the first release in each month, then increment it for additional releases in that month.
-- Create release tags without a `v` prefix (for example `2026.7.0`).
-- Do not use `swift-actions/setup-swift@v2` in GitHub Actions.
-- Run `swift build` or `swift test` when verification is needed.
 - Do not push directly to `main`; use branches and PRs.
+- Inspect `git status` before editing or staging. Preserve unrelated user changes and stage only files that belong to the current task.
+- Make a focused git commit for each meaningful change.
+- Prefer changing the owning source, generator, or handwritten runtime layer instead of patching downstream symptoms.
+- Keep PR descriptions and verification notes free of user-specific absolute paths or local environment details.
+- Do not use `swift-actions/setup-swift@v2` in GitHub Actions. This repository uses `vapor/swiftly-action`; keep the preceding Ubuntu package-index refresh when changing that setup.
+
+## Toolchain
+
+- Use the Swift version recorded in `.swift-version` and the Ruby version recorded in `.ruby-version`.
+- Code generation requires Ruby 3.0+ and Node.js 20+.
+- Run `npm ci`, not an unpinned global quicktype install. `package-lock.json` is the generator dependency source of truth.
+- Before diagnosing a toolchain failure as a repository bug, check the active `swift`, `ruby`, and `node` executables and versions. On macOS also check the selected `DEVELOPER_DIR`/Xcode SDK if SwiftPM stalls or behaves differently from CI.
 
 ## Project Overview
 
@@ -45,11 +50,15 @@ This project is a Swift Slack SDK and app framework. It combines generated Web A
 ### Commands
 
 ```bash
-npm ci         # Install the locked quicktype toolchain
-make update    # Update git submodules (vendor/*)
-make generate  # Run full code generation
-make clean     # Clean temp files
+npm ci                # Install the locked quicktype toolchain
+make update           # Intentionally advance vendor submodules to their configured upstream branches
+make generate         # Clear and regenerate every owned generated Swift tree
+make format-generated # Format only generated output
 ```
+
+`make update` changes vendor gitlinks and is not a routine prerequisite when the checked-out submodules already match the recorded commits. Use it only when an upstream schema update is in scope.
+
+`make clean` is destructive: it removes generated directories, resets and cleans both vendor submodules, and restores their recorded commits. Do not run it merely to clear build artifacts or when a vendor checkout contains work that must be preserved.
 
 ### Pipeline
 
@@ -57,9 +66,18 @@ make clean     # Clean temp files
 2. `swift-openapi-generator` produces Swift client and type definitions.
 3. `scripts/process_webapi.rb` splits generated Web API output and extracts shared models.
 4. `scripts/process_events.rb` extracts generated event types and related conformances into `Sources/SlackApp/Events/Generated`.
-5. SwiftFormat applies formatting (4-space indentation).
+5. SwiftFormat formats only the generated directories (4-space indentation).
 
 When changing generated surfaces, prefer updating the source specs/scripts and rerunning generation instead of hand-editing generated files.
+
+### Generated Output Rules
+
+- The generator owns `Sources/SlackClient/WebAPI/Generated`, `Sources/SlackApp/Events/Generated`, and `Sources/SlackModels/Generated`.
+- `scripts/process_webapi.rb` also updates the generated Web API trait list in `Package.swift`; include that manifest change when regeneration produces one.
+- `make generate` deletes all three generated trees before rebuilding them. Review additions, modifications, and deletions; stale files removed upstream should also disappear downstream.
+- Treat quicktype or OpenAPI generator failures as fatal. Do not keep partially written output or bypass a failed command.
+- When inferred types conflict, inspect both Java SDK samples under `vendor/java-slack-sdk/json-logs/samples` and the corresponding Slack reference schema under `vendor/slack-api-ref`. Samples show observed payloads; the reference may contain broader or more authoritative constraints.
+- `GENERATION_JOBS=<n>` can reduce Ruby generator concurrency on constrained machines. Do not commit machine-specific values.
 
 ### Key Scripts
 
@@ -117,21 +135,39 @@ When changing generated surfaces, prefer updating the source specs/scripts and r
 
 - Use `swift-testing` (not XCTest).
 - Group tests in suite structs per file.
+- Put tests beside the owning module. Event decoding coverage belongs in `Tests/SlackAppTests`; Web API/model mapping coverage belongs in `Tests/SlackClientTests`.
+- For handwritten Swift changes, run `swift test`. A focused `swift build` is sufficient only when the task cannot affect behavior.
+- For schema or generator changes, run `npm ci`, a full `make generate`, and `swift test`. Confirm regeneration leaves no unexplained generated drift.
+- When changing Ruby generation helpers, run `ruby scripts/tests/helpers_test.rb` in addition to the full generation pass.
+- When changing release logic, run `ruby scripts/tests/release_test.rb` and review every command that can create or push a tag or release.
+- For formatting-only changes, run `make format` and at least `swift build`; use `swift test` when formatting accompanies behavioral changes.
 - Helpful filtered build output command:
 
 ```bash
 swift build 2>&1 | awk '/error:|warning:|fatal error:/{flag=1} flag && /^$/{flag=0} flag'
 ```
 
+## Release Workflow
+
+- Releases use calendar versions in the form `YYYY.M.PATCH`, such as `2026.7.0`.
+- `PATCH` is the release counter within a month, not a SemVer compatibility signal. Start at `0` each month and increment it for additional releases that month.
+- Release tags never use a `v` prefix.
+- Prepare release metadata and the dated `CHANGELOG.md` section on a branch and merge it through a PR. Release notes come from that exact changelog section; use bare PR references such as `#123`.
+- Publish only after the preparation PR is merged and local `main` is clean and exactly matches `origin/main`.
+- `ruby scripts/release.rb YYYY.M.PATCH --yes` is a publication command: it builds, tests, creates and pushes the annotated tag, and creates the GitHub release. Never run it from a topic branch or as part of release preparation.
+
 ## Useful Commands
 
 ```bash
-# Development
-make update
-make generate
+# Swift development
 swift build
 swift test
 make format
+
+# Vendor/schema refresh
+npm ci
+make update
+make generate
 
 # Examples
 cd DemoApps/Examples && swift run chatPostMessage
@@ -139,6 +175,6 @@ cd DemoApps/Examples && swift run router
 cd DemoApps/Examples && swift run echoSlashCommand
 cd DemoApps/deepl-translator && swift run
 
-# Release
+# Publish after the release-preparation PR is merged and main is synchronized
 ruby scripts/release.rb [version] [--yes]
 ```
