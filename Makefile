@@ -18,6 +18,9 @@ clean:
 format:
 	swift package plugin --allow-writing-to-package-directory swiftformat -- Sources DemoApps/Examples Tests
 
+format-generated:
+	swift package plugin --allow-writing-to-package-directory swiftformat -- Sources/SlackClient/WebAPI/Generated Sources/SlackApp/Events/Generated Sources/SlackModels/Generated
+
 update:
 	@echo "Initializing and updating git submodules..."
 	@if [ ! -f ".gitmodules" ]; then \
