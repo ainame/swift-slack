@@ -1,6 +1,7 @@
 name: Test
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
   pull_request:
@@ -26,7 +27,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: .build
-          key: ${{ runner.os }}-swift-build-${{ hashFiles('Package.swift', 'Package.resolved') }}
+          key: ${{ runner.os }}-swift-build-${{ hashFiles('.swift-version', 'Package.swift', 'Package.resolved') }}
 
       - name: Build
         run: swift build

@@ -64,4 +64,4 @@ swift run --disable-sandbox swift-openapi-generator generate \
 
 ruby scripts/process_events.rb "${TMP_DIR}/Events/Types.swift" "Sources/SlackApp/Events/Generated"
 
-make format
+make format-generated
