@@ -45,6 +45,7 @@ This project is a Swift Slack SDK and app framework. It combines generated Web A
 ### Commands
 
 ```bash
+npm ci         # Install the locked quicktype toolchain
 make update    # Update git submodules (vendor/*)
 make generate  # Run full code generation
 make clean     # Clean temp files
@@ -52,7 +53,7 @@ make clean     # Clean temp files
 
 ### Pipeline
 
-1. Ruby scripts transform Slack API specs into OpenAPI JSON.
+1. The locked quicktype dependency and Ruby scripts transform Slack API specs into OpenAPI JSON.
 2. `swift-openapi-generator` produces Swift client and type definitions.
 3. `scripts/process_webapi.rb` splits generated Web API output and extracts shared models.
 4. `scripts/process_events.rb` extracts generated event types and related conformances into `Sources/SlackApp/Events/Generated`.
