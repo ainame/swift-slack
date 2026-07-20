@@ -106,6 +106,7 @@ jobs:
 
       - name: Dispatch pull request tests
         if: steps.update.outputs.changes == 'true' && steps.create-pr.outputs.pull-request-number
+        # GITHUB_TOKEN suppresses push-triggered workflows, but workflow_dispatch is exempt.
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run test.yml --ref automated/schema-update
