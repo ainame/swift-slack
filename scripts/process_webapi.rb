@@ -308,7 +308,7 @@ class PackageConfigurationManager
     traits_list_definition = <<~SWIFT
       // BEGIN: Generated WebAPI traits - Do not edit manually
       let webAPITraits: [String] = [
-          #{webapi_trait_names.map { |name| "\"#{name}\"" }.join(",\n    ")}
+          #{webapi_trait_names.map { |name| "\"#{name}\"," }.join("\n    ")}
       ]
 
       var traits: [Trait] = webAPITraits.map { .trait(name: $0) }
