@@ -17,6 +17,12 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+
+      - name: Run script tests
+        run: make test-scripts
+
       - name: Update apt package index
         run: sudo apt-get update
 
