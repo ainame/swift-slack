@@ -60,14 +60,11 @@ jobs:
           # Generate and format generated code
           make generate
 
-          # Include every file the generation pipeline intentionally owns.
+          # Supporting vendor and manifest changes do not open a PR on their own.
           GENERATED_CHANGES=$(git status --porcelain -- \
             Sources/SlackClient/WebAPI/Generated \
             Sources/SlackApp/Events/Generated \
-            Sources/SlackModels/Generated \
-            vendor \
-            Package.swift \
-            Package.resolved)
+            Sources/SlackModels/Generated)
 
           if [[ -n "$GENERATED_CHANGES" ]]; then
             echo "changes=true" >> $GITHUB_OUTPUT
