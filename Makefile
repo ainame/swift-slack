@@ -21,6 +21,9 @@ format:
 format-generated:
 	swift package plugin --allow-writing-to-package-directory swiftformat -- Sources/SlackClient/WebAPI/Generated Sources/SlackApp/Events/Generated Sources/SlackModels/Generated
 
+test-scripts:
+	ruby -I scripts/tests -e 'Dir["scripts/tests/*_test.rb"].sort.each { require File.expand_path(_1) }'
+
 update:
 	@echo "Initializing and updating git submodules..."
 	@if [ ! -f ".gitmodules" ]; then \

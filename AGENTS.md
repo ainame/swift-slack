@@ -138,7 +138,7 @@ When changing generated surfaces, prefer updating the source specs/scripts and r
 - Put tests beside the owning module. Event decoding coverage belongs in `Tests/SlackAppTests`; Web API/model mapping coverage belongs in `Tests/SlackClientTests`.
 - For handwritten Swift changes, run `swift test`. A focused `swift build` is sufficient only when the task cannot affect behavior.
 - For schema or generator changes, run `npm ci`, a full `make generate`, and `swift test`. Confirm regeneration leaves no unexplained generated drift.
-- When changing Ruby generation helpers, run `ruby scripts/tests/helpers_test.rb` in addition to the full generation pass.
+- When changing Ruby generation helpers, run `make test-scripts` in addition to the full generation pass.
 - For formatting-only changes, run `make format` and at least `swift build`; use `swift test` when formatting accompanies behavioral changes.
 - Helpful filtered build output command:
 
@@ -165,6 +165,7 @@ make format
 
 # Vendor/schema refresh
 npm ci
+make test-scripts
 make update
 make generate
 
