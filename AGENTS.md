@@ -139,7 +139,6 @@ When changing generated surfaces, prefer updating the source specs/scripts and r
 - For handwritten Swift changes, run `swift test`. A focused `swift build` is sufficient only when the task cannot affect behavior.
 - For schema or generator changes, run `npm ci`, a full `make generate`, and `swift test`. Confirm regeneration leaves no unexplained generated drift.
 - When changing Ruby generation helpers, run `ruby scripts/tests/helpers_test.rb` in addition to the full generation pass.
-- When changing release logic, run `ruby scripts/tests/release_test.rb` and review every command that can create or push a tag or release.
 - For formatting-only changes, run `make format` and at least `swift build`; use `swift test` when formatting accompanies behavioral changes.
 - Helpful filtered build output command:
 
