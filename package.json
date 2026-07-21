@@ -5,6 +5,6 @@
     "node": ">=20.0.0"
   },
   "devDependencies": {
-    "quicktype": "25.1.0"
+    "quicktype": "26.0.0"
   }
 }
