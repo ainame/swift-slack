@@ -13,6 +13,8 @@ import struct Foundation.URL
 public struct Properties: Codable, Hashable, Sendable {
     /// - Remark: Generated from `#/components/schemas/Properties/canvas`.
     public var canvas: Canvas?
+    /// - Remark: Generated from `#/components/schemas/Properties/has_slack_connect_invite_created`.
+    public var hasSlackConnectInviteCreated: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/Properties/huddles_restricted`.
     public var huddlesRestricted: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/Properties/is_dormant`.
@@ -33,6 +35,7 @@ public struct Properties: Codable, Hashable, Sendable {
     ///
     /// - Parameters:
     ///   - canvas:
+    ///   - hasSlackConnectInviteCreated:
     ///   - huddlesRestricted:
     ///   - isDormant:
     ///   - meetingNotes:
@@ -43,6 +46,7 @@ public struct Properties: Codable, Hashable, Sendable {
     ///   - useCase:
     public init(
         canvas: Canvas? = nil,
+        hasSlackConnectInviteCreated: Swift.Bool? = nil,
         huddlesRestricted: Swift.Bool? = nil,
         isDormant: Swift.Bool? = nil,
         meetingNotes: MeetingNotes? = nil,
@@ -53,6 +57,7 @@ public struct Properties: Codable, Hashable, Sendable {
         useCase: Swift.String? = nil,
     ) {
         self.canvas = canvas
+        self.hasSlackConnectInviteCreated = hasSlackConnectInviteCreated
         self.huddlesRestricted = huddlesRestricted
         self.isDormant = isDormant
         self.meetingNotes = meetingNotes
@@ -65,6 +70,7 @@ public struct Properties: Codable, Hashable, Sendable {
 
     public enum CodingKeys: String, CodingKey {
         case canvas
+        case hasSlackConnectInviteCreated = "has_slack_connect_invite_created"
         case huddlesRestricted = "huddles_restricted"
         case isDormant = "is_dormant"
         case meetingNotes = "meeting_notes"

@@ -73,6 +73,12 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.postEphemeral/POST/requestBody/json/markdown_text`.
                     public var markdownText: Swift.String?
+                    /// JSON object with an entities array of work object entity metadata, presented as a URL-encoded string. Only entity metadata is supported: ephemeral messages are not persisted
+                    /// and never dispatch message_metadata_* events, so event_type/event_payload message metadata is ignored here. Each entity requires entity_type, entity_payload, external_ref, and
+                    /// url.
+                    ///
+                    /// - Remark: Generated from `#/paths/chat.postEphemeral/POST/requestBody/json/metadata`.
+                    public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
                     /// Change how messages are treated. Defaults to none. See below.
                     ///
                     /// - Remark: Generated from `#/paths/chat.postEphemeral/POST/requestBody/json/parse`.
@@ -105,6 +111,9 @@ extension Operations {
                     ///   - iconUrl: URL to an image to use as the icon for this message.
                     ///   - linkNames: Find and link channel names and usernames.
                     ///   - markdownText: Accepts message text formatted in markdown. This argument should not be used in conjunction with blocks or text. Limit this field to 12,000 characters.
+                    ///   - metadata: JSON object with an entities array of work object entity metadata, presented as a URL-encoded string. Only entity metadata is supported: ephemeral messages are
+                    /// not persisted and never dispatch message_metadata_* events, so event_type/event_payload message metadata is ignored here. Each entity requires entity_type, entity_payload,
+                    /// external_ref, and url.
                     ///   - parse: Change how messages are treated. Defaults to none. See below.
                     ///   - text: How this field works and whether it is required depends on other fields you use in your API call. See below for more detail.
                     ///   - threadTs: Provide another message's ts value to post this message in a thread. Avoid using a reply's ts value; use its parent's value instead. Ephemeral messages in threads
@@ -120,6 +129,7 @@ extension Operations {
                         iconUrl: Swift.String? = nil,
                         linkNames: Swift.Bool? = nil,
                         markdownText: Swift.String? = nil,
+                        metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
                         parse: Swift.String? = nil,
                         text: Swift.String? = nil,
                         threadTs: Swift.String? = nil,
@@ -134,6 +144,7 @@ extension Operations {
                         self.iconUrl = iconUrl
                         self.linkNames = linkNames
                         self.markdownText = markdownText
+                        self.metadata = metadata
                         self.parse = parse
                         self.text = text
                         self.threadTs = threadTs
@@ -150,6 +161,7 @@ extension Operations {
                         case iconUrl = "icon_url"
                         case linkNames = "link_names"
                         case markdownText = "markdown_text"
+                        case metadata
                         case parse
                         case text
                         case threadTs = "thread_ts"

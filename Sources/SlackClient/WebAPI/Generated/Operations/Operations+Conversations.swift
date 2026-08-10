@@ -529,7 +529,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/conversations.canvases.create/POST/requestBody/json/channel_id`.
                     public var channelId: Swift.String
-                    /// Structure describing the type and value of the content to create.
+                    /// Structure describing the type and value of the content to create. The markdown content is limited to 1 MiB (1,048,576 characters).
                     ///
                     /// - Remark: Generated from `#/paths/conversations.canvases.create/POST/requestBody/json/document_content`.
                     public var documentContent: Swift.String?
@@ -541,7 +541,7 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - channelId: Channel ID of the channel the canvas will be tabbed in.
-                    ///   - documentContent: Structure describing the type and value of the content to create.
+                    ///   - documentContent: Structure describing the type and value of the content to create. The markdown content is limited to 1 MiB (1,048,576 characters).
                     ///   - title: Title of the newly created canvas.
                     public init(
                         channelId: Swift.String,

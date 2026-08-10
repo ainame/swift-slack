@@ -135,6 +135,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `UsersDiscoverableContactsLookupResponse`.
         ///
         /// - Parameters:
@@ -144,6 +146,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             isDiscoverable: Swift.Bool? = nil,
@@ -151,6 +154,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.isDiscoverable = isDiscoverable
@@ -158,6 +162,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -167,6 +172,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -355,8 +361,6 @@ extension Components.Schemas {
 
     /// - Remark: Generated from `#/components/schemas/UsersListResponse`.
     public struct UsersListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/UsersListResponse/arg`.
-        public var arg: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersListResponse/cache_ts`.
         public var cacheTs: Swift.Int?
         /// - Remark: Generated from `#/components/schemas/UsersListResponse/error`.
@@ -378,7 +382,6 @@ extension Components.Schemas {
         /// Creates a new `UsersListResponse`.
         ///
         /// - Parameters:
-        ///   - arg:
         ///   - cacheTs:
         ///   - error:
         ///   - members:
@@ -389,7 +392,6 @@ extension Components.Schemas {
         ///   - responseMetadata:
         ///   - warning:
         public init(
-            arg: Swift.String? = nil,
             cacheTs: Swift.Int? = nil,
             error: Swift.String? = nil,
             members: [SlackModels.Member]? = nil,
@@ -400,7 +402,6 @@ extension Components.Schemas {
             responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
         ) {
-            self.arg = arg
             self.cacheTs = cacheTs
             self.error = error
             self.members = members
@@ -413,7 +414,6 @@ extension Components.Schemas {
         }
 
         public enum CodingKeys: String, CodingKey {
-            case arg
             case cacheTs = "cache_ts"
             case error
             case members

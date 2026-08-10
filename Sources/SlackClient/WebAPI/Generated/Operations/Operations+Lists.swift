@@ -565,22 +565,50 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/slackLists.download.get/POST/requestBody/json/job_id`.
                     public var jobId: Swift.String
+                    /// Format the export was started with. Must match the format passed to slackLists.download.start. Defaults to csv.
+                    ///
+                    /// - Remark: Generated from `#/paths/slackLists.download.get/POST/requestBody/json/format`.
+                    public var format: Swift.String?
+                    /// Must match the include_threads passed to slackLists.download.start. The returned download_url carries this through so the served export matches what was generated. Only applies
+                    /// when format is json.
+                    ///
+                    /// - Remark: Generated from `#/paths/slackLists.download.get/POST/requestBody/json/include_threads`.
+                    public var includeThreads: Swift.Bool?
+                    /// Must match the include_attachments passed to slackLists.download.start. The returned download_url carries this through so the served export matches what was generated. Only
+                    /// applies when format is json.
+                    ///
+                    /// - Remark: Generated from `#/paths/slackLists.download.get/POST/requestBody/json/include_attachments`.
+                    public var includeAttachments: Swift.Bool?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
                     ///   - listId: ID of the List to export.
                     ///   - jobId: The ID of the recently started job to export the List.
+                    ///   - format: Format the export was started with. Must match the format passed to slackLists.download.start. Defaults to csv.
+                    ///   - includeThreads: Must match the include_threads passed to slackLists.download.start. The returned download_url carries this through so the served export matches what was
+                    /// generated. Only applies when format is json.
+                    ///   - includeAttachments: Must match the include_attachments passed to slackLists.download.start. The returned download_url carries this through so the served export matches what
+                    /// was generated. Only applies when format is json.
                     public init(
                         listId: Swift.String,
                         jobId: Swift.String,
+                        format: Swift.String? = nil,
+                        includeThreads: Swift.Bool? = nil,
+                        includeAttachments: Swift.Bool? = nil,
                     ) {
                         self.listId = listId
                         self.jobId = jobId
+                        self.format = format
+                        self.includeThreads = includeThreads
+                        self.includeAttachments = includeAttachments
                     }
 
                     public enum CodingKeys: String, CodingKey {
                         case listId = "list_id"
                         case jobId = "job_id"
+                        case format
+                        case includeThreads = "include_threads"
+                        case includeAttachments = "include_attachments"
                     }
                 }
 
@@ -721,22 +749,46 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/slackLists.download.start/POST/requestBody/json/include_archived`.
                     public var includeArchived: Swift.Bool?
+                    /// Format of the export. Defaults to csv for backward compatibility. Use json for a complete, hierarchical export.
+                    ///
+                    /// - Remark: Generated from `#/paths/slackLists.download.start/POST/requestBody/json/format`.
+                    public var format: Swift.String?
+                    /// Include each item's conversation thread in the export. Only applies when format is json.
+                    ///
+                    /// - Remark: Generated from `#/paths/slackLists.download.start/POST/requestBody/json/include_threads`.
+                    public var includeThreads: Swift.Bool?
+                    /// Include file attachment metadata and access paths in the export. Only applies when format is json.
+                    ///
+                    /// - Remark: Generated from `#/paths/slackLists.download.start/POST/requestBody/json/include_attachments`.
+                    public var includeAttachments: Swift.Bool?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
                     ///   - listId: ID of the List to export.
                     ///   - includeArchived:
+                    ///   - format: Format of the export. Defaults to csv for backward compatibility. Use json for a complete, hierarchical export.
+                    ///   - includeThreads: Include each item's conversation thread in the export. Only applies when format is json.
+                    ///   - includeAttachments: Include file attachment metadata and access paths in the export. Only applies when format is json.
                     public init(
                         listId: Swift.String,
                         includeArchived: Swift.Bool? = nil,
+                        format: Swift.String? = nil,
+                        includeThreads: Swift.Bool? = nil,
+                        includeAttachments: Swift.Bool? = nil,
                     ) {
                         self.listId = listId
                         self.includeArchived = includeArchived
+                        self.format = format
+                        self.includeThreads = includeThreads
+                        self.includeAttachments = includeAttachments
                     }
 
                     public enum CodingKeys: String, CodingKey {
                         case listId = "list_id"
                         case includeArchived = "include_archived"
+                        case format
+                        case includeThreads = "include_threads"
+                        case includeAttachments = "include_attachments"
                     }
                 }
 

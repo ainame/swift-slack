@@ -13,23 +13,29 @@ import struct Foundation.URL
 public struct TabData: Codable, Hashable, Sendable {
     /// - Remark: Generated from `#/components/schemas/Data/file_id`.
     public var fileId: Swift.String?
+    /// - Remark: Generated from `#/components/schemas/Data/folder_bookmark_id`.
+    public var folderBookmarkId: Swift.String?
     /// - Remark: Generated from `#/components/schemas/Data/shared_ts`.
     public var sharedTs: Swift.String?
     /// Creates a new `Data`.
     ///
     /// - Parameters:
     ///   - fileId:
+    ///   - folderBookmarkId:
     ///   - sharedTs:
     public init(
         fileId: Swift.String? = nil,
+        folderBookmarkId: Swift.String? = nil,
         sharedTs: Swift.String? = nil,
     ) {
         self.fileId = fileId
+        self.folderBookmarkId = folderBookmarkId
         self.sharedTs = sharedTs
     }
 
     public enum CodingKeys: String, CodingKey {
         case fileId = "file_id"
+        case folderBookmarkId = "folder_bookmark_id"
         case sharedTs = "shared_ts"
     }
 }

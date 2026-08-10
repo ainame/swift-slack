@@ -27,12 +27,8 @@ public struct Member: Codable, Hashable, Sendable {
     public var isAppUser: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/Member/is_bot`.
     public var isBot: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Member/is_connector_bot`.
-    public var isConnectorBot: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/Member/is_email_confirmed`.
     public var isEmailConfirmed: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Member/is_invited_user`.
-    public var isInvitedUser: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/Member/is_owner`.
     public var isOwner: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/Member/is_primary_owner`.
@@ -76,9 +72,7 @@ public struct Member: Codable, Hashable, Sendable {
     ///   - isAdmin:
     ///   - isAppUser:
     ///   - isBot:
-    ///   - isConnectorBot:
     ///   - isEmailConfirmed:
-    ///   - isInvitedUser:
     ///   - isOwner:
     ///   - isPrimaryOwner:
     ///   - isRestricted:
@@ -104,9 +98,7 @@ public struct Member: Codable, Hashable, Sendable {
         isAdmin: Swift.Bool? = nil,
         isAppUser: Swift.Bool? = nil,
         isBot: Swift.Bool? = nil,
-        isConnectorBot: Swift.Bool? = nil,
         isEmailConfirmed: Swift.Bool? = nil,
-        isInvitedUser: Swift.Bool? = nil,
         isOwner: Swift.Bool? = nil,
         isPrimaryOwner: Swift.Bool? = nil,
         isRestricted: Swift.Bool? = nil,
@@ -132,9 +124,7 @@ public struct Member: Codable, Hashable, Sendable {
         self.isAdmin = isAdmin
         self.isAppUser = isAppUser
         self.isBot = isBot
-        self.isConnectorBot = isConnectorBot
         self.isEmailConfirmed = isEmailConfirmed
-        self.isInvitedUser = isInvitedUser
         self.isOwner = isOwner
         self.isPrimaryOwner = isPrimaryOwner
         self.isRestricted = isRestricted
@@ -162,9 +152,7 @@ public struct Member: Codable, Hashable, Sendable {
         case isAdmin = "is_admin"
         case isAppUser = "is_app_user"
         case isBot = "is_bot"
-        case isConnectorBot = "is_connector_bot"
         case isEmailConfirmed = "is_email_confirmed"
-        case isInvitedUser = "is_invited_user"
         case isOwner = "is_owner"
         case isPrimaryOwner = "is_primary_owner"
         case isRestricted = "is_restricted"
