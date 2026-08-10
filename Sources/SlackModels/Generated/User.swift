@@ -45,6 +45,8 @@ public struct User: Codable, Hashable, Sendable {
     public var realName: Swift.String?
     /// - Remark: Generated from `#/components/schemas/User/team_id`.
     public var teamId: Swift.String?
+    /// - Remark: Generated from `#/components/schemas/User/two_factor_type`.
+    public var twoFactorType: Swift.String?
     /// - Remark: Generated from `#/components/schemas/User/tz`.
     public var tz: Swift.String?
     /// - Remark: Generated from `#/components/schemas/User/tz_label`.
@@ -75,6 +77,7 @@ public struct User: Codable, Hashable, Sendable {
     ///   - profile:
     ///   - realName:
     ///   - teamId:
+    ///   - twoFactorType:
     ///   - tz:
     ///   - tzLabel:
     ///   - tzOffset:
@@ -98,6 +101,7 @@ public struct User: Codable, Hashable, Sendable {
         profile: UserProfile? = nil,
         realName: Swift.String? = nil,
         teamId: Swift.String? = nil,
+        twoFactorType: Swift.String? = nil,
         tz: Swift.String? = nil,
         tzLabel: Swift.String? = nil,
         tzOffset: Swift.Int? = nil,
@@ -121,6 +125,7 @@ public struct User: Codable, Hashable, Sendable {
         self.profile = profile
         self.realName = realName
         self.teamId = teamId
+        self.twoFactorType = twoFactorType
         self.tz = tz
         self.tzLabel = tzLabel
         self.tzOffset = tzOffset
@@ -146,6 +151,7 @@ public struct User: Codable, Hashable, Sendable {
         case profile
         case realName = "real_name"
         case teamId = "team_id"
+        case twoFactorType = "two_factor_type"
         case tz
         case tzLabel = "tz_label"
         case tzOffset = "tz_offset"

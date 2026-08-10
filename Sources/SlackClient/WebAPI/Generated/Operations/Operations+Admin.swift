@@ -7910,7 +7910,7 @@ extension Operations {
                     /// The URL of a file to use as an image for the emoji. Square images under 128KB and with transparent backgrounds work best.
                     ///
                     /// - Remark: Generated from `#/paths/admin.emoji.add/POST/requestBody/json/url`.
-                    public var url: Swift.String
+                    public var url: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -7918,7 +7918,7 @@ extension Operations {
                     ///   - url: The URL of a file to use as an image for the emoji. Square images under 128KB and with transparent backgrounds work best.
                     public init(
                         name: Swift.String,
-                        url: Swift.String,
+                        url: Swift.String? = nil,
                     ) {
                         self.name = name
                         self.url = url

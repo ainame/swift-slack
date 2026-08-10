@@ -373,7 +373,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/canvases.create/POST/requestBody/json/title`.
                     public var title: Swift.String?
-                    /// Structure describing the type and value of the content to create.
+                    /// Structure describing the type and value of the content to create. The markdown content is limited to 1 MiB (1,048,576 characters).
                     ///
                     /// - Remark: Generated from `#/paths/canvases.create/POST/requestBody/json/document_content`.
                     public var documentContent: Swift.String?
@@ -385,7 +385,7 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - title: Title of the newly created canvas.
-                    ///   - documentContent: Structure describing the type and value of the content to create.
+                    ///   - documentContent: Structure describing the type and value of the content to create. The markdown content is limited to 1 MiB (1,048,576 characters).
                     ///   - channelId: Channel ID of the channel the canvas will be tabbed in. This is a required field for free teams.
                     public init(
                         title: Swift.String? = nil,
@@ -683,7 +683,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/canvases.edit/POST/requestBody/json/canvas_id`.
                     public var canvasId: Swift.String
-                    /// List of changes to apply on the specified canvas.
+                    /// List of changes to apply on the specified canvas. The markdown content of each change is limited to 1 MiB (1,048,576 characters).
                     ///
                     /// - Remark: Generated from `#/paths/canvases.edit/POST/requestBody/json/changes`.
                     public var changes: OpenAPIRuntime.OpenAPIArrayContainer
@@ -691,7 +691,7 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - canvasId: Encoded ID of the canvas.
-                    ///   - changes: List of changes to apply on the specified canvas.
+                    ///   - changes: List of changes to apply on the specified canvas. The markdown content of each change is limited to 1 MiB (1,048,576 characters).
                     public init(
                         canvasId: Swift.String,
                         changes: OpenAPIRuntime.OpenAPIArrayContainer,

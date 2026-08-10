@@ -123,8 +123,6 @@ extension Components.Schemas {
         public var appName: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AuthTestResponse/bot_id`.
         public var botId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/context`.
-        public var context: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AuthTestResponse/enterprise_id`.
         public var enterpriseId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AuthTestResponse/error`.
@@ -157,7 +155,6 @@ extension Components.Schemas {
         ///   - appId:
         ///   - appName:
         ///   - botId:
-        ///   - context:
         ///   - enterpriseId:
         ///   - error:
         ///   - expiresIn:
@@ -175,7 +172,6 @@ extension Components.Schemas {
             appId: Swift.String? = nil,
             appName: Swift.String? = nil,
             botId: Swift.String? = nil,
-            context: Swift.String? = nil,
             enterpriseId: Swift.String? = nil,
             error: Swift.String? = nil,
             expiresIn: Swift.Int? = nil,
@@ -193,7 +189,6 @@ extension Components.Schemas {
             self.appId = appId
             self.appName = appName
             self.botId = botId
-            self.context = context
             self.enterpriseId = enterpriseId
             self.error = error
             self.expiresIn = expiresIn
@@ -213,7 +208,6 @@ extension Components.Schemas {
             case appId = "app_id"
             case appName = "app_name"
             case botId = "bot_id"
-            case context
             case enterpriseId = "enterprise_id"
             case error
             case expiresIn = "expires_in"

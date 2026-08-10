@@ -9,25 +9,25 @@ import struct Foundation.Date
 import struct Foundation.URL
 #endif
 
-/// - Remark: Generated from `#/components/schemas/Record`.
-public struct Record: Codable, Hashable, Sendable {
-    /// - Remark: Generated from `#/components/schemas/Record/created_by`.
+/// - Remark: Generated from `#/components/schemas/Subtask`.
+public struct Subtask: Codable, Hashable, Sendable {
+    /// - Remark: Generated from `#/components/schemas/Subtask/created_by`.
     public var createdBy: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Record/date_created`.
+    /// - Remark: Generated from `#/components/schemas/Subtask/date_created`.
     public var dateCreated: Swift.Int?
-    /// - Remark: Generated from `#/components/schemas/Record/fields`.
-    public var fields: [RecordField]?
-    /// - Remark: Generated from `#/components/schemas/Record/id`.
+    /// - Remark: Generated from `#/components/schemas/Subtask/fields`.
+    public var fields: [SubtaskField]?
+    /// - Remark: Generated from `#/components/schemas/Subtask/id`.
     public var id: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Record/is_subscribed`.
+    /// - Remark: Generated from `#/components/schemas/Subtask/is_subscribed`.
     public var isSubscribed: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Record/list_id`.
+    /// - Remark: Generated from `#/components/schemas/Subtask/list_id`.
     public var listId: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Record/updated_by`.
+    /// - Remark: Generated from `#/components/schemas/Subtask/updated_by`.
     public var updatedBy: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Record/updated_timestamp`.
+    /// - Remark: Generated from `#/components/schemas/Subtask/updated_timestamp`.
     public var updatedTimestamp: Swift.String?
-    /// Creates a new `Record`.
+    /// Creates a new `Subtask`.
     ///
     /// - Parameters:
     ///   - createdBy:
@@ -41,7 +41,7 @@ public struct Record: Codable, Hashable, Sendable {
     public init(
         createdBy: Swift.String? = nil,
         dateCreated: Swift.Int? = nil,
-        fields: [RecordField]? = nil,
+        fields: [SubtaskField]? = nil,
         id: Swift.String? = nil,
         isSubscribed: Swift.Bool? = nil,
         listId: Swift.String? = nil,

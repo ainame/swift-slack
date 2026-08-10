@@ -450,7 +450,7 @@ extension Components.Schemas {
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/subtasks`.
-        public var subtasks: [SlackModels.Record]?
+        public var subtasks: [SlackModels.Subtask]?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/warning`.
         public var warning: Swift.String?
         /// Creates a new `SlackListsItemsInfoResponse`.
@@ -473,7 +473,7 @@ extension Components.Schemas {
             provided: Swift.String? = nil,
             record: SlackModels.Record? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
-            subtasks: [SlackModels.Record]? = nil,
+            subtasks: [SlackModels.Subtask]? = nil,
             warning: Swift.String? = nil,
         ) {
             self.error = error
