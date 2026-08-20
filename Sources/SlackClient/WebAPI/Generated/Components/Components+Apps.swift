@@ -138,6 +138,23 @@ extension Components.Schemas {
         }
     }
 
+    /// - Remark: Generated from `#/components/schemas/AppsManagedPermissionsSetResponse`.
+    public struct AppsManagedPermissionsSetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AppsManagedPermissionsSetResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AppsManagedPermissionsSetResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
     /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse`.
     public struct AppsManifestCreateResponse: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/app_id`.

@@ -42,6 +42,10 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/users.conversations/POST/requestBody/json/exclude_archived`.
                     public var excludeArchived: Swift.Bool?
+                    /// Set to true to exclude muted channels from the list.
+                    ///
+                    /// - Remark: Generated from `#/paths/users.conversations/POST/requestBody/json/exclude_muted`.
+                    public var excludeMuted: Swift.Bool?
                     /// The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the list hasn't been reached. Must be an integer with a max
                     /// value of 999.
                     ///
@@ -65,6 +69,7 @@ extension Operations {
                     ///   - cursor: Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata. Default value
                     /// fetches the first "page" of the collection. See pagination for more detail.
                     ///   - excludeArchived: Set to true to exclude archived channels from the list.
+                    ///   - excludeMuted: Set to true to exclude muted channels from the list.
                     ///   - limit: The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the list hasn't been reached. Must be an integer
                     /// with a max value of 999.
                     ///   - teamId: encoded team id to list conversations in, required if org token is used.
@@ -73,6 +78,7 @@ extension Operations {
                     public init(
                         cursor: Swift.String? = nil,
                         excludeArchived: Swift.Bool? = nil,
+                        excludeMuted: Swift.Bool? = nil,
                         limit: Swift.Double? = nil,
                         teamId: Swift.String? = nil,
                         types: Swift.String? = nil,
@@ -80,6 +86,7 @@ extension Operations {
                     ) {
                         self.cursor = cursor
                         self.excludeArchived = excludeArchived
+                        self.excludeMuted = excludeMuted
                         self.limit = limit
                         self.teamId = teamId
                         self.types = types
@@ -89,6 +96,7 @@ extension Operations {
                     public enum CodingKeys: String, CodingKey {
                         case cursor
                         case excludeArchived = "exclude_archived"
+                        case excludeMuted = "exclude_muted"
                         case limit
                         case teamId = "team_id"
                         case types

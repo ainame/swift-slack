@@ -196,6 +196,10 @@ extension Components.Schemas {
         public var paging: SlackModels.Paging?
         /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/response_metadata`.
+        public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `FilesInfoResponse`.
         ///
         /// - Parameters:
@@ -211,6 +215,8 @@ extension Components.Schemas {
         ///   - ok:
         ///   - paging:
         ///   - provided:
+        ///   - responseMetadata:
+        ///   - warning:
         public init(
             comments: [SlackModels.Comment]? = nil,
             content: Swift.String? = nil,
@@ -224,6 +230,8 @@ extension Components.Schemas {
             ok: Swift.Bool,
             paging: SlackModels.Paging? = nil,
             provided: Swift.String? = nil,
+            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.comments = comments
             self.content = content
@@ -237,6 +245,8 @@ extension Components.Schemas {
             self.ok = ok
             self.paging = paging
             self.provided = provided
+            self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -252,6 +262,8 @@ extension Components.Schemas {
             case ok
             case paging
             case provided
+            case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -269,6 +281,8 @@ extension Components.Schemas {
         public var paging: SlackModels.Paging?
         /// - Remark: Generated from `#/components/schemas/FilesListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `FilesListResponse`.
         ///
         /// - Parameters:
@@ -278,6 +292,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - paging:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             files: [SlackModels.File]? = nil,
@@ -285,6 +300,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             paging: SlackModels.Paging? = nil,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.files = files
@@ -292,6 +308,7 @@ extension Components.Schemas {
             self.ok = ok
             self.paging = paging
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -301,6 +318,7 @@ extension Components.Schemas {
             case ok
             case paging
             case provided
+            case warning
         }
     }
 
@@ -316,6 +334,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `FilesRemoteAddResponse`.
         ///
         /// - Parameters:
@@ -324,18 +344,21 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             file: SlackModels.File? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.file = file
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -344,6 +367,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -359,6 +383,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `FilesRemoteInfoResponse`.
         ///
         /// - Parameters:
@@ -367,18 +393,21 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             file: SlackModels.File? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.file = file
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -387,6 +416,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -404,6 +434,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `FilesRemoteListResponse`.
         ///
         /// - Parameters:
@@ -413,6 +445,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             files: [SlackModels.File]? = nil,
@@ -420,6 +453,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.files = files
@@ -427,6 +461,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -436,6 +471,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -494,6 +530,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `FilesRemoteShareResponse`.
         ///
         /// - Parameters:
@@ -502,18 +540,21 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             file: SlackModels.File? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.file = file
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -522,6 +563,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 
@@ -537,6 +579,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `FilesRemoteUpdateResponse`.
         ///
         /// - Parameters:
@@ -545,18 +589,21 @@ extension Components.Schemas {
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             file: SlackModels.File? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.file = file
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -565,6 +612,7 @@ extension Components.Schemas {
             case needed
             case ok
             case provided
+            case warning
         }
     }
 

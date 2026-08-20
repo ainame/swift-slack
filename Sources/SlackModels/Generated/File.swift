@@ -23,6 +23,8 @@ public struct File: Codable, Hashable, Sendable {
     public var appId: Swift.String?
     /// - Remark: Generated from `#/components/schemas/File/app_name`.
     public var appName: Swift.String?
+    /// - Remark: Generated from `#/components/schemas/File/app_provides_file_work_objects`.
+    public var appProvidesFileWorkObjects: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/File/attachments`.
     public var attachments: [OpenAPIRuntime.OpenAPIValueContainer]?
     /// - Remark: Generated from `#/components/schemas/File/blocks`.
@@ -31,8 +33,12 @@ public struct File: Codable, Hashable, Sendable {
     public var botId: Swift.String?
     /// - Remark: Generated from `#/components/schemas/File/can_toggle_canvas_lock`.
     public var canToggleCanvasLock: Swift.Bool?
+    /// - Remark: Generated from `#/components/schemas/File/canvas_creator_id`.
+    public var canvasCreatorId: Swift.String?
     /// - Remark: Generated from `#/components/schemas/File/canvas_printing_enabled`.
     public var canvasPrintingEnabled: Swift.Bool?
+    /// - Remark: Generated from `#/components/schemas/File/canvas_readtime`.
+    public var canvasReadtime: Swift.Double?
     /// - Remark: Generated from `#/components/schemas/File/canvas_template_mode`.
     public var canvasTemplateMode: Swift.String?
     /// - Remark: Generated from `#/components/schemas/File/cc`.
@@ -105,10 +111,16 @@ public struct File: Codable, Hashable, Sendable {
     public var ims: [Swift.String]?
     /// - Remark: Generated from `#/components/schemas/File/initial_comment`.
     public var initialComment: InitialComment?
+    /// - Remark: Generated from `#/components/schemas/File/inline_attachment_count`.
+    public var inlineAttachmentCount: Swift.Int?
+    /// - Remark: Generated from `#/components/schemas/File/is_ai_suggested`.
+    public var isAiSuggested: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/File/is_channel_space`.
     public var isChannelSpace: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/File/is_external`.
     public var isExternal: Swift.Bool?
+    /// - Remark: Generated from `#/components/schemas/File/is_modified_by_ai`.
+    public var isModifiedByAi: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/File/is_public`.
     public var isPublic: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/File/is_restricted_sharing_enabled`.
@@ -199,6 +211,8 @@ public struct File: Codable, Hashable, Sendable {
     public var simplifiedHtml: Swift.String?
     /// - Remark: Generated from `#/components/schemas/File/size`.
     public var size: Swift.Int?
+    /// - Remark: Generated from `#/components/schemas/File/skipped_shares`.
+    public var skippedShares: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/File/source_team`.
     public var sourceTeam: Swift.String?
     /// - Remark: Generated from `#/components/schemas/File/subject`.
@@ -342,11 +356,14 @@ public struct File: Codable, Hashable, Sendable {
     ///   - altTxt:
     ///   - appId:
     ///   - appName:
+    ///   - appProvidesFileWorkObjects:
     ///   - attachments:
     ///   - blocks:
     ///   - botId:
     ///   - canToggleCanvasLock:
+    ///   - canvasCreatorId:
     ///   - canvasPrintingEnabled:
+    ///   - canvasReadtime:
     ///   - canvasTemplateMode:
     ///   - cc:
     ///   - channelActionsCount:
@@ -383,8 +400,11 @@ public struct File: Codable, Hashable, Sendable {
     ///   - imageExifRotation:
     ///   - ims:
     ///   - initialComment:
+    ///   - inlineAttachmentCount:
+    ///   - isAiSuggested:
     ///   - isChannelSpace:
     ///   - isExternal:
+    ///   - isModifiedByAi:
     ///   - isPublic:
     ///   - isRestrictedSharingEnabled:
     ///   - isStarred:
@@ -430,6 +450,7 @@ public struct File: Codable, Hashable, Sendable {
     ///   - showBadge:
     ///   - simplifiedHtml:
     ///   - size:
+    ///   - skippedShares:
     ///   - sourceTeam:
     ///   - subject:
     ///   - subtype:
@@ -503,11 +524,14 @@ public struct File: Codable, Hashable, Sendable {
         altTxt: Swift.String? = nil,
         appId: Swift.String? = nil,
         appName: Swift.String? = nil,
+        appProvidesFileWorkObjects: Swift.Bool? = nil,
         attachments: [OpenAPIRuntime.OpenAPIValueContainer]? = nil,
         blocks: [Block]? = nil,
         botId: Swift.String? = nil,
         canToggleCanvasLock: Swift.Bool? = nil,
+        canvasCreatorId: Swift.String? = nil,
         canvasPrintingEnabled: Swift.Bool? = nil,
+        canvasReadtime: Swift.Double? = nil,
         canvasTemplateMode: Swift.String? = nil,
         cc: [Cc]? = nil,
         channelActionsCount: Swift.Int? = nil,
@@ -544,8 +568,11 @@ public struct File: Codable, Hashable, Sendable {
         imageExifRotation: Swift.Int? = nil,
         ims: [Swift.String]? = nil,
         initialComment: InitialComment? = nil,
+        inlineAttachmentCount: Swift.Int? = nil,
+        isAiSuggested: Swift.Bool? = nil,
         isChannelSpace: Swift.Bool? = nil,
         isExternal: Swift.Bool? = nil,
+        isModifiedByAi: Swift.Bool? = nil,
         isPublic: Swift.Bool? = nil,
         isRestrictedSharingEnabled: Swift.Bool? = nil,
         isStarred: Swift.Bool? = nil,
@@ -591,6 +618,7 @@ public struct File: Codable, Hashable, Sendable {
         showBadge: Swift.Bool? = nil,
         simplifiedHtml: Swift.String? = nil,
         size: Swift.Int? = nil,
+        skippedShares: Swift.Bool? = nil,
         sourceTeam: Swift.String? = nil,
         subject: Swift.String? = nil,
         subtype: Swift.String? = nil,
@@ -664,11 +692,14 @@ public struct File: Codable, Hashable, Sendable {
         self.altTxt = altTxt
         self.appId = appId
         self.appName = appName
+        self.appProvidesFileWorkObjects = appProvidesFileWorkObjects
         self.attachments = attachments
         self.blocks = blocks
         self.botId = botId
         self.canToggleCanvasLock = canToggleCanvasLock
+        self.canvasCreatorId = canvasCreatorId
         self.canvasPrintingEnabled = canvasPrintingEnabled
+        self.canvasReadtime = canvasReadtime
         self.canvasTemplateMode = canvasTemplateMode
         self.cc = cc
         self.channelActionsCount = channelActionsCount
@@ -705,8 +736,11 @@ public struct File: Codable, Hashable, Sendable {
         self.imageExifRotation = imageExifRotation
         self.ims = ims
         self.initialComment = initialComment
+        self.inlineAttachmentCount = inlineAttachmentCount
+        self.isAiSuggested = isAiSuggested
         self.isChannelSpace = isChannelSpace
         self.isExternal = isExternal
+        self.isModifiedByAi = isModifiedByAi
         self.isPublic = isPublic
         self.isRestrictedSharingEnabled = isRestrictedSharingEnabled
         self.isStarred = isStarred
@@ -752,6 +786,7 @@ public struct File: Codable, Hashable, Sendable {
         self.showBadge = showBadge
         self.simplifiedHtml = simplifiedHtml
         self.size = size
+        self.skippedShares = skippedShares
         self.sourceTeam = sourceTeam
         self.subject = subject
         self.subtype = subtype
@@ -827,11 +862,14 @@ public struct File: Codable, Hashable, Sendable {
         case altTxt = "alt_txt"
         case appId = "app_id"
         case appName = "app_name"
+        case appProvidesFileWorkObjects = "app_provides_file_work_objects"
         case attachments
         case blocks
         case botId = "bot_id"
         case canToggleCanvasLock = "can_toggle_canvas_lock"
+        case canvasCreatorId = "canvas_creator_id"
         case canvasPrintingEnabled = "canvas_printing_enabled"
+        case canvasReadtime = "canvas_readtime"
         case canvasTemplateMode = "canvas_template_mode"
         case cc
         case channelActionsCount = "channel_actions_count"
@@ -868,8 +906,11 @@ public struct File: Codable, Hashable, Sendable {
         case imageExifRotation = "image_exif_rotation"
         case ims
         case initialComment = "initial_comment"
+        case inlineAttachmentCount = "inline_attachment_count"
+        case isAiSuggested = "is_ai_suggested"
         case isChannelSpace = "is_channel_space"
         case isExternal = "is_external"
+        case isModifiedByAi = "is_modified_by_ai"
         case isPublic = "is_public"
         case isRestrictedSharingEnabled = "is_restricted_sharing_enabled"
         case isStarred = "is_starred"
@@ -915,6 +956,7 @@ public struct File: Codable, Hashable, Sendable {
         case showBadge = "show_badge"
         case simplifiedHtml = "simplified_html"
         case size
+        case skippedShares = "skipped_shares"
         case sourceTeam = "source_team"
         case subject
         case subtype

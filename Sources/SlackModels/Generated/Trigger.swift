@@ -11,25 +11,25 @@ import struct Foundation.URL
 
 /// - Remark: Generated from `#/components/schemas/Trigger`.
 public struct Trigger: Codable, Hashable, Sendable {
-    /// - Remark: Generated from `#/components/schemas/Trigger/customizable_input_parameters`.
-    public var customizableInputParameters: [CustomizableInputParameter]?
-    /// - Remark: Generated from `#/components/schemas/Trigger/url`.
-    public var url: Swift.String?
+    /// - Remark: Generated from `#/components/schemas/Trigger/id`.
+    public var id: Swift.String?
+    /// - Remark: Generated from `#/components/schemas/Trigger/title`.
+    public var title: Swift.String?
     /// Creates a new `Trigger`.
     ///
     /// - Parameters:
-    ///   - customizableInputParameters:
-    ///   - url:
+    ///   - id:
+    ///   - title:
     public init(
-        customizableInputParameters: [CustomizableInputParameter]? = nil,
-        url: Swift.String? = nil,
+        id: Swift.String? = nil,
+        title: Swift.String? = nil,
     ) {
-        self.customizableInputParameters = customizableInputParameters
-        self.url = url
+        self.id = id
+        self.title = title
     }
 
     public enum CodingKeys: String, CodingKey {
-        case customizableInputParameters = "customizable_input_parameters"
-        case url
+        case id
+        case title
     }
 }

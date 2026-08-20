@@ -35,6 +35,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SearchAllResponse/query`.
         public var query: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SearchAllResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `SearchAllResponse`.
         ///
         /// - Parameters:
@@ -46,6 +48,7 @@ extension Components.Schemas {
         ///   - posts:
         ///   - provided:
         ///   - query:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             files: SlackModels.Files? = nil,
@@ -55,6 +58,7 @@ extension Components.Schemas {
             posts: SlackModels.Posts? = nil,
             provided: Swift.String? = nil,
             query: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.files = files
@@ -64,6 +68,7 @@ extension Components.Schemas {
             self.posts = posts
             self.provided = provided
             self.query = query
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -75,6 +80,7 @@ extension Components.Schemas {
             case posts
             case provided
             case query
+            case warning
         }
     }
 
@@ -92,6 +98,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SearchFilesResponse/query`.
         public var query: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SearchFilesResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `SearchFilesResponse`.
         ///
         /// - Parameters:
@@ -101,6 +109,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - query:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             files: SlackModels.Files? = nil,
@@ -108,6 +117,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             query: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.files = files
@@ -115,6 +125,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.query = query
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -124,6 +135,7 @@ extension Components.Schemas {
             case ok
             case provided
             case query
+            case warning
         }
     }
 
@@ -141,6 +153,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SearchMessagesResponse/query`.
         public var query: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SearchMessagesResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `SearchMessagesResponse`.
         ///
         /// - Parameters:
@@ -150,6 +164,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - query:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             messages: SlackModels.Messages? = nil,
@@ -157,6 +172,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             query: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.messages = messages
@@ -164,6 +180,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.query = query
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -173,6 +190,7 @@ extension Components.Schemas {
             case ok
             case provided
             case query
+            case warning
         }
     }
 }

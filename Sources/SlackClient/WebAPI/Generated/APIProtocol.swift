@@ -89,6 +89,41 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.apps.config.set`.
     /// - Remark: Generated from `#/paths//admin.apps.config.set/post(adminAppsConfigSet)`.
     func adminAppsConfigSet(_ input: Operations.AdminAppsConfigSet.Input) async throws -> Operations.AdminAppsConfigSet.Output
+    /// List third-party app MCP servers approved for an organization, derived from the org's MCP server allowlist. Entries reflect allowlist state, not install/scope liveness: servers of apps that are uninstalled (but not deleted) are still listed.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.list/post(adminAppsMcpServersList)`.
+    func adminAppsMcpServersList(_ input: Operations.AdminAppsMcpServersList.Input) async throws -> Operations.AdminAppsMcpServersList.Output
+    /// List MCP servers for an app with their access control permissions
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.list/post(adminAppsMcpServersPermissionsList)`.
+    func adminAppsMcpServersPermissionsList(_ input: Operations.AdminAppsMcpServersPermissionsList.Input) async throws -> Operations.AdminAppsMcpServersPermissionsList.Output
+    /// Set the access control permission for who can use an MCP server
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.set`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.set/post(adminAppsMcpServersPermissionsSet)`.
+    func adminAppsMcpServersPermissionsSet(_ input: Operations.AdminAppsMcpServersPermissionsSet.Input) async throws -> Operations.AdminAppsMcpServersPermissionsSet.Output
+    /// Grant permission for entities to access an app that has its permission type set to named_entities
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.add`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.add/post(adminAppsPermissionsAdd)`.
+    func adminAppsPermissionsAdd(_ input: Operations.AdminAppsPermissionsAdd.Input) async throws -> Operations.AdminAppsPermissionsAdd.Output
+    /// Returns the permission type of an app and if applicable, includes the entities that have been granted access
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.list/post(adminAppsPermissionsList)`.
+    func adminAppsPermissionsList(_ input: Operations.AdminAppsPermissionsList.Input) async throws -> Operations.AdminAppsPermissionsList.Output
+    /// Revoke an entity's access to an app that has its permission type set to named_entities
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.remove`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.remove/post(adminAppsPermissionsRemove)`.
+    func adminAppsPermissionsRemove(_ input: Operations.AdminAppsPermissionsRemove.Input) async throws -> Operations.AdminAppsPermissionsRemove.Output
+    /// Set the permission type for who can access an app
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.set`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.set/post(adminAppsPermissionsSet)`.
+    func adminAppsPermissionsSet(_ input: Operations.AdminAppsPermissionsSet.Input) async throws -> Operations.AdminAppsPermissionsSet.Output
     /// Cancel app request for team
     ///
     /// - Remark: HTTP `POST /admin.apps.requests.cancel`.
@@ -179,6 +214,11 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.conversations.bulkMove`.
     /// - Remark: Generated from `#/paths//admin.conversations.bulkMove/post(adminConversationsBulkMove)`.
     func adminConversationsBulkMove(_ input: Operations.AdminConversationsBulkMove.Input) async throws -> Operations.AdminConversationsBulkMove.Output
+    /// Set properties on channels in bulk.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.bulkSetProperties`.
+    /// - Remark: Generated from `#/paths//admin.conversations.bulkSetProperties/post(adminConversationsBulkSetProperties)`.
+    func adminConversationsBulkSetProperties(_ input: Operations.AdminConversationsBulkSetProperties.Input) async throws -> Operations.AdminConversationsBulkSetProperties.Output
     /// Convert a public channel to a private channel.
     ///
     /// - Remark: HTTP `POST /admin.conversations.convertToPrivate`.
@@ -521,6 +561,11 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /apps.event.authorizations.list`.
     /// - Remark: Generated from `#/paths//apps.event.authorizations.list/post(appsEventAuthorizationsList)`.
     func appsEventAuthorizationsList(_ input: Operations.AppsEventAuthorizationsList.Input) async throws -> Operations.AppsEventAuthorizationsList.Output
+    /// Set who can interact with a managed app. Lets the builder who created a managed app on a partner platform configure the app's permissions as themselves, using a user token from the manager app. Permissions can only be set before the app is installed: if the app is already installed, this method makes no change and returns the app's current permissions.
+    ///
+    /// - Remark: HTTP `POST /apps.managed.permissions.set`.
+    /// - Remark: Generated from `#/paths//apps.managed.permissions.set/post(appsManagedPermissionsSet)`.
+    func appsManagedPermissionsSet(_ input: Operations.AppsManagedPermissionsSet.Input) async throws -> Operations.AppsManagedPermissionsSet.Output
     /// Create an app from an app manifest.
     ///
     /// - Remark: HTTP `POST /apps.manifest.create`.
@@ -1495,6 +1540,97 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// List third-party app MCP servers approved for an organization, derived from the org's MCP server allowlist. Entries reflect allowlist state, not install/scope liveness: servers of apps that are uninstalled (but not deleted) are still listed.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.list/post(adminAppsMcpServersList)`.
+    public func adminAppsMcpServersList(
+        headers: Operations.AdminAppsMcpServersList.Input.Headers = .init(),
+        body: Operations.AdminAppsMcpServersList.Input.Body
+    ) async throws -> Operations.AdminAppsMcpServersList.Output {
+        try await adminAppsMcpServersList(Operations.AdminAppsMcpServersList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// List MCP servers for an app with their access control permissions
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.list/post(adminAppsMcpServersPermissionsList)`.
+    public func adminAppsMcpServersPermissionsList(
+        headers: Operations.AdminAppsMcpServersPermissionsList.Input.Headers = .init(),
+        body: Operations.AdminAppsMcpServersPermissionsList.Input.Body
+    ) async throws -> Operations.AdminAppsMcpServersPermissionsList.Output {
+        try await adminAppsMcpServersPermissionsList(Operations.AdminAppsMcpServersPermissionsList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Set the access control permission for who can use an MCP server
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.set`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.set/post(adminAppsMcpServersPermissionsSet)`.
+    public func adminAppsMcpServersPermissionsSet(
+        headers: Operations.AdminAppsMcpServersPermissionsSet.Input.Headers = .init(),
+        body: Operations.AdminAppsMcpServersPermissionsSet.Input.Body
+    ) async throws -> Operations.AdminAppsMcpServersPermissionsSet.Output {
+        try await adminAppsMcpServersPermissionsSet(Operations.AdminAppsMcpServersPermissionsSet.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Grant permission for entities to access an app that has its permission type set to named_entities
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.add`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.add/post(adminAppsPermissionsAdd)`.
+    public func adminAppsPermissionsAdd(
+        headers: Operations.AdminAppsPermissionsAdd.Input.Headers = .init(),
+        body: Operations.AdminAppsPermissionsAdd.Input.Body
+    ) async throws -> Operations.AdminAppsPermissionsAdd.Output {
+        try await adminAppsPermissionsAdd(Operations.AdminAppsPermissionsAdd.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Returns the permission type of an app and if applicable, includes the entities that have been granted access
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.list/post(adminAppsPermissionsList)`.
+    public func adminAppsPermissionsList(
+        headers: Operations.AdminAppsPermissionsList.Input.Headers = .init(),
+        body: Operations.AdminAppsPermissionsList.Input.Body
+    ) async throws -> Operations.AdminAppsPermissionsList.Output {
+        try await adminAppsPermissionsList(Operations.AdminAppsPermissionsList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Revoke an entity's access to an app that has its permission type set to named_entities
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.remove`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.remove/post(adminAppsPermissionsRemove)`.
+    public func adminAppsPermissionsRemove(
+        headers: Operations.AdminAppsPermissionsRemove.Input.Headers = .init(),
+        body: Operations.AdminAppsPermissionsRemove.Input.Body
+    ) async throws -> Operations.AdminAppsPermissionsRemove.Output {
+        try await adminAppsPermissionsRemove(Operations.AdminAppsPermissionsRemove.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Set the permission type for who can access an app
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.set`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.set/post(adminAppsPermissionsSet)`.
+    public func adminAppsPermissionsSet(
+        headers: Operations.AdminAppsPermissionsSet.Input.Headers = .init(),
+        body: Operations.AdminAppsPermissionsSet.Input.Body
+    ) async throws -> Operations.AdminAppsPermissionsSet.Output {
+        try await adminAppsPermissionsSet(Operations.AdminAppsPermissionsSet.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Cancel app request for team
     ///
     /// - Remark: HTTP `POST /admin.apps.requests.cancel`.
@@ -1725,6 +1861,19 @@ extension APIProtocol {
         body: Operations.AdminConversationsBulkMove.Input.Body
     ) async throws -> Operations.AdminConversationsBulkMove.Output {
         try await adminConversationsBulkMove(Operations.AdminConversationsBulkMove.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Set properties on channels in bulk.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.bulkSetProperties`.
+    /// - Remark: Generated from `#/paths//admin.conversations.bulkSetProperties/post(adminConversationsBulkSetProperties)`.
+    public func adminConversationsBulkSetProperties(
+        headers: Operations.AdminConversationsBulkSetProperties.Input.Headers = .init(),
+        body: Operations.AdminConversationsBulkSetProperties.Input.Body
+    ) async throws -> Operations.AdminConversationsBulkSetProperties.Output {
+        try await adminConversationsBulkSetProperties(Operations.AdminConversationsBulkSetProperties.Input(
             headers: headers,
             body: body
         ))
@@ -2611,6 +2760,19 @@ extension APIProtocol {
         body: Operations.AppsEventAuthorizationsList.Input.Body
     ) async throws -> Operations.AppsEventAuthorizationsList.Output {
         try await appsEventAuthorizationsList(Operations.AppsEventAuthorizationsList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Set who can interact with a managed app. Lets the builder who created a managed app on a partner platform configure the app's permissions as themselves, using a user token from the manager app. Permissions can only be set before the app is installed: if the app is already installed, this method makes no change and returns the app's current permissions.
+    ///
+    /// - Remark: HTTP `POST /apps.managed.permissions.set`.
+    /// - Remark: Generated from `#/paths//apps.managed.permissions.set/post(appsManagedPermissionsSet)`.
+    public func appsManagedPermissionsSet(
+        headers: Operations.AppsManagedPermissionsSet.Input.Headers = .init(),
+        body: Operations.AppsManagedPermissionsSet.Input.Body
+    ) async throws -> Operations.AppsManagedPermissionsSet.Output {
+        try await appsManagedPermissionsSet(Operations.AppsManagedPermissionsSet.Input(
             headers: headers,
             body: body
         ))

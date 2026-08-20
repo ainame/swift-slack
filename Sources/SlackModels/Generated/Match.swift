@@ -21,6 +21,8 @@ public struct Match: Codable, Hashable, Sendable {
     public var blocks: [Block]?
     /// - Remark: Generated from `#/components/schemas/Match/channel`.
     public var channel: Channel?
+    /// - Remark: Generated from `#/components/schemas/Match/db_message`.
+    public var dbMessage: Message?
     /// - Remark: Generated from `#/components/schemas/Match/files`.
     public var files: [FileElement]?
     /// - Remark: Generated from `#/components/schemas/Match/iid`.
@@ -55,6 +57,7 @@ public struct Match: Codable, Hashable, Sendable {
     ///   - attachments:
     ///   - blocks:
     ///   - channel:
+    ///   - dbMessage:
     ///   - files:
     ///   - iid:
     ///   - isMpim:
@@ -73,6 +76,7 @@ public struct Match: Codable, Hashable, Sendable {
         attachments: [Attachment]? = nil,
         blocks: [Block]? = nil,
         channel: Channel? = nil,
+        dbMessage: Message? = nil,
         files: [FileElement]? = nil,
         iid: Swift.String? = nil,
         isMpim: Swift.Bool? = nil,
@@ -91,6 +95,7 @@ public struct Match: Codable, Hashable, Sendable {
         self.attachments = attachments
         self.blocks = blocks
         self.channel = channel
+        self.dbMessage = dbMessage
         self.files = files
         self.iid = iid
         self.isMpim = isMpim
@@ -111,6 +116,7 @@ public struct Match: Codable, Hashable, Sendable {
         case attachments
         case blocks
         case channel
+        case dbMessage = "db_message"
         case files
         case iid
         case isMpim = "is_mpim"
