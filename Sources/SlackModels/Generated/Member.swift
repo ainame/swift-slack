@@ -29,6 +29,8 @@ public struct Member: Codable, Hashable, Sendable {
     public var isBot: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/Member/is_email_confirmed`.
     public var isEmailConfirmed: Swift.Bool?
+    /// - Remark: Generated from `#/components/schemas/Member/is_invited_user`.
+    public var isInvitedUser: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/Member/is_owner`.
     public var isOwner: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/Member/is_primary_owner`.
@@ -73,6 +75,7 @@ public struct Member: Codable, Hashable, Sendable {
     ///   - isAppUser:
     ///   - isBot:
     ///   - isEmailConfirmed:
+    ///   - isInvitedUser:
     ///   - isOwner:
     ///   - isPrimaryOwner:
     ///   - isRestricted:
@@ -99,6 +102,7 @@ public struct Member: Codable, Hashable, Sendable {
         isAppUser: Swift.Bool? = nil,
         isBot: Swift.Bool? = nil,
         isEmailConfirmed: Swift.Bool? = nil,
+        isInvitedUser: Swift.Bool? = nil,
         isOwner: Swift.Bool? = nil,
         isPrimaryOwner: Swift.Bool? = nil,
         isRestricted: Swift.Bool? = nil,
@@ -125,6 +129,7 @@ public struct Member: Codable, Hashable, Sendable {
         self.isAppUser = isAppUser
         self.isBot = isBot
         self.isEmailConfirmed = isEmailConfirmed
+        self.isInvitedUser = isInvitedUser
         self.isOwner = isOwner
         self.isPrimaryOwner = isPrimaryOwner
         self.isRestricted = isRestricted
@@ -153,6 +158,7 @@ public struct Member: Codable, Hashable, Sendable {
         case isAppUser = "is_app_user"
         case isBot = "is_bot"
         case isEmailConfirmed = "is_email_confirmed"
+        case isInvitedUser = "is_invited_user"
         case isOwner = "is_owner"
         case isPrimaryOwner = "is_primary_owner"
         case isRestricted = "is_restricted"

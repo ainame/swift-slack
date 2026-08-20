@@ -76,6 +76,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/type`.
         public var _type: Swift.String
+        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `ReactionsGetResponse`.
         ///
         /// - Parameters:
@@ -86,6 +88,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - _type:
+        ///   - warning:
         public init(
             channel: Swift.String? = nil,
             error: Swift.String? = nil,
@@ -94,6 +97,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             _type: Swift.String,
+            warning: Swift.String? = nil,
         ) {
             self.channel = channel
             self.error = error
@@ -102,6 +106,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self._type = _type
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -112,6 +117,7 @@ extension Components.Schemas {
             case ok
             case provided
             case _type = "type"
+            case warning
         }
     }
 
@@ -131,6 +137,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `ReactionsListResponse`.
         ///
         /// - Parameters:
@@ -141,6 +149,7 @@ extension Components.Schemas {
         ///   - paging:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             items: [SlackModels.Item]? = nil,
@@ -149,6 +158,7 @@ extension Components.Schemas {
             paging: SlackModels.Paging? = nil,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.items = items
@@ -157,6 +167,7 @@ extension Components.Schemas {
             self.paging = paging
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -167,6 +178,7 @@ extension Components.Schemas {
             case paging
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 

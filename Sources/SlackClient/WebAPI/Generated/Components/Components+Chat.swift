@@ -339,6 +339,8 @@ extension Components.Schemas {
         public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/ChatPostMessageResponse/ts`.
         public var ts: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ChatPostMessageResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `ChatPostMessageResponse`.
         ///
         /// - Parameters:
@@ -352,6 +354,7 @@ extension Components.Schemas {
         ///   - provided:
         ///   - responseMetadata:
         ///   - ts:
+        ///   - warning:
         public init(
             channel: Swift.String? = nil,
             deprecatedArgument: Swift.String? = nil,
@@ -363,6 +366,7 @@ extension Components.Schemas {
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
             ts: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.channel = channel
             self.deprecatedArgument = deprecatedArgument
@@ -374,6 +378,7 @@ extension Components.Schemas {
             self.provided = provided
             self.responseMetadata = responseMetadata
             self.ts = ts
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -387,6 +392,7 @@ extension Components.Schemas {
             case provided
             case responseMetadata = "response_metadata"
             case ts
+            case warning
         }
     }
 
@@ -410,6 +416,8 @@ extension Components.Schemas {
         public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/ChatScheduleMessageResponse/scheduled_message_id`.
         public var scheduledMessageId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ChatScheduleMessageResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `ChatScheduleMessageResponse`.
         ///
         /// - Parameters:
@@ -422,6 +430,7 @@ extension Components.Schemas {
         ///   - provided:
         ///   - responseMetadata:
         ///   - scheduledMessageId:
+        ///   - warning:
         public init(
             channel: Swift.String? = nil,
             error: Swift.String? = nil,
@@ -432,6 +441,7 @@ extension Components.Schemas {
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
             scheduledMessageId: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.channel = channel
             self.error = error
@@ -442,6 +452,7 @@ extension Components.Schemas {
             self.provided = provided
             self.responseMetadata = responseMetadata
             self.scheduledMessageId = scheduledMessageId
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -454,6 +465,7 @@ extension Components.Schemas {
             case provided
             case responseMetadata = "response_metadata"
             case scheduledMessageId = "scheduled_message_id"
+            case warning
         }
     }
 
@@ -569,38 +581,62 @@ extension Components.Schemas {
 
     /// - Remark: Generated from `#/components/schemas/ChatStopStreamResponse`.
     public struct ChatStopStreamResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ChatStopStreamResponse/channel`.
+        public var channel: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ChatStopStreamResponse/error`.
         public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ChatStopStreamResponse/message`.
+        public var message: SlackModels.Message?
         /// - Remark: Generated from `#/components/schemas/ChatStopStreamResponse/needed`.
         public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ChatStopStreamResponse/ok`.
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ChatStopStreamResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ChatStopStreamResponse/ts`.
+        public var ts: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ChatStopStreamResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `ChatStopStreamResponse`.
         ///
         /// - Parameters:
+        ///   - channel:
         ///   - error:
+        ///   - message:
         ///   - needed:
         ///   - ok:
         ///   - provided:
+        ///   - ts:
+        ///   - warning:
         public init(
+            channel: Swift.String? = nil,
             error: Swift.String? = nil,
+            message: SlackModels.Message? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            ts: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
+            self.channel = channel
             self.error = error
+            self.message = message
             self.needed = needed
             self.ok = ok
             self.provided = provided
+            self.ts = ts
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case channel
             case error
+            case message
             case needed
             case ok
             case provided
+            case ts
+            case warning
         }
     }
 
@@ -679,6 +715,8 @@ extension Components.Schemas {
         public var text: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ChatUpdateResponse/ts`.
         public var ts: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ChatUpdateResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `ChatUpdateResponse`.
         ///
         /// - Parameters:
@@ -691,6 +729,7 @@ extension Components.Schemas {
         ///   - responseMetadata:
         ///   - text:
         ///   - ts:
+        ///   - warning:
         public init(
             channel: Swift.String? = nil,
             error: Swift.String? = nil,
@@ -701,6 +740,7 @@ extension Components.Schemas {
             responseMetadata: SlackModels.ResponseMetadata? = nil,
             text: Swift.String? = nil,
             ts: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.channel = channel
             self.error = error
@@ -711,6 +751,7 @@ extension Components.Schemas {
             self.responseMetadata = responseMetadata
             self.text = text
             self.ts = ts
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -723,6 +764,7 @@ extension Components.Schemas {
             case responseMetadata = "response_metadata"
             case text
             case ts
+            case warning
         }
     }
 }

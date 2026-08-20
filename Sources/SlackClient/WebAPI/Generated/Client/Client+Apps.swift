@@ -222,6 +222,76 @@ extension Client {
         )
     }
 
+    /// Set who can interact with a managed app. Lets the builder who created a managed app on a partner platform configure the app's permissions as themselves, using a user token from the manager
+    /// app. Permissions can only be set before the app is installed: if the app is already installed, this method makes no change and returns the app's current permissions.
+    ///
+    /// - Remark: HTTP `POST /apps.managed.permissions.set`.
+    /// - Remark: Generated from `#/paths//apps.managed.permissions.set/post(appsManagedPermissionsSet)`.
+    func appsManagedPermissionsSet(_ input: Operations.AppsManagedPermissionsSet.Input) async throws -> Operations.AppsManagedPermissionsSet.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.AppsManagedPermissionsSet.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/apps.managed.permissions.set",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.AppsManagedPermissionsSet.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.AppsManagedPermissionsSetResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
     /// Create an app from an app manifest.
     ///
     /// - Remark: HTTP `POST /apps.manifest.create`.

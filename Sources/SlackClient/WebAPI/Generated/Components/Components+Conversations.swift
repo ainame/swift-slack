@@ -429,6 +429,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `ConversationsHistoryResponse`.
         ///
         /// - Parameters:
@@ -444,6 +446,7 @@ extension Components.Schemas {
         ///   - pinCount:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             channelActionsCount: Swift.Int? = nil,
             channelActionsTs: Swift.Int? = nil,
@@ -457,6 +460,7 @@ extension Components.Schemas {
             pinCount: Swift.Int? = nil,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.channelActionsCount = channelActionsCount
             self.channelActionsTs = channelActionsTs
@@ -470,6 +474,7 @@ extension Components.Schemas {
             self.pinCount = pinCount
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -485,6 +490,7 @@ extension Components.Schemas {
             case pinCount = "pin_count"
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 
@@ -1036,6 +1042,8 @@ extension Components.Schemas {
         public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `ConversationsOpenResponse`.
         ///
         /// - Parameters:
@@ -1046,6 +1054,7 @@ extension Components.Schemas {
         ///   - noOp:
         ///   - ok:
         ///   - provided:
+        ///   - warning:
         public init(
             alreadyOpen: Swift.Bool? = nil,
             channel: SlackModels.Channel? = nil,
@@ -1054,6 +1063,7 @@ extension Components.Schemas {
             noOp: Swift.Bool? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.alreadyOpen = alreadyOpen
             self.channel = channel
@@ -1062,6 +1072,7 @@ extension Components.Schemas {
             self.noOp = noOp
             self.ok = ok
             self.provided = provided
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -1072,6 +1083,7 @@ extension Components.Schemas {
             case noOp = "no_op"
             case ok
             case provided
+            case warning
         }
     }
 
@@ -1140,6 +1152,8 @@ extension Components.Schemas {
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/response_metadata`.
         public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/warning`.
+        public var warning: Swift.String?
         /// Creates a new `ConversationsRepliesResponse`.
         ///
         /// - Parameters:
@@ -1150,6 +1164,7 @@ extension Components.Schemas {
         ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - warning:
         public init(
             error: Swift.String? = nil,
             hasMore: Swift.Bool? = nil,
@@ -1158,6 +1173,7 @@ extension Components.Schemas {
             ok: Swift.Bool,
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
+            warning: Swift.String? = nil,
         ) {
             self.error = error
             self.hasMore = hasMore
@@ -1166,6 +1182,7 @@ extension Components.Schemas {
             self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -1176,6 +1193,7 @@ extension Components.Schemas {
             case ok
             case provided
             case responseMetadata = "response_metadata"
+            case warning
         }
     }
 

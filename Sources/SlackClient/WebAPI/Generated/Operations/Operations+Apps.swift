@@ -477,6 +477,162 @@ extension Operations {
         }
     }
 
+    public enum AppsManagedPermissionsSet {
+        public static let id: Swift.String = "appsManagedPermissionsSet"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/apps.managed.permissions.set/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AppsManagedPermissionsSet.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AppsManagedPermissionsSet.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AppsManagedPermissionsSet.Input.Headers
+            /// - Remark: Generated from `#/paths/apps.managed.permissions.set/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/apps.managed.permissions.set/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// Encoded ID of the managed app to configure.
+                    ///
+                    /// - Remark: Generated from `#/paths/apps.managed.permissions.set/POST/requestBody/json/app_id`.
+                    public var appId: Swift.String
+                    /// Who can interact with the app. Use everyone to allow all members, or app_owner to restrict access to the app's owner.
+                    ///
+                    /// - Remark: Generated from `#/paths/apps.managed.permissions.set/POST/requestBody/json/permissions`.
+                    public var permissions: Swift.String
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - appId: Encoded ID of the managed app to configure.
+                    ///   - permissions: Who can interact with the app. Use everyone to allow all members, or app_owner to restrict access to the app's owner.
+                    public init(
+                        appId: Swift.String,
+                        permissions: Swift.String,
+                    ) {
+                        self.appId = appId
+                        self.permissions = permissions
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case appId = "app_id"
+                        case permissions
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/apps.managed.permissions.set/POST/requestBody/content/application\/json`.
+                case json(Operations.AppsManagedPermissionsSet.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AppsManagedPermissionsSet.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AppsManagedPermissionsSet.Input.Headers = .init(),
+                body: Operations.AppsManagedPermissionsSet.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/apps.managed.permissions.set/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/apps.managed.permissions.set/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AppsManagedPermissionsSetResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AppsManagedPermissionsSetResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AppsManagedPermissionsSet.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AppsManagedPermissionsSet.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//apps.managed.permissions.set/post(appsManagedPermissionsSet)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AppsManagedPermissionsSet.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AppsManagedPermissionsSet.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
     public enum AppsManifestCreate {
         public static let id: Swift.String = "appsManifestCreate"
         public struct Input: Sendable, Hashable {

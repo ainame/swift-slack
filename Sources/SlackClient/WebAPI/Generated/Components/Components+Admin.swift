@@ -311,6 +311,125 @@ extension Components.Schemas {
         }
     }
 
+    /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse`.
+    public struct AdminAppsMcpServersListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminAppsMcpServersListResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse`.
+    public struct AdminAppsMcpServersPermissionsListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminAppsMcpServersPermissionsListResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse`.
+    public struct AdminAppsMcpServersPermissionsSetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminAppsMcpServersPermissionsSetResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsAddResponse`.
+    public struct AdminAppsPermissionsAddResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsAddResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminAppsPermissionsAddResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsListResponse`.
+    public struct AdminAppsPermissionsListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsListResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminAppsPermissionsListResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsRemoveResponse`.
+    public struct AdminAppsPermissionsRemoveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsRemoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminAppsPermissionsRemoveResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsSetResponse`.
+    public struct AdminAppsPermissionsSetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsSetResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminAppsPermissionsSetResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+        }
+    }
+
     /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse`.
     public struct AdminAppsRequestsCancelResponse: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/error`.
@@ -1156,6 +1275,23 @@ extension Components.Schemas {
             case provided
             case responseMetadata = "response_metadata"
             case warning
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkSetPropertiesResponse`.
+    public struct AdminConversationsBulkSetPropertiesResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkSetPropertiesResponse/ok`.
+        public var ok: Swift.Bool
+        /// Creates a new `AdminConversationsBulkSetPropertiesResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        public init(ok: Swift.Bool) {
+            self.ok = ok
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
         }
     }
 
