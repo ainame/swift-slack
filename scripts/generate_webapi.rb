@@ -106,7 +106,7 @@ def generate_openapi_component(path, output_dir)
   visitors = [
     InvalidKeysRemover.new,
     ReferenceFixer.new,
-    AcronymsFixer.new('DND' => 'Dnd'),
+    AcronymsFixer.new('DND' => 'Dnd', 'MCP' => 'Mcp'),
     TypeFixer.new,
     UserProfileRefFixer.new,
     TeamProfileRefFixer.new,
