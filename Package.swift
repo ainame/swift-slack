@@ -8,6 +8,7 @@ let webAPITraits: [String] = [
     "WebAPI_Admin",
     "WebAPI_Chat",
     "WebAPI_Views",
+    "WebAPI_Unknown",
     "WebAPI_Apps",
     "WebAPI_Assistant",
     "WebAPI_Auth",

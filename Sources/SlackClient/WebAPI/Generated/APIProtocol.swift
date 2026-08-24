@@ -544,12 +544,22 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.users.unsupportedVersions.export`.
     /// - Remark: Generated from `#/paths//admin.users.unsupportedVersions.export/post(adminUsersUnsupportedVersionsExport)`.
     func adminUsersUnsupportedVersionsExport(_ input: Operations.AdminUsersUnsupportedVersionsExport.Input) async throws -> Operations.AdminUsersUnsupportedVersionsExport.Output
+    /// Rename an agent session.
+    ///
+    /// - Remark: HTTP `POST /agents.sessions.rename`.
+    /// - Remark: Generated from `#/paths//agents.sessions.rename/post(agentsSessionsRename)`.
+    #endif
+    #if WebAPI_Apps
+    func agentsSessionsRename(_ input: Operations.AgentsSessionsRename.Input) async throws -> Operations.AgentsSessionsRename.Output
+    /// Set an agent session's lifecycle status, creating the session if needed.
+    ///
+    /// - Remark: HTTP `POST /agents.sessions.setStatus`.
+    /// - Remark: Generated from `#/paths//agents.sessions.setStatus/post(agentsSessionsSetStatus)`.
+    func agentsSessionsSetStatus(_ input: Operations.AgentsSessionsSetStatus.Input) async throws -> Operations.AgentsSessionsSetStatus.Output
     /// Delete external auth tokens only on the Slack side
     ///
     /// - Remark: HTTP `POST /apps.auth.external.delete`.
     /// - Remark: Generated from `#/paths//apps.auth.external.delete/post(appsAuthExternalDelete)`.
-    #endif
-    #if WebAPI_Apps
     func appsAuthExternalDelete(_ input: Operations.AppsAuthExternalDelete.Input) async throws -> Operations.AppsAuthExternalDelete.Output
     /// Generate a temporary Socket Mode WebSocket URL that your app can connect to in order to receive events and interactive payloads over.
     ///
@@ -2723,12 +2733,38 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// Rename an agent session.
+    ///
+    /// - Remark: HTTP `POST /agents.sessions.rename`.
+    /// - Remark: Generated from `#/paths//agents.sessions.rename/post(agentsSessionsRename)`.
+    #endif
+    #if WebAPI_Apps
+    public func agentsSessionsRename(
+        headers: Operations.AgentsSessionsRename.Input.Headers = .init(),
+        body: Operations.AgentsSessionsRename.Input.Body
+    ) async throws -> Operations.AgentsSessionsRename.Output {
+        try await agentsSessionsRename(Operations.AgentsSessionsRename.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Set an agent session's lifecycle status, creating the session if needed.
+    ///
+    /// - Remark: HTTP `POST /agents.sessions.setStatus`.
+    /// - Remark: Generated from `#/paths//agents.sessions.setStatus/post(agentsSessionsSetStatus)`.
+    public func agentsSessionsSetStatus(
+        headers: Operations.AgentsSessionsSetStatus.Input.Headers = .init(),
+        body: Operations.AgentsSessionsSetStatus.Input.Body
+    ) async throws -> Operations.AgentsSessionsSetStatus.Output {
+        try await agentsSessionsSetStatus(Operations.AgentsSessionsSetStatus.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Delete external auth tokens only on the Slack side
     ///
     /// - Remark: HTTP `POST /apps.auth.external.delete`.
     /// - Remark: Generated from `#/paths//apps.auth.external.delete/post(appsAuthExternalDelete)`.
-    #endif
-    #if WebAPI_Apps
     public func appsAuthExternalDelete(
         headers: Operations.AppsAuthExternalDelete.Input.Headers = .init(),
         body: Operations.AppsAuthExternalDelete.Input.Body

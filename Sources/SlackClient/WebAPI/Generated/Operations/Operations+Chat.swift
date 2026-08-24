@@ -2112,7 +2112,7 @@ extension Operations {
                     /// Provide another message's ts value to reply to. Streamed messages should always be replies to a user request.
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/thread_ts`.
-                    public var threadTs: Swift.String
+                    public var threadTs: Swift.String?
                     /// The encoded ID of the user to receive the streaming text. Required when streaming to channels.
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/recipient_user_id`.
@@ -2121,8 +2121,8 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/recipient_team_id`.
                     public var recipientTeamId: Swift.String?
-                    /// Specifies how tasks are displayed in the message. A timeline displays individual tasks with text in sequential order, plan displays all tasks together, with the first tasks's
-                    /// placement determining the placement of the rest of the tasks, and dense collapses consecutive tool calls into a single summarized task card.
+                    /// Specifies how tasks are displayed in the message. timeline task updates render as individual task cards interleaved with streamed text. plan task updates render together in a
+                    /// plan block.
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/task_display_mode`.
                     public var taskDisplayMode: Swift.String?
@@ -2147,8 +2147,8 @@ extension Operations {
                     ///   - threadTs: Provide another message's ts value to reply to. Streamed messages should always be replies to a user request.
                     ///   - recipientUserId: The encoded ID of the user to receive the streaming text. Required when streaming to channels.
                     ///   - recipientTeamId: The encoded ID of the team the user receiving the streaming text belongs to. Required when streaming to channels.
-                    ///   - taskDisplayMode: Specifies how tasks are displayed in the message. A timeline displays individual tasks with text in sequential order, plan displays all tasks together,
-                    /// with the first tasks's placement determining the placement of the rest of the tasks, and dense collapses consecutive tool calls into a single summarized task card.
+                    ///   - taskDisplayMode: Specifies how tasks are displayed in the message. timeline task updates render as individual task cards interleaved with streamed text. plan task updates
+                    /// render together in a plan block.
                     ///   - iconEmoji: Emoji to use as the icon for this message. Overrides icon_url.
                     ///   - iconUrl: Image URL to use as the icon for this message.
                     ///   - username: The bot's username to display.
@@ -2156,7 +2156,7 @@ extension Operations {
                         channel: Swift.String,
                         chunks: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
                         markdownText: Swift.String? = nil,
-                        threadTs: Swift.String,
+                        threadTs: Swift.String? = nil,
                         recipientUserId: Swift.String? = nil,
                         recipientTeamId: Swift.String? = nil,
                         taskDisplayMode: Swift.String? = nil,
