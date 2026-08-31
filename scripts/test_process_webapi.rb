@@ -25,4 +25,29 @@ class ProcessWebAPITest < Minitest::Test
 
     assert_equal 'Unable to determine Slack API group for FutureFeatureCreate', error.message
   end
+
+  def test_schema_groups_are_canonical_before_trait_formatting
+    group = SchemaGroupDeterminer.determine_schema_group('OauthV2ExchangeResponse')
+
+    assert_equal 'oauth', group
+    assert_equal 'OAuth', GroupNameFormatter.capitalize_group_name(group)
+  end
+
+  def test_component_splitter_uses_the_oauth_trait
+    content = <<~SWIFT
+      /// Types generated from the components section of the OpenAPI document.
+      public enum Components {
+          public enum Schemas {
+              /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse`.
+              public struct OauthV2ExchangeResponse: Codable {
+              }
+          }
+      }
+    SWIFT
+
+    result = ComponentsSplitter.new('/tmp').send(:parse_components_by_schemas, content)
+
+    assert_equal ['oauth'], result[:groups].keys
+    assert_includes result[:groups]['oauth'], '#if WebAPI_OAuth'
+  end
 end
