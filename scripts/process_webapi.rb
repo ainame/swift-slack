@@ -1458,7 +1458,7 @@ class SchemaGroupDeterminer
     if type_name.end_with?('Response')
       # Extract the prefix before "Response"
       prefix = type_name.gsub(/Response$/, '')
-      return GroupNameFormatter.capitalize_group_name(APIGroupResolver.group_for(prefix))
+      return APIGroupResolver.group_for(prefix)
     end
 
     # For non-response types, put in Common
