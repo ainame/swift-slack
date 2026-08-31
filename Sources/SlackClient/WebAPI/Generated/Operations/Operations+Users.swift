@@ -804,7 +804,7 @@ extension Operations {
                     /// User to get info on.
                     ///
                     /// - Remark: Generated from `#/paths/users.info/POST/requestBody/json/user`.
-                    public var user: Swift.String
+                    public var user: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -812,7 +812,7 @@ extension Operations {
                     ///   - user: User to get info on.
                     public init(
                         includeLocale: Swift.Bool? = nil,
-                        user: Swift.String,
+                        user: Swift.String? = nil,
                     ) {
                         self.includeLocale = includeLocale
                         self.user = user

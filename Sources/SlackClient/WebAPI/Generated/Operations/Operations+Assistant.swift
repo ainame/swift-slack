@@ -535,7 +535,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/assistant.threads.setSuggestedPrompts/POST/requestBody/json/channel_id`.
                     public var channelId: Swift.String
-                    /// Message timestamp of the thread to set suggested prompts for.
+                    /// Message timestamp of the thread to set suggested prompts for. If not provided, the prompts will be set for the latest message in the channel.
                     ///
                     /// - Remark: Generated from `#/paths/assistant.threads.setSuggestedPrompts/POST/requestBody/json/thread_ts`.
                     public var threadTs: Swift.String?
@@ -551,7 +551,7 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - channelId: Channel ID containing the assistant thread.
-                    ///   - threadTs: Message timestamp of the thread to set suggested prompts for.
+                    ///   - threadTs: Message timestamp of the thread to set suggested prompts for. If not provided, the prompts will be set for the latest message in the channel.
                     ///   - prompts: Each prompt should be supplied with its title and message attribute.
                     ///   - title: Title for the list of provided prompts. For example: Suggested Prompts, Related Questions.
                     public init(

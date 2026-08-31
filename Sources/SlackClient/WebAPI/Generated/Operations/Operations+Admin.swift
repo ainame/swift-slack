@@ -33,10 +33,6 @@ extension Operations {
             @frozen public enum Body: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/admin.users.session.invalidate/POST/requestBody/json`.
                 public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// ID of the workspace that the session belongs to.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.users.session.invalidate/POST/requestBody/json/team_id`.
-                    public var teamId: Swift.String?
                     /// ID of the user that the session belongs to.
                     ///
                     /// - Remark: Generated from `#/paths/admin.users.session.invalidate/POST/requestBody/json/user_id`.
@@ -48,21 +44,17 @@ extension Operations {
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
-                    ///   - teamId: ID of the workspace that the session belongs to.
                     ///   - userId: ID of the user that the session belongs to.
                     ///   - sessionId: ID of the session to invalidate.
                     public init(
-                        teamId: Swift.String? = nil,
                         userId: Swift.String,
                         sessionId: Swift.Int,
                     ) {
-                        self.teamId = teamId
                         self.userId = userId
                         self.sessionId = sessionId
                     }
 
                     public enum CodingKeys: String, CodingKey {
-                        case teamId = "team_id"
                         case userId = "user_id"
                         case sessionId = "session_id"
                     }
@@ -1158,6 +1150,11 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/admin.apps.config.set/POST/requestBody/json/domain_restrictions`.
                     public var domainRestrictions: OpenAPIRuntime.OpenAPIObjectContainer?
+                    /// Whether the app is allowed to render embedded previews of its work objects on this team. Only settable for apps that have declared embed domains, as the setting does not apply
+                    /// to any other app, and only where the embedded preview feature is available to the caller.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.config.set/POST/requestBody/json/is_embedded_preview_enabled`.
+                    public var isEmbeddedPreviewEnabled: Swift.Bool?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -1166,16 +1163,20 @@ extension Operations {
                     ///   - richLinkPreviewType: Indicates the app-level override for rich link preview. Unsupported for free teams.
                     ///   - domainRestrictions: Domain restrictions for the app. Should be an object with two properties: urls and emails. Each is an array of strings, and each sets the allowed URLs
                     /// and emails for connector authorization, respectively.
+                    ///   - isEmbeddedPreviewEnabled: Whether the app is allowed to render embedded previews of its work objects on this team. Only settable for apps that have declared embed domains,
+                    /// as the setting does not apply to any other app, and only where the embedded preview feature is available to the caller.
                     public init(
                         appId: Swift.String,
                         workflowAuthStrategy: Swift.String? = nil,
                         richLinkPreviewType: Swift.String? = nil,
                         domainRestrictions: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+                        isEmbeddedPreviewEnabled: Swift.Bool? = nil,
                     ) {
                         self.appId = appId
                         self.workflowAuthStrategy = workflowAuthStrategy
                         self.richLinkPreviewType = richLinkPreviewType
                         self.domainRestrictions = domainRestrictions
+                        self.isEmbeddedPreviewEnabled = isEmbeddedPreviewEnabled
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -1183,6 +1184,7 @@ extension Operations {
                         case workflowAuthStrategy = "workflow_auth_strategy"
                         case richLinkPreviewType = "rich_link_preview_type"
                         case domainRestrictions = "domain_restrictions"
+                        case isEmbeddedPreviewEnabled = "is_embedded_preview_enabled"
                     }
                 }
 
@@ -9965,8 +9967,8 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/admin.functions.list/POST/requestBody/json/app_ids`.
                     public var appIds: OpenAPIRuntime.OpenAPIArrayContainer
-                    /// Whether to also include functions that are not yet distributed to any users in the function count. This is needed for admins that are approving an app request and will only
-                    /// work if the team owns the app.
+                    /// Whether to also include functions that are not yet distributed to any users in the function list. This is needed for admins that are approving an app request and will only work
+                    /// if the team owns the app.
                     ///
                     /// - Remark: Generated from `#/paths/admin.functions.list/POST/requestBody/json/include_non_distributed_functions`.
                     public var includeNonDistributedFunctions: Swift.Bool?
@@ -9983,7 +9985,7 @@ extension Operations {
                     /// - Parameters:
                     ///   - teamId: The team context to retrieve functions from.
                     ///   - appIds: Comma-separated array of app IDs to get functions for; max 50.
-                    ///   - includeNonDistributedFunctions: Whether to also include functions that are not yet distributed to any users in the function count. This is needed for admins that are
+                    ///   - includeNonDistributedFunctions: Whether to also include functions that are not yet distributed to any users in the function list. This is needed for admins that are
                     /// approving an app request and will only work if the team owns the app.
                     ///   - cursor: Set cursor to next_cursor returned by the previous call to list items in the next page.
                     ///   - limit: The number of results that will be returned by the API on each invocation. Must be between 1 and 1000, both inclusive.
@@ -13534,7 +13536,7 @@ extension Operations {
                     /// The ID of the guest user to get the expiration for.
                     ///
                     /// - Remark: Generated from `#/paths/admin.users.getExpiration/POST/requestBody/json/user_id`.
-                    public var userId: Swift.String?
+                    public var userId: Swift.String
                     /// If an org token is passed in and this team is on the org, it will operate on the workspace level on the specified team. Otherwise it will operate on the org or team in context.
                     ///
                     /// - Remark: Generated from `#/paths/admin.users.getExpiration/POST/requestBody/json/target_team`.
@@ -13546,7 +13548,7 @@ extension Operations {
                     ///   - targetTeam: If an org token is passed in and this team is on the org, it will operate on the workspace level on the specified team. Otherwise it will operate on the org or
                     /// team in context.
                     public init(
-                        userId: Swift.String? = nil,
+                        userId: Swift.String,
                         targetTeam: Swift.String? = nil,
                     ) {
                         self.userId = userId

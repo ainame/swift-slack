@@ -373,6 +373,10 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.postMessage/POST/requestBody/json/username`.
                     public var username: Swift.String?
+                    /// Pass true to unfurl links from installed apps, or false to prevent app links from unfurling. When omitted, app links follow the unfurl_links setting.
+                    ///
+                    /// - Remark: Generated from `#/paths/chat.postMessage/POST/requestBody/json/unfurl_app_links`.
+                    public var unfurlAppLinks: Swift.Bool?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -397,6 +401,7 @@ extension Operations {
                     ///   - unfurlLinks: Pass true to enable unfurling of primarily text-based content.
                     ///   - unfurlMedia: Pass false to disable unfurling of media content.
                     ///   - username: Set your bot's user name.
+                    ///   - unfurlAppLinks: Pass true to unfurl links from installed apps, or false to prevent app links from unfurling. When omitted, app links follow the unfurl_links setting.
                     public init(
                         asUser: Swift.Bool? = nil,
                         attachments: [SlackModels.Attachment]? = nil,
@@ -416,6 +421,7 @@ extension Operations {
                         unfurlLinks: Swift.Bool? = nil,
                         unfurlMedia: Swift.Bool? = nil,
                         username: Swift.String? = nil,
+                        unfurlAppLinks: Swift.Bool? = nil,
                     ) {
                         self.asUser = asUser
                         self.attachments = attachments
@@ -435,6 +441,7 @@ extension Operations {
                         self.unfurlLinks = unfurlLinks
                         self.unfurlMedia = unfurlMedia
                         self.username = username
+                        self.unfurlAppLinks = unfurlAppLinks
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -456,6 +463,7 @@ extension Operations {
                         case unfurlLinks = "unfurl_links"
                         case unfurlMedia = "unfurl_media"
                         case username
+                        case unfurlAppLinks = "unfurl_app_links"
                     }
                 }
 
@@ -1108,7 +1116,7 @@ extension Operations {
                     /// Accepts message text formatted in markdown. Limit this field to 12,000 characters. This text is what will be appended to the message received so far.
                     ///
                     /// - Remark: Generated from `#/paths/chat.appendStream/POST/requestBody/json/markdown_text`.
-                    public var markdownText: Swift.String
+                    public var markdownText: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -1120,7 +1128,7 @@ extension Operations {
                         channel: Swift.String,
                         chunks: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
                         ts: Swift.String,
-                        markdownText: Swift.String,
+                        markdownText: Swift.String? = nil,
                     ) {
                         self.channel = channel
                         self.chunks = chunks
@@ -2097,7 +2105,7 @@ extension Operations {
             @frozen public enum Body: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json`.
                 public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// An encoded ID that represents a channel thread or DM.
+                    /// An encoded ID that represents a channel, thread, or DM.
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/channel`.
                     public var channel: Swift.String
@@ -2109,10 +2117,11 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/markdown_text`.
                     public var markdownText: Swift.String?
-                    /// Provide another message's ts value to reply to. Streamed messages should always be replies to a user request.
+                    /// Provide another message's ts value to reply to. Omit it to stream a top-level message instead of a thread reply; this is only supported in channels where the whole channel is
+                    /// one session, such as Slack Code, and returns invalid_thread_ts elsewhere. Passing "0" is equivalent to omitting it.
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/thread_ts`.
-                    public var threadTs: Swift.String
+                    public var threadTs: Swift.String?
                     /// The encoded ID of the user to receive the streaming text. Required when streaming to channels.
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/recipient_user_id`.
@@ -2121,8 +2130,8 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/recipient_team_id`.
                     public var recipientTeamId: Swift.String?
-                    /// Specifies how tasks are displayed in the message. A timeline displays individual tasks with text in sequential order, plan displays all tasks together, with the first tasks's
-                    /// placement determining the placement of the rest of the tasks, and dense collapses consecutive tool calls into a single summarized task card.
+                    /// Specifies how tasks are displayed in the message. timeline task updates render as individual task cards interleaved with streamed text. plan task updates render together in a
+                    /// plan block.
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/task_display_mode`.
                     public var taskDisplayMode: Swift.String?
@@ -2141,14 +2150,15 @@ extension Operations {
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
-                    ///   - channel: An encoded ID that represents a channel thread or DM.
+                    ///   - channel: An encoded ID that represents a channel, thread, or DM.
                     ///   - chunks: Array of streaming chunks.
                     ///   - markdownText: Accepts message text formatted in markdown. Limit this field to 12,000 characters.
-                    ///   - threadTs: Provide another message's ts value to reply to. Streamed messages should always be replies to a user request.
+                    ///   - threadTs: Provide another message's ts value to reply to. Omit it to stream a top-level message instead of a thread reply; this is only supported in channels where the
+                    /// whole channel is one session, such as Slack Code, and returns invalid_thread_ts elsewhere. Passing "0" is equivalent to omitting it.
                     ///   - recipientUserId: The encoded ID of the user to receive the streaming text. Required when streaming to channels.
                     ///   - recipientTeamId: The encoded ID of the team the user receiving the streaming text belongs to. Required when streaming to channels.
-                    ///   - taskDisplayMode: Specifies how tasks are displayed in the message. A timeline displays individual tasks with text in sequential order, plan displays all tasks together,
-                    /// with the first tasks's placement determining the placement of the rest of the tasks, and dense collapses consecutive tool calls into a single summarized task card.
+                    ///   - taskDisplayMode: Specifies how tasks are displayed in the message. timeline task updates render as individual task cards interleaved with streamed text. plan task updates
+                    /// render together in a plan block.
                     ///   - iconEmoji: Emoji to use as the icon for this message. Overrides icon_url.
                     ///   - iconUrl: Image URL to use as the icon for this message.
                     ///   - username: The bot's username to display.
@@ -2156,7 +2166,7 @@ extension Operations {
                         channel: Swift.String,
                         chunks: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
                         markdownText: Swift.String? = nil,
-                        threadTs: Swift.String,
+                        threadTs: Swift.String? = nil,
                         recipientUserId: Swift.String? = nil,
                         recipientTeamId: Swift.String? = nil,
                         taskDisplayMode: Swift.String? = nil,
@@ -2344,6 +2354,10 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.stopStream/POST/requestBody/json/metadata`.
                     public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
+                    /// The session status to set after stopping the stream.
+                    ///
+                    /// - Remark: Generated from `#/paths/chat.stopStream/POST/requestBody/json/session_status`.
+                    public var sessionStatus: Swift.String?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -2354,6 +2368,7 @@ extension Operations {
                     ///   - blocks: A list of blocks that will be rendered at the bottom of the finalized message.
                     ///   - metadata: JSON object with event_type and event_payload fields, presented as a URL-encoded string. Metadata you post to Slack is accessible to any app or user who is a
                     /// member of that workspace.
+                    ///   - sessionStatus: The session status to set after stopping the stream.
                     public init(
                         channel: Swift.String,
                         chunks: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
@@ -2361,6 +2376,7 @@ extension Operations {
                         markdownText: Swift.String? = nil,
                         blocks: [SlackBlockKit.Block]? = nil,
                         metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+                        sessionStatus: Swift.String? = nil,
                     ) {
                         self.channel = channel
                         self.chunks = chunks
@@ -2368,6 +2384,7 @@ extension Operations {
                         self.markdownText = markdownText
                         self.blocks = blocks
                         self.metadata = metadata
+                        self.sessionStatus = sessionStatus
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -2377,6 +2394,7 @@ extension Operations {
                         case markdownText = "markdown_text"
                         case blocks
                         case metadata
+                        case sessionStatus = "session_status"
                     }
                 }
 
@@ -2517,7 +2535,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.unfurl/POST/requestBody/json/ts`.
                     public var ts: Swift.String?
-                    /// URL-encoded JSON map with keys set to URLs featured in the the message, pointing to their unfurl blocks or message attachments. Required for public channels.
+                    /// URL-encoded JSON map with keys set to URLs featured in the message, pointing to their unfurl blocks or message attachments. Required for public channels.
                     ///
                     /// - Remark: Generated from `#/paths/chat.unfurl/POST/requestBody/json/unfurls`.
                     public var unfurls: OpenAPIRuntime.OpenAPIObjectContainer?
@@ -2553,7 +2571,7 @@ extension Operations {
                     /// - Parameters:
                     ///   - channel: Channel ID of the message. Both channel and ts must be provided together, or unfurl_id and source must be provided together. Required for public channels.
                     ///   - ts: Timestamp of the message to add unfurl behavior to. Required for public channels.
-                    ///   - unfurls: URL-encoded JSON map with keys set to URLs featured in the the message, pointing to their unfurl blocks or message attachments. Required for public channels.
+                    ///   - unfurls: URL-encoded JSON map with keys set to URLs featured in the message, pointing to their unfurl blocks or message attachments. Required for public channels.
                     ///   - userAuthMessage: Provide a simply-formatted string to send as an ephemeral message to the user as invitation to authenticate further and enable full unfurling behavior.
                     /// Provides two buttons, Not now or Never ask me again.
                     ///   - userAuthRequired: Set to true or 1 to indicate the user must install your Slack app to trigger unfurls for this domain.
