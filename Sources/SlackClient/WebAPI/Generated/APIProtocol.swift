@@ -544,6 +544,18 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.users.unsupportedVersions.export`.
     /// - Remark: Generated from `#/paths//admin.users.unsupportedVersions.export/post(adminUsersUnsupportedVersionsExport)`.
     func adminUsersUnsupportedVersionsExport(_ input: Operations.AdminUsersUnsupportedVersionsExport.Input) async throws -> Operations.AdminUsersUnsupportedVersionsExport.Output
+    /// Rename an agent session.
+    ///
+    /// - Remark: HTTP `POST /agents.sessions.rename`.
+    /// - Remark: Generated from `#/paths//agents.sessions.rename/post(agentsSessionsRename)`.
+    #endif
+    #if WebAPI_Agents
+    func agentsSessionsRename(_ input: Operations.AgentsSessionsRename.Input) async throws -> Operations.AgentsSessionsRename.Output
+    /// Set an agent session's lifecycle status, creating the session if needed.
+    ///
+    /// - Remark: HTTP `POST /agents.sessions.setStatus`.
+    /// - Remark: Generated from `#/paths//agents.sessions.setStatus/post(agentsSessionsSetStatus)`.
+    func agentsSessionsSetStatus(_ input: Operations.AgentsSessionsSetStatus.Input) async throws -> Operations.AgentsSessionsSetStatus.Output
     /// Delete external auth tokens only on the Slack side
     ///
     /// - Remark: HTTP `POST /apps.auth.external.delete`.
@@ -640,6 +652,13 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /auth.test`.
     /// - Remark: Generated from `#/paths//auth.test/post(authTest)`.
     func authTest(_ input: Operations.AuthTest.Input) async throws -> Operations.AuthTest.Output
+    /// Validates blocks, messages, and views Block Kit JSON payloads.
+    ///
+    /// - Remark: HTTP `POST /blocks.validate`.
+    /// - Remark: Generated from `#/paths//blocks.validate/post(blocksValidate)`.
+    #endif
+    #if WebAPI_Blocks
+    func blocksValidate(_ input: Operations.BlocksValidate.Input) async throws -> Operations.BlocksValidate.Output
     /// Add bookmark to a channel.
     ///
     /// - Remark: HTTP `POST /bookmarks.add`.
@@ -2723,6 +2742,34 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// Rename an agent session.
+    ///
+    /// - Remark: HTTP `POST /agents.sessions.rename`.
+    /// - Remark: Generated from `#/paths//agents.sessions.rename/post(agentsSessionsRename)`.
+    #endif
+    #if WebAPI_Agents
+    public func agentsSessionsRename(
+        headers: Operations.AgentsSessionsRename.Input.Headers = .init(),
+        body: Operations.AgentsSessionsRename.Input.Body
+    ) async throws -> Operations.AgentsSessionsRename.Output {
+        try await agentsSessionsRename(Operations.AgentsSessionsRename.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Set an agent session's lifecycle status, creating the session if needed.
+    ///
+    /// - Remark: HTTP `POST /agents.sessions.setStatus`.
+    /// - Remark: Generated from `#/paths//agents.sessions.setStatus/post(agentsSessionsSetStatus)`.
+    public func agentsSessionsSetStatus(
+        headers: Operations.AgentsSessionsSetStatus.Input.Headers = .init(),
+        body: Operations.AgentsSessionsSetStatus.Input.Body
+    ) async throws -> Operations.AgentsSessionsSetStatus.Output {
+        try await agentsSessionsSetStatus(Operations.AgentsSessionsSetStatus.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Delete external auth tokens only on the Slack side
     ///
     /// - Remark: HTTP `POST /apps.auth.external.delete`.
@@ -2959,6 +3006,21 @@ extension APIProtocol {
         body: Operations.AuthTest.Input.Body? = nil
     ) async throws -> Operations.AuthTest.Output {
         try await authTest(Operations.AuthTest.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Validates blocks, messages, and views Block Kit JSON payloads.
+    ///
+    /// - Remark: HTTP `POST /blocks.validate`.
+    /// - Remark: Generated from `#/paths//blocks.validate/post(blocksValidate)`.
+    #endif
+    #if WebAPI_Blocks
+    public func blocksValidate(
+        headers: Operations.BlocksValidate.Input.Headers = .init(),
+        body: Operations.BlocksValidate.Input.Body
+    ) async throws -> Operations.BlocksValidate.Output {
+        try await blocksValidate(Operations.BlocksValidate.Input(
             headers: headers,
             body: body
         ))

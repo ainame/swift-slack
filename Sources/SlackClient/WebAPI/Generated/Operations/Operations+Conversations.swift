@@ -1693,7 +1693,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/conversations.invite/POST/requestBody/json/force`.
                     public var force: Swift.Bool?
-                    /// A comma separated list of user IDs. Up to 100 users may be listed.
+                    /// A comma separated list of user IDs. Up to 1000 users may be listed.
                     ///
                     /// - Remark: Generated from `#/paths/conversations.invite/POST/requestBody/json/users`.
                     public var users: Swift.String
@@ -1702,7 +1702,7 @@ extension Operations {
                     /// - Parameters:
                     ///   - channel: The ID of the public or private channel to invite user(s) to.
                     ///   - force: When set to true and multiple user IDs are provided, continue inviting the valid ones while disregarding invalid IDs. Defaults to false.
-                    ///   - users: A comma separated list of user IDs. Up to 100 users may be listed.
+                    ///   - users: A comma separated list of user IDs. Up to 1000 users may be listed.
                     public init(
                         channel: Swift.String,
                         force: Swift.Bool? = nil,

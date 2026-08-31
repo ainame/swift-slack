@@ -1585,6 +1585,10 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/slackLists.items.list/POST/requestBody/json/archived`.
                     public var archived: Swift.Bool?
+                    /// Set to true to also return the parent list object, including its title, column schema, and total row count. Defaults to false to keep the response small.
+                    ///
+                    /// - Remark: Generated from `#/paths/slackLists.items.list/POST/requestBody/json/include_list`.
+                    public var includeList: Swift.Bool?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -1592,16 +1596,19 @@ extension Operations {
                     ///   - limit: The maximum number of records to return.
                     ///   - cursor: Next cursor for pagination.
                     ///   - archived: Boolean indicating whether archived items or normal items should be returned.
+                    ///   - includeList: Set to true to also return the parent list object, including its title, column schema, and total row count. Defaults to false to keep the response small.
                     public init(
                         listId: Swift.String,
                         limit: Swift.Int? = nil,
                         cursor: Swift.String? = nil,
                         archived: Swift.Bool? = nil,
+                        includeList: Swift.Bool? = nil,
                     ) {
                         self.listId = listId
                         self.limit = limit
                         self.cursor = cursor
                         self.archived = archived
+                        self.includeList = includeList
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -1609,6 +1616,7 @@ extension Operations {
                         case limit
                         case cursor
                         case archived
+                        case includeList = "include_list"
                     }
                 }
 

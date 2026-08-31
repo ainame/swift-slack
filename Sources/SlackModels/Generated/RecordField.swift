@@ -25,6 +25,8 @@ public struct RecordField: Codable, Hashable, Sendable {
     public var richText: [DescriptionBlock]?
     /// - Remark: Generated from `#/components/schemas/RecordField/text`.
     public var text: Swift.String?
+    /// - Remark: Generated from `#/components/schemas/RecordField/user`.
+    public var user: [Swift.String]?
     /// - Remark: Generated from `#/components/schemas/RecordField/value`.
     public var value: Swift.Bool?
     /// Creates a new `RecordField`.
@@ -35,6 +37,7 @@ public struct RecordField: Codable, Hashable, Sendable {
     ///   - key:
     ///   - richText:
     ///   - text:
+    ///   - user:
     ///   - value:
     public init(
         checkbox: Swift.Bool? = nil,
@@ -42,6 +45,7 @@ public struct RecordField: Codable, Hashable, Sendable {
         key: Swift.String? = nil,
         richText: [DescriptionBlock]? = nil,
         text: Swift.String? = nil,
+        user: [Swift.String]? = nil,
         value: Swift.Bool? = nil,
     ) {
         self.checkbox = checkbox
@@ -49,6 +53,7 @@ public struct RecordField: Codable, Hashable, Sendable {
         self.key = key
         self.richText = richText
         self.text = text
+        self.user = user
         self.value = value
     }
 
@@ -58,6 +63,7 @@ public struct RecordField: Codable, Hashable, Sendable {
         case key
         case richText = "rich_text"
         case text
+        case user
         case value
     }
 }
