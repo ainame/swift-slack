@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'fileutils'
+require 'json'
 require_relative 'lib/content_transformer'
 require_relative 'lib/import_manager'
 require_relative 'lib/output'
@@ -181,16 +182,48 @@ class CodeTransformer
   end
 end
 
-# Handles parsing and splitting of Swift client functions by API groups
-class ClientFunctionParser
-  API_GROUPS = %w[
-    admin apps assistant auth bookmarks bots canvases chat conversations
-    dnd emoji files functions migration oauth openid pins reactions
-    reminders rtm search stars team tooling users views entity lists
-  ].freeze
+# Loads the top-level Web API groups advertised by slack-api-ref. Keeping this
+# data in the vendor instead of a hand-maintained list lets a newly added Slack
+# group participate in generation automatically.
+class APIGroupCatalog
+  VENDOR_GROUPS_DIRECTORY = File.expand_path('../vendor/slack-api-ref/groups', __dir__)
+
+  def self.load(directory = VENDOR_GROUPS_DIRECTORY)
+    groups = Dir.glob(File.join(directory, '**', '*.json')).filter_map do |path|
+      name = JSON.parse(File.read(path))['name']
+      name.split('.').first if name
+    end
+
+    raise "No API groups found in #{directory}" if groups.empty?
+
+    groups.uniq
+  end
+end
+
+class UnknownAPIGroupError < StandardError; end
+
+# Resolves generated Swift names back to a Slack API group.
+class APIGroupResolver
   GROUP_PREFIX_ALIASES = {
     'slacklists' => 'lists'
   }.freeze
+
+  def self.group_for(name, groups: APIGroupCatalog.load)
+    normalized_name = name.downcase
+
+    GROUP_PREFIX_ALIASES.each do |prefix, alias_group|
+      return alias_group if normalized_name.start_with?(prefix)
+    end
+
+    group = groups.find { |candidate| normalized_name.start_with?(candidate.downcase) }
+    return group if group
+
+    raise UnknownAPIGroupError, "Unable to determine Slack API group for #{name}"
+  end
+end
+
+# Handles parsing and splitting of Swift client functions by API groups
+class ClientFunctionParser
 
   # Extracts header lines from client file (everything before struct declaration)
   def self.extract_header(lines)
@@ -261,14 +294,7 @@ class ClientFunctionParser
 
   # Extracts API group name from function name
   def self.extract_group_name(function_name)
-    group = API_GROUPS.find { |candidate| function_name&.downcase&.start_with?(candidate.downcase) }
-    return group if group
-
-    GROUP_PREFIX_ALIASES.each do |prefix, alias_group|
-      return alias_group if function_name&.downcase&.start_with?(prefix)
-    end
-
-    'unknown'
+    APIGroupResolver.group_for(function_name)
   end
 
   private
@@ -701,12 +727,8 @@ class ProtocolConditionalCompiler
           end
 
           # Start new group
-          if new_group != 'unknown'
-            current_group = new_group
-            updated_lines << "    #if WebAPI_#{GroupNameFormatter.capitalize_group_name(current_group)}\n"
-          else
-            current_group = nil
-          end
+          current_group = new_group
+          updated_lines << "    #if WebAPI_#{GroupNameFormatter.capitalize_group_name(current_group)}\n"
         end
       elsif stripped == '}' && in_protocol
         # End of protocol
@@ -766,12 +788,8 @@ class ProtocolConditionalCompiler
             end
 
             # Start new group
-            if new_group != 'unknown'
-              current_group = new_group
-              updated_lines << "    #if WebAPI_#{GroupNameFormatter.capitalize_group_name(current_group)}\n"
-            else
-              current_group = nil
-            end
+            current_group = new_group
+            updated_lines << "    #if WebAPI_#{GroupNameFormatter.capitalize_group_name(current_group)}\n"
           end
         end
 
@@ -1028,7 +1046,8 @@ public enum Components {
       if group == 'Common'
         content = header + "\nextension Components.Schemas {\n" + schemas.join + "}\n"
       else
-        content = header + "\n#if WebAPI_#{group}\nextension Components.Schemas {\n" +
+        trait = "WebAPI_#{GroupNameFormatter.capitalize_group_name(group)}"
+        content = header + "\n#if #{trait}\nextension Components.Schemas {\n" +
                  schemas.join + "}\n#endif\n"
       end
 
@@ -1439,15 +1458,7 @@ class SchemaGroupDeterminer
     if type_name.end_with?('Response')
       # Extract the prefix before "Response"
       prefix = type_name.gsub(/Response$/, '')
-      # Find the first API group that matches
-      group = ClientFunctionParser::API_GROUPS.find { |g| prefix.downcase.start_with?(g.downcase) }
-      if group.nil?
-        group = ClientFunctionParser::GROUP_PREFIX_ALIASES.find do |group_prefix, _alias_group|
-          prefix.downcase.start_with?(group_prefix)
-        end&.last
-      end
-      return GroupNameFormatter.capitalize_group_name(group) if group
-      return 'Unknown'
+      return GroupNameFormatter.capitalize_group_name(APIGroupResolver.group_for(prefix))
     end
 
     # For non-response types, put in Common
@@ -1461,14 +1472,7 @@ class OperationGroupExtractor
   def self.extract_operation_group_name(operation_name)
     # Operations follow the pattern AdminAppsActivitiesList, UsersInfo, etc.
     # Extract the first part that matches our API groups
-    group = ClientFunctionParser::API_GROUPS.find { |candidate| operation_name.downcase.start_with?(candidate.downcase) }
-    return group if group
-
-    ClientFunctionParser::GROUP_PREFIX_ALIASES.each do |prefix, alias_group|
-      return alias_group if operation_name.downcase.start_with?(prefix)
-    end
-
-    'unknown'
+    APIGroupResolver.group_for(operation_name)
   end
 end
 

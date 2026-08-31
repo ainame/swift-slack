@@ -23,6 +23,7 @@ format-generated:
 
 test-scripts:
 	ruby -I scripts/tests -e 'Dir["scripts/tests/*_test.rb"].sort.each { require File.expand_path(_1) }'
+	ruby scripts/test_process_webapi.rb
 
 update:
 	@echo "Initializing and updating git submodules..."

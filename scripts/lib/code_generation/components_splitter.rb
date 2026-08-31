@@ -142,7 +142,8 @@ public enum Components {
       if group == 'Common'
         content = header + "\nextension Components.Schemas {\n" + adjusted_schemas.join + "}\n"
       else
-        content = header + "\n#if WebAPI_#{group}\nextension Components.Schemas {\n" +
+        trait = "WebAPI_#{GroupNameFormatter.capitalize_group_name(group)}"
+        content = header + "\n#if #{trait}\nextension Components.Schemas {\n" +
                  adjusted_schemas.join + "}\n#endif\n"
       end
 

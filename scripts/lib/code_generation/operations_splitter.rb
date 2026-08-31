@@ -110,7 +110,8 @@ class OperationsSplitter
         }.join
       }
 
-      content = header + "\n#if WebAPI_#{group}\nextension Operations {\n" +
+      trait = "WebAPI_#{GroupNameFormatter.capitalize_group_name(group)}"
+      content = header + "\n#if #{trait}\nextension Operations {\n" +
                adjusted_operations.join + "}\n#endif\n"
 
       # Apply transformations to operations content
