@@ -8,6 +8,26 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ## Unreleased
 
+## [2026.9.0] - 2026-09-03
+
+### Added
+
+* Added generated Web API operations for methods without response examples, including new Admin, Apps, Assistant, and Entity coverage - #121
+* Expanded generated Web API and shared model coverage from the latest Slack schemas - #127, #129
+* Added generated Agents and Blocks Web API groups and traits - #133
+
+### Changed
+
+* Made schema generation reproducible with a locked quicktype toolchain, fail-fast processing, bounded concurrency, generated-tree PR gating, and required script tests - #123
+* Updated the Ruby toolchain to `4.0.6` and quicktype to v26 - #122, #125, #126
+* Updated the GitHub Actions Node setup action to v7 - #124
+
+### Fixed
+
+* Fixed MCP response component naming during Web API schema generation - #128
+* Made Web API group discovery use vendored schema metadata and fail generation instead of emitting an unknown group - #131
+* Preserved canonical OAuth and OpenID group names so their generated components use active traits - #132
+
 ## [2026.7.0] - 2026-07-02
 
 ### Added
