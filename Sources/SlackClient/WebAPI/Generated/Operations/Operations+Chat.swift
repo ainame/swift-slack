@@ -2109,7 +2109,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/channel`.
                     public var channel: Swift.String
-                    /// Array of streaming chunks.
+                    /// Array of streaming chunks. Can include markdown text chunk objects, task update chunk objects, plan update chunks, or blocks chunks.
                     ///
                     /// - Remark: Generated from `#/paths/chat.startStream/POST/requestBody/json/chunks`.
                     public var chunks: OpenAPIRuntime.OpenAPIArrayContainer?
@@ -2151,7 +2151,7 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - channel: An encoded ID that represents a channel, thread, or DM.
-                    ///   - chunks: Array of streaming chunks.
+                    ///   - chunks: Array of streaming chunks. Can include markdown text chunk objects, task update chunk objects, plan update chunks, or blocks chunks.
                     ///   - markdownText: Accepts message text formatted in markdown. Limit this field to 12,000 characters.
                     ///   - threadTs: Provide another message's ts value to reply to. Omit it to stream a top-level message instead of a thread reply; this is only supported in channels where the
                     /// whole channel is one session, such as Slack Code, and returns invalid_thread_ts elsewhere. Passing "0" is equivalent to omitting it.
@@ -2333,7 +2333,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.stopStream/POST/requestBody/json/channel`.
                     public var channel: Swift.String
-                    /// Array of streaming chunks.
+                    /// Array of streaming chunks. Can include markdown text chunk objects, task update chunk objects, plan update chunks, or blocks chunks.
                     ///
                     /// - Remark: Generated from `#/paths/chat.stopStream/POST/requestBody/json/chunks`.
                     public var chunks: OpenAPIRuntime.OpenAPIArrayContainer?
@@ -2362,7 +2362,7 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - channel: An encoded ID that represents a channel, private group, or DM.
-                    ///   - chunks: Array of streaming chunks.
+                    ///   - chunks: Array of streaming chunks. Can include markdown text chunk objects, task update chunk objects, plan update chunks, or blocks chunks.
                     ///   - ts: The timestamp of the streaming message.
                     ///   - markdownText: Accepts message text formatted in markdown. Limit this field to 12,000 characters.
                     ///   - blocks: A list of blocks that will be rendered at the bottom of the finalized message.

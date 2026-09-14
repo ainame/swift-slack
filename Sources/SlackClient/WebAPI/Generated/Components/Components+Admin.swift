@@ -396,40 +396,6 @@ extension Components.Schemas {
         }
     }
 
-    /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsRemoveResponse`.
-    public struct AdminAppsPermissionsRemoveResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsRemoveResponse/ok`.
-        public var ok: Swift.Bool
-        /// Creates a new `AdminAppsPermissionsRemoveResponse`.
-        ///
-        /// - Parameters:
-        ///   - ok:
-        public init(ok: Swift.Bool) {
-            self.ok = ok
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case ok
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsSetResponse`.
-    public struct AdminAppsPermissionsSetResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsSetResponse/ok`.
-        public var ok: Swift.Bool
-        /// Creates a new `AdminAppsPermissionsSetResponse`.
-        ///
-        /// - Parameters:
-        ///   - ok:
-        public init(ok: Swift.Bool) {
-            self.ok = ok
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case ok
-        }
-    }
-
     /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse`.
     public struct AdminAppsRequestsCancelResponse: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/error`.
