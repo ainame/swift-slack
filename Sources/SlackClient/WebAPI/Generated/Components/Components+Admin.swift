@@ -396,6 +396,80 @@ extension Components.Schemas {
         }
     }
 
+    /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsRemoveResponse`.
+    public struct AdminAppsPermissionsRemoveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsRemoveResponse/channel_ids`.
+        public var channelIds: [Swift.String]?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsRemoveResponse/channel_restriction_mode`.
+        public var channelRestrictionMode: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsRemoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsRemoveResponse/permission_type`.
+        public var permissionType: Swift.String?
+        /// Creates a new `AdminAppsPermissionsRemoveResponse`.
+        ///
+        /// - Parameters:
+        ///   - channelIds:
+        ///   - channelRestrictionMode:
+        ///   - ok:
+        ///   - permissionType:
+        public init(
+            channelIds: [Swift.String]? = nil,
+            channelRestrictionMode: Swift.String? = nil,
+            ok: Swift.Bool,
+            permissionType: Swift.String? = nil,
+        ) {
+            self.channelIds = channelIds
+            self.channelRestrictionMode = channelRestrictionMode
+            self.ok = ok
+            self.permissionType = permissionType
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case channelIds = "channel_ids"
+            case channelRestrictionMode = "channel_restriction_mode"
+            case ok
+            case permissionType = "permission_type"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsSetResponse`.
+    public struct AdminAppsPermissionsSetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsSetResponse/channel_ids`.
+        public var channelIds: [Swift.String]?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsSetResponse/channel_restriction_mode`.
+        public var channelRestrictionMode: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsSetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsPermissionsSetResponse/permission_type`.
+        public var permissionType: Swift.String?
+        /// Creates a new `AdminAppsPermissionsSetResponse`.
+        ///
+        /// - Parameters:
+        ///   - channelIds:
+        ///   - channelRestrictionMode:
+        ///   - ok:
+        ///   - permissionType:
+        public init(
+            channelIds: [Swift.String]? = nil,
+            channelRestrictionMode: Swift.String? = nil,
+            ok: Swift.Bool,
+            permissionType: Swift.String? = nil,
+        ) {
+            self.channelIds = channelIds
+            self.channelRestrictionMode = channelRestrictionMode
+            self.ok = ok
+            self.permissionType = permissionType
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case channelIds = "channel_ids"
+            case channelRestrictionMode = "channel_restriction_mode"
+            case ok
+            case permissionType = "permission_type"
+        }
+    }
+
     /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse`.
     public struct AdminAppsRequestsCancelResponse: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/error`.

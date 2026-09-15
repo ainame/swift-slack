@@ -44,7 +44,7 @@ def generate_json_schema(input_path, output_path, model_name)
     '--alphabetize-properties',
     '--all-properties-optional',
     '--top-level', model_name,
-    input_path,
+    *Array(input_path),
   ]
   puts "Generating schema: $ #{Shellwords.join(command)}"
   stdout, stderr, status = Open3.capture3(*command)
