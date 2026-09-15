@@ -114,6 +114,16 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.apps.permissions.list`.
     /// - Remark: Generated from `#/paths//admin.apps.permissions.list/post(adminAppsPermissionsList)`.
     func adminAppsPermissionsList(_ input: Operations.AdminAppsPermissionsList.Input) async throws -> Operations.AdminAppsPermissionsList.Output
+    /// Revoke an entity's access to an app that has its permission type set to named_entities
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.remove`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.remove/post(adminAppsPermissionsRemove)`.
+    func adminAppsPermissionsRemove(_ input: Operations.AdminAppsPermissionsRemove.Input) async throws -> Operations.AdminAppsPermissionsRemove.Output
+    /// Set the permission type for who can access an app
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.set`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.set/post(adminAppsPermissionsSet)`.
+    func adminAppsPermissionsSet(_ input: Operations.AdminAppsPermissionsSet.Input) async throws -> Operations.AdminAppsPermissionsSet.Output
     /// Cancel app request for team
     ///
     /// - Remark: HTTP `POST /admin.apps.requests.cancel`.
@@ -1610,6 +1620,32 @@ extension APIProtocol {
         body: Operations.AdminAppsPermissionsList.Input.Body
     ) async throws -> Operations.AdminAppsPermissionsList.Output {
         try await adminAppsPermissionsList(Operations.AdminAppsPermissionsList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Revoke an entity's access to an app that has its permission type set to named_entities
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.remove`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.remove/post(adminAppsPermissionsRemove)`.
+    public func adminAppsPermissionsRemove(
+        headers: Operations.AdminAppsPermissionsRemove.Input.Headers = .init(),
+        body: Operations.AdminAppsPermissionsRemove.Input.Body
+    ) async throws -> Operations.AdminAppsPermissionsRemove.Output {
+        try await adminAppsPermissionsRemove(Operations.AdminAppsPermissionsRemove.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Set the permission type for who can access an app
+    ///
+    /// - Remark: HTTP `POST /admin.apps.permissions.set`.
+    /// - Remark: Generated from `#/paths//admin.apps.permissions.set/post(adminAppsPermissionsSet)`.
+    public func adminAppsPermissionsSet(
+        headers: Operations.AdminAppsPermissionsSet.Input.Headers = .init(),
+        body: Operations.AdminAppsPermissionsSet.Input.Body
+    ) async throws -> Operations.AdminAppsPermissionsSet.Output {
+        try await adminAppsPermissionsSet(Operations.AdminAppsPermissionsSet.Input(
             headers: headers,
             body: body
         ))

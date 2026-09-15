@@ -24,6 +24,28 @@ UNSUPPORTED_METHODS = [
   /rtm\./
 ]
 
+# Reviewed reference-only methods whose response examples replace the minimal
+# success fallback. Keep this explicit until other reference-only APIs are reviewed.
+REFERENCE_RESPONSE_METHODS = %w[
+  admin.apps.permissions.remove
+  admin.apps.permissions.set
+].freeze
+
+def reference_response_samples(method_name, api_ref)
+  examples = api_ref.dig('response', 'examples')
+  return [{ 'ok' => true }] if examples == []
+  return unless REFERENCE_RESPONSE_METHODS.include?(method_name)
+
+  raise "Missing response examples for #{method_name}" unless examples.is_a?(Array) && !examples.empty?
+
+  examples.map do |example|
+    response = JSON.parse(example)
+    raise "Invalid response object for #{method_name}" unless response.is_a?(Hash) && [true, false].include?(response['ok'])
+
+    response
+  end
+end
+
 api_ref_dir = './vendor/slack-api-ref/methods/'
 api_ref_paths = Dir.glob("#{api_ref_dir}/**/*.json").sort
 
@@ -42,22 +64,25 @@ def main(api_ref_paths, sample_json_paths, output_dir)
     generate_openapi_component(path, File.join(output_dir, 'schemas'))
   end
 
-  # Some Slack methods intentionally have no response examples in slack-api-ref
-  # and therefore no corresponding java-slack-sdk response fixture. They still
-  # use Slack's standard success envelope, so generate that minimal schema
-  # rather than omitting the operation entirely.
+  # Use reviewed reference examples when Java fixtures are unavailable. Explicit
+  # empty example lists retain the existing minimal success-envelope fallback.
   fallback_responses_dir = File.join(output_dir, 'fallback-responses')
   api_ref_paths.each do |path|
     method_name = File.basename(path, '.json')
     next if sample_json_paths.any? { File.basename(_1, '.json') == method_name }
 
     api_ref = JSON.parse(File.read(path))
-    next unless api_ref.dig('response', 'examples') == []
+    responses = reference_response_samples(method_name, api_ref)
+    next unless responses
 
     FileUtils.mkdir_p(fallback_responses_dir)
     fallback_response_path = File.join(fallback_responses_dir, "#{method_name}.json")
-    File.write(fallback_response_path, JSON.generate({ 'ok' => true }))
-    generate_openapi_component(fallback_response_path, File.join(output_dir, 'schemas'))
+    response_paths = responses.each_with_index.map do |response, index|
+      sample_path = "#{fallback_response_path}.#{index}.json"
+      File.write(sample_path, JSON.generate(response))
+      sample_path
+    end
+    generate_openapi_component(fallback_response_path, File.join(output_dir, 'schemas'), response_paths)
   end
 
   # Load generated schemas and put them in #components/schemas section
@@ -70,7 +95,7 @@ def main(api_ref_paths, sample_json_paths, output_dir)
   # Generate paths
   paths = {}
   api_ref_paths.each do |path|
-    # Methods without a fixture or an explicit empty upstream response are unsupported.
+    # Methods need a fixture, reviewed reference examples, or an explicit empty response.
     method_name = File.basename(path, '.json')
     unless schema_paths.any? { File.basename(_1, '.json') == method_name }
       puts "Skip, this method doesn't have response schema #{method_name}"
@@ -88,7 +113,7 @@ def main(api_ref_paths, sample_json_paths, output_dir)
   File.write(File.join(output_dir, 'openapi.json'), JSON.pretty_generate(openapi))
 end
 
-def generate_openapi_component(path, output_dir)
+def generate_openapi_component(path, output_dir, sample_paths = nil)
   method_name = File.basename(path, '.json')
   return puts "Skip, this method isn't supported #{method_name}" if UNSUPPORTED_METHODS.include?(method_name)
 
@@ -99,7 +124,7 @@ def generate_openapi_component(path, output_dir)
     puts "Found #{path} exists. Skip generating schema."
     json = JSON.parse(File.read(output_path))
   else
-    json = generate_json_schema(path, output_path, model_name)
+    json = generate_json_schema(sample_paths || path, output_path, model_name)
   end
 
   # fix json
@@ -243,4 +268,4 @@ def remove_orphan_schemas(openapi)
   end
 end
 
-main(api_ref_paths, sample_json_paths, output_dir)
+main(api_ref_paths, sample_json_paths, output_dir) if $PROGRAM_NAME == __FILE__
