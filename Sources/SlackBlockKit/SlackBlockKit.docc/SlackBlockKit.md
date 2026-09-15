@@ -6,7 +6,7 @@ Type-safe Swift API for Slack's Block Kit UI framework.
 
 SlackBlockKit provides a comprehensive, type-safe Swift interface to Slack's Block Kit framework. Block Kit is Slack's UI framework that allows you to create rich, interactive messages and modal interfaces using a system of components called "blocks."
 
-This library gives you direct access to all Block Kit components with full control over their properties and structure, matching Slack's JSON Block Kit specification exactly.
+This library provides Swift models for supported Block Kit components, with explicit mappings to Slack's JSON fields.
 
 ## Architecture
 
@@ -60,6 +60,25 @@ try await slack.client.chatPostMessage(
 )
 ```
 
+## Containers and Task Cards
+
+Use ``ContainerBlock`` to group child blocks and ``TaskCardBlock`` to display a task's status, rich-text details, output, and URL sources. Import `SlackBlockKitDSL` to build container children with a result builder:
+
+```swift
+import SlackBlockKit
+import SlackBlockKitDSL
+
+let tasks = ContainerBlock(title: "Tasks", isCollapsible: true) {
+    TaskCardBlock(
+        taskId: "task_1",
+        title: "Collecting results",
+        status: "in_progress"
+    )
+}
+
+let blocks: [Block] = [tasks.render()]
+```
+
 ## Topics
 
 ### Getting Started
@@ -80,6 +99,12 @@ try await slack.client.chatPostMessage(
 - ``VideoBlock``
 - ``FileBlock``
 - ``MarkdownBlock``
+- ``ContainerBlock``
+- ``TaskCardBlock``
+
+### Source Elements
+
+- ``URLSourceElement``
 
 ### Interactive Elements
 
@@ -105,6 +130,7 @@ try await slack.client.chatPostMessage(
 - ``ConfirmationDialogObject``
 - ``DispatchActionConfigurationObject``
 - ``ConversationFilterObject``
+- ``SlackIconObject``
 
 ### Views
 
