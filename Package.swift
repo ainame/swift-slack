@@ -62,7 +62,7 @@ let package = Package(
     ],
     traits: Set(traits),
     dependencies: [
-        .package(url: "https://github.com/apple/swift-crypto", from: "4.3.0"),
+        .package(url: "https://github.com/apple/swift-crypto", from: "5.0.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.10.1"),
         .package(url: "https://github.com/apple/swift-nio", from: "2.94.1"),
         .package(url: "https://github.com/apple/swift-openapi-generator.git", from: "1.11.0"),
