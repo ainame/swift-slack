@@ -8,6 +8,23 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ## Unreleased
 
+## [2026.9.1] - 2026-09-27
+
+### Added
+
+* Added container and task-card Block Kit models, URL source elements, Slack icons, and DSL support for nested container blocks - #135
+
+### Changed
+
+* **BREAKING**: Added container and task-card cases to `Block`, requiring updates to exhaustive switches, and removed `isEmbeddedPreviewEnabled` from `admin.apps.config.set` to match the upstream schema - #135
+* Updated Slack schemas and streaming API descriptions - #135
+* Updated the Ruby toolchain to `4.0.7` - #136
+
+### Fixed
+
+* Restored `admin.apps.permissions.remove` and `admin.apps.permissions.set` generation with channel restriction fields after upstream response examples changed - #135
+* Made Web API generation support multiple response samples and reject invalid reviewed examples, and installed locked generator dependencies before CI script tests - #135
+
 ## [2026.9.0] - 2026-09-03
 
 ### Added
