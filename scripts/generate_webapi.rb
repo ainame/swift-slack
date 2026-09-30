@@ -140,6 +140,11 @@ def generate_openapi_component(path, output_dir)
     TypeFixer.new,
     UserProfileRefFixer.new,
     TeamProfileRefFixer.new,
+    CallRefFixer.new,
+    APITestArgsRefFixer.new,
+    AppWorkflowRefFixer.new,
+    UsergroupRefFixer.new,
+    WorkflowCollaboratorErrorRefFixer.new,
     OptionalityFixer.new,
     ItemTsOptionalAdder.new,
   ]

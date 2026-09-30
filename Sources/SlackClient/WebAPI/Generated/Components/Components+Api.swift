@@ -20,7 +20,7 @@ extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/APITestResponse`.
     public struct APITestResponse: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/APITestResponse/args`.
-        public var args: SlackModels.Args?
+        public var args: SlackModels.APITestArgs?
         /// - Remark: Generated from `#/components/schemas/APITestResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/APITestResponse/needed`.
@@ -41,7 +41,7 @@ extension Components.Schemas {
         ///   - provided:
         ///   - warning:
         public init(
-            args: SlackModels.Args? = nil,
+            args: SlackModels.APITestArgs? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,

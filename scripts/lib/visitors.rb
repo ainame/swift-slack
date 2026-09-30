@@ -294,7 +294,127 @@ class TeamProfileRefFixer
   end
 end
 
+# Hand-written models live in Sources/SlackModels; ref fixers point inferred
+# references at them and leave this placeholder so the OpenAPI document stays
+# valid. The generated Swift type is dropped by SlackModelsExtractor.
+module HandwrittenModel
+  def self.placeholder_schema
+    {
+      'type' => 'object',
+      'properties' => {},
+      'additionalProperties' => true
+    }
+  end
+end
 
+# calls.* responses use the Calls API call object, which is the hand-written
+# SlackModels.Call (com.slack.api.model.Call in java-slack-sdk). Message call
+# blocks also define a `Call` with an unrelated shape, so every inferred `Call`
+# is emptied, like View and Block in TypeFixer, and its nested schemas are
+# removed as orphans.
+class CallRefFixer
+  def walk(root)
+    definitions = root['definitions']
+    return unless definitions.is_a?(Hash) && definitions.key?('Call')
+
+    definitions['Call'] = HandwrittenModel.placeholder_schema
+  end
+end
+
+# api.test echoes its arguments in `args`, which quicktype names `Args`. Use the
+# hand-written SlackModels.APITestArgs (ApiTestResponse.Args in java-slack-sdk).
+class APITestArgsRefFixer
+  TARGET_SCHEMA = 'APITestResponse'.freeze
+
+  def walk(root)
+    definitions = root['definitions']
+    return unless definitions.is_a?(Hash)
+
+    args_ref = definitions.dig(TARGET_SCHEMA, 'properties', 'args', '$ref')
+    return unless args_ref == '#/components/schemas/Args'
+
+    definitions[TARGET_SCHEMA]['properties']['args']['$ref'] = '#/components/schemas/APITestArgs'
+    definitions.delete('Args')
+    definitions['APITestArgs'] = HandwrittenModel.placeholder_schema
+  end
+end
+
+# admin.workflows.search returns app workflows, which quicktype names `Workflow`
+# like several unrelated shapes in other responses. Use the hand-written
+# SlackModels.AppWorkflow (com.slack.api.model.admin.AppWorkflow in
+# java-slack-sdk) and keep this response's `Workflow` out of the shared schemas.
+class AppWorkflowRefFixer
+  TARGET_SCHEMA = 'AdminWorkflowsSearchResponse'.freeze
+
+  def walk(root)
+    definitions = root['definitions']
+    return unless definitions.is_a?(Hash)
+
+    items = definitions.dig(TARGET_SCHEMA, 'properties', 'workflows', 'items')
+    return unless items.is_a?(Hash) && items['$ref'] == '#/components/schemas/Workflow'
+
+    items['$ref'] = '#/components/schemas/AppWorkflow'
+    remove_unreferenced(definitions, from: 'Workflow')
+    definitions['AppWorkflow'] = HandwrittenModel.placeholder_schema
+  end
+
+  private
+
+  # Removes the replaced definition and the nested definitions only it used
+  # (Icons, Step, ...), so they cannot win shared name collisions.
+  def remove_unreferenced(definitions, from:)
+    candidates = [from] + referenced_names(definitions, from)
+    definitions.delete(from)
+    candidates.each do |name|
+      still_used = definitions.any? { |other, _| other != name && referenced_names(definitions, other, [other]).include?(name) }
+      definitions.delete(name) unless still_used
+    end
+  end
+
+  def referenced_names(definitions, name, seen = [name])
+    definitions.fetch(name, {}).to_json.scan(%r{"#/components/schemas/([^"]+)"}).flatten.uniq.flat_map do |child|
+      next [] if seen.include?(child)
+
+      [child] + referenced_names(definitions, child, seen + [child])
+    end.uniq
+  end
+end
+
+# Usergroup responses each contain a different subset of fields, so the merged
+# `Usergroup` kept only the fields of the last fixture. Use the hand-written
+# SlackModels.Usergroup (com.slack.api.model.Usergroup in java-slack-sdk).
+class UsergroupRefFixer
+  def walk(root)
+    definitions = root['definitions']
+    return unless definitions.is_a?(Hash) && definitions.key?('Usergroup')
+
+    definitions['Usergroup'] = HandwrittenModel.placeholder_schema
+  end
+end
+
+# admin.workflows.collaborators.* report per-user failures in `errors`, whose
+# items quicktype names `Error` like unrelated error shapes in other responses.
+# Use the hand-written SlackModels.WorkflowCollaboratorError.
+class WorkflowCollaboratorErrorRefFixer
+  TARGET_SCHEMAS = %w[
+    AdminWorkflowsCollaboratorsAddResponse
+    AdminWorkflowsCollaboratorsRemoveResponse
+  ].freeze
+
+  def walk(root)
+    definitions = root['definitions']
+    return unless definitions.is_a?(Hash)
+
+    TARGET_SCHEMAS.each do |schema_name|
+      items = definitions.dig(schema_name, 'properties', 'errors', 'items')
+      next unless items.is_a?(Hash) && items['$ref'] == '#/components/schemas/Error'
+
+      items['$ref'] = '#/components/schemas/WorkflowCollaboratorError'
+      definitions.delete('Error')
+      definitions['WorkflowCollaboratorError'] = HandwrittenModel.placeholder_schema
+    end
+  end
+end
 
 # Add optional ts property to Item schema for reaction events compatibility
 class ItemTsOptionalAdder
