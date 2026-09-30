@@ -9,12 +9,14 @@ let webAPITraits: [String] = [
     "WebAPI_Chat",
     "WebAPI_Views",
     "WebAPI_Agents",
+    "WebAPI_Api",
     "WebAPI_Apps",
     "WebAPI_Assistant",
     "WebAPI_Auth",
     "WebAPI_Blocks",
     "WebAPI_Bookmarks",
     "WebAPI_Bots",
+    "WebAPI_Calls",
     "WebAPI_Canvases",
     "WebAPI_Conversations",
     "WebAPI_DND",
@@ -33,7 +35,9 @@ let webAPITraits: [String] = [
     "WebAPI_Stars",
     "WebAPI_Team",
     "WebAPI_Tooling",
+    "WebAPI_Usergroups",
     "WebAPI_Users",
+    "WebAPI_Workflows",
 ]
 
 var traits: [Trait] = webAPITraits.map { .trait(name: $0) }

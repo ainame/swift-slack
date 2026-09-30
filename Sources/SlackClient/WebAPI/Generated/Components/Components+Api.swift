@@ -15,53 +15,53 @@ import SlackModels
 #endif
 /// Types generated from the components section of the OpenAPI document.
 
-#if WebAPI_Entity
+#if WebAPI_Api
 extension Components.Schemas {
-    /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse`.
-    public struct EntityPresentDetailsResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/error`.
+    /// - Remark: Generated from `#/components/schemas/APITestResponse`.
+    public struct APITestResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/APITestResponse/args`.
+        public var args: SlackModels.Args?
+        /// - Remark: Generated from `#/components/schemas/APITestResponse/error`.
         public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/needed`.
+        /// - Remark: Generated from `#/components/schemas/APITestResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/ok`.
+        /// - Remark: Generated from `#/components/schemas/APITestResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/provided`.
+        /// - Remark: Generated from `#/components/schemas/APITestResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/warning`.
+        /// - Remark: Generated from `#/components/schemas/APITestResponse/warning`.
         public var warning: Swift.String?
-        /// Creates a new `EntityPresentDetailsResponse`.
+        /// Creates a new `APITestResponse`.
         ///
         /// - Parameters:
+        ///   - args:
         ///   - error:
         ///   - needed:
         ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
         public init(
+            args: SlackModels.Args? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
         ) {
+            self.args = args
             self.error = error
             self.needed = needed
             self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case args
             case error
             case needed
             case ok
             case provided
-            case responseMetadata = "response_metadata"
             case warning
         }
     }

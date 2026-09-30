@@ -1287,1171 +1287,6 @@ extension Operations {
         }
     }
 
-    public enum AdminAppsMcpServersList {
-        public static let id: Swift.String = "adminAppsMcpServersList"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersList.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersList.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminAppsMcpServersList.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// The maximum number of items to return. Must be between 1 - 1000 both inclusive.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/requestBody/json/limit`.
-                    public var limit: Swift.Int?
-                    /// Set cursor to next_cursor returned by the previous call to list items in the next page.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/requestBody/json/cursor`.
-                    public var cursor: Swift.String?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - limit: The maximum number of items to return. Must be between 1 - 1000 both inclusive.
-                    ///   - cursor: Set cursor to next_cursor returned by the previous call to list items in the next page.
-                    public init(
-                        limit: Swift.Int? = nil,
-                        cursor: Swift.String? = nil,
-                    ) {
-                        self.limit = limit
-                        self.cursor = cursor
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case limit
-                        case cursor
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminAppsMcpServersList.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminAppsMcpServersList.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminAppsMcpServersList.Input.Headers = .init(),
-                body: Operations.AdminAppsMcpServersList.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminAppsMcpServersListResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminAppsMcpServersListResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminAppsMcpServersList.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminAppsMcpServersList.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.list/post(adminAppsMcpServersList)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminAppsMcpServersList.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminAppsMcpServersList.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum AdminAppsMcpServersPermissionsList {
-        public static let id: Swift.String = "adminAppsMcpServersPermissionsList"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersPermissionsList.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersPermissionsList.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminAppsMcpServersPermissionsList.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Encoded ID of the app.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/requestBody/json/app_id`.
-                    public var appId: Swift.String
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - appId: Encoded ID of the app.
-                    public init(appId: Swift.String) {
-                        self.appId = appId
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case appId = "app_id"
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminAppsMcpServersPermissionsList.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminAppsMcpServersPermissionsList.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminAppsMcpServersPermissionsList.Input.Headers = .init(),
-                body: Operations.AdminAppsMcpServersPermissionsList.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminAppsMcpServersPermissionsListResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminAppsMcpServersPermissionsListResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminAppsMcpServersPermissionsList.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminAppsMcpServersPermissionsList.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.list/post(adminAppsMcpServersPermissionsList)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminAppsMcpServersPermissionsList.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminAppsMcpServersPermissionsList.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum AdminAppsMcpServersPermissionsSet {
-        public static let id: Swift.String = "adminAppsMcpServersPermissionsSet"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersPermissionsSet.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersPermissionsSet.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminAppsMcpServersPermissionsSet.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Encoded ID of the app.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json/app_id`.
-                    public var appId: Swift.String
-                    /// Encoded ID of the MCP server.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json/server_id`.
-                    public var serverId: Swift.String
-                    /// The type of permission that defines who can use this MCP server.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json/permission_type`.
-                    public var permissionType: Swift.String
-                    /// List of user IDs to set for named_entities or named_entities_exclude.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json/user_ids`.
-                    public var userIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// List of encoded usergroup IDs.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json/usergroup_ids`.
-                    public var usergroupIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - appId: Encoded ID of the app.
-                    ///   - serverId: Encoded ID of the MCP server.
-                    ///   - permissionType: The type of permission that defines who can use this MCP server.
-                    ///   - userIds: List of user IDs to set for named_entities or named_entities_exclude.
-                    ///   - usergroupIds: List of encoded usergroup IDs.
-                    public init(
-                        appId: Swift.String,
-                        serverId: Swift.String,
-                        permissionType: Swift.String,
-                        userIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                        usergroupIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                    ) {
-                        self.appId = appId
-                        self.serverId = serverId
-                        self.permissionType = permissionType
-                        self.userIds = userIds
-                        self.usergroupIds = usergroupIds
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case appId = "app_id"
-                        case serverId = "server_id"
-                        case permissionType = "permission_type"
-                        case userIds = "user_ids"
-                        case usergroupIds = "usergroup_ids"
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminAppsMcpServersPermissionsSet.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminAppsMcpServersPermissionsSet.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminAppsMcpServersPermissionsSet.Input.Headers = .init(),
-                body: Operations.AdminAppsMcpServersPermissionsSet.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminAppsMcpServersPermissionsSetResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminAppsMcpServersPermissionsSetResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminAppsMcpServersPermissionsSet.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminAppsMcpServersPermissionsSet.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.set/post(adminAppsMcpServersPermissionsSet)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminAppsMcpServersPermissionsSet.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminAppsMcpServersPermissionsSet.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum AdminAppsPermissionsAdd {
-        public static let id: Swift.String = "adminAppsPermissionsAdd"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.apps.permissions.add/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsPermissionsAdd.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsPermissionsAdd.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminAppsPermissionsAdd.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.apps.permissions.add/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.add/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Encoded ID of the app.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.add/POST/requestBody/json/app_id`.
-                    public var appId: Swift.String
-                    /// List of user IDs to allow for named_entities visibility.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.add/POST/requestBody/json/user_ids`.
-                    public var userIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// List of encoded usergroup IDs.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.add/POST/requestBody/json/usergroup_ids`.
-                    public var usergroupIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// List of encoded channel IDs to add to the channel restriction list. Interpretation depends on the app's channel_restriction_mode, which is configured via the
-                    /// admin.apps.permissions.set method.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.add/POST/requestBody/json/channel_ids`.
-                    public var channelIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - appId: Encoded ID of the app.
-                    ///   - userIds: List of user IDs to allow for named_entities visibility.
-                    ///   - usergroupIds: List of encoded usergroup IDs.
-                    ///   - channelIds: List of encoded channel IDs to add to the channel restriction list. Interpretation depends on the app's channel_restriction_mode, which is configured via the
-                    /// admin.apps.permissions.set method.
-                    public init(
-                        appId: Swift.String,
-                        userIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                        usergroupIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                        channelIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                    ) {
-                        self.appId = appId
-                        self.userIds = userIds
-                        self.usergroupIds = usergroupIds
-                        self.channelIds = channelIds
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case appId = "app_id"
-                        case userIds = "user_ids"
-                        case usergroupIds = "usergroup_ids"
-                        case channelIds = "channel_ids"
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.add/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminAppsPermissionsAdd.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminAppsPermissionsAdd.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminAppsPermissionsAdd.Input.Headers = .init(),
-                body: Operations.AdminAppsPermissionsAdd.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.add/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.add/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminAppsPermissionsAddResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminAppsPermissionsAddResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminAppsPermissionsAdd.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminAppsPermissionsAdd.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.apps.permissions.add/post(adminAppsPermissionsAdd)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminAppsPermissionsAdd.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminAppsPermissionsAdd.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum AdminAppsPermissionsList {
-        public static let id: Swift.String = "adminAppsPermissionsList"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.apps.permissions.list/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsPermissionsList.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsPermissionsList.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminAppsPermissionsList.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.apps.permissions.list/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.list/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Encoded ID of the app.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.list/POST/requestBody/json/app_id`.
-                    public var appId: Swift.String
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - appId: Encoded ID of the app.
-                    public init(appId: Swift.String) {
-                        self.appId = appId
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case appId = "app_id"
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.list/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminAppsPermissionsList.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminAppsPermissionsList.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminAppsPermissionsList.Input.Headers = .init(),
-                body: Operations.AdminAppsPermissionsList.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.list/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.list/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminAppsPermissionsListResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminAppsPermissionsListResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminAppsPermissionsList.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminAppsPermissionsList.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.apps.permissions.list/post(adminAppsPermissionsList)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminAppsPermissionsList.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminAppsPermissionsList.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum AdminAppsPermissionsRemove {
-        public static let id: Swift.String = "adminAppsPermissionsRemove"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.apps.permissions.remove/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsPermissionsRemove.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsPermissionsRemove.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminAppsPermissionsRemove.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.apps.permissions.remove/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.remove/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Encoded ID of the app.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.remove/POST/requestBody/json/app_id`.
-                    public var appId: Swift.String
-                    /// List of user IDs whose named_entities access will be revoked.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.remove/POST/requestBody/json/user_ids`.
-                    public var userIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// List of encoded usergroup IDs.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.remove/POST/requestBody/json/usergroup_ids`.
-                    public var usergroupIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// List of encoded channel IDs to remove from the channel restriction list. Interpretation depends on the app's channel_restriction_mode, which is configured via the
-                    /// admin.apps.permissions.set method.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.remove/POST/requestBody/json/channel_ids`.
-                    public var channelIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - appId: Encoded ID of the app.
-                    ///   - userIds: List of user IDs whose named_entities access will be revoked.
-                    ///   - usergroupIds: List of encoded usergroup IDs.
-                    ///   - channelIds: List of encoded channel IDs to remove from the channel restriction list. Interpretation depends on the app's channel_restriction_mode, which is configured via
-                    /// the admin.apps.permissions.set method.
-                    public init(
-                        appId: Swift.String,
-                        userIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                        usergroupIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                        channelIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                    ) {
-                        self.appId = appId
-                        self.userIds = userIds
-                        self.usergroupIds = usergroupIds
-                        self.channelIds = channelIds
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case appId = "app_id"
-                        case userIds = "user_ids"
-                        case usergroupIds = "usergroup_ids"
-                        case channelIds = "channel_ids"
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.remove/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminAppsPermissionsRemove.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminAppsPermissionsRemove.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminAppsPermissionsRemove.Input.Headers = .init(),
-                body: Operations.AdminAppsPermissionsRemove.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.remove/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.remove/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminAppsPermissionsRemoveResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminAppsPermissionsRemoveResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminAppsPermissionsRemove.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminAppsPermissionsRemove.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.apps.permissions.remove/post(adminAppsPermissionsRemove)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminAppsPermissionsRemove.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminAppsPermissionsRemove.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum AdminAppsPermissionsSet {
-        public static let id: Swift.String = "adminAppsPermissionsSet"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsPermissionsSet.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsPermissionsSet.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminAppsPermissionsSet.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Encoded ID of the app.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/requestBody/json/app_id`.
-                    public var appId: Swift.String
-                    /// The type of permission that defines who can access the app.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/requestBody/json/permission_type`.
-                    public var permissionType: Swift.String
-                    /// List of user IDs to allow for named_entities visibility.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/requestBody/json/user_ids`.
-                    public var userIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// List of encoded usergroup IDs.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/requestBody/json/usergroup_ids`.
-                    public var usergroupIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// The mode that defines where the app can be used in channels.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/requestBody/json/channel_restriction_mode`.
-                    public var channelRestrictionMode: Swift.String?
-                    /// List of encoded channel IDs for channel restrictions. Semantics depend on channel_restriction_mode: allowlist for specific_channels, exclusion list for all_channels_except.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/requestBody/json/channel_ids`.
-                    public var channelIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - appId: Encoded ID of the app.
-                    ///   - permissionType: The type of permission that defines who can access the app.
-                    ///   - userIds: List of user IDs to allow for named_entities visibility.
-                    ///   - usergroupIds: List of encoded usergroup IDs.
-                    ///   - channelRestrictionMode: The mode that defines where the app can be used in channels.
-                    ///   - channelIds: List of encoded channel IDs for channel restrictions. Semantics depend on channel_restriction_mode: allowlist for specific_channels, exclusion list for
-                    /// all_channels_except.
-                    public init(
-                        appId: Swift.String,
-                        permissionType: Swift.String,
-                        userIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                        usergroupIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                        channelRestrictionMode: Swift.String? = nil,
-                        channelIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                    ) {
-                        self.appId = appId
-                        self.permissionType = permissionType
-                        self.userIds = userIds
-                        self.usergroupIds = usergroupIds
-                        self.channelRestrictionMode = channelRestrictionMode
-                        self.channelIds = channelIds
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case appId = "app_id"
-                        case permissionType = "permission_type"
-                        case userIds = "user_ids"
-                        case usergroupIds = "usergroup_ids"
-                        case channelRestrictionMode = "channel_restriction_mode"
-                        case channelIds = "channel_ids"
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminAppsPermissionsSet.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminAppsPermissionsSet.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminAppsPermissionsSet.Input.Headers = .init(),
-                body: Operations.AdminAppsPermissionsSet.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.apps.permissions.set/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminAppsPermissionsSetResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminAppsPermissionsSetResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminAppsPermissionsSet.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminAppsPermissionsSet.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.apps.permissions.set/post(adminAppsPermissionsSet)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminAppsPermissionsSet.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminAppsPermissionsSet.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
     public enum AdminAppsRequestsCancel {
         public static let id: Swift.String = "adminAppsRequestsCancel"
         public struct Input: Sendable, Hashable {
@@ -3264,298 +2099,6 @@ extension Operations {
             /// - Throws: An error if `self` is not `.ok`.
             /// - SeeAlso: `.ok`.
             public var ok: Operations.AdminAppsUninstall.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum AdminAuditAnomalyAllowGetItem {
-        public static let id: Swift.String = "adminAuditAnomalyAllowGetItem"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.getItem/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAuditAnomalyAllowGetItem.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAuditAnomalyAllowGetItem.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminAuditAnomalyAllowGetItem.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.getItem/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.getItem/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Creates a new `JsonPayload`.
-                    public init() {}
-                    public init(from decoder: any Swift.Decoder) throws {
-                        try decoder.ensureNoAdditionalProperties(knownKeys: [])
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.getItem/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminAuditAnomalyAllowGetItem.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminAuditAnomalyAllowGetItem.Input.Body?
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminAuditAnomalyAllowGetItem.Input.Headers = .init(),
-                body: Operations.AdminAuditAnomalyAllowGetItem.Input.Body? = nil,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.getItem/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.getItem/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminAuditAnomalyAllowGetItemResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminAuditAnomalyAllowGetItemResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminAuditAnomalyAllowGetItem.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminAuditAnomalyAllowGetItem.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.getItem/post(adminAuditAnomalyAllowGetItem)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminAuditAnomalyAllowGetItem.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminAuditAnomalyAllowGetItem.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum AdminAuditAnomalyAllowUpdateItem {
-        public static let id: Swift.String = "adminAuditAnomalyAllowUpdateItem"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.updateItem/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAuditAnomalyAllowUpdateItem.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAuditAnomalyAllowUpdateItem.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminAuditAnomalyAllowUpdateItem.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.updateItem/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.updateItem/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// allow list of IPv4 addresses using cidr notation in the Enterprise organization configuration.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.updateItem/POST/requestBody/json/trusted_cidr`.
-                    public var trustedCidr: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// allow list of Autonomous System Numbers (ASN) in the Enterprise organization configuration.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.updateItem/POST/requestBody/json/trusted_asns`.
-                    public var trustedAsns: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - trustedCidr: allow list of IPv4 addresses using cidr notation in the Enterprise organization configuration.
-                    ///   - trustedAsns: allow list of Autonomous System Numbers (ASN) in the Enterprise organization configuration.
-                    public init(
-                        trustedCidr: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                        trustedAsns: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                    ) {
-                        self.trustedCidr = trustedCidr
-                        self.trustedAsns = trustedAsns
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case trustedCidr = "trusted_cidr"
-                        case trustedAsns = "trusted_asns"
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.updateItem/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminAuditAnomalyAllowUpdateItem.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminAuditAnomalyAllowUpdateItem.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminAuditAnomalyAllowUpdateItem.Input.Headers = .init(),
-                body: Operations.AdminAuditAnomalyAllowUpdateItem.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.updateItem/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.audit.anomaly.allow.updateItem/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminAuditAnomalyAllowUpdateItemResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminAuditAnomalyAllowUpdateItemResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminAuditAnomalyAllowUpdateItem.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminAuditAnomalyAllowUpdateItem.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.updateItem/post(adminAuditAnomalyAllowUpdateItem)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminAuditAnomalyAllowUpdateItem.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminAuditAnomalyAllowUpdateItem.Output.Ok {
                 get throws {
                     switch self {
                     case let .ok(response):
@@ -5336,162 +3879,6 @@ extension Operations {
         }
     }
 
-    public enum AdminConversationsBulkSetProperties {
-        public static let id: Swift.String = "adminConversationsBulkSetProperties"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.conversations.bulkSetProperties/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminConversationsBulkSetProperties.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminConversationsBulkSetProperties.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminConversationsBulkSetProperties.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.conversations.bulkSetProperties/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.conversations.bulkSetProperties/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// An array of channel IDs on which to set the property.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.conversations.bulkSetProperties/POST/requestBody/json/channel_ids`.
-                    public var channelIds: OpenAPIRuntime.OpenAPIArrayContainer
-                    /// The property for this channel in a key value format. Only one property can be updated at a time.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.conversations.bulkSetProperties/POST/requestBody/json/property`.
-                    public var property: Swift.String
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - channelIds: An array of channel IDs on which to set the property.
-                    ///   - property: The property for this channel in a key value format. Only one property can be updated at a time.
-                    public init(
-                        channelIds: OpenAPIRuntime.OpenAPIArrayContainer,
-                        property: Swift.String,
-                    ) {
-                        self.channelIds = channelIds
-                        self.property = property
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case channelIds = "channel_ids"
-                        case property
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.conversations.bulkSetProperties/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminConversationsBulkSetProperties.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminConversationsBulkSetProperties.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminConversationsBulkSetProperties.Input.Headers = .init(),
-                body: Operations.AdminConversationsBulkSetProperties.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.conversations.bulkSetProperties/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.conversations.bulkSetProperties/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminConversationsBulkSetPropertiesResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminConversationsBulkSetPropertiesResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminConversationsBulkSetProperties.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminConversationsBulkSetProperties.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.conversations.bulkSetProperties/post(adminConversationsBulkSetProperties)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminConversationsBulkSetProperties.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminConversationsBulkSetProperties.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
     public enum AdminConversationsConvertToPrivate {
         public static let id: Swift.String = "adminConversationsConvertToPrivate"
         public struct Input: Sendable, Hashable {
@@ -7012,170 +5399,6 @@ extension Operations {
             /// - Throws: An error if `self` is not `.ok`.
             /// - SeeAlso: `.ok`.
             public var ok: Operations.AdminConversationsInvite.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum AdminConversationsLinkObjects {
-        public static let id: Swift.String = "adminConversationsLinkObjects"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.conversations.linkObjects/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminConversationsLinkObjects.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminConversationsLinkObjects.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminConversationsLinkObjects.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.conversations.linkObjects/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.conversations.linkObjects/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Channel ID for Slack channel that will be linked to a Salesforce record.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.conversations.linkObjects/POST/requestBody/json/channel`.
-                    public var channel: Swift.String
-                    /// Salesforce record ID (15 or 18 digit accepted). See here for how to look up record ID.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.conversations.linkObjects/POST/requestBody/json/record_id`.
-                    public var recordId: Swift.String
-                    /// Salesforce org ID (15 or 18 digit accepted). See here for how to look up Salesforce org ID.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.conversations.linkObjects/POST/requestBody/json/salesforce_org_id`.
-                    public var salesforceOrgId: Swift.String
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - channel: Channel ID for Slack channel that will be linked to a Salesforce record.
-                    ///   - recordId: Salesforce record ID (15 or 18 digit accepted). See here for how to look up record ID.
-                    ///   - salesforceOrgId: Salesforce org ID (15 or 18 digit accepted). See here for how to look up Salesforce org ID.
-                    public init(
-                        channel: Swift.String,
-                        recordId: Swift.String,
-                        salesforceOrgId: Swift.String,
-                    ) {
-                        self.channel = channel
-                        self.recordId = recordId
-                        self.salesforceOrgId = salesforceOrgId
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case channel
-                        case recordId = "record_id"
-                        case salesforceOrgId = "salesforce_org_id"
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.conversations.linkObjects/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminConversationsLinkObjects.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminConversationsLinkObjects.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminConversationsLinkObjects.Input.Headers = .init(),
-                body: Operations.AdminConversationsLinkObjects.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.conversations.linkObjects/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.conversations.linkObjects/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminConversationsLinkObjectsResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminConversationsLinkObjectsResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminConversationsLinkObjects.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminConversationsLinkObjects.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.conversations.linkObjects/post(adminConversationsLinkObjects)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminConversationsLinkObjects.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminConversationsLinkObjects.Output.Ok {
                 get throws {
                     switch self {
                     case let .ok(response):
@@ -8992,162 +7215,6 @@ extension Operations {
             /// - Throws: An error if `self` is not `.ok`.
             /// - SeeAlso: `.ok`.
             public var ok: Operations.AdminConversationsUnarchive.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum AdminConversationsUnlinkObjects {
-        public static let id: Swift.String = "adminConversationsUnlinkObjects"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/admin.conversations.unlinkObjects/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminConversationsUnlinkObjects.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminConversationsUnlinkObjects.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AdminConversationsUnlinkObjects.Input.Headers
-            /// - Remark: Generated from `#/paths/admin.conversations.unlinkObjects/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.conversations.unlinkObjects/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Channel ID for Slack channel that will be unlinked from the Salesforce record.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.conversations.unlinkObjects/POST/requestBody/json/channel`.
-                    public var channel: Swift.String
-                    /// Channel name you would like to give to the channel that is being unlinked from the Salesforce record.
-                    ///
-                    /// - Remark: Generated from `#/paths/admin.conversations.unlinkObjects/POST/requestBody/json/new_name`.
-                    public var newName: Swift.String
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - channel: Channel ID for Slack channel that will be unlinked from the Salesforce record.
-                    ///   - newName: Channel name you would like to give to the channel that is being unlinked from the Salesforce record.
-                    public init(
-                        channel: Swift.String,
-                        newName: Swift.String,
-                    ) {
-                        self.channel = channel
-                        self.newName = newName
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case channel
-                        case newName = "new_name"
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/admin.conversations.unlinkObjects/POST/requestBody/content/application\/json`.
-                case json(Operations.AdminConversationsUnlinkObjects.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AdminConversationsUnlinkObjects.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AdminConversationsUnlinkObjects.Input.Headers = .init(),
-                body: Operations.AdminConversationsUnlinkObjects.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/admin.conversations.unlinkObjects/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/admin.conversations.unlinkObjects/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AdminConversationsUnlinkObjectsResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AdminConversationsUnlinkObjectsResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AdminConversationsUnlinkObjects.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AdminConversationsUnlinkObjects.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//admin.conversations.unlinkObjects/post(adminConversationsUnlinkObjects)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AdminConversationsUnlinkObjects.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AdminConversationsUnlinkObjects.Output.Ok {
                 get throws {
                     switch self {
                     case let .ok(response):
@@ -13360,6 +11427,654 @@ extension Operations {
         }
     }
 
+    public enum AdminUsergroupsAddChannels {
+        public static let id: Swift.String = "adminUsergroupsAddChannels"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.usergroups.addChannels/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminUsergroupsAddChannels.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminUsergroupsAddChannels.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminUsergroupsAddChannels.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.usergroups.addChannels/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.usergroups.addChannels/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// ID of the IDP group to add default channels for.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.usergroups.addChannels/POST/requestBody/json/usergroup_id`.
+                    public var usergroupId: Swift.String
+                    /// The workspace to add default channels in.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.usergroups.addChannels/POST/requestBody/json/team_id`.
+                    public var teamId: Swift.String?
+                    /// Comma separated string of channel IDs.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.usergroups.addChannels/POST/requestBody/json/channel_ids`.
+                    public var channelIds: OpenAPIRuntime.OpenAPIArrayContainer
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - usergroupId: ID of the IDP group to add default channels for.
+                    ///   - teamId: The workspace to add default channels in.
+                    ///   - channelIds: Comma separated string of channel IDs.
+                    public init(
+                        usergroupId: Swift.String,
+                        teamId: Swift.String? = nil,
+                        channelIds: OpenAPIRuntime.OpenAPIArrayContainer,
+                    ) {
+                        self.usergroupId = usergroupId
+                        self.teamId = teamId
+                        self.channelIds = channelIds
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case usergroupId = "usergroup_id"
+                        case teamId = "team_id"
+                        case channelIds = "channel_ids"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.usergroups.addChannels/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminUsergroupsAddChannels.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminUsergroupsAddChannels.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminUsergroupsAddChannels.Input.Headers = .init(),
+                body: Operations.AdminUsergroupsAddChannels.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.usergroups.addChannels/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.usergroups.addChannels/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminUsergroupsAddChannelsResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminUsergroupsAddChannelsResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminUsergroupsAddChannels.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminUsergroupsAddChannels.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.usergroups.addChannels/post(adminUsergroupsAddChannels)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminUsergroupsAddChannels.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminUsergroupsAddChannels.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
+    public enum AdminUsergroupsAddTeams {
+        public static let id: Swift.String = "adminUsergroupsAddTeams"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.usergroups.addTeams/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminUsergroupsAddTeams.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminUsergroupsAddTeams.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminUsergroupsAddTeams.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.usergroups.addTeams/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.usergroups.addTeams/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// An encoded usergroup (IDP Group) ID.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.usergroups.addTeams/POST/requestBody/json/usergroup_id`.
+                    public var usergroupId: Swift.String
+                    /// A comma separated list of encoded team (workspace) IDs. Each workspace MUST belong to the organization associated with the token.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.usergroups.addTeams/POST/requestBody/json/team_ids`.
+                    public var teamIds: OpenAPIRuntime.OpenAPIArrayContainer
+                    /// When true, this method automatically creates new workspace accounts for the IDP group members.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.usergroups.addTeams/POST/requestBody/json/auto_provision`.
+                    public var autoProvision: Swift.Bool?
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - usergroupId: An encoded usergroup (IDP Group) ID.
+                    ///   - teamIds: A comma separated list of encoded team (workspace) IDs. Each workspace MUST belong to the organization associated with the token.
+                    ///   - autoProvision: When true, this method automatically creates new workspace accounts for the IDP group members.
+                    public init(
+                        usergroupId: Swift.String,
+                        teamIds: OpenAPIRuntime.OpenAPIArrayContainer,
+                        autoProvision: Swift.Bool? = nil,
+                    ) {
+                        self.usergroupId = usergroupId
+                        self.teamIds = teamIds
+                        self.autoProvision = autoProvision
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case usergroupId = "usergroup_id"
+                        case teamIds = "team_ids"
+                        case autoProvision = "auto_provision"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.usergroups.addTeams/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminUsergroupsAddTeams.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminUsergroupsAddTeams.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminUsergroupsAddTeams.Input.Headers = .init(),
+                body: Operations.AdminUsergroupsAddTeams.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.usergroups.addTeams/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.usergroups.addTeams/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminUsergroupsAddTeamsResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminUsergroupsAddTeamsResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminUsergroupsAddTeams.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminUsergroupsAddTeams.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.usergroups.addTeams/post(adminUsergroupsAddTeams)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminUsergroupsAddTeams.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminUsergroupsAddTeams.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
+    public enum AdminUsergroupsListChannels {
+        public static let id: Swift.String = "adminUsergroupsListChannels"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.usergroups.listChannels/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminUsergroupsListChannels.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminUsergroupsListChannels.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminUsergroupsListChannels.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.usergroups.listChannels/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.usergroups.listChannels/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// ID of the IDP group to list default channels for.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.usergroups.listChannels/POST/requestBody/json/usergroup_id`.
+                    public var usergroupId: Swift.String
+                    /// ID of the the workspace.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.usergroups.listChannels/POST/requestBody/json/team_id`.
+                    public var teamId: Swift.String?
+                    /// Flag to include or exclude the count of members per channel.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.usergroups.listChannels/POST/requestBody/json/include_num_members`.
+                    public var includeNumMembers: Swift.Bool?
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - usergroupId: ID of the IDP group to list default channels for.
+                    ///   - teamId: ID of the the workspace.
+                    ///   - includeNumMembers: Flag to include or exclude the count of members per channel.
+                    public init(
+                        usergroupId: Swift.String,
+                        teamId: Swift.String? = nil,
+                        includeNumMembers: Swift.Bool? = nil,
+                    ) {
+                        self.usergroupId = usergroupId
+                        self.teamId = teamId
+                        self.includeNumMembers = includeNumMembers
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case usergroupId = "usergroup_id"
+                        case teamId = "team_id"
+                        case includeNumMembers = "include_num_members"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.usergroups.listChannels/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminUsergroupsListChannels.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminUsergroupsListChannels.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminUsergroupsListChannels.Input.Headers = .init(),
+                body: Operations.AdminUsergroupsListChannels.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.usergroups.listChannels/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.usergroups.listChannels/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminUsergroupsListChannelsResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminUsergroupsListChannelsResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminUsergroupsListChannels.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminUsergroupsListChannels.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.usergroups.listChannels/post(adminUsergroupsListChannels)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminUsergroupsListChannels.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminUsergroupsListChannels.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
+    public enum AdminUsergroupsRemoveChannels {
+        public static let id: Swift.String = "adminUsergroupsRemoveChannels"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.usergroups.removeChannels/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminUsergroupsRemoveChannels.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminUsergroupsRemoveChannels.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminUsergroupsRemoveChannels.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.usergroups.removeChannels/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.usergroups.removeChannels/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// ID of the IDP Group.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.usergroups.removeChannels/POST/requestBody/json/usergroup_id`.
+                    public var usergroupId: Swift.String
+                    /// Comma-separated string of channel IDs.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.usergroups.removeChannels/POST/requestBody/json/channel_ids`.
+                    public var channelIds: OpenAPIRuntime.OpenAPIArrayContainer
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - usergroupId: ID of the IDP Group.
+                    ///   - channelIds: Comma-separated string of channel IDs.
+                    public init(
+                        usergroupId: Swift.String,
+                        channelIds: OpenAPIRuntime.OpenAPIArrayContainer,
+                    ) {
+                        self.usergroupId = usergroupId
+                        self.channelIds = channelIds
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case usergroupId = "usergroup_id"
+                        case channelIds = "channel_ids"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.usergroups.removeChannels/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminUsergroupsRemoveChannels.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminUsergroupsRemoveChannels.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminUsergroupsRemoveChannels.Input.Headers = .init(),
+                body: Operations.AdminUsergroupsRemoveChannels.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.usergroups.removeChannels/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.usergroups.removeChannels/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminUsergroupsRemoveChannelsResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminUsergroupsRemoveChannelsResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminUsergroupsRemoveChannels.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminUsergroupsRemoveChannels.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.usergroups.removeChannels/post(adminUsergroupsRemoveChannels)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminUsergroupsRemoveChannels.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminUsergroupsRemoveChannels.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
     public enum AdminUsersAssign {
         public static let id: Swift.String = "adminUsersAssign"
         public struct Input: Sendable, Hashable {
@@ -15977,6 +14692,872 @@ extension Operations {
             /// - Throws: An error if `self` is not `.ok`.
             /// - SeeAlso: `.ok`.
             public var ok: Operations.AdminUsersUnsupportedVersionsExport.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
+    public enum AdminWorkflowsCollaboratorsAdd {
+        public static let id: Swift.String = "adminWorkflowsCollaboratorsAdd"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.workflows.collaborators.add/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminWorkflowsCollaboratorsAdd.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminWorkflowsCollaboratorsAdd.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminWorkflowsCollaboratorsAdd.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.workflows.collaborators.add/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.workflows.collaborators.add/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// Array of workflow IDs to edit; max 50.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.collaborators.add/POST/requestBody/json/workflow_ids`.
+                    public var workflowIds: OpenAPIRuntime.OpenAPIArrayContainer
+                    /// Array of collaborators (encoded user IDs) to add; max 50.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.collaborators.add/POST/requestBody/json/collaborator_ids`.
+                    public var collaboratorIds: OpenAPIRuntime.OpenAPIArrayContainer
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - workflowIds: Array of workflow IDs to edit; max 50.
+                    ///   - collaboratorIds: Array of collaborators (encoded user IDs) to add; max 50.
+                    public init(
+                        workflowIds: OpenAPIRuntime.OpenAPIArrayContainer,
+                        collaboratorIds: OpenAPIRuntime.OpenAPIArrayContainer,
+                    ) {
+                        self.workflowIds = workflowIds
+                        self.collaboratorIds = collaboratorIds
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case workflowIds = "workflow_ids"
+                        case collaboratorIds = "collaborator_ids"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.workflows.collaborators.add/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminWorkflowsCollaboratorsAdd.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminWorkflowsCollaboratorsAdd.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminWorkflowsCollaboratorsAdd.Input.Headers = .init(),
+                body: Operations.AdminWorkflowsCollaboratorsAdd.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.workflows.collaborators.add/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.workflows.collaborators.add/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminWorkflowsCollaboratorsAddResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminWorkflowsCollaboratorsAddResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminWorkflowsCollaboratorsAdd.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminWorkflowsCollaboratorsAdd.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.workflows.collaborators.add/post(adminWorkflowsCollaboratorsAdd)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminWorkflowsCollaboratorsAdd.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminWorkflowsCollaboratorsAdd.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
+    public enum AdminWorkflowsCollaboratorsRemove {
+        public static let id: Swift.String = "adminWorkflowsCollaboratorsRemove"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.workflows.collaborators.remove/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminWorkflowsCollaboratorsRemove.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminWorkflowsCollaboratorsRemove.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminWorkflowsCollaboratorsRemove.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.workflows.collaborators.remove/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.workflows.collaborators.remove/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// Array of workflow IDs to edit; max 50.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.collaborators.remove/POST/requestBody/json/workflow_ids`.
+                    public var workflowIds: OpenAPIRuntime.OpenAPIArrayContainer
+                    /// Array of collaborators (encoded user IDs) to remove; max 50.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.collaborators.remove/POST/requestBody/json/collaborator_ids`.
+                    public var collaboratorIds: OpenAPIRuntime.OpenAPIArrayContainer
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - workflowIds: Array of workflow IDs to edit; max 50.
+                    ///   - collaboratorIds: Array of collaborators (encoded user IDs) to remove; max 50.
+                    public init(
+                        workflowIds: OpenAPIRuntime.OpenAPIArrayContainer,
+                        collaboratorIds: OpenAPIRuntime.OpenAPIArrayContainer,
+                    ) {
+                        self.workflowIds = workflowIds
+                        self.collaboratorIds = collaboratorIds
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case workflowIds = "workflow_ids"
+                        case collaboratorIds = "collaborator_ids"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.workflows.collaborators.remove/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminWorkflowsCollaboratorsRemove.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminWorkflowsCollaboratorsRemove.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminWorkflowsCollaboratorsRemove.Input.Headers = .init(),
+                body: Operations.AdminWorkflowsCollaboratorsRemove.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.workflows.collaborators.remove/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.workflows.collaborators.remove/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminWorkflowsCollaboratorsRemoveResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminWorkflowsCollaboratorsRemoveResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminWorkflowsCollaboratorsRemove.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminWorkflowsCollaboratorsRemove.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.workflows.collaborators.remove/post(adminWorkflowsCollaboratorsRemove)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminWorkflowsCollaboratorsRemove.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminWorkflowsCollaboratorsRemove.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
+    public enum AdminWorkflowsPermissionsLookup {
+        public static let id: Swift.String = "adminWorkflowsPermissionsLookup"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.workflows.permissions.lookup/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminWorkflowsPermissionsLookup.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminWorkflowsPermissionsLookup.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminWorkflowsPermissionsLookup.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.workflows.permissions.lookup/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.workflows.permissions.lookup/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// An array of workflow IDs to look up permissions for.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.permissions.lookup/POST/requestBody/json/workflow_ids`.
+                    public var workflowIds: OpenAPIRuntime.OpenAPIArrayContainer
+                    /// Maximum number of triggers to fetch for each workflow when determining overall run permissions; max 1000.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.permissions.lookup/POST/requestBody/json/max_workflow_triggers`.
+                    public var maxWorkflowTriggers: Swift.Int?
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - workflowIds: An array of workflow IDs to look up permissions for.
+                    ///   - maxWorkflowTriggers: Maximum number of triggers to fetch for each workflow when determining overall run permissions; max 1000.
+                    public init(
+                        workflowIds: OpenAPIRuntime.OpenAPIArrayContainer,
+                        maxWorkflowTriggers: Swift.Int? = nil,
+                    ) {
+                        self.workflowIds = workflowIds
+                        self.maxWorkflowTriggers = maxWorkflowTriggers
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case workflowIds = "workflow_ids"
+                        case maxWorkflowTriggers = "max_workflow_triggers"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.workflows.permissions.lookup/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminWorkflowsPermissionsLookup.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminWorkflowsPermissionsLookup.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminWorkflowsPermissionsLookup.Input.Headers = .init(),
+                body: Operations.AdminWorkflowsPermissionsLookup.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.workflows.permissions.lookup/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.workflows.permissions.lookup/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminWorkflowsPermissionsLookupResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminWorkflowsPermissionsLookupResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminWorkflowsPermissionsLookup.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminWorkflowsPermissionsLookup.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.workflows.permissions.lookup/post(adminWorkflowsPermissionsLookup)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminWorkflowsPermissionsLookup.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminWorkflowsPermissionsLookup.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
+    public enum AdminWorkflowsSearch {
+        public static let id: Swift.String = "adminWorkflowsSearch"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.workflows.search/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminWorkflowsSearch.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminWorkflowsSearch.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminWorkflowsSearch.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// A search query to filter for workflow name or description.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/query`.
+                    public var query: Swift.String?
+                    /// The parent app ID for which to return workflows.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/app_id`.
+                    public var appId: Swift.String?
+                    /// Set cursor to next_cursor returned by the previous call to list items in the next page.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/cursor`.
+                    public var cursor: Swift.String?
+                    /// The number of results that will be returned by the API on each invocation.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/limit`.
+                    public var limit: Swift.Int?
+                    /// Only include workflows with no collaborators in the result; default is false.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/no_collaborators`.
+                    public var noCollaborators: Swift.Bool?
+                    /// Only include workflows where all of the provided user IDs are a manager/collaborator of that workflow.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/collaborator_ids`.
+                    public var collaboratorIds: OpenAPIRuntime.OpenAPIArrayContainer?
+                    /// Number of trigger IDs to fetch for each workflow; default is 10.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/num_trigger_ids`.
+                    public var numTriggerIds: Swift.Int?
+                    /// Filter workflows by their Sales Elevate status.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/is_sales_elevate`.
+                    public var isSalesElevate: Swift.Bool?
+                    /// Source of workflow creation, either from code or workflow builder.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/source`.
+                    public var source: Swift.String?
+                    /// The field used to sort the returned workflows.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/sort`.
+                    public var sort: Swift.String?
+                    /// Sort direction. Possible values are asc for ascending order like (1, 2, 3) or (a, b, c), and desc for descending order like (3, 2, 1) or (c, b, a).
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/sort_dir`.
+                    public var sortDir: Swift.String?
+                    /// Only include workflows with this trigger type.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/trigger_type_id`.
+                    public var triggerTypeId: Swift.String?
+                    /// Filter workflows by their published status.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/publish_status`.
+                    public var publishStatus: Swift.String?
+                    /// Only include workflows that use all of the provided step function ids.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/json/step_function_ids`.
+                    public var stepFunctionIds: OpenAPIRuntime.OpenAPIArrayContainer?
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - query: A search query to filter for workflow name or description.
+                    ///   - appId: The parent app ID for which to return workflows.
+                    ///   - cursor: Set cursor to next_cursor returned by the previous call to list items in the next page.
+                    ///   - limit: The number of results that will be returned by the API on each invocation.
+                    ///   - noCollaborators: Only include workflows with no collaborators in the result; default is false.
+                    ///   - collaboratorIds: Only include workflows where all of the provided user IDs are a manager/collaborator of that workflow.
+                    ///   - numTriggerIds: Number of trigger IDs to fetch for each workflow; default is 10.
+                    ///   - isSalesElevate: Filter workflows by their Sales Elevate status.
+                    ///   - source: Source of workflow creation, either from code or workflow builder.
+                    ///   - sort: The field used to sort the returned workflows.
+                    ///   - sortDir: Sort direction. Possible values are asc for ascending order like (1, 2, 3) or (a, b, c), and desc for descending order like (3, 2, 1) or (c, b, a).
+                    ///   - triggerTypeId: Only include workflows with this trigger type.
+                    ///   - publishStatus: Filter workflows by their published status.
+                    ///   - stepFunctionIds: Only include workflows that use all of the provided step function ids.
+                    public init(
+                        query: Swift.String? = nil,
+                        appId: Swift.String? = nil,
+                        cursor: Swift.String? = nil,
+                        limit: Swift.Int? = nil,
+                        noCollaborators: Swift.Bool? = nil,
+                        collaboratorIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
+                        numTriggerIds: Swift.Int? = nil,
+                        isSalesElevate: Swift.Bool? = nil,
+                        source: Swift.String? = nil,
+                        sort: Swift.String? = nil,
+                        sortDir: Swift.String? = nil,
+                        triggerTypeId: Swift.String? = nil,
+                        publishStatus: Swift.String? = nil,
+                        stepFunctionIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
+                    ) {
+                        self.query = query
+                        self.appId = appId
+                        self.cursor = cursor
+                        self.limit = limit
+                        self.noCollaborators = noCollaborators
+                        self.collaboratorIds = collaboratorIds
+                        self.numTriggerIds = numTriggerIds
+                        self.isSalesElevate = isSalesElevate
+                        self.source = source
+                        self.sort = sort
+                        self.sortDir = sortDir
+                        self.triggerTypeId = triggerTypeId
+                        self.publishStatus = publishStatus
+                        self.stepFunctionIds = stepFunctionIds
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case query
+                        case appId = "app_id"
+                        case cursor
+                        case limit
+                        case noCollaborators = "no_collaborators"
+                        case collaboratorIds = "collaborator_ids"
+                        case numTriggerIds = "num_trigger_ids"
+                        case isSalesElevate = "is_sales_elevate"
+                        case source
+                        case sort
+                        case sortDir = "sort_dir"
+                        case triggerTypeId = "trigger_type_id"
+                        case publishStatus = "publish_status"
+                        case stepFunctionIds = "step_function_ids"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.workflows.search/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminWorkflowsSearch.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminWorkflowsSearch.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminWorkflowsSearch.Input.Headers = .init(),
+                body: Operations.AdminWorkflowsSearch.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.workflows.search/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.workflows.search/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminWorkflowsSearchResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminWorkflowsSearchResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminWorkflowsSearch.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminWorkflowsSearch.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.workflows.search/post(adminWorkflowsSearch)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminWorkflowsSearch.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminWorkflowsSearch.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
+    public enum AdminWorkflowsUnpublish {
+        public static let id: Swift.String = "adminWorkflowsUnpublish"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.workflows.unpublish/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminWorkflowsUnpublish.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminWorkflowsUnpublish.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminWorkflowsUnpublish.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.workflows.unpublish/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.workflows.unpublish/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// Array of workflow IDs to unpublish.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.workflows.unpublish/POST/requestBody/json/workflow_ids`.
+                    public var workflowIds: OpenAPIRuntime.OpenAPIArrayContainer
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - workflowIds: Array of workflow IDs to unpublish.
+                    public init(workflowIds: OpenAPIRuntime.OpenAPIArrayContainer) {
+                        self.workflowIds = workflowIds
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case workflowIds = "workflow_ids"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.workflows.unpublish/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminWorkflowsUnpublish.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminWorkflowsUnpublish.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminWorkflowsUnpublish.Input.Headers = .init(),
+                body: Operations.AdminWorkflowsUnpublish.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.workflows.unpublish/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.workflows.unpublish/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminWorkflowsUnpublishResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminWorkflowsUnpublishResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminWorkflowsUnpublish.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminWorkflowsUnpublish.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.workflows.unpublish/post(adminWorkflowsUnpublish)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminWorkflowsUnpublish.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminWorkflowsUnpublish.Output.Ok {
                 get throws {
                     switch self {
                     case let .ok(response):
