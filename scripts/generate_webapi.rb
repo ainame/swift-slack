@@ -37,28 +37,6 @@ def unsupported_method?(method_name)
   UNSUPPORTED_METHODS.any? { _1.match?(method_name) }
 end
 
-# Reviewed reference-only methods whose response examples replace the minimal
-# success fallback. Keep this explicit until other reference-only APIs are reviewed.
-REFERENCE_RESPONSE_METHODS = %w[
-  admin.apps.permissions.remove
-  admin.apps.permissions.set
-].freeze
-
-def reference_response_samples(method_name, api_ref)
-  examples = api_ref.dig('response', 'examples')
-  return [{ 'ok' => true }] if examples == []
-  return unless REFERENCE_RESPONSE_METHODS.include?(method_name)
-
-  raise "Missing response examples for #{method_name}" unless examples.is_a?(Array) && !examples.empty?
-
-  examples.map do |example|
-    response = JSON.parse(example)
-    raise "Invalid response object for #{method_name}" unless response.is_a?(Hash) && [true, false].include?(response['ok'])
-
-    response
-  end
-end
-
 api_ref_dir = './vendor/slack-api-ref/methods/'
 api_ref_paths = Dir.glob("#{api_ref_dir}/**/*.json").sort
 
@@ -77,45 +55,34 @@ def main(api_ref_paths, sample_json_paths, output_dir)
     generate_openapi_component(path, File.join(output_dir, 'schemas'))
   end
 
-  # Use reviewed reference examples when Java fixtures are unavailable. Explicit
-  # empty example lists retain the existing minimal success-envelope fallback.
-  fallback_responses_dir = File.join(output_dir, 'fallback-responses')
-  api_ref_paths.each do |path|
-    method_name = File.basename(path, '.json')
-    next if sample_json_paths.any? { File.basename(_1, '.json') == method_name }
-
-    api_ref = JSON.parse(File.read(path))
-    responses = reference_response_samples(method_name, api_ref)
-    next unless responses
-
-    FileUtils.mkdir_p(fallback_responses_dir)
-    fallback_response_path = File.join(fallback_responses_dir, "#{method_name}.json")
-    response_paths = responses.each_with_index.map do |response, index|
-      sample_path = "#{fallback_response_path}.#{index}.json"
-      File.write(sample_path, JSON.generate(response))
-      sample_path
-    end
-    generate_openapi_component(fallback_response_path, File.join(output_dir, 'schemas'), response_paths)
-  end
-
-  # Load generated schemas and put them in #components/schemas section
+  # Load generated schemas and put them in #components/schemas section.
+  # quicktype may normalize the requested top-level name (e.g. ApiTest -> APITest),
+  # so operations reference the name recorded in each generated schema.
   schema_paths = Dir.glob("#{output_dir}/schemas/*.json").sort
+  response_model_names = {}
   schema_paths.each do |path|
     json = JSON.parse(File.read(path))
     openapi['components']['schemas'].merge!(json['definitions'])
+    response_model_names[File.basename(path, '.json')] = json['$ref'].split('/').last
   end
 
   # Generate paths
   paths = {}
   api_ref_paths.each do |path|
-    # Methods need a fixture, reviewed reference examples, or an explicit empty response.
     method_name = File.basename(path, '.json')
-    unless schema_paths.any? { File.basename(_1, '.json') == method_name }
-      puts "Skip, this method doesn't have response schema #{method_name}"
+    if unsupported_method?(method_name)
+      puts "Skip, this method isn't supported #{method_name}"
       next
     end
 
-    result = generate_openapi_path(path)
+    # Like java-slack-sdk, only methods with a recorded response fixture are
+    # generated; slack-api-ref documentation examples are not used for types.
+    unless response_model_names.key?(method_name)
+      warn "Skip #{method_name}: no java-slack-sdk fixture"
+      next
+    end
+
+    result = generate_openapi_path(path, response_model_names[method_name])
     paths.merge!(result) if result
   end
   openapi['paths'] = paths
@@ -126,7 +93,7 @@ def main(api_ref_paths, sample_json_paths, output_dir)
   File.write(File.join(output_dir, 'openapi.json'), JSON.pretty_generate(openapi))
 end
 
-def generate_openapi_component(path, output_dir, sample_paths = nil)
+def generate_openapi_component(path, output_dir)
   method_name = File.basename(path, '.json')
   model_name = "#{method_name.split('.').map { _1.sub(/\A./, &:upcase) }.join}Response"
   output_path = File.join(output_dir, "#{method_name}.json")
@@ -135,7 +102,7 @@ def generate_openapi_component(path, output_dir, sample_paths = nil)
     puts "Found #{path} exists. Skip generating schema."
     json = JSON.parse(File.read(output_path))
   else
-    json = generate_json_schema(sample_paths || path, output_path, model_name)
+    json = generate_json_schema(path, output_path, model_name)
   end
 
   # fix json
@@ -189,10 +156,8 @@ def normalize_type(name, attributes)
   attributes['type']
 end
 
-def generate_openapi_path(path)
+def generate_openapi_path(path, response_model_name)
   method_name = File.basename(path, '.json')
-  return puts "Skip this method isn't supported #{method_name}" if unsupported_method?(method_name)
-
   json = JSON.parse(File.read(path))
   operation_id = method_name.camelize(separator: '\.')
   method_args = json['args'].is_a?(Hash) ? json['args'] : {}
@@ -223,7 +188,6 @@ def generate_openapi_path(path)
     props[name]['description'] = attributes['desc'] if attributes.key?('desc')
   end
 
-  response_model_name = "#{method_name.split('.').map { _1.sub(/\A./, &:upcase) }.join}Response"
   content_type = request_body_props.any? { |_, v| v['format'] == 'binary' } ? 'multipart/form-data' : 'application/json'
   content_schema = if request_body_props.empty?
                      { 'type': 'object', 'additionalProperties': false }
