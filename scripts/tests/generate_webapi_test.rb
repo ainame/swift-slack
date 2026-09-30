@@ -43,6 +43,26 @@ class GenerateWebapiTest < Minitest::Test
     end
   end
 
+  def test_warnings_are_reported_once_on_github_actions
+    Dir.mktmpdir do |directory|
+      summary_path = File.join(directory, 'summary.md')
+      io = StringIO.new
+      warnings = ['Skip a.b: 100% missing', 'Skip c.d: no data']
+      report_generator_warnings(warnings, env: { 'GITHUB_ACTIONS' => 'true', 'GITHUB_STEP_SUMMARY' => summary_path }, io: io)
+
+      assert_equal "::warning title=Web API generation: 2 warning(s)::Skip a.b: 100%25 missing%0ASkip c.d: no data\n", io.string
+      summary = File.read(summary_path)
+      assert_includes summary, '- Skip a.b: 100% missing'
+      assert_includes summary, '- Skip c.d: no data'
+    end
+  end
+
+  def test_warnings_are_not_annotated_outside_github_actions
+    io = StringIO.new
+    report_generator_warnings(['Skip c.d: no data'], env: {}, io: io)
+    assert_empty io.string
+  end
+
   def test_legacy_methods_are_unsupported_by_prefix
     %w[channels.list groups.list im.open mpim.open rtm.connect dialog.open files.comments.delete oauth.access].each do |name|
       assert unsupported_method?(name), "#{name} should be unsupported"

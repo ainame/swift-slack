@@ -37,6 +37,33 @@ def unsupported_method?(method_name)
   UNSUPPORTED_METHODS.any? { _1.match?(method_name) }
 end
 
+# Data-quality warnings are printed as they happen and, on GitHub Actions,
+# reported once at the end because Actions shows at most 10 warning
+# annotations per step.
+GENERATOR_WARNINGS = []
+
+def generator_warning(message)
+  GENERATOR_WARNINGS << message
+  warn message
+end
+
+def report_generator_warnings(warnings = GENERATOR_WARNINGS, env: ENV, io: $stdout)
+  return if warnings.empty? || env['GITHUB_ACTIONS'] != 'true'
+
+  title = "Web API generation: #{warnings.size} warning(s)"
+  body = warnings.join("\n").gsub('%', '%25').gsub("\r", '%0D').gsub("\n", '%0A')
+  io.puts "::warning title=#{title}::#{body}"
+
+  summary_path = env['GITHUB_STEP_SUMMARY']
+  return unless summary_path
+
+  File.open(summary_path, 'a') do |file|
+    file.puts "### #{title}", ''
+    warnings.each { file.puts "- #{_1}" }
+    file.puts
+  end
+end
+
 api_ref_dir = './vendor/slack-api-ref/methods/'
 api_ref_paths = Dir.glob("#{api_ref_dir}/**/*.json").sort
 
@@ -78,7 +105,7 @@ def main(api_ref_paths, sample_json_paths, output_dir)
     # Like java-slack-sdk, only methods with a recorded response fixture are
     # generated; slack-api-ref documentation examples are not used for types.
     unless response_model_names.key?(method_name)
-      warn "Skip #{method_name}: no java-slack-sdk fixture"
+      generator_warning "Skip #{method_name}: no java-slack-sdk fixture"
       next
     end
 
@@ -243,4 +270,7 @@ def remove_orphan_schemas(openapi)
   end
 end
 
-main(api_ref_paths, sample_json_paths, output_dir) if $PROGRAM_NAME == __FILE__
+if $PROGRAM_NAME == __FILE__
+  main(api_ref_paths, sample_json_paths, output_dir)
+  report_generator_warnings
+end
