@@ -89,41 +89,6 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.apps.config.set`.
     /// - Remark: Generated from `#/paths//admin.apps.config.set/post(adminAppsConfigSet)`.
     func adminAppsConfigSet(_ input: Operations.AdminAppsConfigSet.Input) async throws -> Operations.AdminAppsConfigSet.Output
-    /// List third-party app MCP servers approved for an organization, derived from the org's MCP server allowlist. Entries reflect allowlist state, not install/scope liveness: servers of apps that are uninstalled (but not deleted) are still listed.
-    ///
-    /// - Remark: HTTP `POST /admin.apps.mcp.servers.list`.
-    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.list/post(adminAppsMcpServersList)`.
-    func adminAppsMcpServersList(_ input: Operations.AdminAppsMcpServersList.Input) async throws -> Operations.AdminAppsMcpServersList.Output
-    /// List MCP servers for an app with their access control permissions
-    ///
-    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.list`.
-    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.list/post(adminAppsMcpServersPermissionsList)`.
-    func adminAppsMcpServersPermissionsList(_ input: Operations.AdminAppsMcpServersPermissionsList.Input) async throws -> Operations.AdminAppsMcpServersPermissionsList.Output
-    /// Set the access control permission for who can use an MCP server
-    ///
-    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.set`.
-    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.set/post(adminAppsMcpServersPermissionsSet)`.
-    func adminAppsMcpServersPermissionsSet(_ input: Operations.AdminAppsMcpServersPermissionsSet.Input) async throws -> Operations.AdminAppsMcpServersPermissionsSet.Output
-    /// Grant permission for entities to access an app that has its permission type set to named_entities
-    ///
-    /// - Remark: HTTP `POST /admin.apps.permissions.add`.
-    /// - Remark: Generated from `#/paths//admin.apps.permissions.add/post(adminAppsPermissionsAdd)`.
-    func adminAppsPermissionsAdd(_ input: Operations.AdminAppsPermissionsAdd.Input) async throws -> Operations.AdminAppsPermissionsAdd.Output
-    /// Returns the permission type of an app and if applicable, includes the entities that have been granted access
-    ///
-    /// - Remark: HTTP `POST /admin.apps.permissions.list`.
-    /// - Remark: Generated from `#/paths//admin.apps.permissions.list/post(adminAppsPermissionsList)`.
-    func adminAppsPermissionsList(_ input: Operations.AdminAppsPermissionsList.Input) async throws -> Operations.AdminAppsPermissionsList.Output
-    /// Revoke an entity's access to an app that has its permission type set to named_entities
-    ///
-    /// - Remark: HTTP `POST /admin.apps.permissions.remove`.
-    /// - Remark: Generated from `#/paths//admin.apps.permissions.remove/post(adminAppsPermissionsRemove)`.
-    func adminAppsPermissionsRemove(_ input: Operations.AdminAppsPermissionsRemove.Input) async throws -> Operations.AdminAppsPermissionsRemove.Output
-    /// Set the permission type for who can access an app
-    ///
-    /// - Remark: HTTP `POST /admin.apps.permissions.set`.
-    /// - Remark: Generated from `#/paths//admin.apps.permissions.set/post(adminAppsPermissionsSet)`.
-    func adminAppsPermissionsSet(_ input: Operations.AdminAppsPermissionsSet.Input) async throws -> Operations.AdminAppsPermissionsSet.Output
     /// Cancel app request for team
     ///
     /// - Remark: HTTP `POST /admin.apps.requests.cancel`.
@@ -149,16 +114,6 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.apps.uninstall`.
     /// - Remark: Generated from `#/paths//admin.apps.uninstall/post(adminAppsUninstall)`.
     func adminAppsUninstall(_ input: Operations.AdminAppsUninstall.Input) async throws -> Operations.AdminAppsUninstall.Output
-    /// API to allow Enterprise org admins to read the allow list of IP blocks and ASNs from the enterprise configuration.
-    ///
-    /// - Remark: HTTP `POST /admin.audit.anomaly.allow.getItem`.
-    /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.getItem/post(adminAuditAnomalyAllowGetItem)`.
-    func adminAuditAnomalyAllowGetItem(_ input: Operations.AdminAuditAnomalyAllowGetItem.Input) async throws -> Operations.AdminAuditAnomalyAllowGetItem.Output
-    /// API to allow Enterprise org admins to write/overwrite the allow list of IP blocks and ASNs from the enterprise configuration.
-    ///
-    /// - Remark: HTTP `POST /admin.audit.anomaly.allow.updateItem`.
-    /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.updateItem/post(adminAuditAnomalyAllowUpdateItem)`.
-    func adminAuditAnomalyAllowUpdateItem(_ input: Operations.AdminAuditAnomalyAllowUpdateItem.Input) async throws -> Operations.AdminAuditAnomalyAllowUpdateItem.Output
     /// Assign entities to a particular authentication policy.
     ///
     /// - Remark: HTTP `POST /admin.auth.policy.assignEntities`.
@@ -214,11 +169,6 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.conversations.bulkMove`.
     /// - Remark: Generated from `#/paths//admin.conversations.bulkMove/post(adminConversationsBulkMove)`.
     func adminConversationsBulkMove(_ input: Operations.AdminConversationsBulkMove.Input) async throws -> Operations.AdminConversationsBulkMove.Output
-    /// Set properties on channels in bulk.
-    ///
-    /// - Remark: HTTP `POST /admin.conversations.bulkSetProperties`.
-    /// - Remark: Generated from `#/paths//admin.conversations.bulkSetProperties/post(adminConversationsBulkSetProperties)`.
-    func adminConversationsBulkSetProperties(_ input: Operations.AdminConversationsBulkSetProperties.Input) async throws -> Operations.AdminConversationsBulkSetProperties.Output
     /// Convert a public channel to a private channel.
     ///
     /// - Remark: HTTP `POST /admin.conversations.convertToPrivate`.
@@ -269,11 +219,6 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.conversations.invite`.
     /// - Remark: Generated from `#/paths//admin.conversations.invite/post(adminConversationsInvite)`.
     func adminConversationsInvite(_ input: Operations.AdminConversationsInvite.Input) async throws -> Operations.AdminConversationsInvite.Output
-    /// Link a Salesforce record to a channel
-    ///
-    /// - Remark: HTTP `POST /admin.conversations.linkObjects`.
-    /// - Remark: Generated from `#/paths//admin.conversations.linkObjects/post(adminConversationsLinkObjects)`.
-    func adminConversationsLinkObjects(_ input: Operations.AdminConversationsLinkObjects.Input) async throws -> Operations.AdminConversationsLinkObjects.Output
     /// Returns channels on the given team using the filters.
     ///
     /// - Remark: HTTP `POST /admin.conversations.lookup`.
@@ -329,11 +274,6 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.conversations.unarchive`.
     /// - Remark: Generated from `#/paths//admin.conversations.unarchive/post(adminConversationsUnarchive)`.
     func adminConversationsUnarchive(_ input: Operations.AdminConversationsUnarchive.Input) async throws -> Operations.AdminConversationsUnarchive.Output
-    /// Unlink a Salesforce record from a channel
-    ///
-    /// - Remark: HTTP `POST /admin.conversations.unlinkObjects`.
-    /// - Remark: Generated from `#/paths//admin.conversations.unlinkObjects/post(adminConversationsUnlinkObjects)`.
-    func adminConversationsUnlinkObjects(_ input: Operations.AdminConversationsUnlinkObjects.Input) async throws -> Operations.AdminConversationsUnlinkObjects.Output
     /// Add an emoji.
     ///
     /// - Remark: HTTP `POST /admin.emoji.add`.
@@ -464,6 +404,26 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.teams.settings.setName`.
     /// - Remark: Generated from `#/paths//admin.teams.settings.setName/post(adminTeamsSettingsSetName)`.
     func adminTeamsSettingsSetName(_ input: Operations.AdminTeamsSettingsSetName.Input) async throws -> Operations.AdminTeamsSettingsSetName.Output
+    /// Add up to one hundred default channels to an IDP group.
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.addChannels`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.addChannels/post(adminUsergroupsAddChannels)`.
+    func adminUsergroupsAddChannels(_ input: Operations.AdminUsergroupsAddChannels.Input) async throws -> Operations.AdminUsergroupsAddChannels.Output
+    /// Associate one or more default workspaces with an organization-wide IDP group.
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.addTeams`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.addTeams/post(adminUsergroupsAddTeams)`.
+    func adminUsergroupsAddTeams(_ input: Operations.AdminUsergroupsAddTeams.Input) async throws -> Operations.AdminUsergroupsAddTeams.Output
+    /// List the channels linked to an org-level IDP group (user group).
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.listChannels`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.listChannels/post(adminUsergroupsListChannels)`.
+    func adminUsergroupsListChannels(_ input: Operations.AdminUsergroupsListChannels.Input) async throws -> Operations.AdminUsergroupsListChannels.Output
+    /// Remove one or more default channels from an org-level IDP group (user group).
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.removeChannels`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.removeChannels/post(adminUsergroupsRemoveChannels)`.
+    func adminUsergroupsRemoveChannels(_ input: Operations.AdminUsergroupsRemoveChannels.Input) async throws -> Operations.AdminUsergroupsRemoveChannels.Output
     /// Add an Enterprise user to a workspace.
     ///
     /// - Remark: HTTP `POST /admin.users.assign`.
@@ -544,6 +504,31 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.users.unsupportedVersions.export`.
     /// - Remark: Generated from `#/paths//admin.users.unsupportedVersions.export/post(adminUsersUnsupportedVersionsExport)`.
     func adminUsersUnsupportedVersionsExport(_ input: Operations.AdminUsersUnsupportedVersionsExport.Input) async throws -> Operations.AdminUsersUnsupportedVersionsExport.Output
+    /// Add collaborators to workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.collaborators.add`.
+    /// - Remark: Generated from `#/paths//admin.workflows.collaborators.add/post(adminWorkflowsCollaboratorsAdd)`.
+    func adminWorkflowsCollaboratorsAdd(_ input: Operations.AdminWorkflowsCollaboratorsAdd.Input) async throws -> Operations.AdminWorkflowsCollaboratorsAdd.Output
+    /// Remove collaborators from workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.collaborators.remove`.
+    /// - Remark: Generated from `#/paths//admin.workflows.collaborators.remove/post(adminWorkflowsCollaboratorsRemove)`.
+    func adminWorkflowsCollaboratorsRemove(_ input: Operations.AdminWorkflowsCollaboratorsRemove.Input) async throws -> Operations.AdminWorkflowsCollaboratorsRemove.Output
+    /// Look up the permissions for a set of workflows
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.permissions.lookup`.
+    /// - Remark: Generated from `#/paths//admin.workflows.permissions.lookup/post(adminWorkflowsPermissionsLookup)`.
+    func adminWorkflowsPermissionsLookup(_ input: Operations.AdminWorkflowsPermissionsLookup.Input) async throws -> Operations.AdminWorkflowsPermissionsLookup.Output
+    /// Search workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.search`.
+    /// - Remark: Generated from `#/paths//admin.workflows.search/post(adminWorkflowsSearch)`.
+    func adminWorkflowsSearch(_ input: Operations.AdminWorkflowsSearch.Input) async throws -> Operations.AdminWorkflowsSearch.Output
+    /// Unpublish workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.unpublish`.
+    /// - Remark: Generated from `#/paths//admin.workflows.unpublish/post(adminWorkflowsUnpublish)`.
+    func adminWorkflowsUnpublish(_ input: Operations.AdminWorkflowsUnpublish.Input) async throws -> Operations.AdminWorkflowsUnpublish.Output
     /// Rename an agent session.
     ///
     /// - Remark: HTTP `POST /agents.sessions.rename`.
@@ -556,28 +541,25 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /agents.sessions.setStatus`.
     /// - Remark: Generated from `#/paths//agents.sessions.setStatus/post(agentsSessionsSetStatus)`.
     func agentsSessionsSetStatus(_ input: Operations.AgentsSessionsSetStatus.Input) async throws -> Operations.AgentsSessionsSetStatus.Output
-    /// Delete external auth tokens only on the Slack side
+    /// Checks API calling code.
     ///
-    /// - Remark: HTTP `POST /apps.auth.external.delete`.
-    /// - Remark: Generated from `#/paths//apps.auth.external.delete/post(appsAuthExternalDelete)`.
+    /// - Remark: HTTP `POST /api.test`.
+    /// - Remark: Generated from `#/paths//api.test/post(apiTest)`.
     #endif
-    #if WebAPI_Apps
-    func appsAuthExternalDelete(_ input: Operations.AppsAuthExternalDelete.Input) async throws -> Operations.AppsAuthExternalDelete.Output
+    #if WebAPI_Api
+    func apiTest(_ input: Operations.ApiTest.Input) async throws -> Operations.ApiTest.Output
     /// Generate a temporary Socket Mode WebSocket URL that your app can connect to in order to receive events and interactive payloads over.
     ///
     /// - Remark: HTTP `POST /apps.connections.open`.
     /// - Remark: Generated from `#/paths//apps.connections.open/post(appsConnectionsOpen)`.
+    #endif
+    #if WebAPI_Apps
     func appsConnectionsOpen(_ input: Operations.AppsConnectionsOpen.Input) async throws -> Operations.AppsConnectionsOpen.Output
     /// Get a list of authorizations for the given event context. Each authorization represents an app installation that the event is visible to.
     ///
     /// - Remark: HTTP `POST /apps.event.authorizations.list`.
     /// - Remark: Generated from `#/paths//apps.event.authorizations.list/post(appsEventAuthorizationsList)`.
     func appsEventAuthorizationsList(_ input: Operations.AppsEventAuthorizationsList.Input) async throws -> Operations.AppsEventAuthorizationsList.Output
-    /// Set who can interact with a managed app. Lets the builder who created a managed app on a partner platform configure the app's permissions as themselves, using a user token from the manager app. Permissions can only be set before the app is installed: if the app is already installed, this method makes no change and returns the app's current permissions.
-    ///
-    /// - Remark: HTTP `POST /apps.managed.permissions.set`.
-    /// - Remark: Generated from `#/paths//apps.managed.permissions.set/post(appsManagedPermissionsSet)`.
-    func appsManagedPermissionsSet(_ input: Operations.AppsManagedPermissionsSet.Input) async throws -> Operations.AppsManagedPermissionsSet.Output
     /// Create an app from an app manifest.
     ///
     /// - Remark: HTTP `POST /apps.manifest.create`.
@@ -613,17 +595,12 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /apps.user.connection.update`.
     /// - Remark: Generated from `#/paths//apps.user.connection.update/post(appsUserConnectionUpdate)`.
     func appsUserConnectionUpdate(_ input: Operations.AppsUserConnectionUpdate.Input) async throws -> Operations.AppsUserConnectionUpdate.Output
-    /// Searches messages, files, channels and users across your Slack organization.
-    ///
-    /// - Remark: HTTP `POST /assistant.search.context`.
-    /// - Remark: Generated from `#/paths//assistant.search.context/post(assistantSearchContext)`.
-    #endif
-    #if WebAPI_Assistant
-    func assistantSearchContext(_ input: Operations.AssistantSearchContext.Input) async throws -> Operations.AssistantSearchContext.Output
     /// Set the status for an AI assistant thread.
     ///
     /// - Remark: HTTP `POST /assistant.threads.setStatus`.
     /// - Remark: Generated from `#/paths//assistant.threads.setStatus/post(assistantThreadsSetStatus)`.
+    #endif
+    #if WebAPI_Assistant
     func assistantThreadsSetStatus(_ input: Operations.AssistantThreadsSetStatus.Input) async throws -> Operations.AssistantThreadsSetStatus.Output
     /// Set suggested prompts for the given assistant thread
     ///
@@ -688,6 +665,38 @@ public protocol APIProtocol: Sendable {
     #endif
     #if WebAPI_Bots
     func botsInfo(_ input: Operations.BotsInfo.Input) async throws -> Operations.BotsInfo.Output
+    /// Registers a new Call.
+    ///
+    /// - Remark: HTTP `POST /calls.add`.
+    /// - Remark: Generated from `#/paths//calls.add/post(callsAdd)`.
+    #endif
+    #if WebAPI_Calls
+    func callsAdd(_ input: Operations.CallsAdd.Input) async throws -> Operations.CallsAdd.Output
+    /// Ends a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.end`.
+    /// - Remark: Generated from `#/paths//calls.end/post(callsEnd)`.
+    func callsEnd(_ input: Operations.CallsEnd.Input) async throws -> Operations.CallsEnd.Output
+    /// Returns information about a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.info`.
+    /// - Remark: Generated from `#/paths//calls.info/post(callsInfo)`.
+    func callsInfo(_ input: Operations.CallsInfo.Input) async throws -> Operations.CallsInfo.Output
+    /// Registers new participants added to a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.participants.add`.
+    /// - Remark: Generated from `#/paths//calls.participants.add/post(callsParticipantsAdd)`.
+    func callsParticipantsAdd(_ input: Operations.CallsParticipantsAdd.Input) async throws -> Operations.CallsParticipantsAdd.Output
+    /// Registers participants removed from a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.participants.remove`.
+    /// - Remark: Generated from `#/paths//calls.participants.remove/post(callsParticipantsRemove)`.
+    func callsParticipantsRemove(_ input: Operations.CallsParticipantsRemove.Input) async throws -> Operations.CallsParticipantsRemove.Output
+    /// Updates information about a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.update`.
+    /// - Remark: Generated from `#/paths//calls.update/post(callsUpdate)`.
+    func callsUpdate(_ input: Operations.CallsUpdate.Input) async throws -> Operations.CallsUpdate.Output
     /// Remove access to a canvas for specified entities
     ///
     /// - Remark: HTTP `POST /canvases.access.delete`.
@@ -943,22 +952,12 @@ public protocol APIProtocol: Sendable {
     #endif
     #if WebAPI_Emoji
     func emojiList(_ input: Operations.EmojiList.Input) async throws -> Operations.EmojiList.Output
-    /// Acknowledge a comment mutation (edit, delete, or post) on a work object entity. Apps call this endpoint to confirm they have processed a comment action, and the backend emits a dedicated RTM event to the user.
-    ///
-    /// - Remark: HTTP `POST /entity.acknowledgeCommentAction`.
-    /// - Remark: Generated from `#/paths//entity.acknowledgeCommentAction/post(entityAcknowledgeCommentAction)`.
-    #endif
-    #if WebAPI_Entity
-    func entityAcknowledgeCommentAction(_ input: Operations.EntityAcknowledgeCommentAction.Input) async throws -> Operations.EntityAcknowledgeCommentAction.Output
-    /// Provide comments for work objects. Apps call this endpoint to send per-user flexpane comment data to the client.
-    ///
-    /// - Remark: HTTP `POST /entity.presentComments`.
-    /// - Remark: Generated from `#/paths//entity.presentComments/post(entityPresentComments)`.
-    func entityPresentComments(_ input: Operations.EntityPresentComments.Input) async throws -> Operations.EntityPresentComments.Output
     /// Provide custom flexpane behavior for Work Objects. Apps call this endpoint to send per-user flexpane metadata to the client.
     ///
     /// - Remark: HTTP `POST /entity.presentDetails`.
     /// - Remark: Generated from `#/paths//entity.presentDetails/post(entityPresentDetails)`.
+    #endif
+    #if WebAPI_Entity
     func entityPresentDetails(_ input: Operations.EntityPresentDetails.Input) async throws -> Operations.EntityPresentDetails.Output
     /// Finishes an upload started with files.getUploadURLExternal
     ///
@@ -1291,6 +1290,43 @@ public protocol APIProtocol: Sendable {
     #endif
     #if WebAPI_Tooling
     func toolingTokensRotate(_ input: Operations.ToolingTokensRotate.Input) async throws -> Operations.ToolingTokensRotate.Output
+    /// Create a User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.create`.
+    /// - Remark: Generated from `#/paths//usergroups.create/post(usergroupsCreate)`.
+    #endif
+    #if WebAPI_Usergroups
+    func usergroupsCreate(_ input: Operations.UsergroupsCreate.Input) async throws -> Operations.UsergroupsCreate.Output
+    /// Disable an existing User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.disable`.
+    /// - Remark: Generated from `#/paths//usergroups.disable/post(usergroupsDisable)`.
+    func usergroupsDisable(_ input: Operations.UsergroupsDisable.Input) async throws -> Operations.UsergroupsDisable.Output
+    /// Enable a User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.enable`.
+    /// - Remark: Generated from `#/paths//usergroups.enable/post(usergroupsEnable)`.
+    func usergroupsEnable(_ input: Operations.UsergroupsEnable.Input) async throws -> Operations.UsergroupsEnable.Output
+    /// List all User Groups for a team.
+    ///
+    /// - Remark: HTTP `POST /usergroups.list`.
+    /// - Remark: Generated from `#/paths//usergroups.list/post(usergroupsList)`.
+    func usergroupsList(_ input: Operations.UsergroupsList.Input) async throws -> Operations.UsergroupsList.Output
+    /// Update an existing User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.update`.
+    /// - Remark: Generated from `#/paths//usergroups.update/post(usergroupsUpdate)`.
+    func usergroupsUpdate(_ input: Operations.UsergroupsUpdate.Input) async throws -> Operations.UsergroupsUpdate.Output
+    /// List all users in a User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.users.list`.
+    /// - Remark: Generated from `#/paths//usergroups.users.list/post(usergroupsUsersList)`.
+    func usergroupsUsersList(_ input: Operations.UsergroupsUsersList.Input) async throws -> Operations.UsergroupsUsersList.Output
+    /// Update the list of users for a user group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.users.update`.
+    /// - Remark: Generated from `#/paths//usergroups.users.update/post(usergroupsUsersUpdate)`.
+    func usergroupsUsersUpdate(_ input: Operations.UsergroupsUsersUpdate.Input) async throws -> Operations.UsergroupsUsersUpdate.Output
     /// List conversations the calling user is a member of.
     ///
     /// - Remark: HTTP `POST /users.conversations`.
@@ -1365,6 +1401,28 @@ public protocol APIProtocol: Sendable {
     #endif
     #if WebAPI_Views
     func viewsPublish(_ input: Operations.ViewsPublish.Input) async throws -> Operations.ViewsPublish.Output
+    /// Add featured workflows to a channel.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.add`.
+    /// - Remark: Generated from `#/paths//workflows.featured.add/post(workflowsFeaturedAdd)`.
+    #endif
+    #if WebAPI_Workflows
+    func workflowsFeaturedAdd(_ input: Operations.WorkflowsFeaturedAdd.Input) async throws -> Operations.WorkflowsFeaturedAdd.Output
+    /// List the featured workflows for specified channels.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.list`.
+    /// - Remark: Generated from `#/paths//workflows.featured.list/post(workflowsFeaturedList)`.
+    func workflowsFeaturedList(_ input: Operations.WorkflowsFeaturedList.Input) async throws -> Operations.WorkflowsFeaturedList.Output
+    /// Remove featured workflows from a channel.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.remove`.
+    /// - Remark: Generated from `#/paths//workflows.featured.remove/post(workflowsFeaturedRemove)`.
+    func workflowsFeaturedRemove(_ input: Operations.WorkflowsFeaturedRemove.Input) async throws -> Operations.WorkflowsFeaturedRemove.Output
+    /// Set featured workflows for a channel.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.set`.
+    /// - Remark: Generated from `#/paths//workflows.featured.set/post(workflowsFeaturedSet)`.
+    func workflowsFeaturedSet(_ input: Operations.WorkflowsFeaturedSet.Input) async throws -> Operations.WorkflowsFeaturedSet.Output
     #endif
 }
 
@@ -1559,97 +1617,6 @@ extension APIProtocol {
             body: body
         ))
     }
-    /// List third-party app MCP servers approved for an organization, derived from the org's MCP server allowlist. Entries reflect allowlist state, not install/scope liveness: servers of apps that are uninstalled (but not deleted) are still listed.
-    ///
-    /// - Remark: HTTP `POST /admin.apps.mcp.servers.list`.
-    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.list/post(adminAppsMcpServersList)`.
-    public func adminAppsMcpServersList(
-        headers: Operations.AdminAppsMcpServersList.Input.Headers = .init(),
-        body: Operations.AdminAppsMcpServersList.Input.Body
-    ) async throws -> Operations.AdminAppsMcpServersList.Output {
-        try await adminAppsMcpServersList(Operations.AdminAppsMcpServersList.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// List MCP servers for an app with their access control permissions
-    ///
-    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.list`.
-    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.list/post(adminAppsMcpServersPermissionsList)`.
-    public func adminAppsMcpServersPermissionsList(
-        headers: Operations.AdminAppsMcpServersPermissionsList.Input.Headers = .init(),
-        body: Operations.AdminAppsMcpServersPermissionsList.Input.Body
-    ) async throws -> Operations.AdminAppsMcpServersPermissionsList.Output {
-        try await adminAppsMcpServersPermissionsList(Operations.AdminAppsMcpServersPermissionsList.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// Set the access control permission for who can use an MCP server
-    ///
-    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.set`.
-    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.set/post(adminAppsMcpServersPermissionsSet)`.
-    public func adminAppsMcpServersPermissionsSet(
-        headers: Operations.AdminAppsMcpServersPermissionsSet.Input.Headers = .init(),
-        body: Operations.AdminAppsMcpServersPermissionsSet.Input.Body
-    ) async throws -> Operations.AdminAppsMcpServersPermissionsSet.Output {
-        try await adminAppsMcpServersPermissionsSet(Operations.AdminAppsMcpServersPermissionsSet.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// Grant permission for entities to access an app that has its permission type set to named_entities
-    ///
-    /// - Remark: HTTP `POST /admin.apps.permissions.add`.
-    /// - Remark: Generated from `#/paths//admin.apps.permissions.add/post(adminAppsPermissionsAdd)`.
-    public func adminAppsPermissionsAdd(
-        headers: Operations.AdminAppsPermissionsAdd.Input.Headers = .init(),
-        body: Operations.AdminAppsPermissionsAdd.Input.Body
-    ) async throws -> Operations.AdminAppsPermissionsAdd.Output {
-        try await adminAppsPermissionsAdd(Operations.AdminAppsPermissionsAdd.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// Returns the permission type of an app and if applicable, includes the entities that have been granted access
-    ///
-    /// - Remark: HTTP `POST /admin.apps.permissions.list`.
-    /// - Remark: Generated from `#/paths//admin.apps.permissions.list/post(adminAppsPermissionsList)`.
-    public func adminAppsPermissionsList(
-        headers: Operations.AdminAppsPermissionsList.Input.Headers = .init(),
-        body: Operations.AdminAppsPermissionsList.Input.Body
-    ) async throws -> Operations.AdminAppsPermissionsList.Output {
-        try await adminAppsPermissionsList(Operations.AdminAppsPermissionsList.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// Revoke an entity's access to an app that has its permission type set to named_entities
-    ///
-    /// - Remark: HTTP `POST /admin.apps.permissions.remove`.
-    /// - Remark: Generated from `#/paths//admin.apps.permissions.remove/post(adminAppsPermissionsRemove)`.
-    public func adminAppsPermissionsRemove(
-        headers: Operations.AdminAppsPermissionsRemove.Input.Headers = .init(),
-        body: Operations.AdminAppsPermissionsRemove.Input.Body
-    ) async throws -> Operations.AdminAppsPermissionsRemove.Output {
-        try await adminAppsPermissionsRemove(Operations.AdminAppsPermissionsRemove.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// Set the permission type for who can access an app
-    ///
-    /// - Remark: HTTP `POST /admin.apps.permissions.set`.
-    /// - Remark: Generated from `#/paths//admin.apps.permissions.set/post(adminAppsPermissionsSet)`.
-    public func adminAppsPermissionsSet(
-        headers: Operations.AdminAppsPermissionsSet.Input.Headers = .init(),
-        body: Operations.AdminAppsPermissionsSet.Input.Body
-    ) async throws -> Operations.AdminAppsPermissionsSet.Output {
-        try await adminAppsPermissionsSet(Operations.AdminAppsPermissionsSet.Input(
-            headers: headers,
-            body: body
-        ))
-    }
     /// Cancel app request for team
     ///
     /// - Remark: HTTP `POST /admin.apps.requests.cancel`.
@@ -1711,32 +1678,6 @@ extension APIProtocol {
         body: Operations.AdminAppsUninstall.Input.Body
     ) async throws -> Operations.AdminAppsUninstall.Output {
         try await adminAppsUninstall(Operations.AdminAppsUninstall.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// API to allow Enterprise org admins to read the allow list of IP blocks and ASNs from the enterprise configuration.
-    ///
-    /// - Remark: HTTP `POST /admin.audit.anomaly.allow.getItem`.
-    /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.getItem/post(adminAuditAnomalyAllowGetItem)`.
-    public func adminAuditAnomalyAllowGetItem(
-        headers: Operations.AdminAuditAnomalyAllowGetItem.Input.Headers = .init(),
-        body: Operations.AdminAuditAnomalyAllowGetItem.Input.Body? = nil
-    ) async throws -> Operations.AdminAuditAnomalyAllowGetItem.Output {
-        try await adminAuditAnomalyAllowGetItem(Operations.AdminAuditAnomalyAllowGetItem.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// API to allow Enterprise org admins to write/overwrite the allow list of IP blocks and ASNs from the enterprise configuration.
-    ///
-    /// - Remark: HTTP `POST /admin.audit.anomaly.allow.updateItem`.
-    /// - Remark: Generated from `#/paths//admin.audit.anomaly.allow.updateItem/post(adminAuditAnomalyAllowUpdateItem)`.
-    public func adminAuditAnomalyAllowUpdateItem(
-        headers: Operations.AdminAuditAnomalyAllowUpdateItem.Input.Headers = .init(),
-        body: Operations.AdminAuditAnomalyAllowUpdateItem.Input.Body
-    ) async throws -> Operations.AdminAuditAnomalyAllowUpdateItem.Output {
-        try await adminAuditAnomalyAllowUpdateItem(Operations.AdminAuditAnomalyAllowUpdateItem.Input(
             headers: headers,
             body: body
         ))
@@ -1884,19 +1825,6 @@ extension APIProtocol {
             body: body
         ))
     }
-    /// Set properties on channels in bulk.
-    ///
-    /// - Remark: HTTP `POST /admin.conversations.bulkSetProperties`.
-    /// - Remark: Generated from `#/paths//admin.conversations.bulkSetProperties/post(adminConversationsBulkSetProperties)`.
-    public func adminConversationsBulkSetProperties(
-        headers: Operations.AdminConversationsBulkSetProperties.Input.Headers = .init(),
-        body: Operations.AdminConversationsBulkSetProperties.Input.Body
-    ) async throws -> Operations.AdminConversationsBulkSetProperties.Output {
-        try await adminConversationsBulkSetProperties(Operations.AdminConversationsBulkSetProperties.Input(
-            headers: headers,
-            body: body
-        ))
-    }
     /// Convert a public channel to a private channel.
     ///
     /// - Remark: HTTP `POST /admin.conversations.convertToPrivate`.
@@ -2023,19 +1951,6 @@ extension APIProtocol {
         body: Operations.AdminConversationsInvite.Input.Body
     ) async throws -> Operations.AdminConversationsInvite.Output {
         try await adminConversationsInvite(Operations.AdminConversationsInvite.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// Link a Salesforce record to a channel
-    ///
-    /// - Remark: HTTP `POST /admin.conversations.linkObjects`.
-    /// - Remark: Generated from `#/paths//admin.conversations.linkObjects/post(adminConversationsLinkObjects)`.
-    public func adminConversationsLinkObjects(
-        headers: Operations.AdminConversationsLinkObjects.Input.Headers = .init(),
-        body: Operations.AdminConversationsLinkObjects.Input.Body
-    ) async throws -> Operations.AdminConversationsLinkObjects.Output {
-        try await adminConversationsLinkObjects(Operations.AdminConversationsLinkObjects.Input(
             headers: headers,
             body: body
         ))
@@ -2179,19 +2094,6 @@ extension APIProtocol {
         body: Operations.AdminConversationsUnarchive.Input.Body
     ) async throws -> Operations.AdminConversationsUnarchive.Output {
         try await adminConversationsUnarchive(Operations.AdminConversationsUnarchive.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// Unlink a Salesforce record from a channel
-    ///
-    /// - Remark: HTTP `POST /admin.conversations.unlinkObjects`.
-    /// - Remark: Generated from `#/paths//admin.conversations.unlinkObjects/post(adminConversationsUnlinkObjects)`.
-    public func adminConversationsUnlinkObjects(
-        headers: Operations.AdminConversationsUnlinkObjects.Input.Headers = .init(),
-        body: Operations.AdminConversationsUnlinkObjects.Input.Body
-    ) async throws -> Operations.AdminConversationsUnlinkObjects.Output {
-        try await adminConversationsUnlinkObjects(Operations.AdminConversationsUnlinkObjects.Input(
             headers: headers,
             body: body
         ))
@@ -2534,6 +2436,58 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// Add up to one hundred default channels to an IDP group.
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.addChannels`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.addChannels/post(adminUsergroupsAddChannels)`.
+    public func adminUsergroupsAddChannels(
+        headers: Operations.AdminUsergroupsAddChannels.Input.Headers = .init(),
+        body: Operations.AdminUsergroupsAddChannels.Input.Body
+    ) async throws -> Operations.AdminUsergroupsAddChannels.Output {
+        try await adminUsergroupsAddChannels(Operations.AdminUsergroupsAddChannels.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Associate one or more default workspaces with an organization-wide IDP group.
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.addTeams`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.addTeams/post(adminUsergroupsAddTeams)`.
+    public func adminUsergroupsAddTeams(
+        headers: Operations.AdminUsergroupsAddTeams.Input.Headers = .init(),
+        body: Operations.AdminUsergroupsAddTeams.Input.Body
+    ) async throws -> Operations.AdminUsergroupsAddTeams.Output {
+        try await adminUsergroupsAddTeams(Operations.AdminUsergroupsAddTeams.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// List the channels linked to an org-level IDP group (user group).
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.listChannels`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.listChannels/post(adminUsergroupsListChannels)`.
+    public func adminUsergroupsListChannels(
+        headers: Operations.AdminUsergroupsListChannels.Input.Headers = .init(),
+        body: Operations.AdminUsergroupsListChannels.Input.Body
+    ) async throws -> Operations.AdminUsergroupsListChannels.Output {
+        try await adminUsergroupsListChannels(Operations.AdminUsergroupsListChannels.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Remove one or more default channels from an org-level IDP group (user group).
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.removeChannels`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.removeChannels/post(adminUsergroupsRemoveChannels)`.
+    public func adminUsergroupsRemoveChannels(
+        headers: Operations.AdminUsergroupsRemoveChannels.Input.Headers = .init(),
+        body: Operations.AdminUsergroupsRemoveChannels.Input.Body
+    ) async throws -> Operations.AdminUsergroupsRemoveChannels.Output {
+        try await adminUsergroupsRemoveChannels(Operations.AdminUsergroupsRemoveChannels.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Add an Enterprise user to a workspace.
     ///
     /// - Remark: HTTP `POST /admin.users.assign`.
@@ -2742,6 +2696,71 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// Add collaborators to workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.collaborators.add`.
+    /// - Remark: Generated from `#/paths//admin.workflows.collaborators.add/post(adminWorkflowsCollaboratorsAdd)`.
+    public func adminWorkflowsCollaboratorsAdd(
+        headers: Operations.AdminWorkflowsCollaboratorsAdd.Input.Headers = .init(),
+        body: Operations.AdminWorkflowsCollaboratorsAdd.Input.Body
+    ) async throws -> Operations.AdminWorkflowsCollaboratorsAdd.Output {
+        try await adminWorkflowsCollaboratorsAdd(Operations.AdminWorkflowsCollaboratorsAdd.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Remove collaborators from workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.collaborators.remove`.
+    /// - Remark: Generated from `#/paths//admin.workflows.collaborators.remove/post(adminWorkflowsCollaboratorsRemove)`.
+    public func adminWorkflowsCollaboratorsRemove(
+        headers: Operations.AdminWorkflowsCollaboratorsRemove.Input.Headers = .init(),
+        body: Operations.AdminWorkflowsCollaboratorsRemove.Input.Body
+    ) async throws -> Operations.AdminWorkflowsCollaboratorsRemove.Output {
+        try await adminWorkflowsCollaboratorsRemove(Operations.AdminWorkflowsCollaboratorsRemove.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Look up the permissions for a set of workflows
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.permissions.lookup`.
+    /// - Remark: Generated from `#/paths//admin.workflows.permissions.lookup/post(adminWorkflowsPermissionsLookup)`.
+    public func adminWorkflowsPermissionsLookup(
+        headers: Operations.AdminWorkflowsPermissionsLookup.Input.Headers = .init(),
+        body: Operations.AdminWorkflowsPermissionsLookup.Input.Body
+    ) async throws -> Operations.AdminWorkflowsPermissionsLookup.Output {
+        try await adminWorkflowsPermissionsLookup(Operations.AdminWorkflowsPermissionsLookup.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Search workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.search`.
+    /// - Remark: Generated from `#/paths//admin.workflows.search/post(adminWorkflowsSearch)`.
+    public func adminWorkflowsSearch(
+        headers: Operations.AdminWorkflowsSearch.Input.Headers = .init(),
+        body: Operations.AdminWorkflowsSearch.Input.Body
+    ) async throws -> Operations.AdminWorkflowsSearch.Output {
+        try await adminWorkflowsSearch(Operations.AdminWorkflowsSearch.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Unpublish workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.unpublish`.
+    /// - Remark: Generated from `#/paths//admin.workflows.unpublish/post(adminWorkflowsUnpublish)`.
+    public func adminWorkflowsUnpublish(
+        headers: Operations.AdminWorkflowsUnpublish.Input.Headers = .init(),
+        body: Operations.AdminWorkflowsUnpublish.Input.Body
+    ) async throws -> Operations.AdminWorkflowsUnpublish.Output {
+        try await adminWorkflowsUnpublish(Operations.AdminWorkflowsUnpublish.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Rename an agent session.
     ///
     /// - Remark: HTTP `POST /agents.sessions.rename`.
@@ -2770,17 +2789,17 @@ extension APIProtocol {
             body: body
         ))
     }
-    /// Delete external auth tokens only on the Slack side
+    /// Checks API calling code.
     ///
-    /// - Remark: HTTP `POST /apps.auth.external.delete`.
-    /// - Remark: Generated from `#/paths//apps.auth.external.delete/post(appsAuthExternalDelete)`.
+    /// - Remark: HTTP `POST /api.test`.
+    /// - Remark: Generated from `#/paths//api.test/post(apiTest)`.
     #endif
-    #if WebAPI_Apps
-    public func appsAuthExternalDelete(
-        headers: Operations.AppsAuthExternalDelete.Input.Headers = .init(),
-        body: Operations.AppsAuthExternalDelete.Input.Body
-    ) async throws -> Operations.AppsAuthExternalDelete.Output {
-        try await appsAuthExternalDelete(Operations.AppsAuthExternalDelete.Input(
+    #if WebAPI_Api
+    public func apiTest(
+        headers: Operations.ApiTest.Input.Headers = .init(),
+        body: Operations.ApiTest.Input.Body
+    ) async throws -> Operations.ApiTest.Output {
+        try await apiTest(Operations.ApiTest.Input(
             headers: headers,
             body: body
         ))
@@ -2789,6 +2808,8 @@ extension APIProtocol {
     ///
     /// - Remark: HTTP `POST /apps.connections.open`.
     /// - Remark: Generated from `#/paths//apps.connections.open/post(appsConnectionsOpen)`.
+    #endif
+    #if WebAPI_Apps
     public func appsConnectionsOpen(
         headers: Operations.AppsConnectionsOpen.Input.Headers = .init(),
         body: Operations.AppsConnectionsOpen.Input.Body? = nil
@@ -2807,19 +2828,6 @@ extension APIProtocol {
         body: Operations.AppsEventAuthorizationsList.Input.Body
     ) async throws -> Operations.AppsEventAuthorizationsList.Output {
         try await appsEventAuthorizationsList(Operations.AppsEventAuthorizationsList.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// Set who can interact with a managed app. Lets the builder who created a managed app on a partner platform configure the app's permissions as themselves, using a user token from the manager app. Permissions can only be set before the app is installed: if the app is already installed, this method makes no change and returns the app's current permissions.
-    ///
-    /// - Remark: HTTP `POST /apps.managed.permissions.set`.
-    /// - Remark: Generated from `#/paths//apps.managed.permissions.set/post(appsManagedPermissionsSet)`.
-    public func appsManagedPermissionsSet(
-        headers: Operations.AppsManagedPermissionsSet.Input.Headers = .init(),
-        body: Operations.AppsManagedPermissionsSet.Input.Body
-    ) async throws -> Operations.AppsManagedPermissionsSet.Output {
-        try await appsManagedPermissionsSet(Operations.AppsManagedPermissionsSet.Input(
             headers: headers,
             body: body
         ))
@@ -2915,25 +2923,12 @@ extension APIProtocol {
             body: body
         ))
     }
-    /// Searches messages, files, channels and users across your Slack organization.
-    ///
-    /// - Remark: HTTP `POST /assistant.search.context`.
-    /// - Remark: Generated from `#/paths//assistant.search.context/post(assistantSearchContext)`.
-    #endif
-    #if WebAPI_Assistant
-    public func assistantSearchContext(
-        headers: Operations.AssistantSearchContext.Input.Headers = .init(),
-        body: Operations.AssistantSearchContext.Input.Body
-    ) async throws -> Operations.AssistantSearchContext.Output {
-        try await assistantSearchContext(Operations.AssistantSearchContext.Input(
-            headers: headers,
-            body: body
-        ))
-    }
     /// Set the status for an AI assistant thread.
     ///
     /// - Remark: HTTP `POST /assistant.threads.setStatus`.
     /// - Remark: Generated from `#/paths//assistant.threads.setStatus/post(assistantThreadsSetStatus)`.
+    #endif
+    #if WebAPI_Assistant
     public func assistantThreadsSetStatus(
         headers: Operations.AssistantThreadsSetStatus.Input.Headers = .init(),
         body: Operations.AssistantThreadsSetStatus.Input.Body
@@ -3090,6 +3085,86 @@ extension APIProtocol {
         body: Operations.BotsInfo.Input.Body
     ) async throws -> Operations.BotsInfo.Output {
         try await botsInfo(Operations.BotsInfo.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Registers a new Call.
+    ///
+    /// - Remark: HTTP `POST /calls.add`.
+    /// - Remark: Generated from `#/paths//calls.add/post(callsAdd)`.
+    #endif
+    #if WebAPI_Calls
+    public func callsAdd(
+        headers: Operations.CallsAdd.Input.Headers = .init(),
+        body: Operations.CallsAdd.Input.Body
+    ) async throws -> Operations.CallsAdd.Output {
+        try await callsAdd(Operations.CallsAdd.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Ends a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.end`.
+    /// - Remark: Generated from `#/paths//calls.end/post(callsEnd)`.
+    public func callsEnd(
+        headers: Operations.CallsEnd.Input.Headers = .init(),
+        body: Operations.CallsEnd.Input.Body
+    ) async throws -> Operations.CallsEnd.Output {
+        try await callsEnd(Operations.CallsEnd.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Returns information about a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.info`.
+    /// - Remark: Generated from `#/paths//calls.info/post(callsInfo)`.
+    public func callsInfo(
+        headers: Operations.CallsInfo.Input.Headers = .init(),
+        body: Operations.CallsInfo.Input.Body
+    ) async throws -> Operations.CallsInfo.Output {
+        try await callsInfo(Operations.CallsInfo.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Registers new participants added to a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.participants.add`.
+    /// - Remark: Generated from `#/paths//calls.participants.add/post(callsParticipantsAdd)`.
+    public func callsParticipantsAdd(
+        headers: Operations.CallsParticipantsAdd.Input.Headers = .init(),
+        body: Operations.CallsParticipantsAdd.Input.Body
+    ) async throws -> Operations.CallsParticipantsAdd.Output {
+        try await callsParticipantsAdd(Operations.CallsParticipantsAdd.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Registers participants removed from a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.participants.remove`.
+    /// - Remark: Generated from `#/paths//calls.participants.remove/post(callsParticipantsRemove)`.
+    public func callsParticipantsRemove(
+        headers: Operations.CallsParticipantsRemove.Input.Headers = .init(),
+        body: Operations.CallsParticipantsRemove.Input.Body
+    ) async throws -> Operations.CallsParticipantsRemove.Output {
+        try await callsParticipantsRemove(Operations.CallsParticipantsRemove.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Updates information about a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.update`.
+    /// - Remark: Generated from `#/paths//calls.update/post(callsUpdate)`.
+    public func callsUpdate(
+        headers: Operations.CallsUpdate.Input.Headers = .init(),
+        body: Operations.CallsUpdate.Input.Body
+    ) async throws -> Operations.CallsUpdate.Output {
+        try await callsUpdate(Operations.CallsUpdate.Input(
             headers: headers,
             body: body
         ))
@@ -3741,38 +3816,12 @@ extension APIProtocol {
             body: body
         ))
     }
-    /// Acknowledge a comment mutation (edit, delete, or post) on a work object entity. Apps call this endpoint to confirm they have processed a comment action, and the backend emits a dedicated RTM event to the user.
-    ///
-    /// - Remark: HTTP `POST /entity.acknowledgeCommentAction`.
-    /// - Remark: Generated from `#/paths//entity.acknowledgeCommentAction/post(entityAcknowledgeCommentAction)`.
-    #endif
-    #if WebAPI_Entity
-    public func entityAcknowledgeCommentAction(
-        headers: Operations.EntityAcknowledgeCommentAction.Input.Headers = .init(),
-        body: Operations.EntityAcknowledgeCommentAction.Input.Body
-    ) async throws -> Operations.EntityAcknowledgeCommentAction.Output {
-        try await entityAcknowledgeCommentAction(Operations.EntityAcknowledgeCommentAction.Input(
-            headers: headers,
-            body: body
-        ))
-    }
-    /// Provide comments for work objects. Apps call this endpoint to send per-user flexpane comment data to the client.
-    ///
-    /// - Remark: HTTP `POST /entity.presentComments`.
-    /// - Remark: Generated from `#/paths//entity.presentComments/post(entityPresentComments)`.
-    public func entityPresentComments(
-        headers: Operations.EntityPresentComments.Input.Headers = .init(),
-        body: Operations.EntityPresentComments.Input.Body
-    ) async throws -> Operations.EntityPresentComments.Output {
-        try await entityPresentComments(Operations.EntityPresentComments.Input(
-            headers: headers,
-            body: body
-        ))
-    }
     /// Provide custom flexpane behavior for Work Objects. Apps call this endpoint to send per-user flexpane metadata to the client.
     ///
     /// - Remark: HTTP `POST /entity.presentDetails`.
     /// - Remark: Generated from `#/paths//entity.presentDetails/post(entityPresentDetails)`.
+    #endif
+    #if WebAPI_Entity
     public func entityPresentDetails(
         headers: Operations.EntityPresentDetails.Input.Headers = .init(),
         body: Operations.EntityPresentDetails.Input.Body
@@ -4601,6 +4650,99 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// Create a User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.create`.
+    /// - Remark: Generated from `#/paths//usergroups.create/post(usergroupsCreate)`.
+    #endif
+    #if WebAPI_Usergroups
+    public func usergroupsCreate(
+        headers: Operations.UsergroupsCreate.Input.Headers = .init(),
+        body: Operations.UsergroupsCreate.Input.Body
+    ) async throws -> Operations.UsergroupsCreate.Output {
+        try await usergroupsCreate(Operations.UsergroupsCreate.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Disable an existing User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.disable`.
+    /// - Remark: Generated from `#/paths//usergroups.disable/post(usergroupsDisable)`.
+    public func usergroupsDisable(
+        headers: Operations.UsergroupsDisable.Input.Headers = .init(),
+        body: Operations.UsergroupsDisable.Input.Body
+    ) async throws -> Operations.UsergroupsDisable.Output {
+        try await usergroupsDisable(Operations.UsergroupsDisable.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Enable a User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.enable`.
+    /// - Remark: Generated from `#/paths//usergroups.enable/post(usergroupsEnable)`.
+    public func usergroupsEnable(
+        headers: Operations.UsergroupsEnable.Input.Headers = .init(),
+        body: Operations.UsergroupsEnable.Input.Body
+    ) async throws -> Operations.UsergroupsEnable.Output {
+        try await usergroupsEnable(Operations.UsergroupsEnable.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// List all User Groups for a team.
+    ///
+    /// - Remark: HTTP `POST /usergroups.list`.
+    /// - Remark: Generated from `#/paths//usergroups.list/post(usergroupsList)`.
+    public func usergroupsList(
+        headers: Operations.UsergroupsList.Input.Headers = .init(),
+        body: Operations.UsergroupsList.Input.Body
+    ) async throws -> Operations.UsergroupsList.Output {
+        try await usergroupsList(Operations.UsergroupsList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Update an existing User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.update`.
+    /// - Remark: Generated from `#/paths//usergroups.update/post(usergroupsUpdate)`.
+    public func usergroupsUpdate(
+        headers: Operations.UsergroupsUpdate.Input.Headers = .init(),
+        body: Operations.UsergroupsUpdate.Input.Body
+    ) async throws -> Operations.UsergroupsUpdate.Output {
+        try await usergroupsUpdate(Operations.UsergroupsUpdate.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// List all users in a User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.users.list`.
+    /// - Remark: Generated from `#/paths//usergroups.users.list/post(usergroupsUsersList)`.
+    public func usergroupsUsersList(
+        headers: Operations.UsergroupsUsersList.Input.Headers = .init(),
+        body: Operations.UsergroupsUsersList.Input.Body
+    ) async throws -> Operations.UsergroupsUsersList.Output {
+        try await usergroupsUsersList(Operations.UsergroupsUsersList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Update the list of users for a user group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.users.update`.
+    /// - Remark: Generated from `#/paths//usergroups.users.update/post(usergroupsUsersUpdate)`.
+    public func usergroupsUsersUpdate(
+        headers: Operations.UsergroupsUsersUpdate.Input.Headers = .init(),
+        body: Operations.UsergroupsUsersUpdate.Input.Body
+    ) async throws -> Operations.UsergroupsUsersUpdate.Output {
+        try await usergroupsUsersUpdate(Operations.UsergroupsUsersUpdate.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// List conversations the calling user is a member of.
     ///
     /// - Remark: HTTP `POST /users.conversations`.
@@ -4783,6 +4925,60 @@ extension APIProtocol {
         body: Operations.ViewsPublish.Input.Body
     ) async throws -> Operations.ViewsPublish.Output {
         try await viewsPublish(Operations.ViewsPublish.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Add featured workflows to a channel.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.add`.
+    /// - Remark: Generated from `#/paths//workflows.featured.add/post(workflowsFeaturedAdd)`.
+    #endif
+    #if WebAPI_Workflows
+    public func workflowsFeaturedAdd(
+        headers: Operations.WorkflowsFeaturedAdd.Input.Headers = .init(),
+        body: Operations.WorkflowsFeaturedAdd.Input.Body
+    ) async throws -> Operations.WorkflowsFeaturedAdd.Output {
+        try await workflowsFeaturedAdd(Operations.WorkflowsFeaturedAdd.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// List the featured workflows for specified channels.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.list`.
+    /// - Remark: Generated from `#/paths//workflows.featured.list/post(workflowsFeaturedList)`.
+    public func workflowsFeaturedList(
+        headers: Operations.WorkflowsFeaturedList.Input.Headers = .init(),
+        body: Operations.WorkflowsFeaturedList.Input.Body
+    ) async throws -> Operations.WorkflowsFeaturedList.Output {
+        try await workflowsFeaturedList(Operations.WorkflowsFeaturedList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Remove featured workflows from a channel.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.remove`.
+    /// - Remark: Generated from `#/paths//workflows.featured.remove/post(workflowsFeaturedRemove)`.
+    public func workflowsFeaturedRemove(
+        headers: Operations.WorkflowsFeaturedRemove.Input.Headers = .init(),
+        body: Operations.WorkflowsFeaturedRemove.Input.Body
+    ) async throws -> Operations.WorkflowsFeaturedRemove.Output {
+        try await workflowsFeaturedRemove(Operations.WorkflowsFeaturedRemove.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Set featured workflows for a channel.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.set`.
+    /// - Remark: Generated from `#/paths//workflows.featured.set/post(workflowsFeaturedSet)`.
+    public func workflowsFeaturedSet(
+        headers: Operations.WorkflowsFeaturedSet.Input.Headers = .init(),
+        body: Operations.WorkflowsFeaturedSet.Input.Body
+    ) async throws -> Operations.WorkflowsFeaturedSet.Output {
+        try await workflowsFeaturedSet(Operations.WorkflowsFeaturedSet.Input(
             headers: headers,
             body: body
         ))
