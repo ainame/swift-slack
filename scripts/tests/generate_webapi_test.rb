@@ -52,4 +52,13 @@ class GenerateWebapiTest < Minitest::Test
       reference_response_samples(REFERENCE_RESPONSE_METHODS.first, { 'response' => { 'examples' => ['invalid'] } })
     end
   end
+
+  def test_legacy_methods_are_unsupported_by_prefix
+    %w[channels.list groups.list im.open mpim.open rtm.connect dialog.open files.comments.delete oauth.access].each do |name|
+      assert unsupported_method?(name), "#{name} should be unsupported"
+    end
+    %w[usergroups.list admin.usergroups.addTeams admin.workflows.search functions.workflows.steps.list oauth.v2.access].each do |name|
+      refute unsupported_method?(name), "#{name} should be supported"
+    end
+  end
 end

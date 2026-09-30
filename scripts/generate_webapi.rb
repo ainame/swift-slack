@@ -6,23 +6,36 @@ require 'yaml'
 require_relative './lib/visitors'
 require_relative './lib/helpers'
 
-# https://github.com/slack-edge/slack-web-api-client/blob/4d1d93df8abe423ea7ee3b18591cd83d9bcfe6e6/scripts/code_generator.rb#L91-L115
-# RTM API is legacy so not going to support it
+# Based on the exclusion list in slack-web-api-client:
+# https://github.com/slack-edge/slack-web-api-client/blob/649fb67cc970fe04f05ea3fb215180bd698cee97/scripts/code_generator.rb#L91-L115
+# Patterns are anchored to the start of the method name, as in the reference,
+# so current APIs such as usergroups.* and admin.workflows.* stay generated.
+# Unlike the reference, calls.* and workflows.* are generated because they are
+# current APIs. That list only selects which Java fixtures become response types
+# and has not changed since its 2023 v0.1.x releases; slack-web-api-client's
+# hand-written API surface now exposes calls.* and workflows.* as well. The
+# retired Steps from Apps methods (workflows.stepCompleted, workflows.stepFailed,
+# workflows.updateStep) still have Java fixtures but are not generated because
+# slack-api-ref no longer lists them.
 UNSUPPORTED_METHODS = [
-  /admin\.analytics\.getFile/,
-  /api\.test/,
-  /oauth\.access/,
-  /oauth\.token/,
-  /files\.comments\./,
-  /dialog\./,
-  /calls\./,
-  /workflows\./,
-  /channels\./,
-  /groups\./,
-  /mpim\./,
-  /im\./,
-  /rtm\./
-]
+  # Legacy APIs superseded by current Slack APIs
+  /\Achannels\./,       # Replaced by conversations.*
+  /\Agroups\./,         # Replaced by conversations.*
+  /\Aim\./,             # Replaced by conversations.*
+  /\Ampim\./,           # Replaced by conversations.*
+  /\Artm\./,            # RTM API is legacy; use the Events API or Socket Mode
+  /\Adialog\./,         # Dialogs are legacy; replaced by modals (views.*)
+  /\Afiles\.comments\./, # File comments are legacy
+  /\Aoauth\.access\z/,  # Classic app OAuth; replaced by oauth.v2.access
+  /\Aoauth\.token\z/,   # Retired workspace apps; replaced by oauth.v2.access
+
+  # Responses the generator cannot represent
+  /\Aadmin\.analytics\.getFile\z/, # Returns a gzip-compressed file, not a JSON body
+].freeze
+
+def unsupported_method?(method_name)
+  UNSUPPORTED_METHODS.any? { _1.match?(method_name) }
+end
 
 # Reviewed reference-only methods whose response examples replace the minimal
 # success fallback. Keep this explicit until other reference-only APIs are reviewed.
@@ -115,8 +128,6 @@ end
 
 def generate_openapi_component(path, output_dir, sample_paths = nil)
   method_name = File.basename(path, '.json')
-  return puts "Skip, this method isn't supported #{method_name}" if UNSUPPORTED_METHODS.include?(method_name)
-
   model_name = "#{method_name.split('.').map { _1.sub(/\A./, &:upcase) }.join}Response"
   output_path = File.join(output_dir, "#{method_name}.json")
 
@@ -180,7 +191,7 @@ end
 
 def generate_openapi_path(path)
   method_name = File.basename(path, '.json')
-  return puts "Skip this method isn't supported #{method_name}" if UNSUPPORTED_METHODS.any? { _1.match(method_name) }
+  return puts "Skip this method isn't supported #{method_name}" if unsupported_method?(method_name)
 
   json = JSON.parse(File.read(path))
   operation_id = method_name.camelize(separator: '\.')
