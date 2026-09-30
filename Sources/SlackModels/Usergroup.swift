@@ -1,98 +1,49 @@
-@_spi(Generated) import OpenAPIRuntime
-#if os(Linux)
-@preconcurrency import struct Foundation.Data
-@preconcurrency import struct Foundation.Date
-@preconcurrency import struct Foundation.URL
-#else
-import struct Foundation.Data
-import struct Foundation.Date
-import struct Foundation.URL
-#endif
+import Foundation
 
-/// - Remark: Generated from `#/components/schemas/Usergroup`.
+/// A user group (also called a subteam).
+///
+/// Mirrors `com.slack.api.model.Usergroup` in java-slack-sdk. This is hand-written because each
+/// usergroups fixture contains a different subset of fields, and the generated model kept only the
+/// subset of whichever fixture was merged last. The members and `CodingKeys` of the previously
+/// generated model are kept for source compatibility.
 public struct Usergroup: Codable, Hashable, Sendable {
-    /// - Remark: Generated from `#/components/schemas/Usergroup/auto_provision`.
     public var autoProvision: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/channel_count`.
+    public var autoType: Swift.String?
     public var channelCount: Swift.Int?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/created_by`.
     public var createdBy: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/date_create`.
     public var dateCreate: Swift.Int?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/date_delete`.
     public var dateDelete: Swift.Int?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/date_update`.
     public var dateUpdate: Swift.Int?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/description`.
+    public var deletedBy: Swift.String?
     public var description: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/enterprise_subteam_id`.
     public var enterpriseSubteamId: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/handle`.
     public var handle: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/id`.
     public var id: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/is_editing_restricted`.
     public var isEditingRestricted: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/is_external`.
     public var isExternal: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/is_idp_group`.
     public var isIdpGroup: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/is_membership_locked`.
     public var isMembershipLocked: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/is_org_level`.
     public var isOrgLevel: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/is_section`.
     public var isSection: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/is_subteam`.
     public var isSubteam: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/is_usergroup`.
     public var isUsergroup: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/is_visible`.
     public var isVisible: Swift.Bool?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/name`.
     public var name: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/prefs`.
     public var prefs: Prefs?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/team_id`.
     public var teamId: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/updated_by`.
     public var updatedBy: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Usergroup/users`.
+    public var userCount: Swift.Int?
     public var users: [Swift.String]?
-    /// Creates a new `Usergroup`.
-    ///
-    /// - Parameters:
-    ///   - autoProvision:
-    ///   - channelCount:
-    ///   - createdBy:
-    ///   - dateCreate:
-    ///   - dateDelete:
-    ///   - dateUpdate:
-    ///   - description:
-    ///   - enterpriseSubteamId:
-    ///   - handle:
-    ///   - id:
-    ///   - isEditingRestricted:
-    ///   - isExternal:
-    ///   - isIdpGroup:
-    ///   - isMembershipLocked:
-    ///   - isOrgLevel:
-    ///   - isSection:
-    ///   - isSubteam:
-    ///   - isUsergroup:
-    ///   - isVisible:
-    ///   - name:
-    ///   - prefs:
-    ///   - teamId:
-    ///   - updatedBy:
-    ///   - users:
+
     public init(
         autoProvision: Swift.Bool? = nil,
+        autoType: Swift.String? = nil,
         channelCount: Swift.Int? = nil,
         createdBy: Swift.String? = nil,
         dateCreate: Swift.Int? = nil,
         dateDelete: Swift.Int? = nil,
         dateUpdate: Swift.Int? = nil,
+        deletedBy: Swift.String? = nil,
         description: Swift.String? = nil,
         enterpriseSubteamId: Swift.String? = nil,
         handle: Swift.String? = nil,
@@ -110,14 +61,17 @@ public struct Usergroup: Codable, Hashable, Sendable {
         prefs: Prefs? = nil,
         teamId: Swift.String? = nil,
         updatedBy: Swift.String? = nil,
+        userCount: Swift.Int? = nil,
         users: [Swift.String]? = nil,
     ) {
         self.autoProvision = autoProvision
+        self.autoType = autoType
         self.channelCount = channelCount
         self.createdBy = createdBy
         self.dateCreate = dateCreate
         self.dateDelete = dateDelete
         self.dateUpdate = dateUpdate
+        self.deletedBy = deletedBy
         self.description = description
         self.enterpriseSubteamId = enterpriseSubteamId
         self.handle = handle
@@ -135,16 +89,19 @@ public struct Usergroup: Codable, Hashable, Sendable {
         self.prefs = prefs
         self.teamId = teamId
         self.updatedBy = updatedBy
+        self.userCount = userCount
         self.users = users
     }
 
     public enum CodingKeys: String, CodingKey {
         case autoProvision = "auto_provision"
+        case autoType = "auto_type"
         case channelCount = "channel_count"
         case createdBy = "created_by"
         case dateCreate = "date_create"
         case dateDelete = "date_delete"
         case dateUpdate = "date_update"
+        case deletedBy = "deleted_by"
         case description
         case enterpriseSubteamId = "enterprise_subteam_id"
         case handle
@@ -162,6 +119,7 @@ public struct Usergroup: Codable, Hashable, Sendable {
         case prefs
         case teamId = "team_id"
         case updatedBy = "updated_by"
+        case userCount = "user_count"
         case users
     }
 }

@@ -4288,7 +4288,7 @@ extension Components.Schemas {
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/errors`.
-        public var errors: [SlackModels._Error]?
+        public var errors: [SlackModels.WorkflowCollaboratorError]?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/needed`.
         public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/ok`.
@@ -4308,7 +4308,7 @@ extension Components.Schemas {
         ///   - responseMetadata:
         public init(
             error: Swift.String? = nil,
-            errors: [SlackModels._Error]? = nil,
+            errors: [SlackModels.WorkflowCollaboratorError]? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
@@ -4337,7 +4337,7 @@ extension Components.Schemas {
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/errors`.
-        public var errors: [SlackModels._Error]?
+        public var errors: [SlackModels.WorkflowCollaboratorError]?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/needed`.
         public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/ok`.
@@ -4354,7 +4354,7 @@ extension Components.Schemas {
         ///   - provided:
         public init(
             error: Swift.String? = nil,
-            errors: [SlackModels._Error]? = nil,
+            errors: [SlackModels.WorkflowCollaboratorError]? = nil,
             needed: Swift.String? = nil,
             ok: Swift.Bool,
             provided: Swift.String? = nil,
@@ -4433,7 +4433,7 @@ extension Components.Schemas {
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/total_found`.
         public var totalFound: Swift.Int?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/workflows`.
-        public var workflows: [SlackModels.Workflow]?
+        public var workflows: [SlackModels.AppWorkflow]?
         /// Creates a new `AdminWorkflowsSearchResponse`.
         ///
         /// - Parameters:
@@ -4451,7 +4451,7 @@ extension Components.Schemas {
             provided: Swift.String? = nil,
             responseMetadata: SlackModels.ResponseMetadata? = nil,
             totalFound: Swift.Int? = nil,
-            workflows: [SlackModels.Workflow]? = nil,
+            workflows: [SlackModels.AppWorkflow]? = nil,
         ) {
             self.error = error
             self.needed = needed

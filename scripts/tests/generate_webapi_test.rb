@@ -5,6 +5,7 @@ require_relative '../generate_webapi'
 
 class GenerateWebapiTest < Minitest::Test
   VENDOR_DIR = File.expand_path('../../vendor', __dir__)
+
   def test_only_supported_methods_with_java_fixtures_are_generated
     Dir.mktmpdir do |directory|
       FileUtils.mkdir_p(File.join(directory, 'schemas'))
@@ -40,6 +41,73 @@ class GenerateWebapiTest < Minitest::Test
       # quicktype emits APITestResponse, not the ApiTestResponse derived from the method name.
       assert_equal '#/components/schemas/APITestResponse', reference
       assert schema.fetch('components').fetch('schemas').key?('APITestResponse')
+    end
+  end
+
+  def test_handwritten_models_replace_inferred_shapes
+    Dir.mktmpdir do |directory|
+      FileUtils.mkdir_p(File.join(directory, 'schemas'))
+      api_ref_paths = %w[calls/calls.add api/api.test].map { File.join(VENDOR_DIR, "slack-api-ref/methods/#{_1}.json") }
+      # chat.postMessage defines an unrelated `Call` (message call blocks) that collides with calls.add.
+      sample_paths = %w[calls.add chat.postMessage api.test].map do
+        File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/api/#{_1}.json")
+      end
+
+      capture_io { main(api_ref_paths, sample_paths, directory) }
+      schemas = JSON.parse(File.read(File.join(directory, 'openapi.json'))).fetch('components').fetch('schemas')
+
+      assert_equal '#/components/schemas/Call', schemas.dig('CallsAddResponse', 'properties', 'call', '$ref')
+      assert_equal '#/components/schemas/APITestArgs', schemas.dig('APITestResponse', 'properties', 'args', '$ref')
+      assert_empty schemas.fetch('Call').fetch('properties')
+      assert_empty schemas.fetch('APITestArgs').fetch('properties')
+      %w[V1 Participant AppIconUrls Args].each { refute schemas.key?(_1), "#{_1} should be removed" }
+    end
+  end
+
+  def test_admin_workflows_search_uses_handwritten_app_workflow
+    Dir.mktmpdir do |directory|
+      FileUtils.mkdir_p(File.join(directory, 'schemas'))
+      api_ref_paths = [File.join(VENDOR_DIR, 'slack-api-ref/methods/admin/admin.workflows.search.json')]
+      # chat.postMessage defines an unrelated `Workflow` (with `trigger`) that collides with the search result.
+      sample_paths = %w[admin.workflows.search chat.postMessage].map do
+        File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/api/#{_1}.json")
+      end
+
+      capture_io { main(api_ref_paths, sample_paths, directory) }
+      schemas = JSON.parse(File.read(File.join(directory, 'openapi.json'))).fetch('components').fetch('schemas')
+
+      assert_equal '#/components/schemas/AppWorkflow',
+                   schemas.dig('AdminWorkflowsSearchResponse', 'properties', 'workflows', 'items', '$ref')
+      assert_empty schemas.fetch('AppWorkflow').fetch('properties')
+      # Nested definitions used only by the search result's Workflow are dropped.
+      %w[InputParameter Step].each { refute schemas.key?(_1), "#{_1} should be removed" }
+    end
+  end
+
+  def test_usergroups_and_collaborator_errors_use_handwritten_models
+    Dir.mktmpdir do |directory|
+      FileUtils.mkdir_p(File.join(directory, 'schemas'))
+      methods = %w[usergroups.list usergroups.users.update admin.workflows.collaborators.add conversations.invite]
+      api_ref_paths = %w[
+        usergroups/usergroups.list
+        usergroups/usergroups.users.update
+        admin/admin.workflows.collaborators.add
+        conversations/conversations.invite
+      ].map { File.join(VENDOR_DIR, "slack-api-ref/methods/#{_1}.json") }
+      # usergroups.users.update has fewer Usergroup fields than usergroups.list, and
+      # conversations.invite defines an unrelated `Error`.
+      sample_paths = methods.map { File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/api/#{_1}.json") }
+
+      capture_io { main(api_ref_paths, sample_paths, directory) }
+      schemas = JSON.parse(File.read(File.join(directory, 'openapi.json'))).fetch('components').fetch('schemas')
+
+      assert_empty schemas.fetch('Usergroup').fetch('properties')
+      assert_equal '#/components/schemas/Usergroup', schemas.dig('UsergroupsListResponse', 'properties', 'usergroups', 'items', '$ref')
+      assert_equal '#/components/schemas/WorkflowCollaboratorError',
+                   schemas.dig('AdminWorkflowsCollaboratorsAddResponse', 'properties', 'errors', 'items', '$ref')
+      assert_empty schemas.fetch('WorkflowCollaboratorError').fetch('properties')
+      # conversations.invite keeps its own Error.
+      assert_equal '#/components/schemas/Error', schemas.dig('ConversationsInviteResponse', 'properties', 'errors', 'items', '$ref')
     end
   end
 
