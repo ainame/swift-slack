@@ -37,7 +37,7 @@ This project is a Swift Slack SDK and app framework. It combines generated Web A
 - `Sources/SlackApp`: Handwritten runtime code for inbound request payloads, event payload types, HTTP adapters, request verification, routing, and Socket Mode.
 - `Sources/SlackApp/Events`: Generated Events API payload types owned by `SlackApp`.
 - `Sources/SlackKit`: Umbrella exports and top-level documentation for app authors.
-- `Sources/SlackModels`: Generated and processed shared Slack model types.
+- `Sources/SlackModels`: Shared Slack model types. `Generated/` is generator-owned; files directly under `Sources/SlackModels` are hand-written models (see Hand-written Models).
 - `Sources/SlackBlockKit`: Block Kit data structures and views.
 - `Sources/SlackBlockKitDSL`: Swift DSL for composing Block Kit payloads.
 - `Tests/SlackClientTests`, `Tests/SlackAppTests`, `Tests/SlackBlockKitTests`, `Tests/SlackBlockKitDSLTests`: Module-aligned test suites using `swift-testing`.
@@ -79,9 +79,27 @@ When changing generated surfaces, prefer updating the source specs/scripts and r
 - When inferred types conflict, inspect both Java SDK samples under `vendor/java-slack-sdk/json-logs/samples` and the corresponding Slack reference schema under `vendor/slack-api-ref`. Samples show observed payloads; the reference may contain broader or more authoritative constraints.
 - `GENERATION_JOBS=<n>` can reduce Ruby generator concurrency on constrained machines. Do not commit machine-specific values.
 
+### Web API Coverage
+
+- A Web API method is generated only when java-slack-sdk has a response fixture for it (`vendor/java-slack-sdk/json-logs/samples/api/<method>.json`). slack-api-ref supplies the method list and request arguments, not response types; do not generate response types from its documentation examples.
+- `UNSUPPORTED_METHODS` in `scripts/generate_webapi.rb` excludes legacy methods. Anchor every pattern to the start of the method name and give each entry an inline reason.
+
+### Hand-written Models
+
+When an inferred response type is wrong or badly named, replace it with a hand-written model instead of editing generated output:
+
+1. Add the Swift type as `Sources/SlackModels/<Name>.swift`, following the java-slack-sdk model's name and fields where one exists.
+2. Add `<Name>` to `@manually_handled_types` in `scripts/lib/code_generation/slackmodels_extractor.rb` so the generated version is not extracted.
+3. Add a ref-fixer visitor in `scripts/lib/visitors.rb` that points the affected properties at `#/components/schemas/<Name>` and leaves an empty placeholder schema for it, following `UserProfileRefFixer` and `TeamProfileRefFixer`. Register it in the `visitors` list in `generate_openapi_component` in `scripts/generate_webapi.rb`.
+4. Generated code then references `SlackModels.<Name>`, because `scripts/process_webapi.rb` maps any schema that has a file in `Sources/SlackModels`.
+
+Nested schema names such as `Call` or `Icons` are shared across all methods, and the last definition merged wins. When a new method's response looks wrong, check whether another fixture defines the same name with a different shape.
+
 ### Key Scripts
 
 - `scripts/generate_webapi.rb`
+- `scripts/lib/visitors.rb`: JSON Schema fixes applied to every quicktype output, including hand-written model references
+- `scripts/lib/code_generation/slackmodels_extractor.rb`
 - `scripts/generate_events.rb`
 - `scripts/process_webapi.rb`
 - `scripts/process_events.rb`
