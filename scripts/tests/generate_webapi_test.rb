@@ -1,55 +1,45 @@
 require 'minitest/autorun'
+require 'stringio'
 require 'tmpdir'
 require_relative '../generate_webapi'
 
 class GenerateWebapiTest < Minitest::Test
-  def test_reference_only_permissions_methods_keep_operations_and_response_fields
+  VENDOR_DIR = File.expand_path('../../vendor', __dir__)
+  def test_only_supported_methods_with_java_fixtures_are_generated
     Dir.mktmpdir do |directory|
       FileUtils.mkdir_p(File.join(directory, 'schemas'))
-      paths = REFERENCE_RESPONSE_METHODS.map do |name|
-        File.expand_path("../../vendor/slack-api-ref/methods/admin/#{name}.json", __dir__)
+      api_ref_paths = %w[
+        usergroups/usergroups.list
+        api/api.test
+        rtm/rtm.connect
+        admin/admin.apps.permissions.set
+      ].map { File.join(VENDOR_DIR, "slack-api-ref/methods/#{_1}.json") }
+      sample_paths = %w[usergroups.list api.test rtm.connect].map do
+        File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/api/#{_1}.json")
       end
-      main(paths, [], directory)
+
+      _, stderr = capture_io { main(api_ref_paths, sample_paths, directory) }
       schema = JSON.parse(File.read(File.join(directory, 'openapi.json')))
 
-      REFERENCE_RESPONSE_METHODS.each do |name|
-        operation = schema.fetch('paths').fetch(name).fetch('post')
-        assert operation.dig('requestBody', 'content', 'application/json', 'schema', 'properties').key?('channel_ids')
-        reference = operation.dig('responses', '200', 'content', 'application/json', 'schema', '$ref')
-        properties = schema.fetch('components').fetch('schemas').fetch(reference.split('/').last).fetch('properties')
-        assert_equal 'boolean', properties.dig('ok', 'type')
-        assert_equal 'string', properties.dig('permission_type', 'type')
-        assert_equal 'string', properties.dig('channel_restriction_mode', 'type')
-        assert_equal 'string', properties.dig('channel_ids', 'items', 'type')
-      end
+      # rtm.connect has a fixture but is a legacy API.
+      assert_equal %w[api.test usergroups.list], schema.fetch('paths').keys.sort
+      assert_match(/Skip admin\.apps\.permissions\.set: no java-slack-sdk fixture/, stderr)
     end
   end
 
-  def test_empty_examples_keep_minimal_success_fallback
-    assert_equal [{ 'ok' => true }], reference_response_samples('entity.example', { 'response' => { 'examples' => [] } })
-  end
-
-  def test_multiple_examples_infer_one_response_object
+  def test_operations_reference_the_schema_name_quicktype_emits
     Dir.mktmpdir do |directory|
-      paths = [{ 'ok' => true, 'channel_ids' => ['C123'] }, { 'ok' => false, 'error' => 'invalid_auth' }].each_with_index.map do |sample, index|
-        path = File.join(directory, "sample#{index}.json")
-        File.write(path, JSON.generate(sample))
-        path
-      end
-      schema = generate_json_schema(paths, File.join(directory, 'schema.json'), 'ExampleResponse')
-      properties = schema.fetch('definitions').fetch('ExampleResponse').fetch('properties')
-      assert_equal 'string', properties.dig('error', 'type')
-      assert_equal 'string', properties.dig('channel_ids', 'items', 'type')
-    end
-  end
+      FileUtils.mkdir_p(File.join(directory, 'schemas'))
+      api_ref_paths = [File.join(VENDOR_DIR, 'slack-api-ref/methods/api/api.test.json')]
+      sample_paths = [File.join(VENDOR_DIR, 'java-slack-sdk/json-logs/samples/api/api.test.json')]
 
-  def test_unreviewed_reference_only_methods_remain_unsupported
-    assert_nil reference_response_samples('unknown.method', { 'response' => { 'examples' => ['{}'] } })
-  end
+      capture_io { main(api_ref_paths, sample_paths, directory) }
+      schema = JSON.parse(File.read(File.join(directory, 'openapi.json')))
 
-  def test_invalid_reviewed_examples_fail
-    assert_raises(JSON::ParserError) do
-      reference_response_samples(REFERENCE_RESPONSE_METHODS.first, { 'response' => { 'examples' => ['invalid'] } })
+      reference = schema.dig('paths', 'api.test', 'post', 'responses', '200', 'content', 'application/json', 'schema', '$ref')
+      # quicktype emits APITestResponse, not the ApiTestResponse derived from the method name.
+      assert_equal '#/components/schemas/APITestResponse', reference
+      assert schema.fetch('components').fetch('schemas').key?('APITestResponse')
     end
   end
 
