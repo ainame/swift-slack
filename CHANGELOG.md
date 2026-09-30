@@ -8,6 +8,44 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ## Unreleased
 
+> [!IMPORTANT]
+> **The `usergroups.*`, `admin.usergroups.*`, and `admin.workflows.*` Web API operations have been missing from every release since the initial 0.0.1.** The generator's exclusion list used unanchored patterns, so `/groups\./`, meant for the legacy `groups.*` API, also matched `usergroups.*` and `admin.usergroups.*`, and `/workflows\./` also matched `admin.workflows.*` and `functions.workflows.*`. This release fixes the patterns. The affected methods that have a java-slack-sdk fixture are generated for the first time, with the `WebAPI_Usergroups` trait: all 7 `usergroups.*`, 4 of 5 `admin.usergroups.*`, and 5 of 7 `admin.workflows.*` operations. The others, including `functions.workflows.*`, have no fixture yet - #140
+
+> [!WARNING]
+> **If you adopted 2026.9.0 or 2026.9.1, this release removes 17 Web API operations you may be using.** Those releases shipped operations for methods that java-slack-sdk has no response fixture for. Their response types were either reduced to `ok` only (#121) or inferred from slack-api-ref documentation examples (#135), not from real responses. Shipping them was a mistake. From this release, Web API coverage is aligned with the official [java-slack-sdk](https://github.com/slackapi/java-slack-sdk): a method is generated only when that SDK supports it with a recorded response. The removed operations are listed under Changed below. If you call any of them, stay on 2026.9.1 or call the Slack method with your own HTTP request until they return.
+
+### Added
+
+* Added generated `calls.*`, `workflows.featured.*`, and `api.test` Web API operations, which were previously excluded on purpose but are current APIs, with new `WebAPI_Calls`, `WebAPI_Workflows`, and `WebAPI_Api` traits - #140
+* Added hand-written `Call`, `CallParticipant`, `APITestArgs`, `AppWorkflow`, `AppIcons`, and `WorkflowCollaboratorError` models, following java-slack-sdk, for `calls.*`, `api.test`, `admin.workflows.search`, and `admin.workflows.collaborators.*` responses - #140
+* Reported Web API methods skipped during generation as warnings, aggregated into one GitHub Actions annotation and the job summary - #140
+
+### Changed
+
+* **BREAKING**: Removed 17 Web API operations that 2026.9.0 and 2026.9.1 shipped by mistake without a java-slack-sdk response fixture. Operations are now generated only for methods with a fixture, and these return once java-slack-sdk adds fixtures for them - #140
+  * `admin.apps.mcp.servers.list`
+  * `admin.apps.mcp.servers.permissions.list`
+  * `admin.apps.mcp.servers.permissions.set`
+  * `admin.apps.permissions.add`
+  * `admin.apps.permissions.list`
+  * `admin.apps.permissions.remove`
+  * `admin.apps.permissions.set`
+  * `admin.audit.anomaly.allow.getItem`
+  * `admin.audit.anomaly.allow.updateItem`
+  * `admin.conversations.bulkSetProperties`
+  * `admin.conversations.linkObjects`
+  * `admin.conversations.unlinkObjects`
+  * `apps.auth.external.delete`
+  * `apps.managed.permissions.set`
+  * `assistant.search.context`
+  * `entity.acknowledgeCommentAction`
+  * `entity.presentComments`
+
+### Fixed
+
+* Added the missing `userCount`, `deletedBy`, and `autoType` fields to `Usergroup`, which is now hand-written following java-slack-sdk. Its generated model kept only the fields of one fixture - #140
+* Fixed the unanchored Web API exclusion list patterns that dropped the `usergroups.*`, `admin.usergroups.*`, and `admin.workflows.*` operations since 0.0.1, as described above - #140
+
 ## [2026.9.1] - 2026-09-27
 
 ### Added
