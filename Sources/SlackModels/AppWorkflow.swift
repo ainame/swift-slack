@@ -182,9 +182,9 @@ extension AppWorkflow {
 
         public init(from decoder: any Decoder) throws {
             if let container = try? decoder.container(keyedBy: CodingKeys.self) {
-                self.init(
-                    elements: try container.decodeIfPresent([StepInputValueElement].self, forKey: .elements),
-                    required: try container.decodeIfPresent([Swift.String].self, forKey: .required),
+                try self.init(
+                    elements: container.decodeIfPresent([StepInputValueElement].self, forKey: .elements),
+                    required: container.decodeIfPresent([Swift.String].self, forKey: .required),
                 )
                 return
             }
@@ -195,7 +195,7 @@ extension AppWorkflow {
             } else if let value = try? container.decode([Block].self) {
                 self.init(interactiveBlocks: value.isEmpty ? nil : value)
             } else {
-                self.init(stringValue: try decodeScalarAsString(container))
+                try self.init(stringValue: decodeScalarAsString(container))
             }
         }
 
@@ -295,7 +295,7 @@ extension AppWorkflow {
             if let value = try? container.decode([Swift.String].self) {
                 self.init(stringValues: value)
             } else {
-                self.init(stringValue: try decodeScalarAsString(container))
+                try self.init(stringValue: decodeScalarAsString(container))
             }
         }
 
@@ -415,14 +415,14 @@ extension AppWorkflow {
 /// Reads a JSON scalar as a string, as Gson's `getAsString` does for step input values.
 private func decodeScalarAsString(_ container: any SingleValueDecodingContainer) throws -> Swift.String? {
     if container.decodeNil() {
-        return nil
+        nil
     } else if let value = try? container.decode(Swift.String.self) {
-        return value
+        value
     } else if let value = try? container.decode(Swift.Bool.self) {
-        return String(value)
+        String(value)
     } else if let value = try? container.decode(Swift.Int.self) {
-        return String(value)
+        String(value)
     } else {
-        return String(try container.decode(Swift.Double.self))
+        try String(container.decode(Swift.Double.self))
     }
 }
