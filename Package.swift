@@ -115,6 +115,18 @@ let package = Package(
                 .product(name: "Crypto", package: "swift-crypto"),
                 .product(name: "ServiceLifecycle", package: "swift-service-lifecycle"),
                 .product(
+                    name: "NIOCore", package: "swift-nio",
+                    condition: .when(traits: ["SocketMode", "HummingbirdHTTPAdapter"]),
+                ),
+                .product(
+                    name: "NIOFoundationCompat", package: "swift-nio",
+                    condition: .when(traits: ["SocketMode", "HummingbirdHTTPAdapter"]),
+                ),
+                .product(
+                    name: "NIOPosix", package: "swift-nio",
+                    condition: .when(traits: ["SocketMode"]),
+                ),
+                .product(
                     name: "WSClient", package: "swift-websocket",
                     condition: .when(traits: ["SocketMode"]),
                 ),
