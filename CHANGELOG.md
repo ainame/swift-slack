@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses calendar versioning in the form `YYYY.M.PATCH`.
 The `PATCH` segment is a release counter within the month, not a SemVer compatibility signal.
 
+## [Unreleased]
+
+### Changed
+
+* Moved swift-openapi-generator out of the package manifest into a nested `Tools` package that pins it at 1.11.0 with a committed `Package.resolved`, so `make generate` reproduces the checked-in code now that the root lockfile is untracked - #143
+* Moved the SwiftFormat binary target and formatting plugin into the `Tools` package, so clients no longer download the SwiftFormat artifact bundle when resolving swift-slack - #143
+
 ## [2026.10.0] - 2026-10-01
 
 > [!IMPORTANT]
