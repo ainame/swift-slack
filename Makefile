@@ -15,11 +15,13 @@ clean:
 	git submodule update --init --recursive
 	@echo "Clean complete"
 
+SWIFTFORMAT = swift package --package-path Tools plugin --allow-writing-to-directory "$(CURDIR)" swiftformat --
+
 format:
-	swift package plugin --allow-writing-to-package-directory swiftformat -- Sources DemoApps/Examples Tests
+	$(SWIFTFORMAT) "$(CURDIR)/Sources" "$(CURDIR)/DemoApps/Examples" "$(CURDIR)/Tests"
 
 format-generated:
-	swift package plugin --allow-writing-to-package-directory swiftformat -- Sources/SlackClient/WebAPI/Generated Sources/SlackApp/Events/Generated Sources/SlackModels/Generated
+	$(SWIFTFORMAT) "$(CURDIR)/Sources/SlackClient/WebAPI/Generated" "$(CURDIR)/Sources/SlackApp/Events/Generated" "$(CURDIR)/Sources/SlackModels/Generated"
 
 test-scripts:
 	ruby -I scripts/tests -e 'Dir["scripts/tests/*_test.rb"].sort.each { require File.expand_path(_1) }'
