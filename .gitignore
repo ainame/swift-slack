@@ -23,3 +23,5 @@ docs/
 .swiftpm
 .mise.toml
 .serena
+
+Package.resolved
