@@ -39,21 +39,35 @@ jobs:
         with:
           toolchain: latest
 
-      - name: Cache Swift packages
-        uses: actions/cache@v6
+      # Package.resolved is not tracked, so the cache is keyed on the resolution
+      # result. DocC builds with the latest toolchain, so it keeps its own prefix.
+      - name: Restore Swift build cache
+        id: restore-swift-cache
+        uses: actions/cache/restore@v6
         with:
-          path: |
-            .build
-          key: ${{ runner.os }}-swift-${{ hashFiles('Package.swift', 'Package.resolved') }}
+          path: .build
+          key: ${{ runner.os }}-swift-docc-${{ hashFiles('Package.swift') }}-
           restore-keys: |
-            ${{ runner.os }}-swift-
+            ${{ runner.os }}-swift-docc-${{ hashFiles('Package.swift') }}-
+            ${{ runner.os }}-swift-docc-
 
       - name: Resolve Swift package dependencies
         run: swift package resolve
 
+      - name: Compute Swift build cache key
+        id: swift-cache-key
+        run: echo "key=${{ runner.os }}-swift-docc-${{ hashFiles('Package.swift') }}-${{ hashFiles('Package.resolved') }}" >> "$GITHUB_OUTPUT"
+
       - name: Build DocC Documentation
         run: |
           make doc
+
+      - name: Save Swift build cache
+        if: steps.restore-swift-cache.outputs.cache-matched-key != steps.swift-cache-key.outputs.key
+        uses: actions/cache/save@v6
+        with:
+          path: .build
+          key: ${{ steps.swift-cache-key.outputs.key }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

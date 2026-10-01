@@ -38,14 +38,35 @@ jobs:
       - name: Setup Swiftly
         uses: vapor/swiftly-action@v0.2.1
 
-      - name: Cache Swift build
-        uses: actions/cache@v6
+      # Package.resolved is not tracked, so the cache is keyed on the resolution
+      # result: restore the newest cache by prefix, then save under the new key
+      # only when the resolved dependencies changed.
+      - name: Restore Swift build cache
+        id: restore-swift-cache
+        uses: actions/cache/restore@v6
         with:
           path: .build
-          key: ${{ runner.os }}-swift-build-${{ hashFiles('.swift-version', 'Package.swift', 'Package.resolved') }}
+          key: ${{ runner.os }}-swift-build-${{ hashFiles('.swift-version', 'Package.swift') }}-
+          restore-keys: |
+            ${{ runner.os }}-swift-build-${{ hashFiles('.swift-version', 'Package.swift') }}-
+            ${{ runner.os }}-swift-build-
+
+      - name: Resolve Swift package dependencies
+        run: swift package resolve
+
+      - name: Compute Swift build cache key
+        id: swift-cache-key
+        run: echo "key=${{ runner.os }}-swift-build-${{ hashFiles('.swift-version', 'Package.swift') }}-${{ hashFiles('Package.resolved') }}" >> "$GITHUB_OUTPUT"
 
       - name: Build
         run: swift build
 
       - name: Run tests
         run: swift test
+
+      - name: Save Swift build cache
+        if: steps.restore-swift-cache.outputs.cache-matched-key != steps.swift-cache-key.outputs.key
+        uses: actions/cache/save@v6
+        with:
+          path: .build
+          key: ${{ steps.swift-cache-key.outputs.key }}
