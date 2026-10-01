@@ -16,6 +16,9 @@ Shared guidance for coding agents working in this repository.
 - Use the Swift version recorded in `.swift-version` and the Ruby version recorded in `.ruby-version`.
 - Code generation requires Ruby 3.0+ and Node.js 20+.
 - Run `npm ci`, not an unpinned global quicktype install. `package-lock.json` is the generator dependency source of truth.
+- Development tools live in the nested `Tools` package, not the root manifest: `swift-openapi-generator` for code generation, and the SwiftFormat binary target and command plugin behind `make format`. Nothing depends on `Tools`, so `Tools/Package.swift` pins the generator with `exact:` and `Tools/Package.resolved` is committed; the root `Package.resolved` is not.
+- Do not add tool-only dependencies or binary targets to the root manifest. SwiftPM downloads a dependency package's binary targets for every client. `swift-docc-plugin` stays in the root because `make doc` documents the root package's products and clients do not fetch it.
+- When bumping the generator, update `Tools/Package.swift`, run `swift package --package-path Tools update`, then regenerate and commit the lockfile with any generated drift. Keep the root `swift-openapi-runtime` lower bound at or above what that generator version requires.
 - Before diagnosing a toolchain failure as a repository bug, check the active `swift`, `ruby`, and `node` executables and versions. On macOS also check the selected `DEVELOPER_DIR`/Xcode SDK if SwiftPM stalls or behaves differently from CI.
 
 ## Project Overview
@@ -44,6 +47,7 @@ This project is a Swift Slack SDK and app framework. It combines generated Web A
 - Event decoding coverage belongs in `Tests/SlackAppTests` because the event payload types are part of `SlackApp`.
 - `DemoApps/Examples/`: Small executable samples wired against the local package.
 - `DemoApps/`: Larger end-to-end sample applications.
+- `Tools/`: Nested tooling package for the code generator and SwiftFormat. It has its own committed `Package.resolved`.
 
 ## Code Generation Workflow
 
@@ -63,7 +67,7 @@ make format-generated # Format only generated output
 ### Pipeline
 
 1. The locked quicktype dependency and Ruby scripts transform Slack API specs into OpenAPI JSON.
-2. `swift-openapi-generator` produces Swift client and type definitions.
+2. `swift-openapi-generator`, run from the `Tools` package, produces Swift client and type definitions.
 3. `scripts/process_webapi.rb` splits generated Web API output and extracts shared models.
 4. `scripts/process_events.rb` extracts generated event types and related conformances into `Sources/SlackApp/Events/Generated`.
 5. SwiftFormat formats only the generated directories (4-space indentation).
