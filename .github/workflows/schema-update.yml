@@ -42,11 +42,20 @@ jobs:
       - name: Setup Swiftly
         uses: vapor/swiftly-action@v0.2.1
 
-      - name: Cache Swift build
-        uses: actions/cache@v6
+      # The root Package.resolved is not tracked, so the cache is keyed on the
+      # resolution result after generation: restore the newest cache by prefix,
+      # then save under the new key only when the resolved dependencies changed.
+      - name: Restore Swift build cache
+        id: restore-swift-cache
+        uses: actions/cache/restore@v6
         with:
-          path: .build
-          key: ${{ runner.os }}-swift-build-${{ hashFiles('.swift-version', 'Package.swift', 'Package.resolved') }}
+          path: |
+            .build
+            Tools/.build
+          key: ${{ runner.os }}-schema-update-swift-${{ hashFiles('.swift-version', 'Tools/Package.swift', 'Tools/Package.resolved') }}-
+          restore-keys: |
+            ${{ runner.os }}-schema-update-swift-${{ hashFiles('.swift-version', 'Tools/Package.swift', 'Tools/Package.resolved') }}-
+            ${{ runner.os }}-schema-update-swift-
 
       - name: Install generator dependencies
         run: npm ci --ignore-scripts
@@ -79,6 +88,22 @@ jobs:
         if: steps.update.outputs.changes == 'true'
         run: swift test
 
+      - name: Resolve Swift package dependencies
+        run: swift package resolve
+
+      - name: Compute Swift build cache key
+        id: swift-cache-key
+        run: echo "key=${{ runner.os }}-schema-update-swift-${{ hashFiles('.swift-version', 'Tools/Package.swift', 'Tools/Package.resolved') }}-${{ hashFiles('Package.swift', 'Package.resolved') }}" >> "$GITHUB_OUTPUT"
+
+      - name: Save Swift build cache
+        if: steps.restore-swift-cache.outputs.cache-matched-key != steps.swift-cache-key.outputs.key
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            .build
+            Tools/.build
+          key: ${{ steps.swift-cache-key.outputs.key }}
+
       - name: Create Pull Request
         if: steps.update.outputs.changes == 'true'
         id: create-pr
@@ -91,7 +116,6 @@ jobs:
             Sources/SlackModels/Generated/
             vendor/
             Package.swift
-            Package.resolved
           commit-message: |
             Update Slack API schemas
 
