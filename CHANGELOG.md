@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses calendar versioning in the form `YYYY.M.PATCH`.
 The `PATCH` segment is a release counter within the month, not a SemVer compatibility signal.
 
-## Unreleased
+## [2026.10.0] - 2026-10-01
 
 > [!IMPORTANT]
 > **The `usergroups.*`, `admin.usergroups.*`, and `admin.workflows.*` Web API operations have been missing from every release since the initial 0.0.1.** The generator's exclusion list used unanchored patterns, so `/groups\./`, meant for the legacy `groups.*` API, also matched `usergroups.*` and `admin.usergroups.*`, and `/workflows\./` also matched `admin.workflows.*` and `functions.workflows.*`. This release fixes the patterns. The affected methods that have a java-slack-sdk fixture are generated for the first time, with the `WebAPI_Usergroups` trait: all 7 `usergroups.*`, 4 of 5 `admin.usergroups.*`, and 5 of 7 `admin.workflows.*` operations. The others, including `functions.workflows.*`, have no fixture yet - #140
@@ -22,6 +22,7 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ### Changed
 
+* Updated the development Swift toolchain to `6.4.0` and stopped tracking `Package.resolved` so development resolves dependencies from the package manifest - #141
 * **BREAKING**: Removed 17 Web API operations that 2026.9.0 and 2026.9.1 shipped by mistake without a java-slack-sdk response fixture. Operations are now generated only for methods with a fixture, and these return once java-slack-sdk adds fixtures for them - #140
   * `admin.apps.mcp.servers.list`
   * `admin.apps.mcp.servers.permissions.list`
@@ -43,6 +44,7 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ### Fixed
 
+* Declared `SlackApp`'s NIO product dependencies explicitly to fix Socket Mode compilation after fresh dependency resolution - #141
 * Added the missing `userCount`, `deletedBy`, and `autoType` fields to `Usergroup`, which is now hand-written following java-slack-sdk. Its generated model kept only the fields of one fixture - #140
 * Fixed the unanchored Web API exclusion list patterns that dropped the `usergroups.*`, `admin.usergroups.*`, and `admin.workflows.*` operations since 0.0.1, as described above - #140
 
