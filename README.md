@@ -287,7 +287,7 @@ MIT license texts are available in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.
 
 ## Development
 
-Requirements: Swift 6.2+, Node.js 20+, and Ruby 3.0+. The repository pins
+Requirements: Swift 6.4+, Node.js 20+, and Ruby 3.0+. The repository pins
 quicktype and its transitive dependencies in `package-lock.json`.
 
 ```bash
