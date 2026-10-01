@@ -36,14 +36,14 @@ mkdir -p "${TMP_DIR}/Events"
 ruby scripts/generate_webapi.rb
 
 # Generate types with public and client with internal to avoid potential conflict other symbols named `Client`
-swift run --disable-sandbox swift-openapi-generator generate \
+swift run --package-path Tools --disable-sandbox swift-openapi-generator generate \
     --mode types \
     --access-modifier public \
     --naming-strategy idiomatic \
     --output-directory "${TMP_DIR}/WebAPI" \
     "${TMP_DIR}/WebAPI/openapi.json"
 
-swift run --disable-sandbox swift-openapi-generator generate \
+swift run --package-path Tools --disable-sandbox swift-openapi-generator generate \
     --mode client \
     --access-modifier internal \
     --naming-strategy idiomatic \
@@ -55,7 +55,7 @@ ruby scripts/process_webapi.rb "${TMP_DIR}/WebAPI" "Sources/SlackClient/WebAPI/G
 # Generate events
 ruby scripts/generate_events.rb
 
-swift run --disable-sandbox swift-openapi-generator generate \
+swift run --package-path Tools --disable-sandbox swift-openapi-generator generate \
     --mode types \
     --access-modifier public \
     --naming-strategy idiomatic \
