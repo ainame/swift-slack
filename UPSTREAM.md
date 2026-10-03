@@ -30,6 +30,8 @@ The sync is based on freshly fetched `origin/main`, rather than Java release tag
 - Discover handwritten model names from source filenames instead of a maintained
   registry. Generation and standalone extraction share one implementation; generated
   files are excluded from discovery, and `View`/`Block` remain owned by SlackBlockKit.
+- Share schema aliases between extraction and Web API reference/import rewriting,
+  with coverage for a handwritten `TabData` referenced as `Components.Schemas.Data`.
 - Verify that workflow permission dictionaries preserve dynamic `Wf...` keys and
   all existing Java fixture access fields without requiring a model change.
 
@@ -68,3 +70,9 @@ generation pass matched all 352 generated/manifest hashes. Handwritten Swift was
 formatted and `git diff --check` passed. Existing binary-property generator warnings
 are unchanged. Hosted tests and the documentation build passed for the initial sync;
 the discovery follow-up needs a fresh CI run. Live Slack integration was not run.
+
+The alias-review follow-up was verified with Ruby-only extractor tests (3 tests /
+6 assertions) and Web API processing tests (8 tests / 29 assertions), then Ruby
+post-processing of existing Swift intermediates and formatting. This reused the
+previously generated inputs; quicktype and full OpenAPI generation were not rerun,
+following the requested verification scope. Output comparison is recorded in the PR.

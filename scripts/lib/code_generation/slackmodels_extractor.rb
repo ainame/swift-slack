@@ -13,9 +13,6 @@ class SlackModelsExtractor
     @types_file = types_file
     @output_dir = output_dir
     @handwritten_types = SlackModelCatalog.handwritten_types(handwritten_models_dir)
-    @schema_aliases = {
-      'Data' => 'TabData',
-    }
   end
 
   def extract
@@ -225,11 +222,11 @@ class SlackModelsExtractor
   end
 
   def emitted_schema_name(schema_name)
-    @schema_aliases.fetch(schema_name, schema_name)
+    SlackModelCatalog.emitted_name(schema_name)
   end
 
   def apply_schema_aliases(line, current_schema_name:)
-    @schema_aliases.each do |original_name, alias_name|
+    SlackModelCatalog::SCHEMA_ALIASES.each do |original_name, alias_name|
       next if current_schema_name == original_name
 
       line = line.gsub(/\b#{Regexp.escape(original_name)}\b/, alias_name)
