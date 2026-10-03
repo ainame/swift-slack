@@ -12,6 +12,7 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 * Removed `CLAUDE.md` and moved agent skills from `.codex/skills` to `.agents/skills`, so Claude Code and Codex share `AGENTS.md` and one skills directory, with `.claude/skills` linking to it - #147
 * Required PRs to add their changes to the `Unreleased` section of `CHANGELOG.md` - #147
+* Trimmed `AGENTS.md` to the rules and constraints agents cannot learn from the code, removing module, layout, trait, runtime, and command listings that duplicated the repository - #147
 * Made `scripts/release.rb` use the version's `CHANGELOG.md` section as the draft release notes instead of merged PR titles, and stop before tagging when that section is missing - #147
 
 ## [2026.10.1] - 2026-10-01
