@@ -48,6 +48,7 @@ This project is a Swift Slack SDK and app framework. It combines generated Web A
 - `DemoApps/Examples/`: Small executable samples wired against the local package.
 - `DemoApps/`: Larger end-to-end sample applications.
 - `Tools/`: Nested tooling package for the code generator and SwiftFormat. It has its own committed `Package.resolved`.
+- `.agents/skills/`: Shared agent skills. `.claude/skills` is a symlink to this directory; edit skills here.
 
 ## Code Generation Workflow
 
