@@ -146,7 +146,7 @@ Nested schema names such as `Call` or `Icons` are shared across all methods, and
 - Section DSL maps a single text child to `text`, multiple to `fields`.
 - Keep `_type` naming as-is for event compatibility.
 - Message events depend on `subtype` differentiation.
-- `onSlackMessageMatched(...)` no longer exists; use `router.onEvent(MessageEvent.self)` and filter inside the handler when needed.
+- To handle messages that match a pattern, use `router.onEvent(MessageEvent.self)` and filter inside the handler.
 - Events API handlers are auto-acked; slash commands, block actions, shortcuts, and view handlers still need explicit `ack()`.
 
 ## Serialization and Naming Rules
@@ -177,7 +177,7 @@ swift build 2>&1 | awk '/error:|warning:|fatal error:/{flag=1} flag && /^$/{flag
 - Release tags never use a `v` prefix.
 - Prepare release metadata on a branch, rename the `[Unreleased]` `CHANGELOG.md` section to the dated release section, and merge it through a PR. Release notes come from that exact changelog section; use bare PR references such as `#123`.
 - Publish only after the preparation PR is merged and local `main` is clean and exactly matches `origin/main`.
-- `ruby scripts/release.rb YYYY.M.PATCH --yes` is a publication command: it builds, tests, creates and pushes the annotated tag, and creates the GitHub release. Never run it from a topic branch or as part of release preparation.
+- `ruby scripts/release.rb YYYY.M.PATCH --yes` is a publication command: it builds, tests, creates and pushes the annotated tag, and creates a draft GitHub release with the version's `CHANGELOG.md` section as its notes. Publishing the draft is a separate step. Never run it from a topic branch or as part of release preparation.
 
 ## Useful Commands
 
@@ -199,6 +199,6 @@ cd DemoApps/Examples && swift run router
 cd DemoApps/Examples && swift run echoSlashCommand
 cd DemoApps/deepl-translator && swift run
 
-# Publish after the release-preparation PR is merged and main is synchronized
+# Tag and draft the release after the release-preparation PR is merged and main is synchronized
 ruby scripts/release.rb [version] [--yes]
 ```
