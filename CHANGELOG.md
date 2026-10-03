@@ -10,6 +10,7 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ### Changed
 
+* Moved scheduled upstream schema review to the `slack-upstream-sync` Codex skill, covering generated and handwritten models, and retained Schema Update as a manual Actions fallback - #148
 * Removed `CLAUDE.md` and moved agent skills from `.codex/skills` to `.agents/skills`, so Claude Code and Codex share `AGENTS.md` and one skills directory, with `.claude/skills` linking to it - #147
 * Required PRs to add their changes to the `Unreleased` section of `CHANGELOG.md` - #147
 * Trimmed `AGENTS.md` to the rules and constraints agents cannot learn from the code, removing module, layout, trait, runtime, and command listings that duplicated the repository - #147
