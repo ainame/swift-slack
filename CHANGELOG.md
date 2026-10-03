@@ -2,9 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
 and this project uses calendar versioning in the form `YYYY.M.PATCH`.
 The `PATCH` segment is a release counter within the month, not a SemVer compatibility signal.
+An optional `Maintenance` section records notable contributor improvements as a project-specific extension.
 
 ## [Unreleased]
 
@@ -23,6 +24,10 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 ### Fixed
 
 * Fixed swift-slack conversation response decoding that silently discarded `at_here_restricted`, `at_channel_restricted`, and `channel_workflows` from java-slack-sdk fixtures; exposed them as `atHereRestricted`, `atChannelRestricted`, and `channelWorkflows`, with the `ChannelWorkflow` model - #149
+
+### Maintenance
+
+* Simplified swift-slack handwritten model overrides by discovering source files and sharing extraction logic - #149
 
 ## [2026.10.1] - 2026-10-01
 

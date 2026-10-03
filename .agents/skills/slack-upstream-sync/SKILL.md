@@ -95,12 +95,13 @@ explain any such authorized additions in the PR body.
 - Update `UPSTREAM.md` with both old/new SHAs, review date, reviewed areas, decisions,
   exclusions, and unresolved gaps. Preserve its structural sections, including
   "Maintaining this record". Do not put hosted CI status in committed files.
-  Use [update-changelog](../update-changelog/SKILL.md) for consumer-facing notes;
-  consolidate the complete PR's entries after follow-ups and omit maintenance-only
-  changes. Update README only for user-facing scope changes.
+  Use [update-changelog](../update-changelog/SKILL.md) for notable consumer and
+  contributor changes; consolidate the complete PR's entries after follow-ups,
+  put significant contributor improvements in Maintenance, and omit housekeeping.
+  Update README only for user-facing scope changes.
 - Commit focused changes, push the branch, and open or update the sync PR. Use
   `gh pr create/edit --body-file` for multiline Markdown. Open the PR first to obtain
-  its number, then add consumer-facing `Unreleased` notes when applicable and the
+  its number, then add notable `Unreleased` notes when applicable and the
   provenance PR reference in a follow-up commit. Attach the PR using the host’s
   artifact tool when available. Use `schema-update` as the sole PR label; remove other labels when
   updating a sync PR.
