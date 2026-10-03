@@ -74,6 +74,25 @@ sample_json_paths = Dir.glob("#{api_dir}*.json").sort
 output_dir = './.tmp/WebAPI'
 FileUtils.mkdir_p(File.join(output_dir, 'schemas'))
 
+# Properties is the same ConversationProperties model across conversation fixtures.
+# Union its fields before replacing the definition; future fixture-only fields must
+# survive too. Keep the existing last-definition policy for overlapping fields and
+# other names: quicktype also reuses names for unrelated models (e.g. AgentSession),
+# which require semantic ref fixers rather than a blanket object union.
+def merge_response_schemas!(schemas, incoming)
+  previous = schemas['Properties']
+  current = incoming['Properties']
+  if previous && current
+    unless [previous, current].all? { _1['type'] == 'object' && _1['properties'].is_a?(Hash) }
+      raise 'Cannot merge conversation Properties: expected object schemas'
+    end
+    incoming = incoming.merge('Properties' => current.merge(
+      'properties' => previous['properties'].merge(current['properties'])
+    ))
+  end
+  schemas.merge!(incoming)
+end
+
 def main(api_ref_paths, sample_json_paths, output_dir)
   openapi = JSON.parse(File.read(File.join(__dir__, 'lib/base_openapi.json')))
 
@@ -89,7 +108,7 @@ def main(api_ref_paths, sample_json_paths, output_dir)
   response_model_names = {}
   schema_paths.each do |path|
     json = JSON.parse(File.read(path))
-    openapi['components']['schemas'].merge!(json['definitions'])
+    merge_response_schemas!(openapi['components']['schemas'], json['definitions'])
     response_model_names[File.basename(path, '.json')] = json['$ref'].split('/').last
   end
 
