@@ -13,14 +13,6 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 * Added optional `recordChannel`, `codeChannel`, and `agentSession` fields to swift-slack's conversation `Properties`, with `RecordChannel`, `CodeChannel`, and `AgentSession` models matching java-slack-sdk payloads - #149
 
-### Changed
-
-* Moved scheduled upstream schema review to the `slack-upstream-sync` Codex skill, covering generated and handwritten models, and retained Schema Update as a manual Actions fallback - #148
-* Removed `CLAUDE.md` and moved agent skills from `.codex/skills` to `.agents/skills`, so Claude Code and Codex share `AGENTS.md` and one skills directory, with `.claude/skills` linking to it - #147
-* Required PRs to add their changes to the `Unreleased` section of `CHANGELOG.md` - #147
-* Trimmed `AGENTS.md` to the rules and constraints agents cannot learn from the code, removing module, layout, trait, runtime, and command listings that duplicated the repository - #147
-* Made `scripts/release.rb` use the version's `CHANGELOG.md` section as the draft release notes instead of merged PR titles, and stop before tagging when that section is missing - #147
-
 ### Fixed
 
 * Fixed swift-slack conversation response decoding that silently discarded `at_here_restricted`, `at_channel_restricted`, and `channel_workflows` from java-slack-sdk fixtures; exposed them as `atHereRestricted`, `atChannelRestricted`, and `channelWorkflows`, with the `ChannelWorkflow` model - #149
@@ -28,6 +20,11 @@ An optional `Maintenance` section records notable contributor improvements as a 
 ### Maintenance
 
 * Simplified swift-slack handwritten model overrides by discovering source files and sharing extraction logic - #149
+* Moved scheduled upstream schema review to the `slack-upstream-sync` Codex skill, covering generated and handwritten models, and retained Schema Update as a manual Actions fallback - #148
+* Removed `CLAUDE.md` and moved agent skills from `.codex/skills` to `.agents/skills`, so Claude Code and Codex share `AGENTS.md` and one skills directory, with `.claude/skills` linking to it - #147
+* Required PRs to add their changes to the `Unreleased` section of `CHANGELOG.md` - #147
+* Trimmed `AGENTS.md` to the rules and constraints agents cannot learn from the code, removing module, layout, trait, runtime, and command listings that duplicated the repository - #147
+* Made `scripts/release.rb` use the version's `CHANGELOG.md` section as the draft release notes instead of merged PR titles, and stop before tagging when that section is missing - #147
 
 ## [2026.10.1] - 2026-10-01
 
