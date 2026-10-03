@@ -27,6 +27,9 @@ The sync is based on freshly fetched `origin/main`, rather than Java release tag
   optional. The fixture's new `channel.is_open` field is already supported by `Channel`.
 - Cover meaningful fixture values, complete new property objects on re-encoding,
   older payloads without these fields, and schema merging across real fixtures.
+- Discover handwritten model names from source filenames instead of a maintained
+  registry. Generation and standalone extraction share one implementation; generated
+  files are excluded from discovery, and `View`/`Block` remain owned by SlackBlockKit.
 - Verify that workflow permission dictionaries preserve dynamic `Wf...` keys and
   all existing Java fixture access fields without requiring a model change.
 
@@ -58,9 +61,10 @@ inputs; they are not claims of full API parity. No exhaustive-switch cases chang
 
 ### Verification
 
-`npm ci --ignore-scripts`, full `make generate`, `make test-scripts` (19 tests /
-79 assertions plus 4 processing tests / 10 assertions), and `swift test` (90 tests
+`npm ci --ignore-scripts`, full `make generate`, `make test-scripts` (22 tests /
+85 assertions plus 4 processing tests / 10 assertions), and `swift test` (90 tests
 in 16 suites) passed using the recorded Swift and Ruby versions. A second full
 generation pass matched all 352 generated/manifest hashes. Handwritten Swift was
 formatted and `git diff --check` passed. Existing binary-property generator warnings
-are unchanged. Hosted CI is pending; live Slack integration was not run.
+are unchanged. Hosted tests and the documentation build passed for the initial sync;
+the discovery follow-up needs a fresh CI run. Live Slack integration was not run.
