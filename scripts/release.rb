@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 require 'json'
 require 'date'
+require 'tempfile'
 require 'time'
+require_relative 'lib/changelog'
 
 def main
   check_prerequisites
@@ -12,6 +14,9 @@ def main
   # Accept version as argument
   version = args[0]
   new_tag, latest_tag = get_version(version)
+
+  # Release notes come from the version's CHANGELOG.md section; check it before tagging
+  notes = release_notes(new_tag)
 
   # Confirm (skip if --yes provided)
   unless auto_confirm
@@ -26,11 +31,11 @@ def main
   system("git tag -a #{new_tag} -m 'Release #{new_tag}'")
   system("git push origin #{new_tag}")
 
-  changelog = generate_changelog(new_tag, latest_tag)
-  File.write("CHANGELOG_#{new_tag}.md", changelog)
-
-  system("gh release create #{new_tag} --title 'Release #{new_tag}' --notes-file CHANGELOG_#{new_tag}.md --draft")
-  File.delete("CHANGELOG_#{new_tag}.md")
+  Tempfile.create(["release-notes-#{new_tag}", '.md']) do |file|
+    file.write(notes)
+    file.flush
+    system("gh release create #{new_tag} --title 'Release #{new_tag}' --notes-file #{file.path} --draft")
+  end
 
   puts "\n✅ Draft release created! Review at: https://github.com/$(gh repo view --json nameWithOwner -q .nameWithOwner)/releases"
 end
@@ -81,28 +86,12 @@ def suggest_next_calver(today = Date.today)
   "#{prefix}#{patches.empty? ? 0 : patches.max + 1}"
 end
 
-# Generate changelog
-def generate_changelog(new_tag, latest_tag)
-  puts "Generating changelog..."
+# Use the version's CHANGELOG.md section as the release notes
+def release_notes(new_tag)
+  section = changelog_section(File.read('CHANGELOG.md', encoding: 'UTF-8'), new_tag)
+  abort "Error: CHANGELOG.md has no non-empty '## [#{new_tag}]' section. Merge the release-preparation PR first." unless section
 
-  # Get merged PRs
-  search = latest_tag.empty? ? "" : "merged:>#{`git log -1 --format=%ai #{latest_tag}`.strip}"
-  prs = JSON.parse(`gh pr list --state merged --limit 100 --search "#{search}" --json number,title,author`)
-
-  changelog = ["# Release #{new_tag}", "", "## What's Changed", ""]
-  changelog += prs.map { |pr| "* #{pr['title']} by @#{pr['author']['login']} in ##{pr['number']}" }
-
-  # Contributors
-  contributors = prs.map { |pr| pr['author']['login'] }.uniq.sort
-  changelog += ["", "## Contributors", ""] + contributors.map { |c| "* @#{c}" }
-
-  unless latest_tag.empty?
-    repo = JSON.parse(`gh repo view --json nameWithOwner`)['nameWithOwner']
-    changelog << ""
-    changelog << "**Full Changelog**: https://github.com/#{repo}/compare/#{latest_tag}...#{new_tag}"
-  end
-
-  changelog.join("\n")
+  section + "\n"
 end
 
 # Run main
