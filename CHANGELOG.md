@@ -10,25 +10,22 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ### Added
 
-* Added record-channel, code-channel, and agent-session conversation property models from current upstream snapshots - #149
-
-### Fixed
-
-* Fixed Web API schema references and imports for aliased handwritten models by sharing alias resolution with extraction - #149
-
-* Preserved new `conversations.info` properties when merging shared response schemas, with fixture round-trip coverage - #149
+* Introduced record-channel, code-channel, and agent-session conversation property models from current upstream snapshots - #149
 
 ### Changed
 
-* Required upstream sync PRs to use `schema-update` as their sole label in the sync skill - #149
-
-* Discover handwritten model overrides from their source files and share the extractor between generation and its standalone command - #149
-
+* Required upstream sync PRs to use `schema-update` as their sole label and clarified review, no-op progress, and reporting guidance in the shared sync skill - #149
+* Discovered handwritten model overrides from their source files and shared the extractor between generation and its standalone command - #149
 * Moved scheduled upstream schema review to the `slack-upstream-sync` Codex skill, covering generated and handwritten models, and retained Schema Update as a manual Actions fallback - #148
 * Removed `CLAUDE.md` and moved agent skills from `.codex/skills` to `.agents/skills`, so Claude Code and Codex share `AGENTS.md` and one skills directory, with `.claude/skills` linking to it - #147
 * Required PRs to add their changes to the `Unreleased` section of `CHANGELOG.md` - #147
 * Trimmed `AGENTS.md` to the rules and constraints agents cannot learn from the code, removing module, layout, trait, runtime, and command listings that duplicated the repository - #147
 * Made `scripts/release.rb` use the version's `CHANGELOG.md` section as the draft release notes instead of merged PR titles, and stop before tagging when that section is missing - #147
+
+### Fixed
+
+* Fixed Web API schema references and imports for aliased handwritten models by sharing alias resolution with extraction - #149
+* Preserved the union of conversation `Properties` fields across response fixtures, including record/code/agent payloads, mention restrictions, and channel workflows; unrelated shared schema names retain their existing merge policy - #149
 
 ## [2026.10.1] - 2026-10-01
 

@@ -11,6 +11,10 @@ import struct Foundation.URL
 
 /// - Remark: Generated from `#/components/schemas/Properties`.
 public struct Properties: Codable, Hashable, Sendable {
+    /// - Remark: Generated from `#/components/schemas/Properties/at_channel_restricted`.
+    public var atChannelRestricted: Swift.Bool?
+    /// - Remark: Generated from `#/components/schemas/Properties/at_here_restricted`.
+    public var atHereRestricted: Swift.Bool?
     /// - Remark: Generated from `#/components/schemas/Properties/canvas`.
     public var canvas: Canvas?
     /// - Remark: Generated from `#/components/schemas/Properties/has_slack_connect_invite_created`.
@@ -29,17 +33,21 @@ public struct Properties: Codable, Hashable, Sendable {
     public var tabz: [Tab]?
     /// - Remark: Generated from `#/components/schemas/Properties/threads_restricted_to`.
     public var threadsRestrictedTo: ThreadsRestrictedTo?
-    /// - Remark: Generated from `#/components/schemas/Properties/use_case`.
-    public var useCase: Swift.String?
-    /// - Remark: Generated from `#/components/schemas/Properties/record_channel`.
-    public var recordChannel: RecordChannel?
-    /// - Remark: Generated from `#/components/schemas/Properties/code_channel`.
-    public var codeChannel: CodeChannel?
     /// - Remark: Generated from `#/components/schemas/Properties/agent_session`.
     public var agentSession: AgentSession?
+    /// - Remark: Generated from `#/components/schemas/Properties/code_channel`.
+    public var codeChannel: CodeChannel?
+    /// - Remark: Generated from `#/components/schemas/Properties/record_channel`.
+    public var recordChannel: RecordChannel?
+    /// - Remark: Generated from `#/components/schemas/Properties/use_case`.
+    public var useCase: Swift.String?
+    /// - Remark: Generated from `#/components/schemas/Properties/channel_workflows`.
+    public var channelWorkflows: [ChannelWorkflow]?
     /// Creates a new `Properties`.
     ///
     /// - Parameters:
+    ///   - atChannelRestricted:
+    ///   - atHereRestricted:
     ///   - canvas:
     ///   - hasSlackConnectInviteCreated:
     ///   - huddlesRestricted:
@@ -49,11 +57,14 @@ public struct Properties: Codable, Hashable, Sendable {
     ///   - tabs:
     ///   - tabz:
     ///   - threadsRestrictedTo:
-    ///   - useCase:
-    ///   - recordChannel:
-    ///   - codeChannel:
     ///   - agentSession:
+    ///   - codeChannel:
+    ///   - recordChannel:
+    ///   - useCase:
+    ///   - channelWorkflows:
     public init(
+        atChannelRestricted: Swift.Bool? = nil,
+        atHereRestricted: Swift.Bool? = nil,
         canvas: Canvas? = nil,
         hasSlackConnectInviteCreated: Swift.Bool? = nil,
         huddlesRestricted: Swift.Bool? = nil,
@@ -63,11 +74,14 @@ public struct Properties: Codable, Hashable, Sendable {
         tabs: [Tab]? = nil,
         tabz: [Tab]? = nil,
         threadsRestrictedTo: ThreadsRestrictedTo? = nil,
-        useCase: Swift.String? = nil,
-        recordChannel: RecordChannel? = nil,
-        codeChannel: CodeChannel? = nil,
         agentSession: AgentSession? = nil,
+        codeChannel: CodeChannel? = nil,
+        recordChannel: RecordChannel? = nil,
+        useCase: Swift.String? = nil,
+        channelWorkflows: [ChannelWorkflow]? = nil,
     ) {
+        self.atChannelRestricted = atChannelRestricted
+        self.atHereRestricted = atHereRestricted
         self.canvas = canvas
         self.hasSlackConnectInviteCreated = hasSlackConnectInviteCreated
         self.huddlesRestricted = huddlesRestricted
@@ -77,13 +91,16 @@ public struct Properties: Codable, Hashable, Sendable {
         self.tabs = tabs
         self.tabz = tabz
         self.threadsRestrictedTo = threadsRestrictedTo
-        self.useCase = useCase
-        self.recordChannel = recordChannel
-        self.codeChannel = codeChannel
         self.agentSession = agentSession
+        self.codeChannel = codeChannel
+        self.recordChannel = recordChannel
+        self.useCase = useCase
+        self.channelWorkflows = channelWorkflows
     }
 
     public enum CodingKeys: String, CodingKey {
+        case atChannelRestricted = "at_channel_restricted"
+        case atHereRestricted = "at_here_restricted"
         case canvas
         case hasSlackConnectInviteCreated = "has_slack_connect_invite_created"
         case huddlesRestricted = "huddles_restricted"
@@ -93,9 +110,10 @@ public struct Properties: Codable, Hashable, Sendable {
         case tabs
         case tabz
         case threadsRestrictedTo = "threads_restricted_to"
-        case useCase = "use_case"
-        case recordChannel = "record_channel"
-        case codeChannel = "code_channel"
         case agentSession = "agent_session"
+        case codeChannel = "code_channel"
+        case recordChannel = "record_channel"
+        case useCase = "use_case"
+        case channelWorkflows = "channel_workflows"
     }
 }

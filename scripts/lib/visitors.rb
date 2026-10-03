@@ -451,9 +451,8 @@ class ItemTsOptionalAdder
   end
 end
 
-# The shared Properties schema is replaced by later conversation fixtures during
-# merging. Keep the new conversation fields in every occurrence, and use stable
-# handwritten models for their nested payloads rather than shared inferred names.
+# Use stable handwritten nested conversation models where those fields occur.
+# Field preservation across fixtures belongs to merge_response_schemas!, not here.
 class ConversationPropertiesRefFixer
   FIELDS = {
     'record_channel' => 'RecordChannel',
@@ -467,6 +466,8 @@ class ConversationPropertiesRefFixer
     return unless properties.is_a?(Hash)
 
     FIELDS.each do |field, model|
+      next unless properties.key?(field)
+
       properties[field] = { '$ref' => "#/components/schemas/#{model}" }
       definitions[model] = HandwrittenModel.placeholder_schema
     end

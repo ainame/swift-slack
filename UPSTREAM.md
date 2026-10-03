@@ -18,8 +18,11 @@ The sync is based on freshly fetched `origin/main`, rather than Java release tag
 ### Implemented
 
 - Preserve `record_channel`, `code_channel`, and `agent_session` from the updated
-  `conversations.info` response. Later conversation fixtures replace the shared
-  `Properties` schema, so a visitor adds these optional references to each occurrence.
+  `conversations.info` response. Merge the union of conversation `Properties` fields
+  across fixtures, also recovering `at_here_restricted`, `at_channel_restricted`, and
+  `channel_workflows`. The visitor only wires observed nested handwritten models;
+  it does not inject fields into other fixtures. Overlapping field definitions retain
+  the existing last-definition policy; unrelated schema names are not unioned.
 - Use handwritten `RecordChannel`, `CodeChannel` (with `ContextBarItem`), and
   `AgentSession` (with `OriginLink`), matching the new Java `ConversationProperties`
   fields with explicit coding keys. Stable nested types avoid inferred name collisions.
@@ -63,16 +66,25 @@ inputs; they are not claims of full API parity. No exhaustive-switch cases chang
 
 ### Verification
 
-`npm ci --ignore-scripts`, full `make generate`, `make test-scripts` (22 tests /
-85 assertions plus 4 processing tests / 10 assertions), and `swift test` (90 tests
+Fresh `npm ci`, full `make generate`, formatting, `make test-scripts` (26 tests /
+94 assertions plus 8 processing tests / 29 assertions), and `swift test` (91 tests
 in 16 suites) passed using the recorded Swift and Ruby versions. A second full
-generation pass matched all 352 generated/manifest hashes. Handwritten Swift was
-formatted and `git diff --check` passed. Existing binary-property generator warnings
-are unchanged. Hosted tests and the documentation build passed for the initial sync;
-the discovery follow-up needs a fresh CI run. Live Slack integration was not run.
+generation pass matched all 353 generated/manifest hashes. Visitor tests also passed
+outside the repository root. The generated changes are confined to `Properties`
+and the newly retained `ChannelWorkflow`; no operations or Events changed.
+`git diff --check` passed. Existing binary-property generator warnings are unchanged.
+Live Slack integration was not run.
 
-The alias-review follow-up was verified with Ruby-only extractor tests (3 tests /
-6 assertions) and Web API processing tests (8 tests / 29 assertions), then Ruby
-post-processing of existing Swift intermediates and formatting. This reused the
-previously generated inputs; quicktype and full OpenAPI generation were not rerun,
-following the requested verification scope. Output comparison is recorded in the PR.
+## Maintaining this record
+
+For each reviewed sync, replace the snapshot table with the new gitlinks and
+record the review date, previous SHAs, covered upstream areas, implemented changes,
+intentional exclusions, and unresolved gaps. Include the sync PR reference once
+available. Preserve these structural sections. Record stable local verification
+facts here; keep hosted CI status in the PR body, not this file.
+
+A no-op requires live upstream access and comparison against current `origin/main`.
+Scheduled runs may persist reviewed-through SHAs, the main SHA, decisions and known
+gaps in run memory to avoid repeating unchanged reviews; see the sync skill for
+ancestry and invalidation rules. Repository pins remain unchanged on a no-op.
+Review coverage applies to the selected delta, not complete historical or live parity.

@@ -38,6 +38,32 @@ struct ConversationPropertiesTests {
     }
 
     @Test
+    func `conversation fixtures preserve previously overwritten fields`() throws {
+        for method in ["admin.conversations.search", "conversations.list"] {
+            let fixture = URL(filePath: #filePath)
+                .deletingLastPathComponent()
+                .appending(path: "../../vendor/java-slack-sdk/json-logs/samples/api/\(method).json")
+            let root = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: fixture)) as? [String: Any])
+            let channels = try #require(root[method == "admin.conversations.search" ? "conversations" : "channels"] as? [[String: Any]])
+            let original = try #require(channels.first?["properties"] as? [String: Any])
+            let properties = try JSONDecoder().decode(Properties.self, from: JSONSerialization.data(withJSONObject: original))
+            let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(properties)) as? [String: Any])
+            if method == "admin.conversations.search" {
+                #expect(properties.atHereRestricted == false)
+                #expect(properties.atChannelRestricted == false)
+                #expect(encoded["at_here_restricted"] as? Bool == false)
+                #expect(encoded["at_channel_restricted"] as? Bool == false)
+            } else {
+                #expect(properties.channelWorkflows?.first?.workflowTriggerId == "")
+                #expect(properties.channelWorkflows?.first?.title == "")
+                let expected = try #require(original["channel_workflows"] as? NSArray)
+                let actual = try #require(encoded["channel_workflows"] as? NSArray)
+                #expect(actual == expected)
+            }
+        }
+    }
+
+    @Test
     func `older conversations omit the new properties`() throws {
         let properties = try JSONDecoder().decode(Properties.self, from: Data("{\"use_case\":\"project\"}".utf8))
         #expect(properties.useCase == "project")
