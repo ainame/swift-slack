@@ -18,6 +18,8 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ### Changed
 
+* Required upstream sync PRs to use `schema-update` as their sole label in the sync skill - #149
+
 * Discover handwritten model overrides from their source files and share the extractor between generation and its standalone command - #149
 
 * Moved scheduled upstream schema review to the `slack-upstream-sync` Codex skill, covering generated and handwritten models, and retained Schema Update as a manual Actions fallback - #148
