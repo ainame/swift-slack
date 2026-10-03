@@ -47,7 +47,7 @@ Shared guidance for coding agents working in this repository, a Swift Slack SDK 
 When an inferred response type is wrong or badly named, replace it with a hand-written model instead of editing generated output:
 
 1. Add the Swift type as `Sources/SlackModels/<Name>.swift`, following the java-slack-sdk model's name and fields where one exists.
-2. Add `<Name>` to `@manually_handled_types` in `scripts/lib/code_generation/slackmodels_extractor.rb` so the generated version is not extracted.
+2. Keep the file basename equal to the Swift type name. The extractor and Web API transformer discover handwritten models directly from `Sources/SlackModels/*.swift`; no separate type registry is needed. Files under `Generated` do not count as handwritten overrides.
 3. Add a ref-fixer visitor in `scripts/lib/visitors.rb` that points the affected properties at `#/components/schemas/<Name>` and leaves an empty placeholder schema for it, following `UserProfileRefFixer` and `TeamProfileRefFixer`. Register it in the `visitors` list in `generate_openapi_component` in `scripts/generate_webapi.rb`.
 4. Generated code then references `SlackModels.<Name>`, because `scripts/process_webapi.rb` maps any schema that has a file in `Sources/SlackModels`.
 

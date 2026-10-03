@@ -6,6 +6,7 @@ require 'json'
 require_relative 'lib/content_transformer'
 require_relative 'lib/import_manager'
 require_relative 'lib/output'
+require_relative 'lib/slack_model_catalog'
 require_relative 'lib/code_generation/slackmodels_extractor'
 require_relative 'lib/code_generation/components_splitter'
 require_relative 'lib/code_generation/operations_splitter'
@@ -16,18 +17,11 @@ class CodeTransformer
   # Dynamically determines which types have been moved to SlackModels
   def self.slackmodels_types
     @slackmodels_types ||= begin
-      types = []
+      types = SlackModelCatalog.handwritten_types
 
       # Check both SlackModels root directory and Generated subdirectory
       slackmodels_root = File.join(__dir__, '..', 'Sources', 'SlackModels')
       slackmodels_generated = File.join(slackmodels_root, 'Generated')
-
-      # Get manually created models from SlackModels root
-      if Dir.exist?(slackmodels_root)
-        Dir.glob(File.join(slackmodels_root, '*.swift')).each do |file|
-          types << File.basename(file, '.swift')
-        end
-      end
 
       # Get generated models from SlackModels/Generated
       if Dir.exist?(slackmodels_generated)

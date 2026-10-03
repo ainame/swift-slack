@@ -2,14 +2,17 @@ require 'fileutils'
 require_relative '../content_transformer'
 require_relative '../import_manager'
 require_relative '../output'
+require_relative '../slack_model_catalog'
 
 # Extracts individual model types from Types.swift and creates SlackModels
 class SlackModelsExtractor
-  def initialize(types_file, output_dir)
+  # These types are owned by SlackBlockKit rather than SlackModels.
+  BLOCK_KIT_TYPES = %w[View Block].freeze
+
+  def initialize(types_file, output_dir, handwritten_models_dir: SlackModelCatalog::DIRECTORY)
     @types_file = types_file
     @output_dir = output_dir
-    # These are handled outside generated SlackModels.
-    @manually_handled_types = %w[View Block UserProfile TeamProfile Call APITestArgs AppWorkflow AppIcons Usergroup WorkflowCollaboratorError RecordChannel CodeChannel AgentSession]
+    @handwritten_types = SlackModelCatalog.handwritten_types(handwritten_models_dir)
     @schema_aliases = {
       'Data' => 'TabData',
     }
@@ -125,8 +128,10 @@ class SlackModelsExtractor
     # Don't extract Response types - they stay in WebAPI
     return false if schema_name.end_with?('Response')
 
-    # Don't extract manually handled types
-    return false if @manually_handled_types.include?(schema_name)
+    return false if BLOCK_KIT_TYPES.include?(schema_name)
+
+    # Compare the emitted name so aliases cannot duplicate handwritten models.
+    return false if @handwritten_types.include?(emitted_schema_name(schema_name))
 
     # Extract everything else
     true
