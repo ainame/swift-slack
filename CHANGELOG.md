@@ -10,13 +10,10 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ### Added
 
-* Introduced record-channel, code-channel, and agent-session conversation property models from current upstream snapshots - #149
+* Added optional `recordChannel`, `codeChannel`, and `agentSession` fields to swift-slack's conversation `Properties`, with `RecordChannel`, `CodeChannel`, and `AgentSession` models matching java-slack-sdk payloads - #149
 
 ### Changed
 
-* Required model and field discussions to name `java-slack-sdk`, `slack-api-ref`, or `swift-slack` explicitly in shared agent guidance - #149
-* Required upstream sync PRs to use `schema-update` as their sole label and clarified review, no-op progress, and reporting guidance in the shared sync skill - #149
-* Discovered handwritten model overrides from their source files and shared the extractor between generation and its standalone command - #149
 * Moved scheduled upstream schema review to the `slack-upstream-sync` Codex skill, covering generated and handwritten models, and retained Schema Update as a manual Actions fallback - #148
 * Removed `CLAUDE.md` and moved agent skills from `.codex/skills` to `.agents/skills`, so Claude Code and Codex share `AGENTS.md` and one skills directory, with `.claude/skills` linking to it - #147
 * Required PRs to add their changes to the `Unreleased` section of `CHANGELOG.md` - #147
@@ -25,8 +22,7 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ### Fixed
 
-* Fixed Web API schema references and imports for aliased handwritten models by sharing alias resolution with extraction - #149
-* Preserved the union of conversation `Properties` fields across response fixtures, including record/code/agent payloads, mention restrictions, and channel workflows; unrelated shared schema names retain their existing merge policy - #149
+* Fixed swift-slack conversation response decoding that silently discarded `at_here_restricted`, `at_channel_restricted`, and `channel_workflows` from java-slack-sdk fixtures; exposed them as `atHereRestricted`, `atChannelRestricted`, and `channelWorkflows`, with the `ChannelWorkflow` model - #149
 
 ## [2026.10.1] - 2026-10-01
 

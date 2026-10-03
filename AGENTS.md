@@ -10,7 +10,7 @@ Shared guidance for coding agents working in this repository, a Swift Slack SDK 
 - Prefer changing the owning source, generator, or handwritten runtime layer instead of patching downstream symptoms.
 - Keep PR descriptions and verification notes free of user-specific absolute paths or local environment details.
 - When discussing models or fields, explicitly name the repository: upstream `java-slack-sdk` models/fixtures, upstream `slack-api-ref` schemas/definitions, or downstream `swift-slack` generated/handwritten models. Attribute additions, changes, omissions, dates, and snapshots to that repository so their origin is clear.
-- Every PR adds its changes to the `## [Unreleased]` section at the top of `CHANGELOG.md`, under `Added`, `Changed`, or `Fixed`. Mark breaking changes with `**BREAKING**:` and end each bullet with the PR reference, such as `- #123`; open the PR first to get its number.
+- PRs with library-consumer changes update `## [Unreleased]` in `CHANGELOG.md`; maintenance-only PRs need no entry. Use `.agents/skills/update-changelog/SKILL.md` to review and consolidate the complete PR’s entries after follow-up commits. Mark breaking changes with `**BREAKING**:` and end each bullet with its PR reference, such as `- #123`; open the PR first to get its number.
 - Do not use `swift-actions/setup-swift@v2` in GitHub Actions. This repository uses `vapor/swiftly-action`; keep the preceding Ubuntu package-index refresh when changing that setup.
 - Shared agent skills live in `.agents/skills/`. `.claude/skills` is a symlink to that directory; edit skills there.
 
