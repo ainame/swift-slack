@@ -1,10 +1,9 @@
 name: Schema Update
 
 on:
-  schedule:
-    # Run every Monday at 9 AM UTC
-    - cron: '0 9 * * 1'
-  workflow_dispatch: # Allow manual triggering
+  # Scheduled updates are reviewed by Codex using $slack-upstream-sync.
+  # Dispatch this fallback only when no agent sync is running or awaiting review.
+  workflow_dispatch:
 
 permissions:
   actions: write

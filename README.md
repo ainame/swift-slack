@@ -296,4 +296,17 @@ npm ci
 make update && make generate
 ```
 
+For an agent-reviewed upstream update, invoke `$slack-upstream-sync` using the
+repository's [sync skill](.agents/skills/slack-upstream-sync/SKILL.md). It reviews
+both vendor deltas, checks generated and handwritten models, and prepares a PR.
+The [upstream record](UPSTREAM.md) distinguishes vendor pins from reviewed coverage.
+The same Make targets remain available for manual updates; `make generate` alone
+regenerates from the currently checked-out vendor snapshots.
+
+Scheduled Codex runs require full access, authenticated Git/GitHub access, and an
+isolated worktree based on current `origin/main`. Keep the computer and app running.
+Test the skill manually before enabling the schedule. GitHub Actions continues to
+test PRs; the Schema Update workflow is a manual fallback and should not run while
+an agent sync is running or awaiting review.
+
 **Note**: This is an unofficial, community-based project not affiliated with Slack Technologies, LLC.
