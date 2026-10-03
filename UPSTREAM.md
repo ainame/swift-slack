@@ -5,6 +5,8 @@ selected delta, not complete historical parity or live Slack service behavior.
 
 ## Review on 2026-10-03
 
+Sync PR: #149.
+
 | Source | Previous commit | Reviewed snapshot |
 | --- | --- | --- |
 | [java-slack-sdk](https://github.com/slackapi/java-slack-sdk) | `dbe498ce0a2f0ed068b4bd7028ce31d22c91998d` | `43fad0e0943e53991d9298d08588915116a7a0aa` |
@@ -56,5 +58,9 @@ inputs; they are not claims of full API parity. No exhaustive-switch cases chang
 
 ### Verification
 
-Local generation, script checks, Swift tests, and regeneration reproducibility are
-recorded in the sync PR. Hosted CI and live Slack integration are separate checks.
+`npm ci --ignore-scripts`, full `make generate`, `make test-scripts` (19 tests /
+79 assertions plus 4 processing tests / 10 assertions), and `swift test` (90 tests
+in 16 suites) passed using the recorded Swift and Ruby versions. A second full
+generation pass matched all 352 generated/manifest hashes. Handwritten Swift was
+formatted and `git diff --check` passed. Existing binary-property generator warnings
+are unchanged. Hosted CI is pending; live Slack integration was not run.

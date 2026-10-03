@@ -8,6 +8,14 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ## [Unreleased]
 
+### Added
+
+* Added record-channel, code-channel, and agent-session conversation property models from current upstream snapshots - #149
+
+### Fixed
+
+* Preserved new `conversations.info` properties when merging shared response schemas, with fixture round-trip coverage - #149
+
 ### Changed
 
 * Moved scheduled upstream schema review to the `slack-upstream-sync` Codex skill, covering generated and handwritten models, and retained Schema Update as a manual Actions fallback - #148
