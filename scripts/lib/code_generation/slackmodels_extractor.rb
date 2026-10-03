@@ -9,7 +9,7 @@ class SlackModelsExtractor
     @types_file = types_file
     @output_dir = output_dir
     # These are handled outside generated SlackModels.
-    @manually_handled_types = %w[View Block UserProfile TeamProfile Call APITestArgs AppWorkflow AppIcons Usergroup WorkflowCollaboratorError]
+    @manually_handled_types = %w[View Block UserProfile TeamProfile Call APITestArgs AppWorkflow AppIcons Usergroup WorkflowCollaboratorError RecordChannel CodeChannel AgentSession]
     @schema_aliases = {
       'Data' => 'TabData',
     }

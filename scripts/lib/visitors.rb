@@ -450,3 +450,25 @@ class ItemTsOptionalAdder
     end
   end
 end
+
+# The shared Properties schema is replaced by later conversation fixtures during
+# merging. Keep the new conversation fields in every occurrence, and use stable
+# handwritten models for their nested payloads rather than shared inferred names.
+class ConversationPropertiesRefFixer
+  FIELDS = {
+    'record_channel' => 'RecordChannel',
+    'code_channel' => 'CodeChannel',
+    'agent_session' => 'AgentSession',
+  }.freeze
+
+  def walk(root)
+    definitions = root['definitions']
+    properties = definitions&.dig('Properties', 'properties')
+    return unless properties.is_a?(Hash)
+
+    FIELDS.each do |field, model|
+      properties[field] = { '$ref' => "#/components/schemas/#{model}" }
+      definitions[model] = HandwrittenModel.placeholder_schema
+    end
+  end
+end

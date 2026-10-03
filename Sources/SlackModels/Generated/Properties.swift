@@ -31,6 +31,12 @@ public struct Properties: Codable, Hashable, Sendable {
     public var threadsRestrictedTo: ThreadsRestrictedTo?
     /// - Remark: Generated from `#/components/schemas/Properties/use_case`.
     public var useCase: Swift.String?
+    /// - Remark: Generated from `#/components/schemas/Properties/record_channel`.
+    public var recordChannel: RecordChannel?
+    /// - Remark: Generated from `#/components/schemas/Properties/code_channel`.
+    public var codeChannel: CodeChannel?
+    /// - Remark: Generated from `#/components/schemas/Properties/agent_session`.
+    public var agentSession: AgentSession?
     /// Creates a new `Properties`.
     ///
     /// - Parameters:
@@ -44,6 +50,9 @@ public struct Properties: Codable, Hashable, Sendable {
     ///   - tabz:
     ///   - threadsRestrictedTo:
     ///   - useCase:
+    ///   - recordChannel:
+    ///   - codeChannel:
+    ///   - agentSession:
     public init(
         canvas: Canvas? = nil,
         hasSlackConnectInviteCreated: Swift.Bool? = nil,
@@ -55,6 +64,9 @@ public struct Properties: Codable, Hashable, Sendable {
         tabz: [Tab]? = nil,
         threadsRestrictedTo: ThreadsRestrictedTo? = nil,
         useCase: Swift.String? = nil,
+        recordChannel: RecordChannel? = nil,
+        codeChannel: CodeChannel? = nil,
+        agentSession: AgentSession? = nil,
     ) {
         self.canvas = canvas
         self.hasSlackConnectInviteCreated = hasSlackConnectInviteCreated
@@ -66,6 +78,9 @@ public struct Properties: Codable, Hashable, Sendable {
         self.tabz = tabz
         self.threadsRestrictedTo = threadsRestrictedTo
         self.useCase = useCase
+        self.recordChannel = recordChannel
+        self.codeChannel = codeChannel
+        self.agentSession = agentSession
     }
 
     public enum CodingKeys: String, CodingKey {
@@ -79,5 +94,8 @@ public struct Properties: Codable, Hashable, Sendable {
         case tabz
         case threadsRestrictedTo = "threads_restricted_to"
         case useCase = "use_case"
+        case recordChannel = "record_channel"
+        case codeChannel = "code_channel"
+        case agentSession = "agent_session"
     }
 }
