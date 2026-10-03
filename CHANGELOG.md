@@ -14,6 +14,7 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ### Changed
 
+* Required model and field discussions to name `java-slack-sdk`, `slack-api-ref`, or `swift-slack` explicitly in shared agent guidance - #149
 * Required upstream sync PRs to use `schema-update` as their sole label and clarified review, no-op progress, and reporting guidance in the shared sync skill - #149
 * Discovered handwritten model overrides from their source files and shared the extractor between generation and its standalone command - #149
 * Moved scheduled upstream schema review to the `slack-upstream-sync` Codex skill, covering generated and handwritten models, and retained Schema Update as a manual Actions fallback - #148
