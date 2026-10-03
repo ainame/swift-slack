@@ -79,7 +79,8 @@ no-op without committing the temporary vendor advancement.
   `gh pr create/edit --body-file` for multiline Markdown. Open the PR first to obtain
   its number, then add the required `Unreleased` changelog bullets and provenance PR
   reference in a follow-up commit. Attach the PR using the Codex artifact tool when
-  available. Use the `schema-update` label if present.
+  available. Use `schema-update` as the sole PR label; remove other labels when
+  updating a sync PR.
 - Explain implemented changes, handwritten model decisions, exclusions, breaking
   changes, and validation. Separate local checks from hosted CI and live Slack
   testing. If push or PR creation fails, preserve commits and report the exact
