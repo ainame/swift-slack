@@ -14,6 +14,8 @@ The `PATCH` segment is a release counter within the month, not a SemVer compatib
 
 ### Fixed
 
+* Fixed Web API schema references and imports for aliased handwritten models by sharing alias resolution with extraction - #149
+
 * Preserved new `conversations.info` properties when merging shared response schemas, with fixture round-trip coverage - #149
 
 ### Changed

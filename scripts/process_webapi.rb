@@ -39,7 +39,7 @@ class CodeTransformer
     content.gsub(/\bComponents\.Schemas\.View\b/, 'SlackBlockKit.View')
            .gsub(/\bComponents\.Schemas\.Block\b/, 'SlackBlockKit.Block')
            .gsub(/\bComponents\.Schemas\.(\w+)\b/) do |match|
-             type_name = $1
+             type_name = SlackModelCatalog.emitted_name($1)
              if slackmodels_types.include?(type_name)
                "SlackModels.#{type_name}"
              else
@@ -57,7 +57,7 @@ class CodeTransformer
     # Check if we need SlackModels import (only for types moved to SlackModels)
     needs_slackmodels_import = false
     content.scan(/\bComponents\.Schemas\.(\w+)\b/) do |match|
-      type_name = match[0]
+      type_name = SlackModelCatalog.emitted_name(match[0])
       if CodeTransformer.slackmodels_types.include?(type_name) && type_name != 'View' && type_name != 'Block'
         needs_slackmodels_import = true
         break
@@ -68,7 +68,7 @@ class CodeTransformer
     transformed_content = content.gsub(/\bComponents\.Schemas\.View\b/, 'SlackBlockKit.View')
                                 .gsub(/\bComponents\.Schemas\.Block\b/, 'SlackBlockKit.Block')
                                 .gsub(/\bComponents\.Schemas\.(\w+)\b/) do |match|
-                                  type_name = $1
+                                  type_name = SlackModelCatalog.emitted_name($1)
                                   if CodeTransformer.slackmodels_types.include?(type_name)
                                     "SlackModels.#{type_name}"
                                   else
@@ -123,7 +123,7 @@ class CodeTransformer
       # Replace Components.Schemas.XXX with SlackModels.XXX only for types moved to SlackModels
       if line.match(/\bComponents\.Schemas\.(?!View\b|Block\b)\w+\b/)
         line = line.gsub(/\bComponents\.Schemas\.(\w+)\b/) do |match|
-          type_name = $1
+          type_name = SlackModelCatalog.emitted_name($1)
           if CodeTransformer.slackmodels_types.include?(type_name)
             needs_slackmodels_import = true
             "SlackModels.#{type_name}"
@@ -476,7 +476,7 @@ class CodeGenerationProcessor
                                 functions_content.match(/\bComponents\.Schemas\.Block\b/)
     needs_slackmodels_import = false
     functions_content.scan(/\bComponents\.Schemas\.(\w+)\b/) do |match|
-      type_name = match[0]
+      type_name = SlackModelCatalog.emitted_name(match[0])
       if CodeTransformer.slackmodels_types.include?(type_name) && type_name != 'View' && type_name != 'Block'
         needs_slackmodels_import = true
         break
