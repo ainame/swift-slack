@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses calendar versioning in the form `YYYY.M.PATCH`.
 The `PATCH` segment is a release counter within the month, not a SemVer compatibility signal.
 
+## [Unreleased]
+
+### Changed
+
+* Removed `CLAUDE.md` and moved agent skills from `.codex/skills` to `.agents/skills`, so Claude Code and Codex share `AGENTS.md` and one skills directory, with `.claude/skills` linking to it - #147
+* Required PRs to add their changes to the `Unreleased` section of `CHANGELOG.md` - #147
+
 ## [2026.10.1] - 2026-10-01
 
 This is a follow-up to 2026.10.0, which stopped tracking `Package.resolved`. It moves development-only tools out of the root package manifest, so resolving swift-slack no longer pulls them into client dependency graphs.

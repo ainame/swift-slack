@@ -9,6 +9,7 @@ Shared guidance for coding agents working in this repository.
 - Make a focused git commit for each meaningful change.
 - Prefer changing the owning source, generator, or handwritten runtime layer instead of patching downstream symptoms.
 - Keep PR descriptions and verification notes free of user-specific absolute paths or local environment details.
+- Every PR adds its changes to the `## [Unreleased]` section at the top of `CHANGELOG.md`, under `Added`, `Changed`, or `Fixed`. Mark breaking changes with `**BREAKING**:` and end each bullet with the PR reference, such as `- #123`; open the PR first to get its number.
 - Do not use `swift-actions/setup-swift@v2` in GitHub Actions. This repository uses `vapor/swiftly-action`; keep the preceding Ubuntu package-index refresh when changing that setup.
 
 ## Toolchain
@@ -174,7 +175,7 @@ swift build 2>&1 | awk '/error:|warning:|fatal error:/{flag=1} flag && /^$/{flag
 - Releases use calendar versions in the form `YYYY.M.PATCH`, such as `2026.7.0`.
 - `PATCH` is the release counter within a month, not a SemVer compatibility signal. Start at `0` each month and increment it for additional releases that month.
 - Release tags never use a `v` prefix.
-- Prepare release metadata and the dated `CHANGELOG.md` section on a branch and merge it through a PR. Release notes come from that exact changelog section; use bare PR references such as `#123`.
+- Prepare release metadata on a branch, rename the `[Unreleased]` `CHANGELOG.md` section to the dated release section, and merge it through a PR. Release notes come from that exact changelog section; use bare PR references such as `#123`.
 - Publish only after the preparation PR is merged and local `main` is clean and exactly matches `origin/main`.
 - `ruby scripts/release.rb YYYY.M.PATCH --yes` is a publication command: it builds, tests, creates and pushes the annotated tag, and creates the GitHub release. Never run it from a topic branch or as part of release preparation.
 
