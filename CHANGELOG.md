@@ -23,7 +23,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * Fixed README and DocC examples that did not compile against the current API, covering `TextObject(type:text:)` and other initializer argument orders, `Text.type(_:)`, `Modal(title:)`, `OptionGroup(label:)`, `context.say(text:channel:)`, `context.respond(to:)`, and missing imports; handler examples now call the Web API through `context.client`, and modal examples set the block IDs their submission handlers read - #150
 * Fixed DocC guides that listed 18 of the 33 `WebAPI_*` traits, pinned installation to 0.5.1, and misattributed swift-slack's upstream sources; the Traits guide now lists every trait and explains default and `.defaults` trait selection, and the `SlackApp` examples note that `Router.onBlockAction(_:)` matches the containing view's callback ID, so message buttons are handled with `onInteractive(_:)` - #150
 * Fixed `SlackBlockKitDSL` so `if`, `if let`, `if/else`, and `for` compile inside `Context`, `RichText`, `RichList`, `RichSection`, `RichQuote`, `RichPreformatted`, and `StaticSelect` option groups - #151
-* Fixed `Markdown { ... }` emitting a blank line for an `if` whose condition was false - #151
+* Fixed `Markdown { ... }` emitting a blank line for an `if` whose condition was false or a `for` loop with no iterations - #151
 
 ### Maintenance
 
