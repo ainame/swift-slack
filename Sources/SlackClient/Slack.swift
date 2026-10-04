@@ -12,17 +12,19 @@ import OpenAPIRuntime
 ///
 /// ### Basic Setup
 /// ```swift
-/// let client = Slack(
-///     transport: URLSessionTransport(),
+/// let slack = Slack(
+///     transport: AsyncHTTPClientTransport(),
 ///     configuration: .init(token: "xoxb-your-bot-token")
 /// )
 /// ```
 ///
 /// ### Web API Calls
 /// ```swift
-/// try await client.chatPostMessage(
-///     channel: "#general",
-///     text: "Hello from SwiftSlackClient!"
+/// try await slack.client.chatPostMessage(
+///     body: .json(.init(
+///         channel: "#general",
+///         text: "Hello from Swift!"
+///     ))
 /// )
 /// ```
 ///

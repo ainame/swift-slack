@@ -1,35 +1,24 @@
 # ``SlackClient``
 
-A Swift library for interacting with the Slack Web API with type-safe generated models and operations.
+Call the Slack Web API with typed requests and responses.
 
 ## Overview
 
-`SlackClient` is the pure client layer in the `swift-slack` package. Use it when you want:
+`SlackClient` is the Web API layer of the `swift-slack` package. Use it on its own for scripts, CLIs, and CI jobs, or through `SlackKit` inside an app. It provides:
 
-- generated Web API operations
-- shared Slack model and event types
-- Block Kit model support via companion modules
+- ``Slack``, which configures authentication and middleware for a transport you choose
+- generated Web API operations on ``Slack/client``, such as `chatPostMessage` and `viewsOpen`
+- request and response models, re-exported from `SlackModels`
 
-If you want a higher-level runtime for Socket Mode or HTTP request handling, use the `SlackApp` product. `SlackClient` remains the lower-level choice when you want to supply your own transport, including Apple-platform setups built around `URLSession`.
+For Socket Mode, signed HTTP requests, routing, acknowledgements, and Events API payload types, use `SlackKit`, which adds the `SlackApp` runtime on top of this module.
 
-### Up-to-date client code
+### Choose a transport
 
-You can benefit SlackClient being always up-to-date to the Slack API specs.
-This project relies on the official Java SDK
- [java-slack-sdk](https://github.com/slackapi/java-slack-sdk)
-and community project
- [slack-api-ref](https://github.com/slack-ruby/slack-ruby-client)
-to compose own OpenAPI spec and generate client and model code by
- [swift-openapi-generator](https://github.com/apple/swift-openapi-generator).
-When those source repositories get updates, this project will also receive update from GitHub Actions.
+`SlackClient` is generated with [swift-openapi-generator](https://github.com/apple/swift-openapi-generator), so it works with any `ClientTransport` from that ecosystem, such as [AsyncHTTPClient](https://github.com/swift-server/swift-openapi-async-http-client) on servers or [URLSession](https://github.com/apple/swift-openapi-urlsession) in Apple-platform apps.
 
-### Built for Server on Swift
+### Where the API comes from
 
-SlackClient is built with server-side Swift in mind and works with structured concurrency throughout.
-
-You can also choose underlying networking layer; i.e.
-[swift-openapi-async-http-client](https://github.com/swift-server/swift-openapi-async-http-client),
-thanks to swift-openapi-generator ecosystem.
+Web API methods and request parameters come from the community-maintained [slack-api-ref](https://github.com/slack-ruby/slack-api-ref). Response models are inferred from the recorded responses in Slack's official [java-slack-sdk](https://github.com/slackapi/java-slack-sdk), so a method is available only when that SDK has a response sample for it. Many response properties are optional because they are inferred from samples.
 
 ## Topics
 
@@ -37,4 +26,4 @@ thanks to swift-openapi-generator ecosystem.
 
 - <doc:GettingStarted>
 - <doc:Traits>
-- <doc:Examples>
+- ``Slack``

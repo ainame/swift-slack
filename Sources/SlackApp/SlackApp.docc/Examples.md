@@ -1,71 +1,65 @@
 # Practical Examples
 
-Runtime-oriented examples for `SlackApp` and `SlackKit`, including `SlackApp`'s Events API payload types.
+Combine `SlackApp` routing with Block Kit views to build an interactive workflow.
 
-## Socket Mode Integration
+## Interactive Task Management
 
-### Interactive Task Management
+This example lists tasks in response to a slash command, opens a modal when someone clicks a button in that message, and reads the modal's values on submission. It uses `SlackBlockKitDSL` for the views, so add that product to your target alongside `SlackKit`.
 
-Combining Block Kit views with `SlackApp` routing and Socket Mode handlers for interactive task management.
-
-> Note: `SlackApp` auto-acknowledges Events API handlers. Slash commands, actions, shortcuts, and views still need explicit `ack()`. Router registrations are overwrite-based, and `onSlackMessageMatched(...)` was removed in favor of `onEvent(MessageEvent.self)` plus in-handler filtering.
+> Note: Events API handlers are acknowledged automatically. Slash command, interaction, shortcut, and view handlers must call `ack()`. Registering another handler for the same command, callback ID, or event type replaces the earlier one.
 
 ```swift
-// Slash command handler
+import SlackBlockKitDSL
+import SlackKit
+
+let router = Router()
+
+// List the user's tasks
 router.onSlashCommand("/tasks") { context, payload in
     try await context.ack()
 
-    let tasks = try await TaskService.getUserTasks(userId: payload.userId)
-    let taskList = TaskListView(tasks: tasks, userId: payload.userId)
-
+    let tasks = try await TaskService.tasks(for: payload.userId)
     try await context.respond(
-        responseType: .ephemeral,
-        blocks: taskList.blocks
+        to: payload.responseUrl,
+        blocks: TaskListView(tasks: tasks).blocks,
+        responseType: .ephemeral
     )
 }
 
-// Button interaction handler
-router.onBlockAction("create_task") { context, payload in
+// Open the creation modal when the message's "Create Task" button is clicked.
+// `onBlockAction(_:)` matches the callback ID of the view that contains the
+// action, so buttons in messages are handled with `onInteractive(_:)`.
+router.onInteractive { context, envelope in
     try await context.ack()
 
-    let modal = TaskCreationModal(userId: payload.user.id)
+    guard case let .blockActions(payload) = envelope.body,
+          case let .button(button)? = payload.actions?.first,
+          button.actionId == "create_task",
+          let triggerId = payload.triggerId else {
+        return
+    }
 
-    try await slack.client.viewsOpen(
+    try await context.client.viewsOpen(
         body: .json(.init(
-            triggerId: payload.triggerId,
-            view: modal.render()
+            triggerId: triggerId,
+            view: taskCreationModal().asView()
         ))
     )
 }
 
-// View submission handler
+// Handle the modal submission
 router.onViewSubmission("create_task") { context, payload in
     let title = payload.view.state?["title_block", "task_title"]?.value ?? ""
     let priority = payload.view.state?["priority_block", "task_priority"]?.selectedOption?.value ?? "medium"
-    let assigneeId = payload.view.state?["assignee_block", "task_assignee"]?.selectedUser
 
-    let task = try await TaskService.createTask(
-        title: title,
-        priority: Priority(rawValue: priority) ?? .medium,
-        assigneeId: assigneeId,
-        createdBy: payload.user.id
-    )
+    let task = try await TaskService.createTask(title: title, priority: priority)
 
-    let successView = Modal("Task Created") {
+    let successView = Modal(title: Text("Task Created")) {
         Header { Text("Success! ✅") }
 
         Section {
-            Text("Task '*\(task.title)*' has been created successfully.")
-                .style(.mrkdwn)
-        }
-
-        Actions {
-            Button("View Task")
-                .actionId("view_task_\(task.id)")
-                .style(.primary)
-
-            Button("Create Another")
-                .actionId("create_another_task")
+            Text("Task *\(task.title)* has been created.")
+                .type(.mrkdwn)
         }
     }
     .close(Text("Done"))
@@ -73,9 +67,29 @@ router.onViewSubmission("create_task") { context, payload in
     try await context.ack(responseAction: .update, view: successView.asView())
 }
 
+func taskCreationModal() -> Modal {
+    Modal(title: Text("New Task")) {
+        Input("Title") {
+            PlainTextInput("task_title")
+                .placeholder("What needs to be done?")
+        }
+        .blockId("title_block")
+
+        Input("Priority") {
+            StaticSelect("task_priority") {
+                Option("High").value("high")
+                Option("Medium").value("medium")
+                Option("Low").value("low")
+            }
+        }
+        .blockId("priority_block")
+    }
+    .callbackId("create_task")
+    .submit(Text("Create"))
+}
+
 struct TaskListView: SlackView {
-    let tasks: [Task]
-    let userId: String
+    let tasks: [TaskItem]
 
     var blocks: [Block] {
         Header {
@@ -86,14 +100,6 @@ struct TaskListView: SlackView {
             Button("Create Task")
                 .actionId("create_task")
                 .style(.primary)
-
-            StaticSelect("filter_tasks") {
-                Option("All Tasks").value("all")
-                Option("My Tasks").value("mine")
-                Option("High Priority").value("high")
-                Option("Due Today").value("today")
-            }
-            .placeholder("Filter tasks")
         }
 
         Divider()
@@ -101,14 +107,13 @@ struct TaskListView: SlackView {
         if tasks.isEmpty {
             Section {
                 Text("_No tasks found. Create your first task!_")
-                    .style(.mrkdwn)
+                    .type(.mrkdwn)
             }
         } else {
             for task in tasks {
                 Section {
                     Text("*\(task.title)*")
-                        .style(.mrkdwn)
-                    Text(task.summary)
+                        .type(.mrkdwn)
                 }
                 .accessory(
                     Button("Open")
@@ -119,3 +124,5 @@ struct TaskListView: SlackView {
     }
 }
 ```
+
+`TaskService` and `TaskItem` stand in for your own storage layer.

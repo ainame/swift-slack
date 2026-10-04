@@ -1,28 +1,35 @@
 # ``SlackApp``
 
-Build Slack app runtimes on top of ``SlackClient``.
+Build Slack apps that respond to events, commands, and interactions.
 
 ## Overview
 
-`SlackApp` is the framework layer in the `swift-slack` package. It owns:
+`SlackApp` is the app runtime of the `swift-slack` package, built on `SlackClient`. It receives requests from Slack over Socket Mode or signed HTTP, acknowledges them, and dispatches them to the handlers you register on a ``Router``.
 
-- `SlackApp`
-- `Router`
-- `SlackApp.Context`
-- `Ack`
-- inbound app request envelopes and interaction payloads
-- Socket Mode orchestration
-- HTTP request verification and dispatch
-- `HTTPServerAdapter` and `HTTPServerHandler` for custom HTTP server integrations
-- optional framework adapters such as `HummingbirdAdapter`
-- the default async HTTP transport for app-author workflows
-
-In normal app code, prefer `import SlackKit`. Use `SlackApp` directly when you only want the runtime layer, or `SlackClient` when you want custom transport control or a lower-level client surface, such as Apple-platform apps using `URLSession`-based transports.
+In app code, `import SlackKit`, which re-exports this module along with `SlackClient` and `SlackBlockKit`. Import `SlackApp` directly only when you want the runtime without the umbrella module.
 
 ## Topics
 
 ### Essentials
 
 - <doc:GettingStarted>
-- <doc:MigrationGuide>
 - <doc:Examples>
+- <doc:MigrationGuide>
+
+### Running an App
+
+- ``SlackApp/SlackApp``
+- ``Router``
+
+### Handling Requests
+
+- ``SlackApp/SlackApp/Context``
+- ``SlackApp/SlackApp/EventContext``
+- ``Ack``
+- ``Say``
+- ``Respond``
+
+### HTTP Integration
+
+- ``HTTPServerAdapter``
+- ``HTTPServerHandler``
