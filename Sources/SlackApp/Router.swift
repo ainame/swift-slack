@@ -253,7 +253,7 @@ public class Router {
         }
     }
 
-    public func onBlockAction(_ callbackId: String, handler: @escaping RequestPayloadHandler<BlockActionsPaylaod>) {
+    public func onBlockAction(_ callbackId: String, handler: @escaping RequestPayloadHandler<BlockActionsPayload>) {
         blockActionHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,

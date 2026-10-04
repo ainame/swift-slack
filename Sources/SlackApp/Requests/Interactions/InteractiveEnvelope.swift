@@ -20,7 +20,7 @@ public struct InteractiveEnvelope: Decodable, Hashable, Sendable {
         case "message_action":
             body = try .messageAction(MessageShortcutPayload(from: decoder))
         case "block_actions":
-            body = try .blockActions(BlockActionsPaylaod(from: decoder))
+            body = try .blockActions(BlockActionsPayload(from: decoder))
         case "view_submission":
             body = try .viewSubmission(ViewSubmissionPayload(from: decoder))
         case "view_closed":
