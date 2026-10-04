@@ -867,24 +867,24 @@ public struct RichQuote {
 /// Result builder for rich text elements
 @resultBuilder
 public struct RichTextElementBuilder {
-    public static func buildBlock(_ components: RichTextElementType...) -> [RichTextElementType] {
-        components
+    public static func buildBlock(_ components: [RichTextElementType]...) -> [RichTextElementType] {
+        components.flatMap(\.self)
     }
 
-    public static func buildExpression(_ expression: RichList) -> RichTextElementType {
-        expression.asRichTextElement()
+    public static func buildExpression(_ expression: RichList) -> [RichTextElementType] {
+        [expression.asRichTextElement()]
     }
 
-    public static func buildExpression(_ expression: RichSection) -> RichTextElementType {
-        expression.asRichTextElement()
+    public static func buildExpression(_ expression: RichSection) -> [RichTextElementType] {
+        [expression.asRichTextElement()]
     }
 
-    public static func buildExpression(_ expression: RichPreformatted) -> RichTextElementType {
-        expression.asRichTextElement()
+    public static func buildExpression(_ expression: RichPreformatted) -> [RichTextElementType] {
+        [expression.asRichTextElement()]
     }
 
-    public static func buildExpression(_ expression: RichQuote) -> RichTextElementType {
-        expression.asRichTextElement()
+    public static func buildExpression(_ expression: RichQuote) -> [RichTextElementType] {
+        [expression.asRichTextElement()]
     }
 
     public static func buildArray(_ components: [[RichTextElementType]]) -> [RichTextElementType] {
@@ -907,12 +907,12 @@ public struct RichTextElementBuilder {
 /// Result builder for rich text sections
 @resultBuilder
 public struct RichTextSectionBuilder {
-    public static func buildBlock(_ components: RichTextSection...) -> [RichTextSection] {
-        components
+    public static func buildBlock(_ components: [RichTextSection]...) -> [RichTextSection] {
+        components.flatMap(\.self)
     }
 
-    public static func buildExpression(_ expression: RichSection) -> RichTextSection {
-        expression.asRichTextSection()
+    public static func buildExpression(_ expression: RichSection) -> [RichTextSection] {
+        [expression.asRichTextSection()]
     }
 
     public static func buildArray(_ components: [[RichTextSection]]) -> [RichTextSection] {
@@ -935,44 +935,44 @@ public struct RichTextSectionBuilder {
 /// Result builder for rich text content elements
 @resultBuilder
 public struct RichTextContentBuilder {
-    public static func buildBlock(_ components: RichTextContentElement...) -> [RichTextContentElement] {
-        components
+    public static func buildBlock(_ components: [RichTextContentElement]...) -> [RichTextContentElement] {
+        components.flatMap(\.self)
     }
 
-    public static func buildExpression(_ expression: RichTextContent) -> RichTextContentElement {
-        expression.asRichTextContent()
+    public static func buildExpression(_ expression: RichTextContent) -> [RichTextContentElement] {
+        [expression.asRichTextContent()]
     }
 
-    public static func buildExpression(_ expression: RichEmoji) -> RichTextContentElement {
-        expression.asRichTextContent()
+    public static func buildExpression(_ expression: RichEmoji) -> [RichTextContentElement] {
+        [expression.asRichTextContent()]
     }
 
-    public static func buildExpression(_ expression: RichLink) -> RichTextContentElement {
-        expression.asRichTextContent()
+    public static func buildExpression(_ expression: RichLink) -> [RichTextContentElement] {
+        [expression.asRichTextContent()]
     }
 
-    public static func buildExpression(_ expression: RichUser) -> RichTextContentElement {
-        expression.asRichTextContent()
+    public static func buildExpression(_ expression: RichUser) -> [RichTextContentElement] {
+        [expression.asRichTextContent()]
     }
 
-    public static func buildExpression(_ expression: RichChannel) -> RichTextContentElement {
-        expression.asRichTextContent()
+    public static func buildExpression(_ expression: RichChannel) -> [RichTextContentElement] {
+        [expression.asRichTextContent()]
     }
 
-    public static func buildExpression(_ expression: RichDate) -> RichTextContentElement {
-        expression.asRichTextContent()
+    public static func buildExpression(_ expression: RichDate) -> [RichTextContentElement] {
+        [expression.asRichTextContent()]
     }
 
-    public static func buildExpression(_ expression: RichBroadcast) -> RichTextContentElement {
-        expression.asRichTextContent()
+    public static func buildExpression(_ expression: RichBroadcast) -> [RichTextContentElement] {
+        [expression.asRichTextContent()]
     }
 
-    public static func buildExpression(_ expression: RichColor) -> RichTextContentElement {
-        expression.asRichTextContent()
+    public static func buildExpression(_ expression: RichColor) -> [RichTextContentElement] {
+        [expression.asRichTextContent()]
     }
 
-    public static func buildExpression(_ expression: RichUsergroup) -> RichTextContentElement {
-        expression.asRichTextContent()
+    public static func buildExpression(_ expression: RichUsergroup) -> [RichTextContentElement] {
+        [expression.asRichTextContent()]
     }
 
     public static func buildArray(_ components: [[RichTextContentElement]]) -> [RichTextContentElement] {
