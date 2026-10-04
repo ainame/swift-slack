@@ -20,7 +20,7 @@ let welcome = SectionBlock(
         text: "*Welcome!* Click the button to get started."
     ),
     accessory: .button(ButtonElement(
-        text: TextObject(text: "Get Started", type: .plainText),
+        text: TextObject(type: .plainText, text: "Get Started"),
         actionId: "get_started",
         style: .primary
     ))
@@ -33,7 +33,7 @@ import SlackBlockKitDSL
 
 let welcome = Section {
     Text("*Welcome!* Click the button to get started.")
-        .style(.mrkdwn)
+        .type(.mrkdwn)
 }
 .accessory(
     Button("Get Started")
@@ -49,10 +49,10 @@ import SlackBlockKitDSL
 
 // Create a reusable modal view
 struct TaskCreationModal: SlackModalView {
-    var title: TextObject {
-        TextObject(text: "Create Task", type: .plainText)
-    }
-    
+    var title: TextObject { "Create Task" }
+    var submit: TextObject? { "Create" }
+    var callbackId: String? { "create_task" }
+
     var blocks: [Block] {
         Header {
             Text("Task Details")
@@ -70,19 +70,10 @@ struct TaskCreationModal: SlackModalView {
                 Option("Low").value("low")
             }
         }
-        
-        Actions {
-            Button("Create")
-                .actionId("create_task")
-                .style(.primary)
-            
-            Button("Cancel")
-                .actionId("cancel")
-        }
     }
 }
 
-// Use the modal
+// Open the modal with a trigger ID from a slash command or interaction
 let modal = TaskCreationModal()
 try await slack.client.viewsOpen(
     body: .json(.init(
@@ -97,6 +88,7 @@ try await slack.client.viewsOpen(
 ### Getting Started
 
 - <doc:BlockKitDSL>
+- <doc:Examples>
 
 ### Core Components
 
@@ -181,7 +173,7 @@ The DSL is built on several key concepts:
 Swift's result builders enable declarative syntax:
 
 ```swift
-Modal("Settings") {
+Modal(title: Text("Settings")) {
     Header { Text("Configuration") }
     
     Section { Text("General settings") }
@@ -219,9 +211,7 @@ Reusable components with SwiftUI-like patterns:
 struct UserProfile: SlackModalView {
     let user: User
     
-    var title: TextObject {
-        TextObject(text: "User Profile", type: .plainText)
-    }
+    var title: TextObject { "User Profile" }
     
     var blocks: [Block] {
         Header { Text(user.name) }
@@ -236,31 +226,30 @@ struct UserProfile: SlackModalView {
 SlackBlockKitDSL builds on top of SlackBlockKit and integrates with the entire swift-slack ecosystem:
 
 ```swift
-import SlackClient
 import SlackBlockKitDSL
+import SlackKit
 
-// Use with Socket Mode
+// Open a modal from a SlackApp handler
 router.onSlashCommand("/create-task") { context, payload in
-    let modal = TaskCreationModal()
-    try await slack.client.viewsOpen(
+    try await context.ack()
+    try await context.client.viewsOpen(
         body: .json(.init(
             triggerId: payload.triggerId,
-            view: modal.render()
+            view: TaskCreationModal().render()
         ))
     )
-    try await context.ack()
 }
 
-// Use with Web API
-let blocks = [
-    Header { Text("Status Update") },
-    Section { Text("Deployment successful! ✅") }
+// Post blocks with the Web API client
+let blocks: [Block] = [
+    Header { Text("Status Update") }.render(),
+    Section { Text("Deployment successful! ✅") }.render(),
 ]
 
 try await slack.client.chatPostMessage(
     body: .json(.init(
-        channel: "#deployments",
-        blocks: blocks.map { $0.render() }
+        blocks: blocks,
+        channel: "#deployments"
     ))
 )
 ```
@@ -271,18 +260,18 @@ The DSL provides a smooth migration path from direct SlackBlockKit usage:
 
 ```swift
 // Before: SlackBlockKit
-let section = SectionBlock(
+let modelSection = SectionBlock(
     text: TextObject(type: .mrkdwn, text: "*Status:* Active"),
     accessory: .button(ButtonElement(
-        text: TextObject(text: "Details", type: .plainText),
+        text: TextObject(type: .plainText, text: "Details"),
         actionId: "view_details",
         style: .primary
     ))
 )
 
 // After: SlackBlockKitDSL
-let section = Section {
-    Text("*Status:* Active").style(.mrkdwn)
+let dslSection = Section {
+    Text("*Status:* Active").type(.mrkdwn)
 }
 .accessory(
     Button("Details")

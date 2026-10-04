@@ -21,7 +21,7 @@ let welcome = SectionBlock(
         text: "*Welcome!* Click the button to get started."
     ),
     accessory: .button(ButtonElement(
-        text: TextObject(text: "Get Started", type: .plainText),
+        text: TextObject(type: .plainText, text: "Get Started"),
         actionId: "get_started",
         style: .primary
     ))
@@ -34,7 +34,7 @@ import SlackBlockKitDSL
 
 let welcome = Section {
     Text("*Welcome!* Click the button to get started.")
-        .style(.mrkdwn)
+        .type(.mrkdwn)
 }
 .accessory(
     Button("Get Started")
@@ -55,11 +55,11 @@ Text("Hello, World!")
 
 // Markdown text with formatting
 Text("*Bold text* and _italic text_")
-    .style(.mrkdwn)
+    .type(.mrkdwn)
 
 // Plain text with emoji control
 Text("No emoji here")
-    .style(.plainText)
+    .type(.plainText)
     .emoji(false)
 
 // Verbatim text (no parsing)
@@ -199,16 +199,17 @@ StaticSelect("priority") {
 .initialOption(Option("Medium Priority").value("medium"))
 
 // Grouped options
-StaticSelect("category") {
-    OptionGroup("Priority", options: {
+StaticSelect {
+    OptionGroup(label: "Priority") {
         Option("High").value("high")
         Option("Medium").value("medium")
-    })
-    OptionGroup("Type", options: {
+    }
+    OptionGroup(label: "Type") {
         Option("Bug").value("bug")
         Option("Feature").value("feature")
-    })
+    }
 }
+.actionId("category")
 
 // User selection
 UsersSelect("assignee")
@@ -352,36 +353,33 @@ Create reusable modal interfaces using SwiftUI-like patterns:
 ```swift
 struct TaskCreationModal: SlackModalView {
     let projectId: String
-    
-    var title: TextObject {
-        TextObject(text: "Create New Task", type: .plainText)
-    }
-    
-    var submit: TextObject? {
-        TextObject(text: "Create Task", type: .plainText)
-    }
-    
-    var callbackId: String? {
-        "create_task_\(projectId)"
-    }
-    
+
+    var title: TextObject { "Create New Task" }
+    var submit: TextObject? { "Create Task" }
+    var callbackId: String? { "create_task" }
+    // Carry context to the view submission handler
+    var privateMetadata: String? { projectId }
+
     var blocks: [Block] {
         Header {
             Text("Task Details")
         }
-        
+
+        // Set block IDs so submission handlers can read values from view.state
         Input("Task Title") {
             PlainTextInput("task_title")
                 .placeholder("Enter task title")
                 .maxLength(100)
         }
-        
+        .blockId("task_title_block")
+
         Input("Description") {
             PlainTextInput("task_description")
                 .placeholder("Describe the task")
                 .multiline(true)
         }
-        
+        .blockId("task_description_block")
+
         Input("Priority") {
             StaticSelect("priority") {
                 Option("🔴 High").value("high")
@@ -390,11 +388,13 @@ struct TaskCreationModal: SlackModalView {
             }
             .placeholder("Select priority")
         }
-        
+        .blockId("priority_block")
+
         Input("Assignee") {
             UsersSelect("assignee")
                 .placeholder("Assign to team member")
         }
+        .blockId("assignee_block")
         .optional(true)
         
         Divider()
@@ -466,7 +466,7 @@ Constructs arrays of blocks for views and containers:
 
 ```swift
 // Automatic array building
-Modal("Settings") {
+Modal(title: Text("Settings")) {
     Header { Text("Configuration") }  // Single block
     
     // Conditional blocks
@@ -521,7 +521,7 @@ StaticSelect("category") {
 ### Conditional Content
 
 ```swift
-Modal("User Profile") {
+Modal(title: Text("User Profile")) {
     Header { Text("Profile Settings") }
     
     // Always show basic fields
@@ -554,9 +554,8 @@ Modal("User Profile") {
                 Text(notification.description)
             }
             .accessory(
-                Button(notification.enabled ? "Enabled" : "Disabled")
+                Button(notification.enabled ? "Disable" : "Enable")
                     .actionId("toggle_\(notification.id)")
-                    .style(notification.enabled ? .primary : nil)
             )
         }
     }
@@ -567,7 +566,7 @@ Modal("User Profile") {
 
 ```swift
 struct TaskListView: SlackView {
-    let tasks: [Task]
+    let tasks: [TaskItem]
     
     var blocks: [Block] {
         Header { Text("Task List") }
@@ -589,9 +588,8 @@ struct TaskListView: SlackView {
                     Text(task.description)
                 }
                 .accessory(
-                    Button(task.completed ? "✅" : "⏳")
+                    Button(task.completed ? "✅ Done" : "Mark Done")
                         .actionId("toggle_task_\(task.id)")
-                        .style(task.completed ? nil : .primary)
                 )
             }
         }
@@ -605,22 +603,24 @@ struct TaskListView: SlackView {
 }
 ```
 
-## Integration with Socket Mode
+## Integration with SlackApp
 
-Use DSL components seamlessly with Socket Mode routing:
+Use DSL views from `SlackApp` handlers. Acknowledge the request first, then call the Web API through `context.client`:
 
 ```swift
+import SlackBlockKitDSL
+import SlackKit
+
 router.onSlashCommand("/create-task") { context, payload in
+    try await context.ack()
+
     let modal = TaskCreationModal(projectId: payload.channelId)
-    
-    try await slack.client.viewsOpen(
+    try await context.client.viewsOpen(
         body: .json(.init(
             triggerId: payload.triggerId,
             view: modal.render()
         ))
     )
-    
-    try await context.ack()
 }
 
 router.onViewSubmission("create_task") { context, payload in
@@ -629,7 +629,7 @@ router.onViewSubmission("create_task") { context, payload in
     let priority = payload.view.state?["priority_block", "priority"]?.selectedOption?.value ?? "medium"
     
     // Create response view
-    let successView = Modal("Task Created") {
+    let successView = Modal(title: Text("Task Created")) {
         Header { Text("Success! ✅") }
         
         Section {
