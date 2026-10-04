@@ -16,6 +16,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 ### Fixed
 
 * Fixed swift-slack conversation response decoding that silently discarded `at_here_restricted`, `at_channel_restricted`, and `channel_workflows` from java-slack-sdk fixtures; exposed them as `atHereRestricted`, `atChannelRestricted`, and `channelWorkflows`, with the `ChannelWorkflow` model - #149
+* Fixed README examples that did not compile, covering the `context.say(text:channel:)` argument order, `SlackModalView` titles typed as `TextObject`, `Text.type(.mrkdwn)`, and the imports the Block Kit DSL needs; rewrote the README around a runnable Socket Mode bot and an end-to-end `/echo` quick start - #150
 
 ### Maintenance
 
