@@ -223,29 +223,36 @@ public struct InputElementBuilder {
 }
 
 /// Result builder for markdown content
+///
+/// Lines are collected into an array and joined with newlines once, so a branch
+/// that produces nothing does not leave an empty line behind.
 @resultBuilder
 public struct MarkdownBuilder {
-    public static func buildBlock(_ components: String...) -> String {
-        components.joined(separator: "\n")
+    public static func buildBlock(_ components: [String]...) -> [String] {
+        components.flatMap(\.self)
     }
 
-    public static func buildExpression(_ expression: String) -> String {
-        expression
+    public static func buildExpression(_ expression: String) -> [String] {
+        [expression]
     }
 
-    public static func buildArray(_ components: [String]) -> String {
-        components.joined(separator: "\n")
+    public static func buildArray(_ components: [[String]]) -> [String] {
+        components.flatMap(\.self)
     }
 
-    public static func buildOptional(_ component: String?) -> String {
-        component ?? ""
+    public static func buildOptional(_ component: [String]?) -> [String] {
+        component ?? []
     }
 
-    public static func buildEither(first component: String) -> String {
+    public static func buildEither(first component: [String]) -> [String] {
         component
     }
 
-    public static func buildEither(second component: String) -> String {
+    public static func buildEither(second component: [String]) -> [String] {
         component
+    }
+
+    public static func buildFinalResult(_ component: [String]) -> String {
+        component.joined(separator: "\n")
     }
 }
