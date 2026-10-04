@@ -3,10 +3,11 @@ import SlackBlockKit
 @testable import SlackBlockKitDSL
 import Testing
 
-/// Verifies that every DSL result builder supports `if`, `if let`, `if/else`, and `for`.
+/// Verifies that the DSL list result builders support `if`, `if let`, `if/else`, `switch`, and `for`.
 ///
-/// Each test builds the same component with control flow and with the equivalent flat
-/// list of children, then compares the rendered Block Kit values.
+/// Most tests build the same component with control flow and with the equivalent flat
+/// list of children, then compare the rendered Block Kit values. The explicit model tests
+/// pin the builders' output to values assembled without the builders under test.
 struct ResultBuilderControlFlowTests {
     private static let iconURL = URL(string: "https://example.com/icon.png")!
 
@@ -424,5 +425,145 @@ struct ResultBuilderControlFlowTests {
             markdown(showIntro: true, footer: "Footer", isDone: true, items: ["a", "b"])
                 == Markdown("# Report\nIntro\nFooter\nStatus: done\n- a\n- b").render(),
         )
+    }
+
+    // MARK: - Explicit model values
+
+    private enum Priority {
+        case low
+        case medium
+        case high
+    }
+
+    @Test(arguments: [Priority.low, .medium, .high])
+    private func `ContextElementBuilder flattens switch and for into explicit elements`(priority: Priority) {
+        let attendees = ["U1", "U2"]
+        let block = Context {
+            Text("Status")
+            switch priority {
+            case .low:
+                Text("low")
+            case .medium:
+                ContextImage(imageUrl: Self.iconURL, altText: "medium")
+            case .high:
+                Text("high")
+                Text("urgent")
+            }
+            for attendee in attendees {
+                Text(attendee)
+            }
+        }.render()
+
+        let priorityElements: [ContextElementType] = switch priority {
+        case .low:
+            [.text(Text("low").render())]
+        case .medium:
+            [ContextImage(imageUrl: Self.iconURL, altText: "medium").asContextElement()]
+        case .high:
+            [.text(Text("high").render()), .text(Text("urgent").render())]
+        }
+        let expected: [ContextElementType] = [.text(Text("Status").render())]
+            + priorityElements
+            + [.text(Text("U1").render()), .text(Text("U2").render())]
+        #expect(block == .context(ContextBlock(elements: expected, blockId: nil)))
+    }
+
+    @Test func `rich text builders flatten control flow into explicit elements`() {
+        let items = ["a", "b"]
+        let author: String? = "U1"
+        let priority = Priority.medium
+        let block = RichText {
+            RichSection {
+                RichTextContent("note")
+                if let author {
+                    RichUser(author)
+                }
+                switch priority {
+                case .low, .high:
+                    RichEmoji("red_circle")
+                case .medium:
+                    RichEmoji("large_yellow_circle")
+                    RichTextContent("medium")
+                }
+            }
+            RichList {
+                for item in items {
+                    RichSection { RichTextContent(item) }
+                }
+            }
+            switch priority {
+            case .low, .high:
+                RichPreformatted { RichTextContent("code") }
+            case .medium:
+                RichQuote {
+                    for item in items {
+                        RichTextContent(item)
+                    }
+                }
+            }
+        }.render()
+
+        let a = RichTextContent("a").asRichTextContent()
+        let b = RichTextContent("b").asRichTextContent()
+        #expect(block == .richText(RichTextBlock(
+            elements: [
+                .section(RichTextSection(elements: [
+                    RichTextContent("note").asRichTextContent(),
+                    RichUser("U1").asRichTextContent(),
+                    RichEmoji("large_yellow_circle").asRichTextContent(),
+                    RichTextContent("medium").asRichTextContent(),
+                ])),
+                .list(RichTextList(
+                    style: .bullet,
+                    elements: [RichTextSection(elements: [a]), RichTextSection(elements: [b])],
+                    indent: nil,
+                )),
+                .quote(RichTextQuote(elements: [a, b], border: nil)),
+            ],
+            blockId: nil,
+        )))
+    }
+
+    @Test func `OptionGroupBuilder flattens control flow into explicit groups`() {
+        let teams = ["t1", "t2"]
+        let priority = Priority.low
+        let element = StaticSelect {
+            switch priority {
+            case .low:
+                OptionGroup(label: "Low") { Option("L").value("l") }
+            case .medium, .high:
+                OptionGroup(label: "Other") { Option("O").value("o") }
+            }
+            for team in teams {
+                OptionGroup(label: team) { Option(team).value(team) }
+            }
+        }.asActionElement()
+
+        guard case let .staticSelect(select) = element else {
+            Issue.record("Expected a static select, got \(element)")
+            return
+        }
+        #expect(select.options == nil)
+        #expect(select.optionGroups == [
+            OptionGroup(label: "Low") { Option("L").value("l") }.render(),
+            OptionGroup(label: "t1") { Option("t1").value("t1") }.render(),
+            OptionGroup(label: "t2") { Option("t2").value("t2") }.render(),
+        ])
+    }
+
+    @Test func `MarkdownBuilder keeps explicit blank lines and supports switch`() {
+        let priority = Priority.high
+        let block = Markdown {
+            "# Report"
+            ""
+            switch priority {
+            case .low:
+                "Low"
+            case .medium, .high:
+                "Needs attention"
+            }
+        }.render()
+
+        #expect(block == Markdown("# Report\n\nNeeds attention").render())
     }
 }
