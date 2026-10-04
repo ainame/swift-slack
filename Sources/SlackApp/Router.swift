@@ -92,7 +92,6 @@ public class Router {
     private var globalShortcutHandlers: [String: RequestHandler] = [:]
     private var messageShortcutHandlers: [String: RequestHandler] = [:]
     private var blockActionHandlers: [BlockActionKey: RequestHandler] = [:]
-    private var blockActionCallbackHandlers: [String: RequestHandler] = [:]
     private var viewHandlers: [String: InteractiveHandler] = [:]
     #if Events
     private var eventHandler: RequestHandler?
@@ -108,7 +107,6 @@ public class Router {
         private let globalShortcutHandlers: [String: RequestHandler]
         private let messageShortcutHandlers: [String: RequestHandler]
         private let blockActionHandlers: [BlockActionKey: RequestHandler]
-        private let blockActionCallbackHandlers: [String: RequestHandler]
         private let viewHandlers: [String: InteractiveHandler]
         #if Events
         private let eventHandler: RequestHandler?
@@ -122,7 +120,6 @@ public class Router {
             globalShortcutHandlers = router.globalShortcutHandlers
             messageShortcutHandlers = router.messageShortcutHandlers
             blockActionHandlers = router.blockActionHandlers
-            blockActionCallbackHandlers = router.blockActionCallbackHandlers
             viewHandlers = router.viewHandlers
             #if Events
             eventHandler = router.eventHandler
@@ -133,6 +130,16 @@ public class Router {
 
         @discardableResult
         func dispatch(context: DispatchContext, request: Request) async throws -> Bool {
+            if let callbackId = callbackIdRegisteredAsActionId(in: request) {
+                context.requestContext?.logger.warning(
+                    """
+                    onBlockAction("\(callbackId)") matches an element's action_id, not a view's callback_id, \
+                    so it did not match this block action from the view "\(callbackId)". Register the action IDs \
+                    of the view's elements with onBlockAction, or use onInteractive and check payload.callbackId.
+                    """,
+                )
+            }
+
             guard let handler = handler(for: request) else {
                 return false
             }
@@ -178,14 +185,7 @@ public class Router {
                 }
                 return interactiveHandler
             case let .blockActions(payload):
-                if let handler = blockActionHandler(for: payload) {
-                    return handler
-                }
-                if let callbackId = payload.callbackId,
-                   let handler = blockActionCallbackHandlers[callbackId] {
-                    return handler
-                }
-                return interactiveHandler
+                return blockActionHandler(for: payload) ?? interactiveHandler
             case let .viewSubmission(payload):
                 if let callbackId = payload.callbackId,
                    let handler = viewHandlers[callbackId] {
@@ -201,6 +201,20 @@ public class Router {
             case .unsupported:
                 return interactiveHandler
             }
+        }
+
+        /// Returns the view's callback ID when no handler matched a block action from that view, but an
+        /// ``Router/onBlockAction(_:blockId:handler:)`` registration uses the callback ID as its action ID.
+        /// Code written when `onBlockAction` matched callback IDs looks like this.
+        func callbackIdRegisteredAsActionId(in request: Request) -> String? {
+            guard case let .interactive(envelope) = request,
+                  case let .blockActions(payload) = envelope.body,
+                  let callbackId = payload.callbackId,
+                  blockActionHandler(for: payload) == nil,
+                  blockActionHandlers.keys.contains(where: { $0.actionId == callbackId }) else {
+                return nil
+            }
+            return callbackId
         }
 
         /// Prefers a handler registered with both `action_id` and `block_id` for any action over one registered
@@ -286,8 +300,8 @@ public class Router {
     ///
     /// This matches interactions from messages, modals, and App Home alike, like Bolt's `app.action(...)`.
     /// Pass `blockId` to match only the element in that block. A handler registered with both IDs takes
-    /// precedence over one registered with `actionId` only, and both take precedence over
-    /// ``onBlockAction(callbackId:handler:)``.
+    /// precedence over one registered with `actionId` only. To handle every action in a view, use
+    /// ``onInteractive(_:)`` and check the payload's `callbackId`.
     public func onBlockAction(
         _ actionId: String,
         blockId: String? = nil,
@@ -298,22 +312,6 @@ public class Router {
                   case let .interactive(interactiveEnvelope) = request,
                   case let .blockActions(payload) = interactiveEnvelope.body,
                   payload.containsAction(actionId, blockId: blockId) else {
-                return
-            }
-            try await handler(context, payload)
-        }
-    }
-
-    /// Registers a handler for `block_actions` requests from any element in a view with the given `callback_id`.
-    ///
-    /// Actions outside a view, such as message buttons, have no callback ID and never match. Handlers registered
-    /// with ``onBlockAction(_:blockId:handler:)`` take precedence.
-    public func onBlockAction(callbackId: String, handler: @escaping RequestPayloadHandler<BlockActionsPayload>) {
-        blockActionCallbackHandlers[callbackId] = { context, request in
-            guard let context = context.requestContext,
-                  case let .interactive(interactiveEnvelope) = request,
-                  case let .blockActions(payload) = interactiveEnvelope.body,
-                  payload.callbackId == callbackId else {
                 return
             }
             try await handler(context, payload)

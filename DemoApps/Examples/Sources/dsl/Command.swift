@@ -175,8 +175,8 @@ struct Command {
             print("Home tab published: \(response)")
         }
 
-        // Handle any button in the quick form modal by the modal's callback ID
-        router.onBlockAction(callbackId: "quick_form_modal") { context, payload in
+        // Handle the quick form modal's Submit button by its action ID
+        router.onBlockAction("submit") { context, payload in
             try await context.ack()
 
             // Create a success message modal

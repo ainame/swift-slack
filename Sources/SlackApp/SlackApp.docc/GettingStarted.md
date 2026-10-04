@@ -105,17 +105,22 @@ Both context types provide `client` for Web API calls, `say` to post a message, 
 
 ## Block actions
 
-`onBlockAction(_:blockId:handler:)` matches the `action_id` of the interacted element, like Bolt's `app.action(...)`, for buttons and menus in messages, modals, and App Home. Pass `blockId:` to also require the `block_id`. To handle every action inside a view, register `onBlockAction(callbackId:handler:)` with the view's `callback_id`; action ID handlers take precedence.
+`onBlockAction(_:blockId:handler:)` matches the `action_id` of the interacted element, like Bolt's `app.action(...)`, for buttons and menus in messages, modals, and App Home. Pass `blockId:` to also require the `block_id`. A handler registered with both IDs takes precedence over one registered with the action ID only.
 
 ```swift
 router.onBlockAction("approve") { context, payload in
     try await context.ack()
+    print(payload.actions?.first?.value ?? "")
 }
 
-router.onBlockAction(callbackId: "settings_modal") { context, payload in
+router.onBlockAction("approve", blockId: "request_42") { context, payload in
     try await context.ack()
 }
 ```
+
+To handle every action in a view, use `onInteractive(_:)` and check the payload's `callbackId`.
+
+Earlier versions matched `onBlockAction` against the containing view's `callback_id`. If a block action from a view matches no handler, but an `onBlockAction` registration uses that view's callback ID, the router logs a warning that explains how to update the registration.
 
 ## Events API payload types
 

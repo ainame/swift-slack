@@ -177,28 +177,38 @@ struct AppRouterTests {
         #expect(await tracker.value == "broad")
     }
 
-    @Test func `block action dispatch prefers action id over view callback id`() async throws {
-        let tracker = ValueTracker()
-        let router = Router()
-        router.onBlockAction(callbackId: "modal") { _, _ in await tracker.set("callback") }
-        router.onBlockAction("button-id") { _, _ in await tracker.set("action") }
-
-        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: "modal"))
-        #expect(await tracker.value == "action")
-
-        try await dispatch(router, makeBlockActionEnvelope(actionId: "other-id", viewCallbackId: "modal"))
-        #expect(await tracker.value == "callback")
-    }
-
-    @Test func `block action callback id handler does not match actions without view`() async throws {
+    @Test func `block action dispatch does not match the view callback id`() async throws {
         let tracker = ValueTracker()
         let router = Router()
         router.onInteractive { _, _ in await tracker.set("broad") }
-        router.onBlockAction(callbackId: "button-id") { _, _ in await tracker.set("callback") }
+        router.onBlockAction("modal") { _, _ in await tracker.set("action") }
 
-        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: nil))
+        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: "modal"))
 
         #expect(await tracker.value == "broad")
+    }
+
+    @Test func `detects a view callback id registered as an action id`() throws {
+        let router = Router()
+        router.onBlockAction("modal") { _, _ in }
+        router.onBlockAction("save") { _, _ in }
+        let fixedRouter = Router.FixedRouter(from: router)
+
+        // Written for the earlier callback ID matching: the view's callback ID is registered, no action matches.
+        let unmatched = try makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: "modal")
+        #expect(fixedRouter.callbackIdRegisteredAsActionId(in: .interactive(unmatched)) == "modal")
+
+        // An action matched, so nothing is reported.
+        let matched = try makeBlockActionEnvelope(actionId: "save", viewCallbackId: "modal")
+        #expect(fixedRouter.callbackIdRegisteredAsActionId(in: .interactive(matched)) == nil)
+
+        // No registration uses the view's callback ID.
+        let otherView = try makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: "other-modal")
+        #expect(fixedRouter.callbackIdRegisteredAsActionId(in: .interactive(otherView)) == nil)
+
+        // Messages have no view.
+        let message = try makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: nil)
+        #expect(fixedRouter.callbackIdRegisteredAsActionId(in: .interactive(message)) == nil)
     }
 
     @Test func `interactive dispatch uses last broad handler`() async throws {
