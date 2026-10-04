@@ -31,7 +31,7 @@ let welcomeText = TextObject(
 let welcomeSection = SectionBlock(
     text: welcomeText,
     accessory: .button(ButtonElement(
-        text: TextObject(text: "Get Started", type: .plainText),
+        text: TextObject(type: .plainText, text: "Get Started"),
         actionId: "get_started_button",
         style: .primary
     ))
@@ -39,7 +39,7 @@ let welcomeSection = SectionBlock(
 
 // Header block
 let headerBlock = HeaderBlock(
-    text: TextObject(text: "Team Onboarding", type: .plainText)
+    text: TextObject(type: .plainText, text: "Team Onboarding")
 )
 
 // Combine into a message
@@ -60,7 +60,7 @@ SlackBlockKit supports all Block Kit block types:
 SectionBlock(
     text: TextObject(type: .mrkdwn, text: "Task *completed* ✅"),
     accessory: .button(ButtonElement(
-        text: TextObject(text: "View Details", type: .plainText),
+        text: TextObject(type: .plainText, text: "View Details"),
         actionId: "view_details"
     ))
 )
@@ -69,7 +69,7 @@ SectionBlock(
 **HeaderBlock**: Large text for section headers
 ```swift
 HeaderBlock(
-    text: TextObject(text: "Project Status", type: .plainText)
+    text: TextObject(type: .plainText, text: "Project Status")
 )
 ```
 
@@ -82,12 +82,12 @@ DividerBlock()
 ```swift
 ActionsBlock(elements: [
     .button(ButtonElement(
-        text: TextObject(text: "Approve", type: .plainText),
+        text: TextObject(type: .plainText, text: "Approve"),
         actionId: "approve",
         style: .primary
     )),
     .button(ButtonElement(
-        text: TextObject(text: "Reject", type: .plainText),
+        text: TextObject(type: .plainText, text: "Reject"),
         actionId: "reject",
         style: .danger
     ))
@@ -97,7 +97,7 @@ ActionsBlock(elements: [
 **ContextBlock**: Supplementary information
 ```swift
 ContextBlock(elements: [
-    .text(TextObject(text: "Last updated: 2 hours ago", type: .mrkdwn))
+    .text(TextObject(type: .mrkdwn, text: "Last updated: 2 hours ago"))
 ])
 ```
 
@@ -106,10 +106,10 @@ ContextBlock(elements: [
 **InputBlock**: Form inputs with labels
 ```swift
 InputBlock(
-    label: TextObject(text: "Email Address", type: .plainText),
+    label: TextObject(type: .plainText, text: "Email Address"),
     element: .plainTextInput(PlainTextInputElement(
         actionId: "email_input",
-        placeholder: TextObject(text: "Enter your email", type: .plainText)
+        placeholder: TextObject(type: .plainText, text: "Enter your email")
     ))
 )
 ```
@@ -121,7 +121,7 @@ InputBlock(
 ImageBlock(
     altText: "Team photo",
     imageUrl: URL(string: "https://example.com/team.jpg")!,
-    title: TextObject(text: "Our Amazing Team", type: .plainText)
+    title: TextObject(type: .plainText, text: "Our Amazing Team")
 )
 ```
 
@@ -147,21 +147,21 @@ Create interactive buttons with various styles:
 ```swift
 // Primary action button
 ButtonElement(
-    text: TextObject(text: "Submit", type: .plainText),
+    text: TextObject(type: .plainText, text: "Submit"),
     actionId: "submit_form",
     style: .primary
 )
 
 // Danger button with confirmation
 ButtonElement(
-    text: TextObject(text: "Delete", type: .plainText),
+    text: TextObject(type: .plainText, text: "Delete"),
     actionId: "delete_item",
     style: .danger,
     confirm: ConfirmationDialogObject(
-        title: TextObject(text: "Delete Item", type: .plainText),
-        text: TextObject(text: "Are you sure you want to delete this item?", type: .plainText),
-        confirm: TextObject(text: "Delete", type: .plainText),
-        deny: TextObject(text: "Cancel", type: .plainText)
+        title: TextObject(type: .plainText, text: "Delete Item"),
+        text: TextObject(type: .plainText, text: "Are you sure you want to delete this item?"),
+        confirm: TextObject(type: .plainText, text: "Delete"),
+        deny: TextObject(type: .plainText, text: "Cancel")
     )
 )
 ```
@@ -175,28 +175,28 @@ Various types of select menus for different data sources:
 StaticSelectElement(
     options: [
         OptionObject(
-            text: TextObject(text: "High Priority", type: .plainText),
+            text: TextObject(type: .plainText, text: "High Priority"),
             value: "high"
         ),
         OptionObject(
-            text: TextObject(text: "Medium Priority", type: .plainText),
+            text: TextObject(type: .plainText, text: "Medium Priority"),
             value: "medium"
         )
     ],
     actionId: "priority_select",
-    placeholder: TextObject(text: "Select priority", type: .plainText)
+    placeholder: TextObject(type: .plainText, text: "Select priority")
 )
 
 // User selection
 UsersSelectElement(
     actionId: "assignee_select",
-    placeholder: TextObject(text: "Assign to...", type: .plainText)
+    placeholder: TextObject(type: .plainText, text: "Assign to...")
 )
 
 // Channel selection
 ChannelsSelectElement(
     actionId: "channel_select",
-    placeholder: TextObject(text: "Choose channel", type: .plainText)
+    placeholder: TextObject(type: .plainText, text: "Choose channel")
 )
 ```
 
@@ -206,9 +206,9 @@ ChannelsSelectElement(
 ```swift
 PlainTextInputElement(
     actionId: "description_input",
-    placeholder: TextObject(text: "Enter description", type: .plainText),
     multiline: true,
-    maxLength: 500
+    maxLength: 500,
+    placeholder: TextObject(type: .plainText, text: "Enter description")
 )
 ```
 
@@ -216,8 +216,8 @@ PlainTextInputElement(
 ```swift
 CheckboxesElement(
     options: [
-        OptionObject(text: TextObject(text: "Email notifications", type: .plainText), value: "email"),
-        OptionObject(text: TextObject(text: "SMS notifications", type: .plainText), value: "sms")
+        OptionObject(text: TextObject(type: .plainText, text: "Email notifications"), value: "email"),
+        OptionObject(text: TextObject(type: .plainText, text: "SMS notifications"), value: "sms")
     ],
     actionId: "notification_preferences"
 )
@@ -227,8 +227,8 @@ CheckboxesElement(
 ```swift
 DatePickerElement(
     actionId: "due_date",
-    placeholder: TextObject(text: "Select due date", type: .plainText),
-    initialDate: "2023-12-01"
+    initialDate: "2023-12-01",
+    placeholder: TextObject(type: .plainText, text: "Select due date")
 )
 ```
 
@@ -260,18 +260,18 @@ Structure choices for select menus and radio buttons:
 ```swift
 // Individual option
 OptionObject(
-    text: TextObject(text: "Option 1", type: .plainText),
+    text: TextObject(type: .plainText, text: "Option 1"),
     value: "opt1",
-    description: TextObject(text: "Description of option 1", type: .plainText)
+    description: TextObject(type: .plainText, text: "Description of option 1")
 )
 
 // Grouped options
 OptionGroupObject(
-    label: TextObject(text: "Priority Levels", type: .plainText),
+    label: TextObject(type: .plainText, text: "Priority Levels"),
     options: [
-        OptionObject(text: TextObject(text: "High", type: .plainText), value: "high"),
-        OptionObject(text: TextObject(text: "Medium", type: .plainText), value: "medium"),
-        OptionObject(text: TextObject(text: "Low", type: .plainText), value: "low")
+        OptionObject(text: TextObject(type: .plainText, text: "High"), value: "high"),
+        OptionObject(text: TextObject(type: .plainText, text: "Medium"), value: "medium"),
+        OptionObject(text: TextObject(type: .plainText, text: "Low"), value: "low")
     ]
 )
 ```
@@ -282,13 +282,11 @@ Add confirmation steps to destructive actions:
 
 ```swift
 ConfirmationDialogObject(
-    title: TextObject(text: "Delete Project", type: .plainText),
-    text: TextObject(
-        text: "This will permanently delete the project and all associated data. This action cannot be undone.",
-        type: .mrkdwn
+    title: TextObject(type: .plainText, text: "Delete Project"),
+    text: TextObject(type: .mrkdwn, text: "This will permanently delete the project and all associated data. This action cannot be undone."
     ),
-    confirm: TextObject(text: "Yes, Delete", type: .plainText),
-    deny: TextObject(text: "Cancel", type: .plainText),
+    confirm: TextObject(type: .plainText, text: "Yes, Delete"),
+    deny: TextObject(type: .plainText, text: "Cancel"),
     style: .danger
 )
 ```
@@ -301,19 +299,19 @@ Block Kit views define the overall structure for modals and home tabs:
 
 ```swift
 ModalView(
-    title: TextObject(text: "Project Settings", type: .plainText),
+    title: TextObject(type: .plainText, text: "Project Settings"),
     blocks: [
-        .header(HeaderBlock(text: TextObject(text: "Configuration", type: .plainText))),
+        .header(HeaderBlock(text: TextObject(type: .plainText, text: "Configuration"))),
         .input(InputBlock(
-            label: TextObject(text: "Project Name", type: .plainText),
+            label: TextObject(type: .plainText, text: "Project Name"),
             element: .plainTextInput(PlainTextInputElement(
                 actionId: "project_name",
                 initialValue: "My Project"
             ))
         ))
     ],
-    submit: TextObject(text: "Save", type: .plainText),
-    close: TextObject(text: "Cancel", type: .plainText)
+    close: TextObject(type: .plainText, text: "Cancel"),
+    submit: TextObject(type: .plainText, text: "Save")
 )
 ```
 
@@ -322,9 +320,9 @@ ModalView(
 ```swift
 HomeTabView(
     blocks: [
-        .header(HeaderBlock(text: TextObject(text: "Welcome Dashboard", type: .plainText))),
+        .header(HeaderBlock(text: TextObject(type: .plainText, text: "Welcome Dashboard"))),
         .section(SectionBlock(
-            text: TextObject(text: "Your recent activity:", type: .mrkdwn)
+            text: TextObject(type: .mrkdwn, text: "Your recent activity:")
         ))
     ]
 )
@@ -339,16 +337,16 @@ import SlackClient
 import SlackBlockKit
 
 let blocks: [Block] = [
-    .header(HeaderBlock(text: TextObject(text: "Notification", type: .plainText))),
+    .header(HeaderBlock(text: TextObject(type: .plainText, text: "Notification"))),
     .section(SectionBlock(
-        text: TextObject(text: "Your deployment was successful! ✅", type: .mrkdwn)
+        text: TextObject(type: .mrkdwn, text: "Your deployment was successful! ✅")
     ))
 ]
 
 try await slack.client.chatPostMessage(
     body: .json(.init(
-        channel: "#deployments",
-        blocks: blocks
+        blocks: blocks,
+        channel: "#deployments"
     ))
 )
 ```

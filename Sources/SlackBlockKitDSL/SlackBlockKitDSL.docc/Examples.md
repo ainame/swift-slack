@@ -1,12 +1,12 @@
 # Practical Examples
 
-Examples of composing Slack payloads and Block Kit views with the client and model layers.
+Compose messages, modals, and App Home tabs with Block Kit.
 
 ## Overview
 
-This section provides real-world examples of Slack interfaces, demonstrating common payload and Block Kit composition patterns. Each example shows both the direct SlackBlockKit approach and the declarative SlackBlockKitDSL approach.
+These examples show common Slack interface patterns built with `SlackBlockKitDSL`. The first example also shows the equivalent `SlackBlockKit` models for comparison.
 
-For runtime-oriented examples using routing, acknowledgements, Socket Mode, or `context.say` / `context.respond`, see the `SlackApp` documentation.
+Types such as `Project`, `Issue`, and `Meeting` stand in for your own app's data. For routing, acknowledgements, and responding to interactions, see the `SlackApp` documentation.
 
 ## Basic Message Examples
 
@@ -25,7 +25,7 @@ let welcomeBlocks = [
     
     Section {
         Text("We're excited to have you here. Let's get you started with your onboarding process.")
-            .style(.mrkdwn)
+            .type(.mrkdwn)
     }.render(),
     
     Actions {
@@ -46,7 +46,7 @@ import SlackBlockKit
 
 let welcomeBlocks: [Block] = [
     .header(HeaderBlock(
-        text: TextObject(text: "Welcome to the Team! 🎉", type: .plainText)
+        text: TextObject(type: .plainText, text: "Welcome to the Team! 🎉")
     )),
     
     .section(SectionBlock(
@@ -58,12 +58,12 @@ let welcomeBlocks: [Block] = [
     
     .actions(ActionsBlock(elements: [
         .button(ButtonElement(
-            text: TextObject(text: "Start Onboarding", type: .plainText),
+            text: TextObject(type: .plainText, text: "Start Onboarding"),
             actionId: "start_onboarding",
             style: .primary
         )),
         .button(ButtonElement(
-            text: TextObject(text: "View Team Guide", type: .plainText),
+            text: TextObject(type: .plainText, text: "View Team Guide"),
             actionId: "view_guide",
             url: URL(string: "https://company.com/guide")!
         ))
@@ -80,7 +80,7 @@ A status update message showing project information with contextual details.
 let statusBlocks = [
     Section {
         Text("*Project Alpha* deployment completed successfully ✅")
-            .style(.mrkdwn)
+            .type(.mrkdwn)
     }
     .accessory(
         Button("View Details")
@@ -89,14 +89,14 @@ let statusBlocks = [
     
     Context {
         Text("Deployed by Alice Johnson • <!date^1677123456^{date_short} at {time}|Mar 15, 2023 2:30 PM>")
-            .style(.mrkdwn)
+            .type(.mrkdwn)
     }.render(),
     
     Divider().render(),
     
     Section {
         Text("*Deployment Summary:*")
-            .style(.mrkdwn)
+            .type(.mrkdwn)
         Text("• 12 files updated")
         Text("• 0 breaking changes")
         Text("• 3.2s build time")
@@ -115,13 +115,9 @@ A comprehensive task creation modal with various input types.
 struct TaskCreationModal: SlackModalView {
     let projectId: String
     
-    var title: TextObject {
-        TextObject(text: "Create New Task", type: .plainText)
-    }
+    var title: TextObject { "Create New Task" }
     
-    var submit: TextObject? {
-        TextObject(text: "Create Task", type: .plainText)
-    }
+    var submit: TextObject? { "Create Task" }
     
     var callbackId: String? {
         "create_task_\(projectId)"
@@ -186,7 +182,7 @@ struct TaskCreationModal: SlackModalView {
         
         Context {
             Text("_All required fields must be completed before submitting_")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
         }
     }
 }
@@ -208,13 +204,9 @@ A customer feedback survey with various question types.
 **Using SlackBlockKitDSL:**
 ```swift
 struct FeedbackSurvey: SlackModalView {
-    var title: TextObject {
-        TextObject(text: "Customer Feedback", type: .plainText)
-    }
+    var title: TextObject { "Customer Feedback" }
     
-    var submit: TextObject? {
-        TextObject(text: "Submit Feedback", type: .plainText)
-    }
+    var submit: TextObject? { "Submit Feedback" }
     
     var blocks: [Block] {
         Header {
@@ -223,7 +215,7 @@ struct FeedbackSurvey: SlackModalView {
         
         Section {
             Text("Your feedback helps us build better products. This survey takes about 2 minutes.")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
         }
         
         Divider()
@@ -253,22 +245,23 @@ struct FeedbackSurvey: SlackModalView {
         .optional(true)
         
         Input("How did you hear about us?") {
-            StaticSelect("referral_source") {
-                OptionGroup("Online", options: {
+            StaticSelect {
+                OptionGroup(label: "Online") {
                     Option("Google Search").value("google")
                     Option("Social Media").value("social")
                     Option("Online Ad").value("ad")
-                })
-                OptionGroup("Referral", options: {
+                }
+                OptionGroup(label: "Referral") {
                     Option("Friend/Colleague").value("friend")
                     Option("Company Partner").value("partner")
-                })
-                OptionGroup("Other", options: {
+                }
+                OptionGroup(label: "Other") {
                     Option("Conference/Event").value("event")
                     Option("Blog/Article").value("blog")
                     Option("Other").value("other")
-                })
+                }
             }
+            .actionId("referral_source")
             .placeholder("Select one")
         }
         .optional(true)
@@ -293,7 +286,7 @@ struct FeedbackSurvey: SlackModalView {
         
         Context {
             Text("_Your responses are confidential and help us improve our service_")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
         }
     }
 }
@@ -319,7 +312,7 @@ struct ProjectDashboard: SlackHomeTabView {
         
         Section {
             Text("*Your Projects*")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
         }
         .accessory(
             Button("Create Project")
@@ -331,7 +324,7 @@ struct ProjectDashboard: SlackHomeTabView {
         for project in projects.prefix(5) {
             Section {
                 Text("*\(project.name)*")
-                    .style(.mrkdwn)
+                    .type(.mrkdwn)
                 Text("\(project.description)")
                 Text("📊 \(project.completionPercentage)% complete • 👥 \(project.memberCount) members")
             }
@@ -344,7 +337,7 @@ struct ProjectDashboard: SlackHomeTabView {
         if projects.count > 5 {
             Context {
                 Text("_Showing 5 of \(projects.count) projects_")
-                    .style(.mrkdwn)
+                    .type(.mrkdwn)
             }
             
             Actions {
@@ -357,19 +350,19 @@ struct ProjectDashboard: SlackHomeTabView {
         
         Section {
             Text("*Recent Activity*")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
         }
         
         // Activity feed
         for activity in recentActivity.prefix(3) {
             Section {
-                Text("**\(activity.user.name)** \(activity.description)")
-                    .style(.mrkdwn)
+                Text("*\(activity.user.name)* \(activity.description)")
+                    .type(.mrkdwn)
             }
             
             Context {
                 Text("<!date^\(activity.timestamp)^{date_short} at {time}|Recently>")
-                    .style(.mrkdwn)
+                    .type(.mrkdwn)
             }
         }
         
@@ -384,7 +377,7 @@ struct ProjectDashboard: SlackHomeTabView {
         
         Section {
             Text("*Quick Actions*")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
         }
         
         Actions {
@@ -401,7 +394,7 @@ struct ProjectDashboard: SlackHomeTabView {
         
         Context {
             Text("Need help? Contact <@U123456> or visit our <https://help.company.com|help center>")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
         }
     }
 }
@@ -425,7 +418,7 @@ struct IssueTracker: SlackView {
         // Filter controls
         Section {
             Text("*Filter Issues*")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
         }
         
         Actions {
@@ -457,7 +450,7 @@ struct IssueTracker: SlackView {
         if issues.isEmpty {
             Section {
                 Text("_No issues found matching your filters._")
-                    .style(.mrkdwn)
+                    .type(.mrkdwn)
             }
             
             Actions {
@@ -473,7 +466,7 @@ struct IssueTracker: SlackView {
             for issue in issues {
                 Section {
                     Text("*#\(issue.number): \(issue.title)*")
-                        .style(.mrkdwn)
+                        .type(.mrkdwn)
                     Text(issue.description.prefix(100) + (issue.description.count > 100 ? "..." : ""))
                     Text("\(issue.priority.emoji) \(issue.priority.displayName) • \(issue.status.emoji) \(issue.status.displayName)")
                 }
@@ -482,13 +475,12 @@ struct IssueTracker: SlackView {
                         .actionId("view_issue_\(issue.id)")
                 )
                 
+                let assignment = issue.assignee.map { "Assigned to <@\($0)>" } ?? "Unassigned"
                 Context {
-                    Text("Created by <@\(issue.createdBy)> • <!date^(\issue.createdAt)^{date_short}|Recently>")
-                        .style(.mrkdwn)
-                    if let assignee = issue.assignee {
-                        Text("Assigned to <@\(assignee)>")
-                            .style(.mrkdwn)
-                    }
+                    Text("Created by <@\(issue.createdBy)> • <!date^\(issue.createdAt)^{date_short}|Recently>")
+                        .type(.mrkdwn)
+                    Text(assignment)
+                        .type(.mrkdwn)
                 }
                 
                 if issue != issues.last {
@@ -507,7 +499,7 @@ struct IssueTracker: SlackView {
         
         Context {
             Text("Showing \(issues.count) issues")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
         }
     }
 }
@@ -592,39 +584,40 @@ struct MeetingNotes: SlackView {
         
         Section {
             Text("*Date:* <!date^\(meeting.timestamp)^{date_long}|Meeting date>")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
             Text("*Duration:* \(meeting.duration) minutes")
             Text("*Location:* \(meeting.location)")
         }
         
         Section {
             Text("*Attendees (\(attendees.count)):*")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
         }
         
         Context {
-            for attendee in attendees {
-                Text("<@\(attendee.id)>")
-                    .style(.mrkdwn)
-            }
+            Text(attendees.map { "<@\($0.id)>" }.joined(separator: " "))
+                .type(.mrkdwn)
         }
         
         Divider()
         
         Section {
             Text("*Meeting Notes*")
-                .style(.mrkdwn)
+                .type(.mrkdwn)
         }
         
         for note in notes {
-            RichText {
-                RichSection {
-                    RichTextContent("• \(note.content)")
-                }
-                if let author = note.author {
+            if let author = note.author {
+                RichText {
                     RichSection {
-                        RichTextContent("  — ")
+                        RichTextContent("• \(note.content) — ")
                         RichUser(author.id, italic: true)
+                    }
+                }
+            } else {
+                RichText {
+                    RichSection {
+                        RichTextContent("• \(note.content)")
                     }
                 }
             }
@@ -635,23 +628,22 @@ struct MeetingNotes: SlackView {
             
             Section {
                 Text("*Action Items*")
-                    .style(.mrkdwn)
+                    .type(.mrkdwn)
             }
             
             for item in actionItems {
                 Section {
                     Text("☐ \(item.description)")
-                        .style(.mrkdwn)
+                        .type(.mrkdwn)
                 }
                 .accessory(
-                    Button(item.isCompleted ? "✅" : "Mark Done")
+                    Button(item.isCompleted ? "✅ Done" : "Mark Done")
                         .actionId("complete_action_\(item.id)")
-                        .style(item.isCompleted ? nil : .primary)
                 )
                 
                 Context {
                     Text("Assigned to <@\(item.assigneeId)> • Due: <!date^\(item.dueDate)^{date_short}|TBD>")
-                        .style(.mrkdwn)
+                        .type(.mrkdwn)
                 }
             }
         }

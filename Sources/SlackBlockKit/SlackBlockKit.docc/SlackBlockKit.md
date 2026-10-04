@@ -29,7 +29,7 @@ let welcomeSection = SectionBlock(
         text: "*Welcome to our team!* Let's get you started."
     ),
     accessory: .button(ButtonElement(
-        text: TextObject(text: "Get Started", type: .plainText),
+        text: TextObject(type: .plainText, text: "Get Started"),
         actionId: "get_started_button",
         style: .primary
     ))
@@ -42,20 +42,24 @@ let blocks: [Block] = [.section(welcomeSection)]
 
 SlackBlockKit integrates seamlessly with other swift-slack modules:
 
-- Use with `SlackClient` to send messages and open modals
-- Combine with `SlackBlockKitDSL` for declarative syntax
-- Access shared types from `SlackModels`
+- Pass blocks and views to `SlackClient` Web API calls to send messages and open modals.
+- Build the same models declaratively with `SlackBlockKitDSL`.
+- `SlackModels` uses these types in Web API requests, responses, and event payloads.
 
 ```swift
-import SlackClient
+import OpenAPIAsyncHTTPClient
 import SlackBlockKit
+import SlackClient
 
-let slack = Slack(transport: transport, configuration: config)
+let slack = Slack(
+    transport: AsyncHTTPClientTransport(),
+    configuration: .init(token: token)
+)
 
 try await slack.client.chatPostMessage(
     body: .json(.init(
-        channel: "#general",
-        blocks: blocks
+        blocks: blocks,
+        channel: "#general"
     ))
 )
 ```
