@@ -11,6 +11,8 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Added
 
+* Added `Router.onAction(_:blockId:handler:)`, which matches the interacted element's `action_id`, and its `block_id` when given, like Bolt's `app.action(...)`. Unlike `onBlockAction`, it handles elements in messages as well as in modals and App Home - #155
+* Added `BlockActionsPayload.blockActions`, following java-slack-sdk's `BlockActionPayload.Action`, with each action's `actionId`, `blockId`, `actionTs`, and selected values such as `value`, `selectedOption`, `selectedOptions`, `selectedUser`, `selectedDate`, `selectedDateTime`, and `richTextValue`, and `BlockActionsPayload.containsAction(_:blockId:)` - #155
 * Added optional `recordChannel`, `codeChannel`, and `agentSession` fields to swift-slack's conversation `Properties`, with `RecordChannel`, `CodeChannel`, and `AgentSession` models matching java-slack-sdk payloads - #149
 
 ### Changed
@@ -18,11 +20,19 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * Rewrote the README around a runnable Socket Mode bot and an end-to-end `/echo` quick start, and reorganized the DocC catalogs: a `SlackClient` Getting Started that reads Web API responses, the Block Kit example gallery moved to `SlackBlockKitDSL`, a single migration guide in the `SlackApp` documentation, and `SlackKit` added to the Swift Package Index documentation targets - #150
 * **BREAKING**: Changed `ContextElementBuilder`, `OptionGroupBuilder`, `RichTextElementBuilder`, `RichTextSectionBuilder`, `RichTextContentBuilder`, and `MarkdownBuilder` to build arrays from each expression. Custom `buildExpression` overloads added to these builders must now return an array, such as `[ContextElementType]` or `[String]`, and direct calls to their `build*` methods must pass and expect arrays - #151
 
+### Deprecated
+
+* Deprecated `Router.onBlockAction(_:handler:)`, which matches the containing view's `callback_id`, not the element's `action_id`, and never matches elements in messages. Use `onAction(_:blockId:handler:)` for each element, or `onInteractive(_:)` with `payload.callbackId` for a whole view. It will be removed in a 2027 release - #155
+* Deprecated `BlockActionsPayload.actions`, which returns Block Kit element definitions without `block_id` or selected values, in favor of `blockActions`. It will be removed in a 2027 release - #155
+* Deprecated the public type `BlockActionsPaylaod`, which misspelled "Payload", and renamed it to `BlockActionsPayload`. The old name remains as a typealias with a fix-it and will be removed in a 2027 release - #155
+
 ### Fixed
 
+* Fixed `block_actions` requests that failed to decode, so no handler ran, when the action came from checkboxes, radio buttons, overflow menus, or multi-static selects, which Slack sends without the element's `options`, or from element types swift-slack did not model, such as dispatch-enabled text inputs. The deprecated `actions` now skips those elements - #155
+* Fixed Socket Mode leaving interactive requests and slash commands unacknowledged when no handler matched, which made Slack show the user an error; they now receive an empty acknowledgement, as in HTTP mode - #155
 * Fixed swift-slack conversation response decoding that silently discarded `at_here_restricted`, `at_channel_restricted`, and `channel_workflows` from java-slack-sdk fixtures; exposed them as `atHereRestricted`, `atChannelRestricted`, and `channelWorkflows`, with the `ChannelWorkflow` model - #149
 * Fixed README and DocC examples that did not compile against the current API, covering `TextObject(type:text:)` and other initializer argument orders, `Text.type(_:)`, `Modal(title:)`, `OptionGroup(label:)`, `context.say(text:channel:)`, `context.respond(to:)`, and missing imports; handler examples now call the Web API through `context.client`, and modal examples set the block IDs their submission handlers read - #150
-* Fixed DocC guides that listed 18 of the 33 `WebAPI_*` traits, pinned installation to 0.5.1, and misattributed swift-slack's upstream sources; the Traits guide now lists every trait and explains default and `.defaults` trait selection, and the `SlackApp` examples note that `Router.onBlockAction(_:)` matches the containing view's callback ID, so message buttons are handled with `onInteractive(_:)` - #150
+* Fixed DocC guides that listed 18 of the 33 `WebAPI_*` traits, pinned installation to 0.5.1, and misattributed swift-slack's upstream sources; the Traits guide now lists every trait and explains default and `.defaults` trait selection - #150
 * Fixed `SlackBlockKitDSL` so control flow (`if`, `if let`, `if/else`, `switch`, and `for`) compiles inside `Context`, `RichText`, `RichList`, `RichSection`, `RichQuote`, `RichPreformatted`, and `StaticSelect` option groups - #151
 * Fixed `Markdown { ... }` emitting a blank line for an `if` whose condition was false or a `for` loop with no iterations - #151
 
