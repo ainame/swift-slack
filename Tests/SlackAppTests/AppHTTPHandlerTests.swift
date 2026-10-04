@@ -257,6 +257,60 @@ struct AppHTTPHandlerTests {
         #expect(responseBody == nil)
     }
 
+    @Test func `message button dispatches action handler by action id`() async throws {
+        actor Tracker {
+            private(set) var actionId: String?
+
+            func setActionId(_ value: String?) {
+                actionId = value
+            }
+        }
+
+        let json = """
+        {
+          "type": "block_actions",
+          "user": { "id": "U123" },
+          "api_app_id": "A123",
+          "container": { "type": "message", "message_ts": "123.456", "channel_id": "C123", "is_ephemeral": false },
+          "trigger_id": "13345224609.738474920.8088930838d88f008e0",
+          "team": { "id": "T123", "domain": "example" },
+          "channel": { "id": "C123", "name": "general" },
+          "response_url": "https://hooks.slack.com/actions/T123/1/2",
+          "actions": [{
+            "type": "button",
+            "action_id": "approve",
+            "block_id": "request",
+            "text": { "type": "plain_text", "text": "Approve" },
+            "value": "1",
+            "action_ts": "123.456"
+          }]
+        }
+        """
+        let encodedPayload = try #require(json.addingPercentEncoding(withAllowedCharacters: .alphanumerics))
+        let timestamp = currentTimestamp()
+        let request = signedRequest(
+            secret: "secret",
+            method: .post,
+            path: "/slack/events",
+            contentType: "application/x-www-form-urlencoded",
+            body: Data("payload=\(encodedPayload)".utf8),
+            timestamp: timestamp,
+        )
+        let tracker = Tracker()
+        let router = Router()
+        router.onAction("approve") { context, payload in
+            try await context.ack()
+            await tracker.setActionId(payload.blockActions.first?.actionId)
+        }
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
+
+        let (response, responseBody) = try await app.handle(request.0, body: request.1)
+
+        #expect(response.status == .ok)
+        #expect(responseBody == nil)
+        #expect(await tracker.actionId == "approve")
+    }
+
     @Test func `unmatched interactive returns OK`() async throws {
         let body = Data(
             "payload=%7B%22type%22%3A%22block_actions%22%2C%22user%22%3A%7B%22id%22%3A%22U123%22%7D%2C%22api_app_id%22%3A%22A123%22%2C%22token%22%3A%22legacy-token%22%2C%22container%22%3A%7B%22type%22%3A%22message%22%2C%22message_ts%22%3A%22123.456%22%2C%22channel_id%22%3A%22C123%22%2C%22is_ephemeral%22%3Afalse%7D%2C%22trigger_id%22%3A%2213345224609.738474920.8088930838d88f008e0%22%2C%22team%22%3A%7B%22id%22%3A%22T123%22%2C%22domain%22%3A%22example%22%7D%2C%22channel%22%3A%7B%22id%22%3A%22C123%22%2C%22name%22%3A%22general%22%7D%2C%22view%22%3A%7B%22type%22%3A%22modal%22%2C%22callback_id%22%3A%22other-id%22%2C%22title%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Test%22%7D%2C%22blocks%22%3A%5B%5D%7D%2C%22response_url%22%3A%22https%3A%2F%2Fhooks.slack.com%2Factions%2FT123%2F1%2F2%22%2C%22actions%22%3A%5B%7B%22action_id%22%3A%22button-id%22%2C%22block_id%22%3A%22block-1%22%2C%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Click%22%7D%2C%22value%22%3A%22test%22%2C%22type%22%3A%22button%22%2C%22action_ts%22%3A%22123.456%22%7D%5D%2C%22callback_id%22%3A%22other-id%22%7D"
@@ -272,7 +326,7 @@ struct AppHTTPHandlerTests {
             timestamp: timestamp,
         )
         let router = Router()
-        router.onBlockAction("button-id") { context, _ in
+        router.onAction("other-action-id") { context, _ in
             try await context.ack()
         }
         let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
