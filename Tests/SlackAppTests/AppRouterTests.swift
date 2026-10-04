@@ -104,27 +104,87 @@ struct AppRouterTests {
     }
 
     @Test func `interactive dispatch uses specific handler over broad interactive handler`() async throws {
-        actor Tracker {
-            private(set) var callbackId: String?
-            func setCallbackId(_ value: String) {
-                callbackId = value
-            }
-        }
-
-        let tracker = Tracker()
+        let tracker = ValueTracker()
         let router = Router()
-        router.onInteractive { _, _ in
-            await tracker.setCallbackId("broad")
-        }
+        router.onInteractive { _, _ in await tracker.set("broad") }
+        router.onBlockAction("button-id") { _, _ in await tracker.set("action") }
+
+        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: "modal"))
+
+        #expect(await tracker.value == "action")
+    }
+
+    @Test func `block action dispatch matches action id from message without view`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onInteractive { _, _ in await tracker.set("broad") }
         router.onBlockAction("button-id") { _, payload in
-            await tracker.setCallbackId(payload.callbackId ?? "")
+            await tracker.set(payload.actionIdentifiers.first?.actionId ?? "")
         }
 
-        let body = try makeBlockActionEnvelope(callbackId: "button-id")
-        let fixedRouter = Router.FixedRouter(from: router)
-        try await fixedRouter.dispatch(context: .request(makeRequestContext()), request: .interactive(body))
+        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: nil))
 
-        #expect(await tracker.callbackId == "button-id")
+        #expect(await tracker.value == "button-id")
+    }
+
+    @Test func `block action dispatch ignores other action ids`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onInteractive { _, _ in await tracker.set("broad") }
+        router.onBlockAction("other-id") { _, _ in await tracker.set("action") }
+
+        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: nil))
+
+        #expect(await tracker.value == "broad")
+    }
+
+    @Test func `block action dispatch prefers handler with matching block id`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onBlockAction("button-id") { _, _ in await tracker.set("action") }
+        router.onBlockAction("button-id", blockId: "block-1") { _, _ in await tracker.set("block-1") }
+        router.onBlockAction("button-id", blockId: "block-2") { _, _ in await tracker.set("block-2") }
+
+        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", blockId: "block-1", viewCallbackId: nil))
+        #expect(await tracker.value == "block-1")
+
+        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", blockId: "block-3", viewCallbackId: nil))
+        #expect(await tracker.value == "action")
+    }
+
+    @Test func `block action dispatch with block id ignores other blocks`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onInteractive { _, _ in await tracker.set("broad") }
+        router.onBlockAction("button-id", blockId: "block-2") { _, _ in await tracker.set("block-2") }
+
+        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", blockId: "block-1", viewCallbackId: nil))
+
+        #expect(await tracker.value == "broad")
+    }
+
+    @Test func `block action dispatch prefers action id over view callback id`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onBlockAction(callbackId: "modal") { _, _ in await tracker.set("callback") }
+        router.onBlockAction("button-id") { _, _ in await tracker.set("action") }
+
+        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: "modal"))
+        #expect(await tracker.value == "action")
+
+        try await dispatch(router, makeBlockActionEnvelope(actionId: "other-id", viewCallbackId: "modal"))
+        #expect(await tracker.value == "callback")
+    }
+
+    @Test func `block action callback id handler does not match actions without view`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onInteractive { _, _ in await tracker.set("broad") }
+        router.onBlockAction(callbackId: "button-id") { _, _ in await tracker.set("callback") }
+
+        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: nil))
+
+        #expect(await tracker.value == "broad")
     }
 
     @Test func `interactive dispatch uses last broad handler`() async throws {
@@ -140,7 +200,7 @@ struct AppRouterTests {
         router.onInteractive { _, _ in await tracker.set("first") }
         router.onInteractive { _, _ in await tracker.set("second") }
 
-        let body = try makeBlockActionEnvelope(callbackId: nil)
+        let body = try makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: nil)
         let fixedRouter = Router.FixedRouter(from: router)
         try await fixedRouter.dispatch(context: .request(makeRequestContext()), request: .interactive(body))
 
@@ -215,49 +275,66 @@ private func makeMessageEventEnvelope(text: String) throws -> EventsApiEnvelope<
     return try JSONDecoder().decode(EventsApiEnvelope<Event>.self, from: eventData)
 }
 
-private func makeBlockActionEnvelope(callbackId: String?) throws -> InteractiveEnvelope {
-    let rawJSON = """
-    {
-      "type": "block_actions",
-      "user": { "id": "U123" },
-      "api_app_id": "A123",
-      "token": "legacy-token",
-      "container": {
-        "type": "message",
-        "message_ts": "123.456",
-        "channel_id": "C123",
-        "is_ephemeral": false
-      },
-      "trigger_id": "13345224609.738474920.8088930838d88f008e0",
-      "team": { "id": "T123", "domain": "example" },
-      "channel": { "id": "C123", "name": "general" },
-      "view": {
-        "type": "modal",
-        "callback_id": "__VIEW_CALLBACK_ID__",
-        "title": { "type": "plain_text", "text": "Test" },
-        "blocks": []
-      },
-      "response_url": "https://hooks.slack.com/actions/T123/1/2",
-      "actions": [{
-        "action_id": "button-id",
-        "block_id": "block-1",
-        "text": { "type": "plain_text", "text": "Click" },
-        "value": "test",
-        "type": "button",
-        "action_ts": "123.456"
-      }],
-      __CALLBACK_ID_FIELD__
-      "state": {"values": {}}
+private actor ValueTracker {
+    private(set) var value: String?
+    func set(_ value: String) {
+        self.value = value
     }
-    """
+}
+
+private func dispatch(_ router: Router, _ envelope: InteractiveEnvelope) async throws {
+    let fixedRouter = Router.FixedRouter(from: router)
+    try await fixedRouter.dispatch(context: .request(makeRequestContext()), request: .interactive(envelope))
+}
+
+private func makeBlockActionEnvelope(
+    actionId: String,
+    blockId: String = "block-1",
+    viewCallbackId: String?,
+) throws -> InteractiveEnvelope {
+    let container = if viewCallbackId == nil {
+        """
+        { "type": "message", "message_ts": "123.456", "channel_id": "C123", "is_ephemeral": false }
+        """
+    } else {
+        """
+        { "type": "view", "view_id": "V123" }
+        """
+    }
+    let view = viewCallbackId.map {
+        """
+        "view": {
+          "type": "modal",
+          "callback_id": "\($0)",
+          "title": { "type": "plain_text", "text": "Test" },
+          "blocks": []
+        },
+        """
+    } ?? ""
     let bodyData = try #require(
-        rawJSON
-            .replacingOccurrences(of: "__VIEW_CALLBACK_ID__", with: callbackId ?? "fallback-modal")
-            .replacingOccurrences(
-                of: "__CALLBACK_ID_FIELD__",
-                with: callbackId.map { "\"callback_id\": \"\($0)\",\n      " } ?? "",
-            )
-            .data(using: .utf8),
+        """
+        {
+          "type": "block_actions",
+          "user": { "id": "U123" },
+          "api_app_id": "A123",
+          "token": "legacy-token",
+          "container": \(container),
+          "trigger_id": "13345224609.738474920.8088930838d88f008e0",
+          "team": { "id": "T123", "domain": "example" },
+          "channel": { "id": "C123", "name": "general" },
+          \(view)
+          "response_url": "https://hooks.slack.com/actions/T123/1/2",
+          "actions": [{
+            "action_id": "\(actionId)",
+            "block_id": "\(blockId)",
+            "text": { "type": "plain_text", "text": "Click" },
+            "value": "test",
+            "type": "button",
+            "action_ts": "123.456"
+          }],
+          "state": {"values": {}}
+        }
+        """.data(using: .utf8),
     )
     return try JSONDecoder().decode(InteractiveEnvelope.self, from: bodyData)
 }

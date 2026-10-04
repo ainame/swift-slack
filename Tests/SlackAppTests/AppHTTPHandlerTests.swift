@@ -272,7 +272,7 @@ struct AppHTTPHandlerTests {
             timestamp: timestamp,
         )
         let router = Router()
-        router.onBlockAction("button-id") { context, _ in
+        router.onBlockAction("other-action-id") { context, _ in
             try await context.ack()
         }
         let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
