@@ -52,9 +52,9 @@ struct Command {
             print("onGlobalShortcut: \(payload._type) \(payload.callbackId!)")
         }
 
-        router.onBlockAction("run-something") { context, payload in
+        router.onAction("run-something") { context, payload in
             try await context.ack()
-            print("onGlobalShortcut: \(payload._type) \(payload.callbackId!)")
+            print("onAction: \(payload._type) \(payload.blockActions.map(\.actionId))")
         }
 
         router.onEvent(MessageEvent.self) { _, _, payload in
