@@ -100,6 +100,33 @@ struct BlockActionsPayloadTests {
     }
 
     @Test
+    func `decode link button actions with valid and invalid URLs`() throws {
+        let payload = try decodeMessageBlockActions(actions: """
+        {
+          "type": "button",
+          "action_id": "docs",
+          "block_id": "b1",
+          "text": { "type": "plain_text", "text": "Docs" },
+          "url": "https://docs.slack.dev",
+          "action_ts": "1.1"
+        },
+        {
+          "type": "button",
+          "action_id": "empty",
+          "block_id": "b2",
+          "text": { "type": "plain_text", "text": "Empty" },
+          "url": "",
+          "action_ts": "1.2"
+        }
+        """)
+
+        let actions = try #require(payload.actions)
+        #expect(actions[0].url?.absoluteString == "https://docs.slack.dev")
+        #expect(actions[1].url == nil)
+        #expect(actions[1].actionId == "empty")
+    }
+
+    @Test
     func `decode option actions without element options`() throws {
         let payload = try decodeMessageBlockActions(actions: """
         {

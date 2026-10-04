@@ -152,6 +152,20 @@ struct AppRouterTests {
         #expect(await tracker.value == "action")
     }
 
+    @Test func `block action dispatch prefers block id match across all actions`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onBlockAction("first") { _, _ in await tracker.set("first") }
+        router.onBlockAction("second", blockId: "block-2") { _, _ in await tracker.set("second") }
+
+        try await dispatch(router, makeBlockActionEnvelope(actions: [
+            (actionId: "first", blockId: "block-1"),
+            (actionId: "second", blockId: "block-2"),
+        ]))
+
+        #expect(await tracker.value == "second")
+    }
+
     @Test func `block action dispatch with block id ignores other blocks`() async throws {
         let tracker = ValueTracker()
         let router = Router()
@@ -292,6 +306,13 @@ private func makeBlockActionEnvelope(
     blockId: String = "block-1",
     viewCallbackId: String?,
 ) throws -> InteractiveEnvelope {
+    try makeBlockActionEnvelope(actions: [(actionId: actionId, blockId: blockId)], viewCallbackId: viewCallbackId)
+}
+
+private func makeBlockActionEnvelope(
+    actions: [(actionId: String, blockId: String)],
+    viewCallbackId: String? = nil,
+) throws -> InteractiveEnvelope {
     let container = if viewCallbackId == nil {
         """
         { "type": "message", "message_ts": "123.456", "channel_id": "C123", "is_ephemeral": false }
@@ -311,6 +332,18 @@ private func makeBlockActionEnvelope(
         },
         """
     } ?? ""
+    let actionsJSON = actions.map { action in
+        """
+        {
+          "action_id": "\(action.actionId)",
+          "block_id": "\(action.blockId)",
+          "text": { "type": "plain_text", "text": "Click" },
+          "value": "test",
+          "type": "button",
+          "action_ts": "123.456"
+        }
+        """
+    }.joined(separator: ",")
     let bodyData = try #require(
         """
         {
@@ -324,14 +357,7 @@ private func makeBlockActionEnvelope(
           "channel": { "id": "C123", "name": "general" },
           \(view)
           "response_url": "https://hooks.slack.com/actions/T123/1/2",
-          "actions": [{
-            "action_id": "\(actionId)",
-            "block_id": "\(blockId)",
-            "text": { "type": "plain_text", "text": "Click" },
-            "value": "test",
-            "type": "button",
-            "action_ts": "123.456"
-          }],
+          "actions": [\(actionsJSON)],
           "state": {"values": {}}
         }
         """.data(using: .utf8),

@@ -84,6 +84,7 @@ extension BlockActionsPayload {
         /// The button value, or the text entered in a text input
         public let value: String?
         public let style: String?
+        /// The link button URL, or `nil` when it is not a valid URL
         public let url: URL?
         public let selectedOption: StateValuesObject.SelectedOption?
         public let selectedOptions: [StateValuesObject.SelectedOption]?
@@ -134,7 +135,8 @@ extension BlockActionsPayload {
             text = try container.decodeIfPresent(TextObject.self, forKey: .text)
             value = try container.decodeIfPresent(String.self, forKey: .value)
             style = try container.decodeIfPresent(String.self, forKey: .style)
-            url = try container.decodeIfPresent(URL.self, forKey: .url)
+            // An empty or malformed link button URL should not drop the whole interaction.
+            url = try? container.decodeIfPresent(URL.self, forKey: .url)
             selectedOption = try container.decodeIfPresent(StateValuesObject.SelectedOption.self, forKey: .selectedOption)
             selectedOptions = try container.decodeIfPresent([StateValuesObject.SelectedOption].self, forKey: .selectedOptions)
             selectedUser = try container.decodeIfPresent(String.self, forKey: .selectedUser)
