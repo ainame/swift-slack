@@ -9,7 +9,7 @@ public protocol InteractivePayloadProtocol: Decodable, Hashable, Sendable {
 public enum InteractivePayload: Decodable, Hashable, Sendable {
     case shortcut(GlobalShortcutPayload)
     case messageAction(MessageShortcutPayload)
-    case blockActions(BlockActionsPaylaod)
+    case blockActions(BlockActionsPayload)
     case viewSubmission(ViewSubmissionPayload)
     case viewClosed(ViewClosedPayload)
     case unsupported(String)
