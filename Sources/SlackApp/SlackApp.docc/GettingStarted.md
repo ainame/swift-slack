@@ -103,6 +103,20 @@ Slack requires an acknowledgement within three seconds of delivering a request.
 
 Both context types provide `client` for Web API calls, `say` to post a message, `respond` to reply through a response URL, and `logger`.
 
+## Block actions
+
+`onBlockAction(_:blockId:handler:)` matches the `action_id` of the interacted element, like Bolt's `app.action(...)`, for buttons and menus in messages, modals, and App Home. Pass `blockId:` to also require the `block_id`. To handle every action inside a view, register `onBlockAction(callbackId:handler:)` with the view's `callback_id`; action ID handlers take precedence.
+
+```swift
+router.onBlockAction("approve") { context, payload in
+    try await context.ack()
+}
+
+router.onBlockAction(callbackId: "settings_modal") { context, payload in
+    try await context.ack()
+}
+```
+
 ## Events API payload types
 
 With the `Events` trait enabled, `SlackApp` provides typed payloads for Events API events, such as `MessageEvent`, `AppMentionEvent`, and `ReactionAddedEvent`. Register a handler for one event type with `onEvent(_:handler:)`, or receive every event as an `Event` value with `onEvent(_:)`.

@@ -54,7 +54,7 @@ struct Command {
 
         router.onBlockAction("run-something") { context, payload in
             try await context.ack()
-            print("onGlobalShortcut: \(payload._type) \(payload.callbackId!)")
+            print("onBlockAction: \(payload._type) \(payload.actionIdentifiers.map(\.actionId))")
         }
 
         router.onEvent(MessageEvent.self) { _, _, payload in

@@ -175,8 +175,8 @@ struct Command {
             print("Home tab published: \(response)")
         }
 
-        // Handle interactive components
-        router.onBlockAction("quick_form_modal") { context, payload in
+        // Handle any button in the quick form modal by the modal's callback ID
+        router.onBlockAction(callbackId: "quick_form_modal") { context, payload in
             try await context.ack()
 
             // Create a success message modal
@@ -228,7 +228,7 @@ struct Command {
             print("View updated: \(response)")
         }
 
-        // Handle button actions
+        // Handle button actions by action ID
         router.onBlockAction("done") { context, _ in
             try await context.ack()
 

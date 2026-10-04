@@ -27,15 +27,11 @@ router.onSlashCommand("/tasks") { context, payload in
 }
 
 // Open the creation modal when the message's "Create Task" button is clicked.
-// `onBlockAction(_:)` matches the callback ID of the view that contains the
-// action, so buttons in messages are handled with `onInteractive(_:)`.
-router.onInteractive { context, envelope in
+// `onBlockAction(_:)` matches the button's action ID.
+router.onBlockAction("create_task") { context, payload in
     try await context.ack()
 
-    guard case let .blockActions(payload) = envelope.body,
-          case let .button(button)? = payload.actions?.first,
-          button.actionId == "create_task",
-          let triggerId = payload.triggerId else {
+    guard let triggerId = payload.triggerId else {
         return
     }
 
