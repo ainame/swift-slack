@@ -93,16 +93,16 @@ public struct ContextElementBuilder {
     }
 
     /// Handle arrays of ContextElementType (from buildExpression)
-    public static func buildBlock(_ components: ContextElementType...) -> [ContextElementType] {
-        components
+    public static func buildBlock(_ components: [ContextElementType]...) -> [ContextElementType] {
+        components.flatMap(\.self)
     }
 
-    public static func buildExpression(_ expression: Text) -> ContextElementType {
-        .text(expression.render())
+    public static func buildExpression(_ expression: Text) -> [ContextElementType] {
+        [.text(expression.render())]
     }
 
-    public static func buildExpression(_ expression: ContextImage) -> ContextElementType {
-        expression.asContextElement()
+    public static func buildExpression(_ expression: ContextImage) -> [ContextElementType] {
+        [expression.asContextElement()]
     }
 
     public static func buildArray(_ components: [[ContextElementType]]) -> [ContextElementType] {
@@ -189,8 +189,12 @@ public struct OptionBuilder {
 /// Result builder for OptionGroup components
 @resultBuilder
 public struct OptionGroupBuilder {
-    public static func buildBlock(_ components: OptionGroup...) -> [OptionGroup] {
-        components
+    public static func buildBlock(_ components: [OptionGroup]...) -> [OptionGroup] {
+        components.flatMap(\.self)
+    }
+
+    public static func buildExpression(_ expression: OptionGroup) -> [OptionGroup] {
+        [expression]
     }
 
     public static func buildArray(_ components: [[OptionGroup]]) -> [OptionGroup] {
