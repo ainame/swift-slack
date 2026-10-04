@@ -23,7 +23,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Deprecated
 
-* Deprecated the misspelled `BlockActionsPaylaod` in favor of `BlockActionsPayload`; the old name remains as a typealias - #152
+* Deprecated the public type `BlockActionsPaylaod`, which misspelled "Payload", and renamed it to `BlockActionsPayload`. The old name remains as a deprecated typealias, so existing code compiles with a warning and a fix-it; switch to `BlockActionsPayload` before the alias is removed in a future release - #152
 
 ### Fixed
 
