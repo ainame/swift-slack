@@ -1,24 +1,34 @@
 # Migration Guide
 
-Move existing runtime code from `SlackClient` to `SlackApp`.
+Move app runtime code from `SlackClient` 0.5.x to `SlackApp` and `SlackKit`.
 
-## Import Changes
+## Overview
 
-Old:
+Release 0.6.0 split the app runtime out of `SlackClient`. `SlackClient` became the Web API layer, and the new `SlackApp` module took over:
+
+- `SlackApp`, `Router`, and `Ack`
+- Events API payload types
+- Socket Mode
+- HTTP request verification and server adapters
+
+## Update dependencies and imports
+
+Depend on the `SlackKit` product, which re-exports `SlackApp`, `SlackClient`, and `SlackBlockKit`:
 
 ```swift
-import SlackClient
+.target(
+    name: "MySlackApp",
+    dependencies: [
+        .product(name: "SlackKit", package: "swift-slack"),
+    ]
+)
 ```
 
-New:
+Then replace `import SlackClient` with `import SlackKit` in app code.
 
-```swift
-import SlackKit
-```
+## Update Socket Mode startup
 
-## Runtime Entry Point
-
-Old:
+Before:
 
 ```swift
 let router = SocketModeRouter()
@@ -26,7 +36,7 @@ await slack.addSocketModeRouter(router)
 try await slack.runInSocketMode()
 ```
 
-New:
+After:
 
 ```swift
 let router = Router()
@@ -38,13 +48,38 @@ let app = SlackApp(
 try await app.run()
 ```
 
-## Symbol Moves
+## Update HTTP apps
 
-- `SocketModeRouter` -> `Router`
-- `Slack.runInSocketMode(...)` -> `SlackApp(..., mode: .socketMode(...)).run()`
-- `Slack.addSocketModeRouter(...)` -> pass the router directly to `SlackApp`
-- Hummingbird HTTP integration moved under `HummingbirdAdapter`
+HTTP request handling moved to `SlackApp`. Enable the `HummingbirdHTTPAdapter` trait and pass a `HummingbirdAdapter`:
 
-## Client Layer
+```swift
+let router = Router()
+let adapter = HummingbirdAdapter(hostname: "0.0.0.0", port: 8080)
+let app = SlackApp(
+    configuration: .init(token: token, signingSecret: signingSecret),
+    router: router,
+    mode: .http(adapter)
+)
+try await app.run()
+```
 
-`SlackClient` is now the pure Web API layer. Runtime concerns such as Events API payload types, Socket Mode, HTTP request verification, routing, and acknowledgements live in `SlackApp`.
+## Renamed and moved symbols
+
+- `SocketModeRouter` is now `Router`.
+- `Slack.runInSocketMode(...)` is now `SlackApp(..., mode: .socketMode()).run()`.
+- `Slack.addSocketModeRouter(...)` was removed. Pass the router to `SlackApp` instead.
+- Hummingbird support moved to `HummingbirdAdapter`.
+- Events API payload types such as `Event`, `MessageEvent`, and `AppMentionEvent` moved from `SlackClient` to `SlackApp`.
+- `onSlackMessageMatched(...)` was removed. Register `onEvent(MessageEvent.self)` and filter inside the handler.
+
+## Acknowledgement changes
+
+`SlackApp` acknowledges Events API requests the way Bolt does:
+
+- `onEvent` handlers are acknowledged automatically and don't receive `ack`. In HTTP mode, Events API requests return `200 OK`; in Socket Mode, the envelope is acknowledged before dispatch.
+- Slash command, interaction, shortcut, and view handlers still call `ack()` explicitly.
+- Registering another handler for the same command, callback ID, or event type replaces the earlier one.
+
+## ServiceLifecycle
+
+`SlackApp` conforms to `Service`, so you can run it in a `ServiceGroup`. See <doc:GettingStarted#Running-with-ServiceLifecycle>.

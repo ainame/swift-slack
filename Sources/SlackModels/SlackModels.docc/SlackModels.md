@@ -1,9 +1,13 @@
 # ``SlackModels``
 
-Shared data models and types for the Slack API ecosystem.
+Data models for Slack Web API requests and responses.
 
 ## Overview
 
-SlackModels provides a comprehensive collection of Swift types representing Slack's data models. These types are shared across all swift-slack modules, ensuring consistency and type safety when working with Slack API data.
+`SlackModels` contains the Swift types that `SlackClient` uses for Web API responses and nested objects, such as users, conversations, messages, and files. `SlackClient` re-exports this module, so you rarely import it directly.
 
-All models are automatically generated from Slack's official API specifications, with additional handcrafted models for complex scenarios and enhanced usability.
+Most models are generated. Their shapes are inferred from the recorded API responses in Slack's [java-slack-sdk](https://github.com/slackapi/java-slack-sdk), so many properties are optional. Where inference produces the wrong type or name, a hand-written model replaces it, following the java-slack-sdk model's name and fields.
+
+Events API payload types live in `SlackApp`, not in this module.
+
+If a model is missing a field or fails to decode a response, [open an issue](https://github.com/ainame/swift-slack/issues) with the payload you received.

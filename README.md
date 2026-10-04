@@ -255,7 +255,7 @@ Events API handlers are acknowledged automatically. Slash commands, block action
 - [Runtime guide](Sources/SlackApp/SlackApp.docc/GettingStarted.md): HTTP setup, startup hooks, acknowledgements, and `ServiceGroup` integration.
 - [Package traits](Sources/SlackClient/SlackClient.docc/Traits.md): choose the APIs and integrations your app needs.
 - [API documentation](https://ainame.github.io/swift-slack/documentation): explore the package's modules and types.
-- [Migration guide](MIGRATING_TO_SLACKAPP.md): upgrade from 0.5.x to `SlackApp`.
+- [Migration guide](Sources/SlackApp/SlackApp.docc/MigrationGuide.md): upgrade from 0.5.x to `SlackApp`.
 
 ## Contributing
 

@@ -1,81 +1,77 @@
 # Getting Started
 
-Use `SlackKit` for normal app code when you want a Slack app runtime on top of `SlackClient`. Use `SlackApp` directly when you only want the runtime layer itself. `SlackApp` is also the home of Events API payload types.
+Run a Slack app over Socket Mode or HTTP, and handle its events and interactions.
 
 ## Installation
 
-Add the package and enable the traits your runtime needs:
+Add swift-slack to your package and depend on the `SlackKit` product, which includes this runtime and the Web API client:
 
 ```swift
-.package(
-    url: "https://github.com/ainame/swift-slack",
-    from: "0.5.1",
-    traits: [
-        "WebAPI_Apps",
-        "WebAPI_Chat",
-        "WebAPI_Views",
-        "SocketMode",
-        "Events",
-        "HummingbirdHTTPAdapter"
-    ]
-)
+dependencies: [
+    .package(url: "https://github.com/ainame/swift-slack.git", from: "2026.10.1"),
+],
+targets: [
+    .executableTarget(
+        name: "MySlackApp",
+        dependencies: [
+            .product(name: "SlackKit", package: "swift-slack"),
+        ]
+    ),
+]
 ```
 
-Then depend on `SlackKit` from your target:
-
-```swift
-.target(
-    name: "MySlackApp",
-    dependencies: [
-        .product(name: "SlackKit", package: "swift-slack"),
-        .product(name: "ServiceLifecycle", package: "swift-service-lifecycle"),
-    ]
-)
-```
+The default traits include Socket Mode, Events API payloads, and every Web API group. To serve HTTP requests with Hummingbird, or to compile fewer Web API groups, see the `SlackClient` documentation on traits.
 
 ## Socket Mode
+
+Socket Mode connects to Slack over a WebSocket, so your app doesn't need a public URL. It needs an app-level token with the `connections:write` scope and a bot token:
 
 ```swift
 import SlackKit
 
 let router = Router()
 
+// Events are acknowledged automatically
+router.onEvent(AppMentionEvent.self) { context, _, event in
+    guard let channel = event.channel, let user = event.user else { return }
+    try await context.say(text: "Hi <@\(user)>! 👋", channel: channel)
+}
+
+// Slash commands must be acknowledged
 router.onSlashCommand("/hello") { context, payload in
     try await context.ack()
-    try await context.say(channel: payload.channelId, text: "Hello, \(payload.userName)!")
+    try await context.say(text: "Hello, \(payload.userName)!", channel: payload.channelId)
 }
 
 let app = SlackApp(
-    configuration: .init(
-        appToken: appToken,
-        token: token
-    ),
+    configuration: .init(appToken: appToken, token: token),
     router: router,
     mode: .socketMode()
 )
+
 try await app.run()
 ```
 
-If you need to perform setup work with the underlying client before the runtime starts, use the `preparing` hook:
+To use the Web API client before the runtime starts, pass a `preparing` closure:
 
 ```swift
 try await app.run { slack in
-    _ = try await slack.authTest()
+    _ = try await slack.client.authTest()
 }
 ```
 
-## HTTP App
+## HTTP
+
+An HTTP app receives signed requests from Slack. Enable the `HummingbirdHTTPAdapter` trait, then pass a `HummingbirdAdapter` and your signing secret:
 
 ```swift
 import SlackKit
 
 let router = Router()
 let adapter = HummingbirdAdapter(hostname: "0.0.0.0", port: 8080)
+
 let app = SlackApp(
-    configuration: .init(
-        token: token,
-        signingSecret: signingSecret
-    ),
+    configuration: .init(token: token, signingSecret: signingSecret),
     router: router,
     mode: .http(adapter)
 )
@@ -83,36 +79,37 @@ let app = SlackApp(
 try await app.run()
 ```
 
-If you want to integrate with a different server framework, implement `HTTPServerAdapter` and pass it to `.http(...)`:
+To use another server framework, implement `HTTPServerAdapter` and pass it to `.http(_:)`:
 
 ```swift
 import SlackKit
 
 struct MyHTTPAdapter: HTTPServerAdapter {
-    func run(
-        handler: @escaping HTTPServerHandler
-    ) async throws {
-        // Convert incoming requests from your server framework into
-        // HTTPRequest plus a request body Data value, then write the returned
-        // HTTPResponse and optional response body back out.
+    func run(handler: @escaping HTTPServerHandler) async throws {
+        // Convert each incoming request into an HTTPRequest and its body Data,
+        // call handler, then write the returned HTTPResponse and body.
     }
 }
 ```
 
-## Ack semantics
+## Handlers and acknowledgements
 
-- Events API handlers are auto-acked and receive `EventContext` without `ack`.
-- Slash commands, block actions, shortcuts, and views receive `Context` and must call `ack()`.
-- Router registrations are overwrite-based: the same API/key uses the last registered handler.
-- `onSlackMessageMatched(...)` was removed; use `onEvent(MessageEvent.self)` and filter inside the handler.
+Slack requires an acknowledgement within three seconds of delivering a request.
 
-## Events Types
+- Events API handlers registered with `onEvent` are acknowledged automatically. They receive an `EventContext`, which has no `ack`.
+- Slash command, interaction, shortcut, and view handlers receive a `Context` and must call `ack()`. Acknowledge first, then do slower work.
+- View submission handlers can acknowledge with `ack(responseAction:view:)` to update or push a view, or `ack(errors:)` to show validation errors.
+- Registering another handler for the same command, callback ID, or event type replaces the earlier one.
 
-When the `Events` trait is enabled, `SlackApp` provides the concrete event payload types such as `Event`, `MessageEvent`, and `AppMentionEvent`. Use those types with `Router.onEvent(...)` or when decoding incoming Events API payloads.
+Both context types provide `client` for Web API calls, `say` to post a message, `respond` to reply through a response URL, and `logger`.
+
+## Events API payload types
+
+With the `Events` trait enabled, `SlackApp` provides typed payloads for Events API events, such as `MessageEvent`, `AppMentionEvent`, and `ReactionAddedEvent`. Register a handler for one event type with `onEvent(_:handler:)`, or receive every event as an `Event` value with `onEvent(_:)`.
 
 ## Running with ServiceLifecycle
 
-`SlackApp` conforms to `Service`, so you can run it inside a `ServiceGroup`:
+`SlackApp` conforms to `Service`, so you can run it in a `ServiceGroup` with other services and shut it down gracefully. Add the [swift-service-lifecycle](https://github.com/swift-server/swift-service-lifecycle) package and its `ServiceLifecycle` product to your target:
 
 ```swift
 import Logging
@@ -120,10 +117,7 @@ import ServiceLifecycle
 import SlackKit
 
 let app = SlackApp(
-    configuration: .init(
-        appToken: appToken,
-        token: token
-    ),
+    configuration: .init(appToken: appToken, token: token),
     router: router,
     mode: .socketMode()
 )
