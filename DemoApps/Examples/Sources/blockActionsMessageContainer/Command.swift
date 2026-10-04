@@ -25,7 +25,7 @@ struct Command {
                 print("block_actions received")
                 print("container.type: \(payload.container._type)")
                 print("container: \(payload.container)")
-                print("actions: \(payload.actions?.map { String(describing: $0) } ?? [])")
+                print("actions: \(payload.blockActions.map { String(describing: $0) })")
             case let .unsupported(type):
                 print("unsupported interactive payload type: \(type)")
             default:

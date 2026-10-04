@@ -175,8 +175,8 @@ struct Command {
             print("Home tab published: \(response)")
         }
 
-        // Handle interactive components
-        router.onBlockAction("quick_form_modal") { context, payload in
+        // Handle the quick form modal's Submit button by its action ID
+        router.onAction("submit") { context, payload in
             try await context.ack()
 
             // Create a success message modal
@@ -229,7 +229,7 @@ struct Command {
         }
 
         // Handle button actions
-        router.onBlockAction("done") { context, _ in
+        router.onAction("done") { context, _ in
             try await context.ack()
 
             // Close the modal
@@ -237,7 +237,7 @@ struct Command {
         }
 
         // Handle additional interactive actions
-        router.onBlockAction("get_started") { context, payload in
+        router.onAction("get_started") { context, payload in
             try await context.ack()
 
             // Create an advanced form modal showcasing option groups

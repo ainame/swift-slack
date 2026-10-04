@@ -158,6 +158,7 @@ If you have built Slack apps with Bolt for JavaScript or Python, the same concep
 | `app.event('app_mention', ...)`    | `router.onEvent(AppMentionEvent.self) { ... }`           |
 | `app.command('/echo', ...)`        | `router.onSlashCommand("/echo") { ... }`                 |
 | `app.shortcut('callback_id', ...)` | `router.onGlobalShortcut("callback_id") { ... }`         |
+| `app.action('action_id', ...)`     | `router.onAction("action_id") { ... }`                   |
 | `app.view('callback_id', ...)`     | `router.onViewSubmission("callback_id") { ... }`         |
 | `await ack()` / `await say(...)`   | `try await context.ack()` / `try await context.say(...)` |
 | `client.chat.postMessage({...})`   | `context.client.chatPostMessage(body: .json(...))`       |
