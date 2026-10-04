@@ -4,7 +4,7 @@ import SlackBlockKit
 import SlackModels
 
 /// https://docs.slack.dev/reference/interaction-payloads/block_actions-payload#fields
-public struct BlockActionsPaylaod: InteractivePayloadProtocol, Decodable, Sendable {
+public struct BlockActionsPayload: InteractivePayloadProtocol, Decodable, Sendable {
     /// "block_actions"
     public let _type: String
     public let triggerId: String?
@@ -51,13 +51,17 @@ public struct BlockActionsPaylaod: InteractivePayloadProtocol, Decodable, Sendab
     }
 }
 
-extension BlockActionsPaylaod {
+@available(*, deprecated, renamed: "BlockActionsPayload")
+public typealias BlockActionsPaylaod = BlockActionsPayload
+
+extension BlockActionsPayload {
+    /// The `callback_id` of the view that contains the actions, or `nil` for actions outside a view, such as message buttons.
     public var callbackId: String? {
         view?.callbackId
     }
 }
 
-extension BlockActionsPaylaod {
+extension BlockActionsPayload {
     public struct FunctionData: Decodable, Hashable, Sendable {
         public let executionId: String?
         public let function: Function?

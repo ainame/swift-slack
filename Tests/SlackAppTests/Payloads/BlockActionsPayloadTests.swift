@@ -26,7 +26,7 @@ struct BlockActionsPayloadTests {
         }
         """
 
-        let payload = try JSONDecoder().decode(BlockActionsPaylaod.self, from: #require(json.data(using: .utf8)))
+        let payload = try JSONDecoder().decode(BlockActionsPayload.self, from: #require(json.data(using: .utf8)))
 
         #expect(payload._type == "block_actions")
         #expect(payload.container._type == "message")
@@ -63,7 +63,7 @@ struct BlockActionsPayloadTests {
         }
         """
 
-        let payload = try JSONDecoder().decode(BlockActionsPaylaod.self, from: #require(json.data(using: .utf8)))
+        let payload = try JSONDecoder().decode(BlockActionsPayload.self, from: #require(json.data(using: .utf8)))
 
         #expect(payload.container._type == "view")
         #expect(payload.container.viewId == "V123")
