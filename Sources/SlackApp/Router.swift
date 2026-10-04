@@ -67,6 +67,11 @@ private enum InteractiveHandler {
     }
 }
 
+private struct ActionKey: Hashable {
+    let actionId: String
+    let blockId: String?
+}
+
 #if Events
 private struct TypedEventKey: Hashable {
     let typeName: String
@@ -86,6 +91,7 @@ public class Router {
     private var slashCommandHandlers: [String: RequestHandler] = [:]
     private var globalShortcutHandlers: [String: RequestHandler] = [:]
     private var messageShortcutHandlers: [String: RequestHandler] = [:]
+    private var actionHandlers: [ActionKey: RequestHandler] = [:]
     private var blockActionHandlers: [String: RequestHandler] = [:]
     private var viewHandlers: [String: InteractiveHandler] = [:]
     #if Events
@@ -101,6 +107,7 @@ public class Router {
         private let slashCommandHandlers: [String: RequestHandler]
         private let globalShortcutHandlers: [String: RequestHandler]
         private let messageShortcutHandlers: [String: RequestHandler]
+        private let actionHandlers: [ActionKey: RequestHandler]
         private let blockActionHandlers: [String: RequestHandler]
         private let viewHandlers: [String: InteractiveHandler]
         #if Events
@@ -114,6 +121,7 @@ public class Router {
             slashCommandHandlers = router.slashCommandHandlers
             globalShortcutHandlers = router.globalShortcutHandlers
             messageShortcutHandlers = router.messageShortcutHandlers
+            actionHandlers = router.actionHandlers
             blockActionHandlers = router.blockActionHandlers
             viewHandlers = router.viewHandlers
             #if Events
@@ -170,6 +178,9 @@ public class Router {
                 }
                 return interactiveHandler
             case let .blockActions(payload):
+                if let handler = actionHandler(for: payload) {
+                    return handler
+                }
                 if let callbackId = payload.callbackId,
                    let handler = blockActionHandlers[callbackId] {
                     return handler
@@ -190,6 +201,23 @@ public class Router {
             case .unsupported:
                 return interactiveHandler
             }
+        }
+
+        /// Prefers a handler registered with both `action_id` and `block_id` for any action over one registered
+        /// with `action_id` only.
+        private func actionHandler(for payload: BlockActionsPayload) -> RequestHandler? {
+            for action in payload.blockActions {
+                if let blockId = action.blockId,
+                   let handler = actionHandlers[ActionKey(actionId: action.actionId, blockId: blockId)] {
+                    return handler
+                }
+            }
+            for action in payload.blockActions {
+                if let handler = actionHandlers[ActionKey(actionId: action.actionId, blockId: nil)] {
+                    return handler
+                }
+            }
+            return nil
         }
 
         #if Events
@@ -253,6 +281,32 @@ public class Router {
         }
     }
 
+    /// Registers a handler for `block_actions` requests from an element with the given `action_id`.
+    ///
+    /// This matches interactions from messages, modals, and App Home alike, like Bolt's `app.action(...)` in
+    /// JavaScript and Python and `app.blockAction(...)` in Java. Pass `blockId` to match only the element in that
+    /// block. A handler registered with both IDs takes precedence over one registered with `actionId` only. To
+    /// handle every action in a view, use ``onInteractive(_:)`` and check the payload's `callbackId`.
+    public func onAction(
+        _ actionId: String,
+        blockId: String? = nil,
+        handler: @escaping RequestPayloadHandler<BlockActionsPayload>,
+    ) {
+        actionHandlers[ActionKey(actionId: actionId, blockId: blockId)] = { context, request in
+            guard let context = context.requestContext,
+                  case let .interactive(interactiveEnvelope) = request,
+                  case let .blockActions(payload) = interactiveEnvelope.body,
+                  payload.containsAction(actionId, blockId: blockId) else {
+                return
+            }
+            try await handler(context, payload)
+        }
+    }
+
+    /// Registers a handler for `block_actions` requests from any element in a view with the given `callback_id`.
+    ///
+    /// This does not match an element's `action_id`, and never matches elements in messages, which have no view.
+    @available(*, deprecated, message: "onBlockAction(_:) matches the containing view's callback_id, not the element's action_id. To match an element's action_id, like Bolt's app.action or app.blockAction, use onAction(_:blockId:handler:). To handle every action in a view, use onInteractive(_:) and check payload.callbackId. onBlockAction(_:) will be removed in a 2027 release.")
     public func onBlockAction(_ callbackId: String, handler: @escaping RequestPayloadHandler<BlockActionsPayload>) {
         blockActionHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
