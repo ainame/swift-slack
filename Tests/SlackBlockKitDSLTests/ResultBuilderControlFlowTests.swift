@@ -3,7 +3,7 @@ import SlackBlockKit
 @testable import SlackBlockKitDSL
 import Testing
 
-/// Verifies that the DSL list result builders support `if`, `if let`, `if/else`, and `for`.
+/// Verifies that every DSL result builder supports `if`, `if let`, `if/else`, and `for`.
 ///
 /// Each test builds the same component with control flow and with the equivalent flat
 /// list of children, then compares the rendered Block Kit values.
@@ -393,5 +393,36 @@ struct ResultBuilderControlFlowTests {
                 RichTextContent("U2", code: true)
             }
         }.render())
+    }
+
+    // MARK: - MarkdownBuilder
+
+    private func markdown(showIntro: Bool, footer: String?, isDone: Bool, items: [String]) -> Block {
+        Markdown {
+            "# Report"
+            if showIntro {
+                "Intro"
+            }
+            if let footer {
+                footer
+            }
+            if isDone {
+                "Status: done"
+            } else {
+                "Status: open"
+            }
+            for item in items {
+                "- \(item)"
+            }
+        }.render()
+    }
+
+    @Test func `MarkdownBuilder supports control flow`() {
+        #expect(markdown(showIntro: false, footer: nil, isDone: false, items: []) == Markdown("# Report\nStatus: open").render())
+
+        #expect(
+            markdown(showIntro: true, footer: "Footer", isDone: true, items: ["a", "b"])
+                == Markdown("# Report\nIntro\nFooter\nStatus: done\n- a\n- b").render(),
+        )
     }
 }
