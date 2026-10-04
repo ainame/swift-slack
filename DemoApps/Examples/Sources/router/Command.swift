@@ -54,7 +54,7 @@ struct Command {
 
         router.onBlockAction("run-something") { context, payload in
             try await context.ack()
-            print("onBlockAction: \(payload._type) \(payload.actionIdentifiers.map(\.actionId))")
+            print("onBlockAction: \(payload._type) \((payload.actions ?? []).map(\.actionId))")
         }
 
         router.onEvent(MessageEvent.self) { _, _, payload in

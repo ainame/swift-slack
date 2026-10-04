@@ -119,7 +119,7 @@ struct AppRouterTests {
         let router = Router()
         router.onInteractive { _, _ in await tracker.set("broad") }
         router.onBlockAction("button-id") { _, payload in
-            await tracker.set(payload.actionIdentifiers.first?.actionId ?? "")
+            await tracker.set(payload.actions?.first?.actionId ?? "")
         }
 
         try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: nil))

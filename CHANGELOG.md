@@ -11,12 +11,13 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Added
 
-* Added `Router.onBlockAction(callbackId:handler:)` to handle every block action inside a view by the view's `callback_id`, and `BlockActionsPayload.actionIdentifiers` and `containsAction(_:blockId:)` to read each action's `action_id` and `block_id`
+* Added `Router.onBlockAction(callbackId:handler:)` to handle every block action inside a view by the view's `callback_id`, and `BlockActionsPayload.containsAction(_:blockId:)` to check for an action by `action_id` and `block_id`
 * Added optional `recordChannel`, `codeChannel`, and `agentSession` fields to swift-slack's conversation `Properties`, with `RecordChannel`, `CodeChannel`, and `AgentSession` models matching java-slack-sdk payloads - #149
 
 ### Changed
 
 * **BREAKING**: `Router.onBlockAction(_:handler:)` now matches the interacted element's `action_id`, like Bolt's `app.action(...)`, instead of the containing view's `callback_id`, and takes an optional `blockId:` to also require the `block_id`. Block actions from message buttons, which have no view, now reach these handlers instead of falling back to `onInteractive`. Code that registered a modal's callback ID must switch to `onBlockAction(callbackId:handler:)`
+* **BREAKING**: `BlockActionsPayload.actions` now contains `BlockActionsPayload.Action` values, matching java-slack-sdk's `BlockActionPayload.Action`, instead of Block Kit `ActionElementType` element definitions. Each action exposes `actionId`, `blockId`, `actionTs`, and the selected values, such as `value`, `selectedOption`, `selectedOptions`, `selectedUser`, `selectedDate`, `selectedDateTime`, and `richTextValue`. Replace pattern matches such as `case let .button(button)` with checks on `action._type` and these fields
 * Rewrote the README around a runnable Socket Mode bot and an end-to-end `/echo` quick start, and reorganized the DocC catalogs: a `SlackClient` Getting Started that reads Web API responses, the Block Kit example gallery moved to `SlackBlockKitDSL`, a single migration guide in the `SlackApp` documentation, and `SlackKit` added to the Swift Package Index documentation targets - #150
 * **BREAKING**: Changed `ContextElementBuilder`, `OptionGroupBuilder`, `RichTextElementBuilder`, `RichTextSectionBuilder`, `RichTextContentBuilder`, and `MarkdownBuilder` to build arrays from each expression. Custom `buildExpression` overloads added to these builders must now return an array, such as `[ContextElementType]` or `[String]`, and direct calls to their `build*` methods must pass and expect arrays - #151
 
@@ -26,6 +27,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Fixed
 
+* Fixed `block_actions` requests that failed to decode, so no handler ran, when the action came from checkboxes, radio buttons, overflow menus, or multi-static selects, which Slack sends without the element's `options`, or from element types swift-slack did not model, such as dispatch-enabled text inputs. Actions now also expose selected values, including the `rich_text_input` value, which were previously dropped
 * Fixed swift-slack conversation response decoding that silently discarded `at_here_restricted`, `at_channel_restricted`, and `channel_workflows` from java-slack-sdk fixtures; exposed them as `atHereRestricted`, `atChannelRestricted`, and `channelWorkflows`, with the `ChannelWorkflow` model - #149
 * Fixed README and DocC examples that did not compile against the current API, covering `TextObject(type:text:)` and other initializer argument orders, `Text.type(_:)`, `Modal(title:)`, `OptionGroup(label:)`, `context.say(text:channel:)`, `context.respond(to:)`, and missing imports; handler examples now call the Web API through `context.client`, and modal examples set the block IDs their submission handlers read - #150
 * Fixed DocC guides that listed 18 of the 33 `WebAPI_*` traits, pinned installation to 0.5.1, and misattributed swift-slack's upstream sources; the Traits guide now lists every trait and explains default and `.defaults` trait selection - #150

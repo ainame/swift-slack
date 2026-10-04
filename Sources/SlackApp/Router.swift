@@ -205,7 +205,7 @@ public class Router {
 
         /// Prefers a handler registered with both `action_id` and `block_id` over one registered with `action_id` only.
         private func blockActionHandler(for payload: BlockActionsPayload) -> RequestHandler? {
-            for action in payload.actionIdentifiers {
+            for action in payload.actions ?? [] {
                 if let blockId = action.blockId,
                    let handler = blockActionHandlers[BlockActionKey(actionId: action.actionId, blockId: blockId)] {
                     return handler
