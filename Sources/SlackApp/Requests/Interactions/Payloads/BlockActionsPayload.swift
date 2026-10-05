@@ -17,6 +17,8 @@ public struct BlockActionsPayload: InteractivePayloadProtocol, Decodable, Sendab
     public let hash: String?
     /// The interacted elements and their selected values.
     public let blockActions: [Action]
+    /// Storage for the deprecated `actions`: the same `actions` JSON array as `blockActions`, decoded as Block Kit
+    /// element definitions, skipping elements that cannot be decoded that way. Remove with `actions` (#156).
     private let elementActions: [ActionElementType]?
     public let channel: Channel?
     public let message: Message?
