@@ -252,11 +252,16 @@ struct AppRouterTests {
         #expect(await tracker.value == "closed:view_closed")
     }
 
-    @Test func `onView is a fallback for view payload types without a specific handler`() async throws {
+    @Test(arguments: [false, true])
+    func `onView is a fallback for view payload types without a specific handler`(viewFirst: Bool) async throws {
         let tracker = ValueTracker()
         let router = Router()
-        router.onView("modal") { _, payload in await tracker.set("view:\(payload._type)") }
+        let registerView = {
+            router.onView("modal") { _, payload in await tracker.set("view:\(payload._type)") }
+        }
+        if viewFirst { registerView() }
         router.onViewSubmission("modal") { _, _ in await tracker.set("submission") }
+        if !viewFirst { registerView() }
 
         #expect(try await dispatch(router, makeViewSubmissionEnvelope(callbackId: "modal")))
         #expect(await tracker.value == "submission")
@@ -289,6 +294,35 @@ struct AppRouterTests {
 
         #expect(try await dispatch(router, makeViewClosedEnvelope(callbackId: "modal")))
         #expect(await tracker.value == "view_closed")
+    }
+
+    @Test func `view handler registration uses last handler of each kind`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onViewSubmission("modal") { _, _ in await tracker.set("first submission") }
+        router.onViewSubmission("modal") { _, _ in await tracker.set("second submission") }
+        router.onView("modal") { _, _ in await tracker.set("first view") }
+        router.onView("modal") { _, _ in await tracker.set("second view") }
+
+        #expect(try await dispatch(router, makeViewSubmissionEnvelope(callbackId: "modal")))
+        #expect(await tracker.value == "second submission")
+
+        #expect(try await dispatch(router, makeViewClosedEnvelope(callbackId: "modal")))
+        #expect(await tracker.value == "second view")
+    }
+
+    @Test func `view payload without a callback id falls back to onInteractive`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onViewSubmission("modal") { _, _ in await tracker.set("submission") }
+        router.onView("modal") { _, _ in await tracker.set("view") }
+
+        #expect(try await !dispatch(router, makeViewSubmissionEnvelope(callbackId: nil)))
+        #expect(await tracker.value == nil)
+
+        router.onInteractive { _, _ in await tracker.set("broad") }
+        #expect(try await dispatch(router, makeViewSubmissionEnvelope(callbackId: nil)))
+        #expect(await tracker.value == "broad")
     }
 
     @Test func `view payload without a handler for its type is not handled`() async throws {
@@ -436,7 +470,8 @@ private func makeBlockActionEnvelope(
     return try JSONDecoder().decode(InteractiveEnvelope.self, from: bodyData)
 }
 
-private func makeViewSubmissionEnvelope(callbackId: String) throws -> InteractiveEnvelope {
+private func makeViewSubmissionEnvelope(callbackId: String?) throws -> InteractiveEnvelope {
+    let callbackIdJSON = callbackId.map { "\"callback_id\": \"\($0)\"," } ?? ""
     let bodyData = try #require(
         """
         {
@@ -450,7 +485,7 @@ private func makeViewSubmissionEnvelope(callbackId: String) throws -> Interactiv
             "id": "V123",
             "team_id": "T123",
             "type": "modal",
-            "callback_id": "\(callbackId)",
+            \(callbackIdJSON)
             "title": { "type": "plain_text", "text": "Test" },
             "blocks": [],
             "state": {"values": {}}
@@ -468,6 +503,7 @@ private func makeViewClosedEnvelope(callbackId: String) throws -> InteractiveEnv
           "type": "view_closed",
           "user": { "id": "U123" },
           "api_app_id": "A123",
+          "token": "legacy-token",
           "team": { "id": "T123", "domain": "example" },
           "is_cleared": false,
           "view": {
@@ -475,6 +511,7 @@ private func makeViewClosedEnvelope(callbackId: String) throws -> InteractiveEnv
             "team_id": "T123",
             "type": "modal",
             "callback_id": "\(callbackId)",
+            "notify_on_close": true,
             "title": { "type": "plain_text", "text": "Test" },
             "blocks": [],
             "state": {"values": {}}
