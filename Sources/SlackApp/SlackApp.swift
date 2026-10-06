@@ -114,8 +114,10 @@ extension SlackApp {
                 for try await frame in inbound {
                     guard frame.opcode == .text else { continue }
 
-                    let message = try Self.parseSocketModeMessage(frame.data, logger: logger)
-                    guard case let .message(envelope) = message.body else { continue }
+                    let envelope = try await Self.decodeSocketModeFrame(frame.data, logger: logger) { envelopeId in
+                        try await SocketModeAcknowledger.sendBasicAck(envelopeId: envelopeId, writer: outbound)
+                    }
+                    guard let envelope else { continue }
 
                     let request = Self.request(from: envelope)
                     group.addTask {
@@ -221,23 +223,54 @@ extension SlackApp {
 
 #if SocketMode
 extension SlackApp {
-    private static func parseSocketModeMessage(_ buffer: ByteBuffer, logger: Logger) throws -> SocketModeMessage {
+    /// Decodes one Socket Mode text frame and returns the envelope to dispatch, if any.
+    ///
+    /// A frame that fails to decode is logged and skipped instead of thrown, because a thrown error
+    /// closes the WebSocket connection and stops the app. When the failed frame is an envelope whose
+    /// `envelope_id` can still be read, it receives a basic acknowledgement through `sendBasicAck`, so
+    /// Slack neither retries it nor shows the user an error. `hello` and `disconnect` frames are only
+    /// logged, so failing to decode them changes nothing.
+    static func decodeSocketModeFrame(
+        _ buffer: ByteBuffer,
+        logger: Logger,
+        sendBasicAck: (String) async throws -> Void,
+    ) async throws -> SocketModeMessageEnvelope? {
+        let message: SocketModeMessage
         do {
-            let messageType = try JSONDecoder().decode(SocketModeMessage.self, from: buffer)
-            switch messageType.body {
-            case let .hello(message):
-                logger.info("\(message)")
-            case let .disconnect(message):
-                logger.info("\(message)")
-            case .message:
-                break
-            }
-            return messageType
+            message = try JSONDecoder().decode(SocketModeMessage.self, from: buffer)
         } catch {
-            let message = String(buffer: buffer)
-            logger.error("Parsing message failed: \(error) /// \(message)")
-            throw error
+            logger.error("Parsing message failed: \(error) /// \(String(buffer: buffer))")
+            guard let header = try? JSONDecoder().decode(SocketModeEnvelopeHeader.self, from: buffer) else {
+                return nil
+            }
+            logger.warning(
+                "Acknowledging Socket Mode envelope that failed to decode: \(header.envelopeId) (type: \(header._type ?? "unknown"))",
+            )
+            try await sendBasicAck(header.envelopeId)
+            return nil
         }
+
+        switch message.body {
+        case let .hello(hello):
+            logger.info("\(hello)")
+            return nil
+        case let .disconnect(disconnect):
+            logger.info("\(disconnect)")
+            return nil
+        case let .message(envelope):
+            return envelope
+        }
+    }
+}
+
+/// The fields of a Socket Mode envelope needed to acknowledge it when its payload fails to decode.
+private struct SocketModeEnvelopeHeader: Decodable {
+    let envelopeId: String
+    let _type: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case envelopeId = "envelope_id"
+        case _type = "type"
     }
 }
 #endif
