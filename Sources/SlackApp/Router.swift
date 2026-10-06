@@ -305,8 +305,10 @@ public class Router {
 
     /// Registers a handler for `block_actions` requests from any element in a view with the given `callback_id`.
     ///
-    /// This does not match an element's `action_id`, and never matches elements in messages, which have no view.
-    @available(*, deprecated, message: "onBlockAction(_:) matches the containing view's callback_id, not the element's action_id. To match an element's action_id, like Bolt's app.action or app.blockAction, use onAction(_:blockId:handler:). To handle every action in a view, use onInteractive(_:) and check payload.callbackId. onBlockAction(_:) will be removed in a 2027 release.")
+    /// This was implemented incorrectly: it does not match Bolt, which matches block actions by the element's
+    /// `action_id`. A view's `callback_id` also never matches elements in messages, which have no view. Use
+    /// ``onAction(_:blockId:handler:)`` instead.
+    @available(*, deprecated, message: "onBlockAction(_:) was implemented incorrectly: it does not match Bolt's app.action and app.blockAction, which match the element's action_id. It matches the containing view's callback_id instead, so it never matches elements in messages. Use onAction(_:blockId:handler:) to match an action_id, or onInteractive(_:) and check payload.callbackId to handle every action in a view. onBlockAction(_:) will be removed in a 2027 release.")
     public func onBlockAction(_ callbackId: String, handler: @escaping RequestPayloadHandler<BlockActionsPayload>) {
         blockActionHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,

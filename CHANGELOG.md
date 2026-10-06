@@ -22,7 +22,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Deprecated
 
-* Deprecated `Router.onBlockAction(_:handler:)`, which matches the containing view's `callback_id`, not the element's `action_id`, and never matches elements in messages. Use `onAction(_:blockId:handler:)` for each element, or `onInteractive(_:)` with `payload.callbackId` for a whole view. It will be removed in a 2027 release - #155
+* Deprecated `Router.onBlockAction(_:handler:)`, which was implemented incorrectly: it does not match Bolt's `app.action(...)`, which matches the element's `action_id`, and matches the containing view's `callback_id` instead, so it never matches elements in messages. Use `onAction(_:blockId:handler:)` for each element, or `onInteractive(_:)` with `payload.callbackId` for a whole view. It will be removed in a 2027 release - #155
 * Deprecated `BlockActionsPayload.actions`, which returns Block Kit element definitions without `block_id` or selected values, in favor of `blockActions`. It will be removed in a 2027 release - #155
 * Deprecated the public type `BlockActionsPaylaod`, which misspelled "Payload", and renamed it to `BlockActionsPayload`. The old name remains as a typealias with a fix-it and will be removed in a 2027 release - #155
 
