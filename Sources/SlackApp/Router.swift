@@ -307,8 +307,8 @@ public class Router {
     /// Registers a handler for `view_submission` and `view_closed` requests from a view with the given `callback_id`.
     ///
     /// This is a fallback: a handler registered with ``onViewSubmission(_:handler:)`` or
-    /// ``onViewClosed(_:handler:)`` for the same `callback_id` takes precedence for its payload type, whichever is
-    /// registered first. Requests that no view handler matches go to ``onInteractive(_:)``.
+    /// ``onViewClosed(_:handler:)`` for the same `callback_id` takes precedence for its payload type, regardless of
+    /// registration order. Requests that no view handler matches go to ``onInteractive(_:)``.
     public func onView(_ callbackId: String, handler: @escaping RequestPayloadHandler<InteractivePayload>) {
         viewHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
@@ -327,7 +327,7 @@ public class Router {
     ///
     /// Like Bolt's `viewSubmission` in Java and `view_submission` in Python, this can be registered alongside
     /// ``onViewClosed(_:handler:)`` for the same `callback_id`. It takes precedence over ``onView(_:handler:)`` for
-    /// `view_submission` requests, whichever is registered first.
+    /// `view_submission` requests, regardless of registration order.
     public func onViewSubmission(_ callbackId: String, handler: @escaping RequestPayloadHandler<ViewSubmissionPayload>) {
         viewSubmissionHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
@@ -344,8 +344,8 @@ public class Router {
     ///
     /// Slack sends `view_closed` only for views that set `notify_on_close`. Like Bolt's `viewClosed` in Java and
     /// `view_closed` in Python, this can be registered alongside ``onViewSubmission(_:handler:)`` for the same
-    /// `callback_id`. It takes precedence over ``onView(_:handler:)`` for `view_closed` requests, whichever is
-    /// registered first.
+    /// `callback_id`. It takes precedence over ``onView(_:handler:)`` for `view_closed` requests, regardless of
+    /// registration order.
     public func onViewClosed(_ callbackId: String, handler: @escaping RequestPayloadHandler<ViewClosedPayload>) {
         viewClosedHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
