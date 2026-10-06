@@ -9,7 +9,9 @@ public struct SocketModeOptions: OptionSet, RawRepresentable, Sendable {
     ///
     /// * WebSocket library (WSClient)
     /// * Networking failure for WebSocket
-    /// * JSON decoding errors (Please report this to get it fixed)
+    ///
+    /// Messages that fail to decode are always logged and skipped, regardless of this option, and
+    /// acknowledged when their `envelope_id` can be read. Please report them to get them fixed.
     public static let recoverFromAppError = SocketModeOptions(rawValue: 1 << 1)
 
     public let rawValue: Int
