@@ -70,7 +70,7 @@ public class Router {
     private var messageShortcutHandlers: [String: RequestHandler] = [:]
     private var actionHandlers: [ActionKey: RequestHandler] = [:]
     private var blockActionHandlers: [String: RequestHandler] = [:]
-    private var viewHandlers: [String: RequestHandler] = [:]
+    private var anyViewHandlers: [String: RequestHandler] = [:]
     private var viewSubmissionHandlers: [String: RequestHandler] = [:]
     private var viewClosedHandlers: [String: RequestHandler] = [:]
     #if Events
@@ -88,7 +88,7 @@ public class Router {
         private let messageShortcutHandlers: [String: RequestHandler]
         private let actionHandlers: [ActionKey: RequestHandler]
         private let blockActionHandlers: [String: RequestHandler]
-        private let viewHandlers: [String: RequestHandler]
+        private let anyViewHandlers: [String: RequestHandler]
         private let viewSubmissionHandlers: [String: RequestHandler]
         private let viewClosedHandlers: [String: RequestHandler]
         #if Events
@@ -104,7 +104,7 @@ public class Router {
             messageShortcutHandlers = router.messageShortcutHandlers
             actionHandlers = router.actionHandlers
             blockActionHandlers = router.blockActionHandlers
-            viewHandlers = router.viewHandlers
+            anyViewHandlers = router.anyViewHandlers
             viewSubmissionHandlers = router.viewSubmissionHandlers
             viewClosedHandlers = router.viewClosedHandlers
             #if Events
@@ -169,15 +169,19 @@ public class Router {
                     return handler
                 }
                 return interactiveHandler
+            // `onView` handlers in `anyViewHandlers` run their body for both view payload types, so they can serve
+            // as the fallback when no handler is registered for the payload's own type. Type-specific handlers must
+            // not: their body skips the other type, and returning one would report the request as handled without
+            // an acknowledgement.
             case let .viewSubmission(payload):
                 if let callbackId = payload.callbackId,
-                   let handler = viewSubmissionHandlers[callbackId] ?? viewHandlers[callbackId] {
+                   let handler = viewSubmissionHandlers[callbackId] ?? anyViewHandlers[callbackId] {
                     return handler
                 }
                 return interactiveHandler
             case let .viewClosed(payload):
                 if let callbackId = payload.callbackId,
-                   let handler = viewClosedHandlers[callbackId] ?? viewHandlers[callbackId] {
+                   let handler = viewClosedHandlers[callbackId] ?? anyViewHandlers[callbackId] {
                     return handler
                 }
                 return interactiveHandler
@@ -310,7 +314,7 @@ public class Router {
     /// ``onViewClosed(_:handler:)`` for the same `callback_id` takes precedence for its payload type, regardless of
     /// registration order. Requests that no view handler matches go to ``onInteractive(_:)``.
     public func onView(_ callbackId: String, handler: @escaping RequestPayloadHandler<InteractivePayload>) {
-        viewHandlers[callbackId] = { context, request in
+        anyViewHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request else { return }
             if case let .viewSubmission(payload) = interactiveEnvelope.body,
