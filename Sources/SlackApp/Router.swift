@@ -9,6 +9,17 @@ public enum DispatchContext: Sendable {
     case event(SlackApp.EventContext)
     #endif
 
+    var logger: Logger {
+        switch self {
+        case let .request(context):
+            context.logger
+        #if Events
+        case let .event(context):
+            context.logger
+        #endif
+        }
+    }
+
     var requestContext: SlackApp.Context? {
         guard case let .request(context) = self else { return nil }
         return context
@@ -44,9 +55,69 @@ public enum Request: Sendable {
     case unsupported(String)
 }
 
-private struct ActionKey: Hashable {
+extension Request {
+    /// Names the request type and the IDs handlers are registered with, for logs.
+    var routingDescription: String {
+        switch self {
+        case let .interactive(envelope):
+            envelope.body.routingDescription
+        case let .slashCommand(payload):
+            "slash command \"\(payload.command)\""
+        #if Events
+        case let .event(envelope):
+            if let event = envelope.event.payload {
+                "event \"\(event._type)\" (\(Swift.type(of: event)))"
+            } else if case let .unsupported(type) = envelope.event {
+                "unsupported event \"\(type)\""
+            } else {
+                "event"
+            }
+        #endif
+        case let .unsupported(type):
+            "unsupported request type \"\(type)\""
+        }
+    }
+}
+
+extension InteractivePayload {
+    fileprivate var routingDescription: String {
+        switch self {
+        case let .shortcut(payload):
+            describe(callbackId: payload.callbackId)
+        case let .messageAction(payload):
+            describe(callbackId: payload.callbackId)
+        case let .blockActions(payload) where payload.blockActions.isEmpty:
+            "\(_type) without actions"
+        case let .blockActions(payload):
+            "\(_type) with "
+                + payload.blockActions
+                .map { ActionKey(actionId: $0.actionId, blockId: $0.blockId).description }
+                .joined(separator: ", ")
+        case let .viewSubmission(payload):
+            describe(callbackId: payload.callbackId)
+        case let .viewClosed(payload):
+            describe(callbackId: payload.callbackId)
+        case let .unsupported(type):
+            "unsupported interactive payload type \"\(type)\""
+        }
+    }
+
+    private func describe(callbackId: String?) -> String {
+        "\(_type) with " + (callbackId.map { "callback_id \"\($0)\"" } ?? "no callback_id")
+    }
+}
+
+private struct ActionKey: Hashable, CustomStringConvertible {
     let actionId: String
     let blockId: String?
+
+    var description: String {
+        if let blockId {
+            "action_id \"\(actionId)\" and block_id \"\(blockId)\""
+        } else {
+            "action_id \"\(actionId)\""
+        }
+    }
 }
 
 #if Events
@@ -78,8 +149,16 @@ public class Router {
     private var typedEventHandlers: [TypedEventKey: RequestHandler] = [:]
     #endif
     private var errorHandler: ErrorHandler?
+    private let logger: Logger
 
-    public init() {}
+    /// Creates a router.
+    ///
+    /// - Parameter logger: Logs a warning when a registration replaces the handler registered earlier for the same
+    ///   key, such as the same command or `callback_id`. Requests that no handler matches are logged with the
+    ///   app's logger instead.
+    public init(logger: Logger = Logger(label: "SlackApp.Router")) {
+        self.logger = logger
+    }
 
     struct FixedRouter {
         private let interactiveHandler: RequestHandler?
@@ -117,6 +196,7 @@ public class Router {
         @discardableResult
         func dispatch(context: DispatchContext, request: Request) async throws -> Bool {
             guard let handler = handler(for: request) else {
+                context.logger.warning("No handler matched \(request.routingDescription)")
                 return false
             }
 
@@ -229,7 +309,7 @@ public class Router {
     }
 
     public func onGlobalShortcut(_ callbackId: String, handler: @escaping RequestPayloadHandler<GlobalShortcutPayload>) {
-        globalShortcutHandlers[callbackId] = { context, request in
+        register("onGlobalShortcut", callbackId, describedAs: "callback_id \"\(callbackId)\"", in: &globalShortcutHandlers) { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .shortcut(payload) = interactiveEnvelope.body,
@@ -241,7 +321,7 @@ public class Router {
     }
 
     public func onMessageShortcut(_ callbackId: String, handler: @escaping RequestPayloadHandler<MessageShortcutPayload>) {
-        messageShortcutHandlers[callbackId] = { context, request in
+        register("onMessageShortcut", callbackId, describedAs: "callback_id \"\(callbackId)\"", in: &messageShortcutHandlers) { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .messageAction(payload) = interactiveEnvelope.body,
@@ -258,7 +338,7 @@ public class Router {
     ) {
         precondition(command.hasPrefix("/"), "A command should be registered with `/` prefix; e.g. `/command`")
 
-        slashCommandHandlers[command] = { context, request in
+        register("onSlashCommand", command, describedAs: "command \"\(command)\"", in: &slashCommandHandlers) { context, request in
             guard let context = context.requestContext,
                   case let .slashCommand(payload) = request,
                   payload.command == command else {
@@ -279,7 +359,8 @@ public class Router {
         blockId: String? = nil,
         handler: @escaping RequestPayloadHandler<BlockActionsPayload>,
     ) {
-        actionHandlers[ActionKey(actionId: actionId, blockId: blockId)] = { context, request in
+        let key = ActionKey(actionId: actionId, blockId: blockId)
+        register("onAction", key, describedAs: key.description, in: &actionHandlers) { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .blockActions(payload) = interactiveEnvelope.body,
@@ -297,7 +378,7 @@ public class Router {
     /// ``onAction(_:blockId:handler:)`` instead.
     @available(*, deprecated, message: "onBlockAction(_:) was implemented incorrectly: it does not match Bolt's app.action and app.blockAction, which match the element's action_id. It matches the containing view's callback_id instead, so it never matches elements in messages. Use onAction(_:blockId:handler:) to match an action_id, or onInteractive(_:) and check payload.callbackId to handle every action in a view. onBlockAction(_:) will be removed in a 2027 release.")
     public func onBlockAction(_ callbackId: String, handler: @escaping RequestPayloadHandler<BlockActionsPayload>) {
-        blockActionHandlers[callbackId] = { context, request in
+        register("onBlockAction", callbackId, describedAs: "callback_id \"\(callbackId)\"", in: &blockActionHandlers) { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .blockActions(payload) = interactiveEnvelope.body,
@@ -314,7 +395,7 @@ public class Router {
     /// ``onViewClosed(_:handler:)`` for the same `callback_id` takes precedence for its payload type, regardless of
     /// registration order. Requests that no view handler matches go to ``onInteractive(_:)``.
     public func onView(_ callbackId: String, handler: @escaping RequestPayloadHandler<InteractivePayload>) {
-        anyViewHandlers[callbackId] = { context, request in
+        register("onView", callbackId, describedAs: "callback_id \"\(callbackId)\"", in: &anyViewHandlers) { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request else { return }
             if case let .viewSubmission(payload) = interactiveEnvelope.body,
@@ -333,7 +414,7 @@ public class Router {
     /// ``onViewClosed(_:handler:)`` for the same `callback_id`. It takes precedence over ``onView(_:handler:)`` for
     /// `view_submission` requests, regardless of registration order.
     public func onViewSubmission(_ callbackId: String, handler: @escaping RequestPayloadHandler<ViewSubmissionPayload>) {
-        viewSubmissionHandlers[callbackId] = { context, request in
+        register("onViewSubmission", callbackId, describedAs: "callback_id \"\(callbackId)\"", in: &viewSubmissionHandlers) { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .viewSubmission(payload) = interactiveEnvelope.body,
@@ -351,7 +432,7 @@ public class Router {
     /// `callback_id`. It takes precedence over ``onView(_:handler:)`` for `view_closed` requests, regardless of
     /// registration order.
     public func onViewClosed(_ callbackId: String, handler: @escaping RequestPayloadHandler<ViewClosedPayload>) {
-        viewClosedHandlers[callbackId] = { context, request in
+        register("onViewClosed", callbackId, describedAs: "callback_id \"\(callbackId)\"", in: &viewClosedHandlers) { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .viewClosed(payload) = interactiveEnvelope.body,
@@ -364,6 +445,20 @@ public class Router {
 
     public func onError(_ handler: @escaping ErrorHandler) {
         errorHandler = handler
+    }
+
+    /// Stores `handler` for `key`, warning when it replaces a handler registered earlier, like Bolt for Java's
+    /// `Replaced the handler for ...`.
+    private func register<Key: Hashable>(
+        _ api: String,
+        _ key: Key,
+        describedAs keyDescription: String,
+        in handlers: inout [Key: RequestHandler],
+        handler: @escaping RequestHandler,
+    ) {
+        if handlers.updateValue(handler, forKey: key) != nil {
+            logger.warning("Replaced the \(api) handler for \(keyDescription)")
+        }
     }
 
     #if Events
@@ -379,7 +474,7 @@ public class Router {
         _: T.Type,
         handler: @escaping EventRequestEnvelopePayloadHandler<EventsApiEnvelope<Event>, T>,
     ) {
-        typedEventHandlers[TypedEventKey(T.self)] = { context, request in
+        register("onEvent", TypedEventKey(T.self), describedAs: "\(T.self)", in: &typedEventHandlers) { context, request in
             guard let context = context.eventContext,
                   case let .event(payload) = request,
                   let event = payload.event.payload as? T else {

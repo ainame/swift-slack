@@ -148,8 +148,8 @@ extension SlackApp {
                                 )
                                 let matched = try await router.dispatch(context: .request(context), request: request)
                                 if !matched {
-                                    // Match the HTTP mode, which acknowledges requests that no handler matched.
-                                    runtimeLogger.info("No handler matched Socket Mode request; sending an empty acknowledgement")
+                                    // The router has logged the unmatched request. Match the HTTP mode, which
+                                    // acknowledges requests that no handler matched.
                                     try await SocketModeAcknowledger.sendBasicAck(
                                         envelopeId: envelope.envelopeId,
                                         writer: outbound,
