@@ -39,6 +39,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Maintenance
 
+* Moved CI to `ubuntu-26.04` ahead of the `ubuntu-latest` migration, installed the `.swift-version` toolchain through swiftly instead of using the runner image's preinstalled Swift, and keyed Swift build caches by runner image - #162
 * Simplified swift-slack handwritten model overrides by discovering source files and sharing extraction logic - #149
 * Moved scheduled upstream schema review to the `slack-upstream-sync` Codex skill, covering generated and handwritten models, and retained Schema Update as a manual Actions fallback - #148
 * Removed `CLAUDE.md` and moved agent skills from `.codex/skills` to `.agents/skills`, so Claude Code and Codex share `AGENTS.md` and one skills directory, with `.claude/skills` linking to it - #147
