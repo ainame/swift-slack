@@ -6,7 +6,7 @@ Combine `SlackApp` routing with Block Kit views to build an interactive workflow
 
 This example lists tasks in response to a slash command, opens a modal when someone clicks a button in that message, and reads the modal's values on submission. It uses `SlackBlockKitDSL` for the views, so add that product to your target alongside `SlackKit`.
 
-> Note: Events API handlers are acknowledged automatically. Slash command, interaction, shortcut, and view handlers must call `ack()`. Registering another handler for the same command, callback ID, or event type replaces the earlier one.
+> Note: Events API handlers are acknowledged automatically. Slash command, interaction, shortcut, and view handlers must call `ack()`. Registering another handler for the same command, callback ID, action ID, or event type replaces the earlier one and logs a warning.
 
 ```swift
 import SlackBlockKitDSL

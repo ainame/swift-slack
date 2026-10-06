@@ -78,7 +78,7 @@ try await app.run()
 
 - `onEvent` handlers are acknowledged automatically and don't receive `ack`. In HTTP mode, Events API requests return `200 OK`; in Socket Mode, the envelope is acknowledged before dispatch.
 - Slash command, interaction, shortcut, and view handlers still call `ack()` explicitly.
-- Registering another handler of the same kind for the same command, callback ID, or event type replaces the earlier one. `onViewSubmission` and `onViewClosed` can share a callback ID, and `onView` handles only the view payload types that have no type-specific handler.
+- Registering another handler of the same kind for the same command, callback ID, action ID, or event type replaces the earlier one and logs a warning through the logger passed to `Router(logger:)`. `onViewSubmission` and `onViewClosed` can share a callback ID, and `onView` handles only the view payload types that have no type-specific handler.
 
 ## ServiceLifecycle
 
