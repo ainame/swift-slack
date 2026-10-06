@@ -19,7 +19,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 * Rewrote the README around a runnable Socket Mode bot and an end-to-end `/echo` quick start, and reorganized the DocC catalogs: a `SlackClient` Getting Started that reads Web API responses, the Block Kit example gallery moved to `SlackBlockKitDSL`, a single migration guide in the `SlackApp` documentation, and `SlackKit` added to the Swift Package Index documentation targets - #150
 * **BREAKING**: Changed `ContextElementBuilder`, `OptionGroupBuilder`, `RichTextElementBuilder`, `RichTextSectionBuilder`, `RichTextContentBuilder`, and `MarkdownBuilder` to build arrays from each expression. Custom `buildExpression` overloads added to these builders must now return an array, such as `[ContextElementType]` or `[String]`, and direct calls to their `build*` methods must pass and expect arrays - #151
-* Changed `Router.onView(_:handler:)` into a fallback for its `callback_id`: `onViewSubmission(_:handler:)` and `onViewClosed(_:handler:)` now take precedence for their payload types whichever is registered first, and `onView` handles only the payload types they leave unregistered. Previously, the last registration for a `callback_id` replaced the others - #161
+* **BREAKING**: Changed `Router.onView(_:handler:)` into a fallback for its `callback_id`: `onViewSubmission(_:handler:)` and `onViewClosed(_:handler:)` now take precedence for their payload types whichever is registered first, and `onView` handles only the payload types they leave unregistered. Previously, the last registration for a `callback_id` replaced the others. If an app relied on a later `onView` replacing a type-specific handler, remove that handler - #161
 
 ### Deprecated
 
