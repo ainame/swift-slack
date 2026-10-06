@@ -365,7 +365,7 @@ struct AppRouterTests {
         router.onBlockAction("modal") { _, _ in }
         router.onBlockAction("modal") { _, _ in }
 
-        #expect(logs.warnings == [#"Replaced the onBlockAction handler for callback_id "modal""#])
+        #expect(logs.warnings == [#"Replaced the onBlockAction handler for "modal""#])
     }
 
     @Test func `registering different keys does not log a warning`() {
@@ -495,23 +495,23 @@ enum Registration: CaseIterable {
     var expectedWarning: String {
         switch self {
         case .slashCommand:
-            #"Replaced the onSlashCommand handler for command "/test""#
+            #"Replaced the onSlashCommand handler for "/test""#
         case .globalShortcut:
-            #"Replaced the onGlobalShortcut handler for callback_id "shortcut""#
+            #"Replaced the onGlobalShortcut handler for "shortcut""#
         case .messageShortcut:
-            #"Replaced the onMessageShortcut handler for callback_id "shortcut""#
+            #"Replaced the onMessageShortcut handler for "shortcut""#
         case .action:
-            #"Replaced the onAction handler for action_id "button""#
+            #"Replaced the onAction handler for "button""#
         case .actionInBlock:
-            #"Replaced the onAction handler for action_id "button" and block_id "block-1""#
+            #"Replaced the onAction handler for "button" in block "block-1""#
         case .view:
-            #"Replaced the onView handler for callback_id "modal""#
+            #"Replaced the onView handler for "modal""#
         case .viewSubmission:
-            #"Replaced the onViewSubmission handler for callback_id "modal""#
+            #"Replaced the onViewSubmission handler for "modal""#
         case .viewClosed:
-            #"Replaced the onViewClosed handler for callback_id "modal""#
+            #"Replaced the onViewClosed handler for "modal""#
         case .typedEvent:
-            "Replaced the onEvent handler for MessageEvent"
+            "Replaced the onEvent handler for SlackApp.MessageEvent"
         }
     }
 }
