@@ -10,8 +10,9 @@ public struct SocketModeOptions: OptionSet, RawRepresentable, Sendable {
     /// * WebSocket library (WSClient)
     /// * Networking failure for WebSocket
     ///
-    /// Messages that fail to decode are always logged and skipped, regardless of this option, and
-    /// acknowledged when their `envelope_id` can be read. Please report them to get them fixed.
+    /// Messages that fail to decode are always logged and skipped, regardless of this option. As in HTTP mode,
+    /// Events API envelopes are acknowledged, and interactive requests and slash commands are not, so Slack
+    /// shows the user an error. Please report them to get them fixed.
     public static let recoverFromAppError = SocketModeOptions(rawValue: 1 << 1)
 
     public let rawValue: Int

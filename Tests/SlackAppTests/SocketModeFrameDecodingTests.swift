@@ -7,19 +7,33 @@ import Testing
 struct SocketModeFrameDecodingTests {
     private let logger = Logger(label: "test")
 
-    @Test func `undecodable envelope is acknowledged and skipped`() async throws {
-        // A slash command payload without the required `command` field.
+    @Test func `undecodable Events API envelope is acknowledged and skipped`() async {
+        // A message event whose blocks include a block type swift-slack does not model.
         let json = """
         {
           "envelope_id": "env-1",
-          "type": "slash_commands",
-          "accepts_response_payload": true,
-          "payload": { "text": "hello" }
+          "type": "events_api",
+          "accepts_response_payload": false,
+          "payload": {
+            "team_id": "T123",
+            "api_app_id": "A123",
+            "type": "event_callback",
+            "event_id": "Ev123",
+            "event_time": 1700000000,
+            "event": {
+              "type": "message",
+              "channel": "C123",
+              "user": "U123",
+              "text": "hello",
+              "ts": "1.2",
+              "blocks": [{ "type": "unmodeled_block", "block_id": "b1" }]
+            }
+          }
         }
         """
         let acks = AckRecorder()
 
-        let envelope = try await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) {
+        let envelope = await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) {
             await acks.record($0)
         }
 
@@ -28,15 +42,39 @@ struct SocketModeFrameDecodingTests {
     }
 
     @Test(arguments: [
-        "not json",
-        #"{ "type": "hello" }"#,
-        #"{ "type": "disconnect", "reason": "warning" }"#,
-        #"{ "type": "slash_commands", "payload": {} }"#,
+        // A view submission whose view includes a block type swift-slack does not model.
+        """
+        {
+          "envelope_id": "env-1",
+          "type": "interactive",
+          "accepts_response_payload": true,
+          "payload": {
+            "type": "view_submission",
+            "user": { "id": "U123" },
+            "team": { "id": "T123" },
+            "view": {
+              "id": "V123",
+              "type": "modal",
+              "title": { "type": "plain_text", "text": "Preferences" },
+              "blocks": [{ "type": "unmodeled_block" }]
+            }
+          }
+        }
+        """,
+        // A slash command without the required `command` field.
+        """
+        {
+          "envelope_id": "env-1",
+          "type": "slash_commands",
+          "accepts_response_payload": true,
+          "payload": { "text": "hello" }
+        }
+        """,
     ])
-    func `undecodable frame without envelope ID is skipped without acknowledgement`(json: String) async throws {
+    func `undecodable request envelope is skipped without acknowledgement`(json: String) async {
         let acks = AckRecorder()
 
-        let envelope = try await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) {
+        let envelope = await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) {
             await acks.record($0)
         }
 
@@ -44,7 +82,34 @@ struct SocketModeFrameDecodingTests {
         #expect(await acks.envelopeIds.isEmpty)
     }
 
-    @Test func `hello frame is skipped without acknowledgement`() async throws {
+    @Test func `failed acknowledgement is logged instead of thrown`() async {
+        let json = #"{ "envelope_id": "env-1", "type": "events_api", "payload": {} }"#
+
+        let envelope = await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) { _ in
+            throw AckFailure()
+        }
+
+        #expect(envelope == nil)
+    }
+
+    @Test(arguments: [
+        "not json",
+        #"{ "type": "hello" }"#,
+        #"{ "type": "disconnect", "reason": "warning" }"#,
+        #"{ "type": "slash_commands", "payload": {} }"#,
+    ])
+    func `undecodable frame without envelope ID is skipped without acknowledgement`(json: String) async {
+        let acks = AckRecorder()
+
+        let envelope = await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) {
+            await acks.record($0)
+        }
+
+        #expect(envelope == nil)
+        #expect(await acks.envelopeIds.isEmpty)
+    }
+
+    @Test func `hello frame is skipped without acknowledgement`() async {
         let json = """
         {
           "type": "hello",
@@ -55,7 +120,7 @@ struct SocketModeFrameDecodingTests {
         """
         let acks = AckRecorder()
 
-        let envelope = try await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) {
+        let envelope = await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) {
             await acks.record($0)
         }
 
@@ -87,7 +152,7 @@ struct SocketModeFrameDecodingTests {
         """
         let acks = AckRecorder()
 
-        let envelope = try await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) {
+        let envelope = await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) {
             await acks.record($0)
         }
 
@@ -101,6 +166,8 @@ struct SocketModeFrameDecodingTests {
         #expect(await acks.envelopeIds.isEmpty)
     }
 }
+
+private struct AckFailure: Error {}
 
 private actor AckRecorder {
     private(set) var envelopeIds: [String] = []
