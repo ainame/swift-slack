@@ -378,6 +378,34 @@ struct AppHTTPHandlerTests {
         #expect(await tracker.submitted)
     }
 
+    @Test func `view closed without a closed handler returns OK`() async throws {
+        let router = Router()
+        router.onViewSubmission("feedback_modal") { context, _ in
+            try await context.ack()
+        }
+
+        let payload = """
+        {"type":"view_closed","user":{"id":"U123"},"api_app_id":"A123","token":"legacy-token","team":{"id":"T123","domain":"example"},"is_cleared":false,"view":{"id":"V123","team_id":"T123","type":"modal","callback_id":"feedback_modal","notify_on_close":true,"title":{"type":"plain_text","text":"Test"},"blocks":[],"state":{"values":{}}}}
+        """
+        let encodedPayload = try #require(payload.addingPercentEncoding(withAllowedCharacters: .alphanumerics))
+        let body = Data("payload=\(encodedPayload)".utf8)
+        let timestamp = currentTimestamp()
+        let request = signedRequest(
+            secret: "secret",
+            method: .post,
+            path: "/slack/events",
+            contentType: "application/x-www-form-urlencoded",
+            body: body,
+            timestamp: timestamp,
+        )
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
+
+        let (response, responseBody) = try await app.handle(request.0, body: request.1)
+
+        #expect(response.status == .ok)
+        #expect(responseBody == nil)
+    }
+
     @Test func `matched slash command without ack returns internal server error`() async throws {
         let router = Router()
         router.onSlashCommand("/echo") { _, _ in }
