@@ -44,29 +44,6 @@ public enum Request: Sendable {
     case unsupported(String)
 }
 
-private enum InteractiveHandler {
-    case interactive(RequestHandler)
-    case shortcut(RequestHandler)
-    case messageShortcut(RequestHandler)
-    case blockAction(RequestHandler)
-    case view(RequestHandler)
-    case viewSubmission(RequestHandler)
-    case viewClosed(RequestHandler)
-
-    var handler: RequestHandler {
-        switch self {
-        case let .interactive(handler),
-             let .shortcut(handler),
-             let .messageShortcut(handler),
-             let .blockAction(handler),
-             let .view(handler),
-             let .viewSubmission(handler),
-             let .viewClosed(handler):
-            handler
-        }
-    }
-}
-
 private struct ActionKey: Hashable {
     let actionId: String
     let blockId: String?
@@ -93,7 +70,9 @@ public class Router {
     private var messageShortcutHandlers: [String: RequestHandler] = [:]
     private var actionHandlers: [ActionKey: RequestHandler] = [:]
     private var blockActionHandlers: [String: RequestHandler] = [:]
-    private var viewHandlers: [String: InteractiveHandler] = [:]
+    private var viewHandlers: [String: RequestHandler] = [:]
+    private var viewSubmissionHandlers: [String: RequestHandler] = [:]
+    private var viewClosedHandlers: [String: RequestHandler] = [:]
     #if Events
     private var eventHandler: RequestHandler?
     private var typedEventHandlers: [TypedEventKey: RequestHandler] = [:]
@@ -109,7 +88,9 @@ public class Router {
         private let messageShortcutHandlers: [String: RequestHandler]
         private let actionHandlers: [ActionKey: RequestHandler]
         private let blockActionHandlers: [String: RequestHandler]
-        private let viewHandlers: [String: InteractiveHandler]
+        private let viewHandlers: [String: RequestHandler]
+        private let viewSubmissionHandlers: [String: RequestHandler]
+        private let viewClosedHandlers: [String: RequestHandler]
         #if Events
         private let eventHandler: RequestHandler?
         private let typedEventHandlers: [TypedEventKey: RequestHandler]
@@ -124,6 +105,8 @@ public class Router {
             actionHandlers = router.actionHandlers
             blockActionHandlers = router.blockActionHandlers
             viewHandlers = router.viewHandlers
+            viewSubmissionHandlers = router.viewSubmissionHandlers
+            viewClosedHandlers = router.viewClosedHandlers
             #if Events
             eventHandler = router.eventHandler
             typedEventHandlers = router.typedEventHandlers
@@ -188,14 +171,14 @@ public class Router {
                 return interactiveHandler
             case let .viewSubmission(payload):
                 if let callbackId = payload.callbackId,
-                   let handler = viewHandlers[callbackId] {
-                    return handler.handler
+                   let handler = viewSubmissionHandlers[callbackId] ?? viewHandlers[callbackId] {
+                    return handler
                 }
                 return interactiveHandler
             case let .viewClosed(payload):
                 if let callbackId = payload.callbackId,
-                   let handler = viewHandlers[callbackId] {
-                    return handler.handler
+                   let handler = viewClosedHandlers[callbackId] ?? viewHandlers[callbackId] {
+                    return handler
                 }
                 return interactiveHandler
             case .unsupported:
@@ -321,8 +304,13 @@ public class Router {
         }
     }
 
+    /// Registers a handler for `view_submission` and `view_closed` requests from a view with the given `callback_id`.
+    ///
+    /// This is a fallback: a handler registered with ``onViewSubmission(_:handler:)`` or
+    /// ``onViewClosed(_:handler:)`` for the same `callback_id` takes precedence for its payload type, whichever is
+    /// registered first. Requests that no view handler matches go to ``onInteractive(_:)``.
     public func onView(_ callbackId: String, handler: @escaping RequestPayloadHandler<InteractivePayload>) {
-        viewHandlers[callbackId] = .view { context, request in
+        viewHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request else { return }
             if case let .viewSubmission(payload) = interactiveEnvelope.body,
@@ -335,8 +323,13 @@ public class Router {
         }
     }
 
+    /// Registers a handler for `view_submission` requests from a view with the given `callback_id`.
+    ///
+    /// Like Bolt's `viewSubmission` in Java and `view_submission` in Python, this can be registered alongside
+    /// ``onViewClosed(_:handler:)`` for the same `callback_id`. It takes precedence over ``onView(_:handler:)`` for
+    /// `view_submission` requests, whichever is registered first.
     public func onViewSubmission(_ callbackId: String, handler: @escaping RequestPayloadHandler<ViewSubmissionPayload>) {
-        viewHandlers[callbackId] = .viewSubmission { context, request in
+        viewSubmissionHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .viewSubmission(payload) = interactiveEnvelope.body,
@@ -347,8 +340,14 @@ public class Router {
         }
     }
 
+    /// Registers a handler for `view_closed` requests from a view with the given `callback_id`.
+    ///
+    /// Slack sends `view_closed` only for views that set `notify_on_close`. Like Bolt's `viewClosed` in Java and
+    /// `view_closed` in Python, this can be registered alongside ``onViewSubmission(_:handler:)`` for the same
+    /// `callback_id`. It takes precedence over ``onView(_:handler:)`` for `view_closed` requests, whichever is
+    /// registered first.
     public func onViewClosed(_ callbackId: String, handler: @escaping RequestPayloadHandler<ViewClosedPayload>) {
-        viewHandlers[callbackId] = .viewClosed { context, request in
+        viewClosedHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .viewClosed(payload) = interactiveEnvelope.body,

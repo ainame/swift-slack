@@ -227,24 +227,88 @@ struct AppRouterTests {
         #expect(await tracker.value == "second")
     }
 
-    @Test func `view handlers share namespace by callback id`() async throws {
-        actor Tracker {
-            private(set) var value: String?
-            func set(_ value: String) {
-                self.value = value
-            }
+    @Test(arguments: [false, true])
+    func `view submission and closed handlers for one callback id both run`(closedFirst: Bool) async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        let registerSubmission = {
+            router.onViewSubmission("modal") { _, payload in await tracker.set("submission:\(payload._type)") }
+        }
+        let registerClosed = {
+            router.onViewClosed("modal") { _, payload in await tracker.set("closed:\(payload._type)") }
+        }
+        if closedFirst {
+            registerClosed()
+            registerSubmission()
+        } else {
+            registerSubmission()
+            registerClosed()
         }
 
-        let tracker = Tracker()
+        #expect(try await dispatch(router, makeViewSubmissionEnvelope(callbackId: "modal")))
+        #expect(await tracker.value == "submission:view_submission")
+
+        #expect(try await dispatch(router, makeViewClosedEnvelope(callbackId: "modal")))
+        #expect(await tracker.value == "closed:view_closed")
+    }
+
+    @Test func `onView is a fallback for view payload types without a specific handler`() async throws {
+        let tracker = ValueTracker()
         let router = Router()
-        router.onView("modal") { _, _ in await tracker.set("view") }
+        router.onView("modal") { _, payload in await tracker.set("view:\(payload._type)") }
         router.onViewSubmission("modal") { _, _ in await tracker.set("submission") }
 
-        let body = try makeViewSubmissionEnvelope(callbackId: "modal")
-        let fixedRouter = Router.FixedRouter(from: router)
-        try await fixedRouter.dispatch(context: .request(makeRequestContext()), request: .interactive(body))
-
+        #expect(try await dispatch(router, makeViewSubmissionEnvelope(callbackId: "modal")))
         #expect(await tracker.value == "submission")
+
+        #expect(try await dispatch(router, makeViewClosedEnvelope(callbackId: "modal")))
+        #expect(await tracker.value == "view:view_closed")
+    }
+
+    @Test func `specific view handlers take precedence over onView registered later`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onViewSubmission("modal") { _, _ in await tracker.set("submission") }
+        router.onViewClosed("modal") { _, _ in await tracker.set("closed") }
+        router.onView("modal") { _, _ in await tracker.set("view") }
+
+        #expect(try await dispatch(router, makeViewSubmissionEnvelope(callbackId: "modal")))
+        #expect(await tracker.value == "submission")
+
+        #expect(try await dispatch(router, makeViewClosedEnvelope(callbackId: "modal")))
+        #expect(await tracker.value == "closed")
+    }
+
+    @Test func `onView handles both view payload types`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onView("modal") { _, payload in await tracker.set(payload._type) }
+
+        #expect(try await dispatch(router, makeViewSubmissionEnvelope(callbackId: "modal")))
+        #expect(await tracker.value == "view_submission")
+
+        #expect(try await dispatch(router, makeViewClosedEnvelope(callbackId: "modal")))
+        #expect(await tracker.value == "view_closed")
+    }
+
+    @Test func `view payload without a handler for its type is not handled`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onViewClosed("modal") { _, _ in await tracker.set("closed") }
+        router.onViewSubmission("other") { _, _ in await tracker.set("other") }
+
+        #expect(try await !dispatch(router, makeViewSubmissionEnvelope(callbackId: "modal")))
+        #expect(await tracker.value == nil)
+    }
+
+    @Test func `view payload without a handler for its type falls back to onInteractive`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onInteractive { _, _ in await tracker.set("broad") }
+        router.onViewSubmission("modal") { _, _ in await tracker.set("submission") }
+
+        #expect(try await dispatch(router, makeViewClosedEnvelope(callbackId: "modal")))
+        #expect(await tracker.value == "broad")
     }
 }
 
@@ -302,9 +366,10 @@ private actor ValueTracker {
     }
 }
 
-private func dispatch(_ router: Router, _ envelope: InteractiveEnvelope) async throws {
+@discardableResult
+private func dispatch(_ router: Router, _ envelope: InteractiveEnvelope) async throws -> Bool {
     let fixedRouter = Router.FixedRouter(from: router)
-    try await fixedRouter.dispatch(context: .request(makeRequestContext()), request: .interactive(envelope))
+    return try await fixedRouter.dispatch(context: .request(makeRequestContext()), request: .interactive(envelope))
 }
 
 private func makeBlockActionEnvelope(
@@ -381,6 +446,30 @@ private func makeViewSubmissionEnvelope(callbackId: String) throws -> Interactiv
           "token": "legacy-token",
           "trigger_id": "13345224609.738474920.8088930838d88f008e0",
           "team": { "id": "T123", "domain": "example" },
+          "view": {
+            "id": "V123",
+            "team_id": "T123",
+            "type": "modal",
+            "callback_id": "\(callbackId)",
+            "title": { "type": "plain_text", "text": "Test" },
+            "blocks": [],
+            "state": {"values": {}}
+          }
+        }
+        """.data(using: .utf8),
+    )
+    return try JSONDecoder().decode(InteractiveEnvelope.self, from: bodyData)
+}
+
+private func makeViewClosedEnvelope(callbackId: String) throws -> InteractiveEnvelope {
+    let bodyData = try #require(
+        """
+        {
+          "type": "view_closed",
+          "user": { "id": "U123" },
+          "api_app_id": "A123",
+          "team": { "id": "T123", "domain": "example" },
+          "is_cleared": false,
           "view": {
             "id": "V123",
             "team_id": "T123",
