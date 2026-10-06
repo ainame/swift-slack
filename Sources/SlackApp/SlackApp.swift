@@ -114,7 +114,7 @@ extension SlackApp {
                 for try await frame in inbound {
                     guard frame.opcode == .text else { continue }
 
-                    let envelope = try await Self.decodeSocketModeFrame(frame.data, logger: logger) { envelopeId in
+                    let envelope = await Self.decodeSocketModeFrame(frame.data, logger: logger) { envelopeId in
                         try await SocketModeAcknowledger.sendBasicAck(envelopeId: envelopeId, writer: outbound)
                     }
                     guard let envelope else { continue }
@@ -226,27 +226,38 @@ extension SlackApp {
     /// Decodes one Socket Mode text frame and returns the envelope to dispatch, if any.
     ///
     /// A frame that fails to decode is logged and skipped instead of thrown, because a thrown error
-    /// closes the WebSocket connection and stops the app. When the failed frame is an envelope whose
-    /// `envelope_id` can still be read, it receives a basic acknowledgement through `sendBasicAck`, so
-    /// Slack neither retries it nor shows the user an error. `hello` and `disconnect` frames are only
-    /// logged, so failing to decode them changes nothing.
+    /// closes the WebSocket connection and stops the app. Acknowledgement matches HTTP mode: an
+    /// `events_api` envelope whose `envelope_id` can still be read is acknowledged through `sendBasicAck`,
+    /// so Slack does not retry it. Interactive requests and slash commands are left unacknowledged, so
+    /// Slack shows the user an error instead of treating the request as handled, which would close a
+    /// submitted modal. `hello` and `disconnect` frames are only logged, so failing to decode them changes
+    /// nothing. A failed acknowledgement is logged; if the connection is broken, the frame loop ends on
+    /// its own.
     static func decodeSocketModeFrame(
         _ buffer: ByteBuffer,
         logger: Logger,
         sendBasicAck: (String) async throws -> Void,
-    ) async throws -> SocketModeMessageEnvelope? {
+    ) async -> SocketModeMessageEnvelope? {
         let message: SocketModeMessage
         do {
             message = try JSONDecoder().decode(SocketModeMessage.self, from: buffer)
         } catch {
-            logger.error("Parsing message failed: \(error) /// \(String(buffer: buffer))")
-            guard let header = try? JSONDecoder().decode(SocketModeEnvelopeHeader.self, from: buffer) else {
+            let header = try? JSONDecoder().decode(SocketModeEnvelopeHeader.self, from: buffer)
+            logger.error(
+                "Parsing Socket Mode message failed (envelope_id: \(header?.envelopeId ?? "none"), type: \(header?._type ?? "unknown")): \(error)",
+            )
+            logger.debug("Socket Mode message that failed to parse: \(String(buffer: buffer))")
+
+            guard let header, let envelopeId = header.envelopeId else { return nil }
+            guard header._type == "events_api" else {
+                logger.warning("Not acknowledging Socket Mode envelope \(envelopeId) that failed to decode; Slack reports the failure")
                 return nil
             }
-            logger.warning(
-                "Acknowledging Socket Mode envelope that failed to decode: \(header.envelopeId) (type: \(header._type ?? "unknown"))",
-            )
-            try await sendBasicAck(header.envelopeId)
+            do {
+                try await sendBasicAck(envelopeId)
+            } catch {
+                logger.error("Acknowledging Socket Mode envelope \(envelopeId) failed: \(error)")
+            }
             return nil
         }
 
@@ -263,9 +274,9 @@ extension SlackApp {
     }
 }
 
-/// The fields of a Socket Mode envelope needed to acknowledge it when its payload fails to decode.
+/// The fields of a Socket Mode message used to log and acknowledge it when it fails to decode.
 private struct SocketModeEnvelopeHeader: Decodable {
-    let envelopeId: String
+    let envelopeId: String?
     let _type: String?
 
     private enum CodingKeys: String, CodingKey {
