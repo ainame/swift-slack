@@ -165,12 +165,13 @@ public class Router {
     private var errorHandler: ErrorHandler?
     private let logger: Logger
 
-    /// Creates a router.
-    ///
-    /// - Parameter logger: Logs a warning when a registration replaces the handler registered earlier for the same
-    ///   key, such as the same command or `callback_id`. Requests that no handler matches are logged with the
-    ///   app's logger instead.
-    public init(logger: Logger = Logger(label: "SlackApp.Router")) {
+    public convenience init() {
+        // Like Bolt for Java's class-level logger, this follows the app's `LoggingSystem` bootstrap. It only logs
+        // registrations that replace an earlier handler; requests that no handler matches use the app's logger.
+        self.init(logger: Logger(label: "SlackApp.Router"))
+    }
+
+    init(logger: Logger) {
         self.logger = logger
     }
 
