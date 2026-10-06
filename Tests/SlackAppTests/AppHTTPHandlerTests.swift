@@ -337,6 +337,47 @@ struct AppHTTPHandlerTests {
         #expect(responseBody == nil)
     }
 
+    @Test func `view submission is acknowledged by its handler when a closed handler shares the callback id`() async throws {
+        actor Tracker {
+            private(set) var submitted = false
+
+            func markSubmitted() {
+                submitted = true
+            }
+        }
+
+        let tracker = Tracker()
+        let router = Router()
+        router.onViewSubmission("feedback_modal") { context, _ in
+            try await context.ack()
+            await tracker.markSubmitted()
+        }
+        router.onViewClosed("feedback_modal") { context, _ in
+            try await context.ack()
+        }
+
+        let payload = """
+        {"type":"view_submission","user":{"id":"U123"},"api_app_id":"A123","token":"legacy-token","trigger_id":"trigger","team":{"id":"T123","domain":"example"},"view":{"id":"V123","team_id":"T123","type":"modal","callback_id":"feedback_modal","title":{"type":"plain_text","text":"Test"},"blocks":[],"state":{"values":{}}}}
+        """
+        let encodedPayload = try #require(payload.addingPercentEncoding(withAllowedCharacters: .alphanumerics))
+        let body = Data("payload=\(encodedPayload)".utf8)
+        let timestamp = currentTimestamp()
+        let request = signedRequest(
+            secret: "secret",
+            method: .post,
+            path: "/slack/events",
+            contentType: "application/x-www-form-urlencoded",
+            body: body,
+            timestamp: timestamp,
+        )
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
+
+        let (response, _) = try await app.handle(request.0, body: request.1)
+
+        #expect(response.status == .ok)
+        #expect(await tracker.submitted)
+    }
+
     @Test func `matched slash command without ack returns internal server error`() async throws {
         let router = Router()
         router.onSlashCommand("/echo") { _, _ in }
