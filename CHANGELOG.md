@@ -13,6 +13,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 * Added `Router.onAction(_:blockId:handler:)`, which matches the interacted element's `action_id`, and its `block_id` when given, like Bolt's `app.action(...)`. Unlike `onBlockAction`, it handles elements in messages as well as in modals and App Home - #155
 * Added `BlockActionsPayload.blockActions`, following java-slack-sdk's `BlockActionPayload.Action`, with each action's `actionId`, `blockId`, `actionTs`, and selected values such as `value`, `selectedOption`, `selectedOptions`, `selectedUser`, `selectedDate`, `selectedDateTime`, and `richTextValue`, and `BlockActionsPayload.containsAction(_:blockId:)` - #155
+* Added warnings when a `Router` registration replaces the handler registered earlier for the same command, `callback_id`, `action_id`, or event type. The warning names the API and the key, like Bolt for Java's `Replaced the handler for ...`, and goes to the logger passed to the new `Router(logger:)`, which defaults to `Logger(label: "SlackApp.Router")` - #163
 * Added optional `recordChannel`, `codeChannel`, and `agentSession` fields to swift-slack's conversation `Properties`, with `RecordChannel`, `CodeChannel`, and `AgentSession` models matching java-slack-sdk payloads - #149
 
 ### Changed
@@ -20,6 +21,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * Rewrote the README around a runnable Socket Mode bot and an end-to-end `/echo` quick start, and reorganized the DocC catalogs: a `SlackClient` Getting Started that reads Web API responses, the Block Kit example gallery moved to `SlackBlockKitDSL`, a single migration guide in the `SlackApp` documentation, and `SlackKit` added to the Swift Package Index documentation targets - #150
 * **BREAKING**: Changed `ContextElementBuilder`, `OptionGroupBuilder`, `RichTextElementBuilder`, `RichTextSectionBuilder`, `RichTextContentBuilder`, and `MarkdownBuilder` to build arrays from each expression. Custom `buildExpression` overloads added to these builders must now return an array, such as `[ContextElementType]` or `[String]`, and direct calls to their `build*` methods must pass and expect arrays - #151
 * **BREAKING**: Changed `Router.onView(_:handler:)` into a fallback for its `callback_id`: `onViewSubmission(_:handler:)` and `onViewClosed(_:handler:)` now take precedence for their payload types regardless of registration order, and `onView` handles only the payload types they leave unregistered. Previously, the last registration for a `callback_id` replaced the others. If an app relied on a later `onView` replacing a type-specific handler, remove that handler - #161
+* Changed requests that no handler matches to log a warning naming the request type and its command, `action_id`, `callback_id`, or event type, in both HTTP mode and Socket Mode. Previously HTTP mode logged nothing, and Socket Mode logged at info level without the type or ID. HTTP mode still returns 200, and Socket Mode still sends an empty acknowledgement - #163
 
 ### Deprecated
 
