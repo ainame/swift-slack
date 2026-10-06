@@ -7,7 +7,7 @@ import PackageDescription
 let package = Package(
     name: "swift-slack-tools",
     dependencies: [
-        .package(url: "https://github.com/apple/swift-openapi-generator.git", exact: "1.11.0"),
+        .package(url: "https://github.com/apple/swift-openapi-generator.git", exact: "1.14.0"),
     ],
     targets: [
         // renovate: datasource=github-release-attachments depName=nicklockwood/SwiftFormat versioning=semver
