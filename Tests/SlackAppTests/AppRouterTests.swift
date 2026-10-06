@@ -344,6 +344,176 @@ struct AppRouterTests {
         #expect(try await dispatch(router, makeViewClosedEnvelope(callbackId: "modal")))
         #expect(await tracker.value == "broad")
     }
+
+    @Test(arguments: Registration.allCases)
+    func `re-registering a key logs a warning naming the API and the key`(registration: Registration) {
+        let logs = LogRecorder()
+        let router = Router(logger: logs.makeLogger())
+
+        registration.register(on: router)
+        #expect(logs.warnings.isEmpty)
+
+        registration.register(on: router)
+        #expect(logs.warnings == [registration.expectedWarning])
+    }
+
+    @available(*, deprecated)
+    @Test func `re-registering deprecated onBlockAction logs a warning`() {
+        let logs = LogRecorder()
+        let router = Router(logger: logs.makeLogger())
+
+        router.onBlockAction("modal") { _, _ in }
+        router.onBlockAction("modal") { _, _ in }
+
+        #expect(logs.warnings == [#"Replaced the onBlockAction handler for callback_id "modal""#])
+    }
+
+    @Test func `registering different keys does not log a warning`() {
+        let logs = LogRecorder()
+        let router = Router(logger: logs.makeLogger())
+
+        router.onSlashCommand("/first") { _, _ in }
+        router.onSlashCommand("/second") { _, _ in }
+        router.onGlobalShortcut("shared") { _, _ in }
+        router.onMessageShortcut("shared") { _, _ in }
+        router.onAction("button") { _, _ in }
+        router.onAction("button", blockId: "block-1") { _, _ in }
+        router.onView("modal") { _, _ in }
+        router.onViewSubmission("modal") { _, _ in }
+        router.onViewClosed("modal") { _, _ in }
+        router.onEvent(MessageEvent.self) { _, _, _ in }
+        router.onEvent(AppMentionEvent.self) { _, _, _ in }
+
+        #expect(logs.warnings.isEmpty)
+    }
+
+    @Test func `unmatched requests log a warning naming the type and ID`() async throws {
+        let cases: [(request: Request, warning: String)] = try [
+            (
+                .slashCommand(makeSlashCommandPayload(command: "/unknown")),
+                #"No handler matched slash command "/unknown""#,
+            ),
+            (
+                .interactive(makeBlockActionEnvelope(actions: [("approve", "request"), ("deny", "request")])),
+                #"No handler matched block_actions with action_id "approve" and block_id "request", action_id "deny" and block_id "request""#,
+            ),
+            (
+                .interactive(makeViewSubmissionEnvelope(callbackId: "modal")),
+                #"No handler matched view_submission with callback_id "modal""#,
+            ),
+            (
+                .interactive(makeViewSubmissionEnvelope(callbackId: nil)),
+                "No handler matched view_submission with no callback_id",
+            ),
+            (
+                .interactive(makeViewClosedEnvelope(callbackId: "modal")),
+                #"No handler matched view_closed with callback_id "modal""#,
+            ),
+        ]
+
+        for (request, warning) in cases {
+            let logs = LogRecorder()
+            let router = Router()
+            router.onSlashCommand("/known") { _, _ in }
+            router.onAction("other") { _, _ in }
+            router.onViewSubmission("other") { _, _ in }
+
+            let matched = try await Router.FixedRouter(from: router).dispatch(
+                context: .request(makeRequestContext(logger: logs.makeLogger())),
+                request: request,
+            )
+
+            #expect(!matched)
+            #expect(logs.warnings == [warning])
+        }
+    }
+
+    @Test func `unmatched event logs a warning naming the event type`() async throws {
+        let logs = LogRecorder()
+        let router = Router()
+        router.onEvent(AppMentionEvent.self) { _, _, _ in }
+
+        let matched = try await Router.FixedRouter(from: router).dispatch(
+            context: .event(makeEventContext(logger: logs.makeLogger())),
+            request: .event(makeMessageEventEnvelope(text: "hello")),
+        )
+
+        #expect(!matched)
+        #expect(logs.warnings == [#"No handler matched event "message" (MessageEvent)"#])
+    }
+
+    @Test func `requests handled by a fallback handler do not log a warning`() async throws {
+        let logs = LogRecorder()
+        let router = Router()
+        router.onInteractive { _, _ in }
+
+        let matched = try await Router.FixedRouter(from: router).dispatch(
+            context: .request(makeRequestContext(logger: logs.makeLogger())),
+            request: .interactive(makeBlockActionEnvelope(actionId: "button", viewCallbackId: nil)),
+        )
+
+        #expect(matched)
+        #expect(logs.warnings.isEmpty)
+    }
+}
+
+/// A keyed registration, for checking that registering the same key twice is logged.
+enum Registration: CaseIterable {
+    case slashCommand
+    case globalShortcut
+    case messageShortcut
+    case action
+    case actionInBlock
+    case view
+    case viewSubmission
+    case viewClosed
+    case typedEvent
+
+    func register(on router: Router) {
+        switch self {
+        case .slashCommand:
+            router.onSlashCommand("/test") { _, _ in }
+        case .globalShortcut:
+            router.onGlobalShortcut("shortcut") { _, _ in }
+        case .messageShortcut:
+            router.onMessageShortcut("shortcut") { _, _ in }
+        case .action:
+            router.onAction("button") { _, _ in }
+        case .actionInBlock:
+            router.onAction("button", blockId: "block-1") { _, _ in }
+        case .view:
+            router.onView("modal") { _, _ in }
+        case .viewSubmission:
+            router.onViewSubmission("modal") { _, _ in }
+        case .viewClosed:
+            router.onViewClosed("modal") { _, _ in }
+        case .typedEvent:
+            router.onEvent(MessageEvent.self) { _, _, _ in }
+        }
+    }
+
+    var expectedWarning: String {
+        switch self {
+        case .slashCommand:
+            #"Replaced the onSlashCommand handler for command "/test""#
+        case .globalShortcut:
+            #"Replaced the onGlobalShortcut handler for callback_id "shortcut""#
+        case .messageShortcut:
+            #"Replaced the onMessageShortcut handler for callback_id "shortcut""#
+        case .action:
+            #"Replaced the onAction handler for action_id "button""#
+        case .actionInBlock:
+            #"Replaced the onAction handler for action_id "button" and block_id "block-1""#
+        case .view:
+            #"Replaced the onView handler for callback_id "modal""#
+        case .viewSubmission:
+            #"Replaced the onViewSubmission handler for callback_id "modal""#
+        case .viewClosed:
+            #"Replaced the onViewClosed handler for callback_id "modal""#
+        case .typedEvent:
+            "Replaced the onEvent handler for MessageEvent"
+        }
+    }
 }
 
 private func makeSlashCommandPayload(command: String) throws -> SlashCommandsPayload {
@@ -522,8 +692,7 @@ private func makeViewClosedEnvelope(callbackId: String) throws -> InteractiveEnv
     return try JSONDecoder().decode(InteractiveEnvelope.self, from: bodyData)
 }
 
-private func makeEventContext() async -> SlackApp.EventContext {
-    let logger = Logger(label: "test")
+private func makeEventContext(logger: Logger = Logger(label: "test")) async -> SlackApp.EventContext {
     let transport = MockTransport()
     let slack = Slack(transport: transport)
     let client = await slack.client
@@ -536,8 +705,7 @@ private func makeEventContext() async -> SlackApp.EventContext {
     )
 }
 
-private func makeRequestContext() async -> SlackApp.Context {
-    let logger = Logger(label: "test")
+private func makeRequestContext(logger: Logger = Logger(label: "test")) async -> SlackApp.Context {
     let transport = MockTransport()
     let slack = Slack(transport: transport)
     let client = await slack.client

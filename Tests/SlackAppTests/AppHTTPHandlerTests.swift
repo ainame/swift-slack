@@ -1,6 +1,7 @@
 import Crypto
 import Foundation
 import HTTPTypes
+import Logging
 import OpenAPIRuntime
 @testable import SlackApp
 import SlackClient
@@ -249,12 +250,14 @@ struct AppHTTPHandlerTests {
             body: body,
             timestamp: timestamp,
         )
-        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: Router())
+        let logs = LogRecorder()
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret", logger: logs.makeLogger()), router: Router())
 
         let (response, responseBody) = try await app.handle(request.0, body: request.1)
 
         #expect(response.status == .ok)
         #expect(responseBody == nil)
+        #expect(logs.warnings == [#"No handler matched slash command "/unknown""#])
     }
 
     @Test func `message button dispatches action handler by action id`() async throws {
@@ -329,12 +332,14 @@ struct AppHTTPHandlerTests {
         router.onAction("other-action-id") { context, _ in
             try await context.ack()
         }
-        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
+        let logs = LogRecorder()
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret", logger: logs.makeLogger()), router: router)
 
         let (response, responseBody) = try await app.handle(request.0, body: request.1)
 
         #expect(response.status == .ok)
         #expect(responseBody == nil)
+        #expect(logs.warnings == [#"No handler matched block_actions with action_id "button-id" and block_id "block-1""#])
     }
 
     @Test func `view submission is acknowledged by its handler when a closed handler shares the callback id`() async throws {
@@ -472,9 +477,10 @@ private func currentTimestamp() -> String {
     String(Int(Date().timeIntervalSince1970))
 }
 
-private func makeSlack(signingSecret: String) -> Slack {
+private func makeSlack(signingSecret: String, logger: Logger? = nil) -> Slack {
     Slack(
         transport: MockTransport(),
+        logger: logger,
         configuration: .init(token: "xoxb-test", signingSecret: signingSecret),
     )
 }
