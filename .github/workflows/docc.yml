@@ -26,13 +26,18 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
       - name: Update apt package index
         run: sudo apt-get update
+
+      # Swift build caches are tied to the runner image as well as the toolchain.
+      - name: Read runner image
+        id: env-info
+        run: echo "image=${ImageOS}" >> "$GITHUB_OUTPUT"
 
       - name: Install Swift
         uses: vapor/swiftly-action@v0.2.1
@@ -46,17 +51,17 @@ jobs:
         uses: actions/cache/restore@v6
         with:
           path: .build
-          key: ${{ runner.os }}-swift-docc-${{ hashFiles('Package.swift') }}-
+          key: ${{ steps.env-info.outputs.image }}-swift-docc-${{ hashFiles('Package.swift') }}-
           restore-keys: |
-            ${{ runner.os }}-swift-docc-${{ hashFiles('Package.swift') }}-
-            ${{ runner.os }}-swift-docc-
+            ${{ steps.env-info.outputs.image }}-swift-docc-${{ hashFiles('Package.swift') }}-
+            ${{ steps.env-info.outputs.image }}-swift-docc-
 
       - name: Resolve Swift package dependencies
         run: swift package resolve
 
       - name: Compute Swift build cache key
         id: swift-cache-key
-        run: echo "key=${{ runner.os }}-swift-docc-${{ hashFiles('Package.swift') }}-${{ hashFiles('Package.resolved') }}" >> "$GITHUB_OUTPUT"
+        run: echo "key=${{ steps.env-info.outputs.image }}-swift-docc-${{ hashFiles('Package.swift') }}-${{ hashFiles('Package.resolved') }}" >> "$GITHUB_OUTPUT"
 
       - name: Build DocC Documentation
         run: |
@@ -77,7 +82,7 @@ jobs:
   deploy:
     if: github.ref == 'refs/heads/main'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

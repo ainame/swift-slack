@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   schema-update:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Checkout repository
@@ -38,8 +38,17 @@ jobs:
       - name: Update apt package index
         run: sudo apt-get update
 
+      # Swift build caches are tied to the runner image as well as the toolchain.
+      - name: Read Swift version and runner image
+        id: env-info
+        run: |
+          echo "swift-version=$(cat .swift-version)" >> "$GITHUB_OUTPUT"
+          echo "image=${ImageOS}" >> "$GITHUB_OUTPUT"
+
       - name: Setup Swiftly
         uses: vapor/swiftly-action@v0.2.1
+        with:
+          toolchain: ${{ steps.env-info.outputs.swift-version }}
 
       # The root Package.resolved is not tracked, so the cache is keyed on the
       # resolution result after generation: restore the newest cache by prefix,
@@ -51,10 +60,10 @@ jobs:
           path: |
             .build
             Tools/.build
-          key: ${{ runner.os }}-schema-update-swift-${{ hashFiles('.swift-version', 'Tools/Package.swift', 'Tools/Package.resolved') }}-
+          key: ${{ steps.env-info.outputs.image }}-schema-update-swift-${{ hashFiles('.swift-version', 'Tools/Package.swift', 'Tools/Package.resolved') }}-
           restore-keys: |
-            ${{ runner.os }}-schema-update-swift-${{ hashFiles('.swift-version', 'Tools/Package.swift', 'Tools/Package.resolved') }}-
-            ${{ runner.os }}-schema-update-swift-
+            ${{ steps.env-info.outputs.image }}-schema-update-swift-${{ hashFiles('.swift-version', 'Tools/Package.swift', 'Tools/Package.resolved') }}-
+            ${{ steps.env-info.outputs.image }}-schema-update-swift-
 
       - name: Install generator dependencies
         run: npm ci --ignore-scripts
@@ -92,7 +101,7 @@ jobs:
 
       - name: Compute Swift build cache key
         id: swift-cache-key
-        run: echo "key=${{ runner.os }}-schema-update-swift-${{ hashFiles('.swift-version', 'Tools/Package.swift', 'Tools/Package.resolved') }}-${{ hashFiles('Package.swift', 'Package.resolved') }}" >> "$GITHUB_OUTPUT"
+        run: echo "key=${{ steps.env-info.outputs.image }}-schema-update-swift-${{ hashFiles('.swift-version', 'Tools/Package.swift', 'Tools/Package.resolved') }}-${{ hashFiles('Package.swift', 'Package.resolved') }}" >> "$GITHUB_OUTPUT"
 
       - name: Save Swift build cache
         if: steps.restore-swift-cache.outputs.cache-matched-key != steps.swift-cache-key.outputs.key
