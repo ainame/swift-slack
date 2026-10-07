@@ -173,6 +173,7 @@ If you have built Slack apps with Bolt for JavaScript or Python, the same concep
 | Compose interactive messages, modals, and an App Home | [Block Kit DSL app](DemoApps/Examples/Sources/dsl/Command.swift) |
 | Reply to slash commands publicly or privately | [Echo bot](DemoApps/Examples/Sources/echoSlashCommand/Command.swift) |
 | Handle typed Slack events and interactions | [Router example](DemoApps/Examples/Sources/router/Command.swift) |
+| Load external select menu options as the user types | [External select](DemoApps/Examples/Sources/externalSelect/Command.swift) |
 
 Browse [all examples](DemoApps/Examples) for more patterns.
 

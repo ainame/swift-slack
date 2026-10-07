@@ -11,6 +11,7 @@ targets.append(executable("dsl"))
 targets.append(executable("echoSlashCommand"))
 targets.append(executable("threadExpander"))
 targets.append(executable("blockActionsMessageContainer"))
+targets.append(executable("externalSelect"))
 
 let package = Package(
     name: "Examples",
