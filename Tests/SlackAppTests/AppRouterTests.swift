@@ -345,48 +345,6 @@ struct AppRouterTests {
         #expect(await tracker.value == "broad")
     }
 
-    @Test(arguments: Registration.allCases)
-    func `re-registering a key logs a warning naming the API and the key`(registration: Registration) {
-        let logs = LogRecorder()
-        let router = Router(logger: logs.makeLogger())
-
-        registration.register(on: router)
-        #expect(logs.warnings.isEmpty)
-
-        registration.register(on: router)
-        #expect(logs.warnings == [registration.expectedWarning])
-    }
-
-    @available(*, deprecated)
-    @Test func `re-registering deprecated onBlockAction logs a warning`() {
-        let logs = LogRecorder()
-        let router = Router(logger: logs.makeLogger())
-
-        router.onBlockAction("modal") { _, _ in }
-        router.onBlockAction("modal") { _, _ in }
-
-        #expect(logs.warnings == [#"Replaced the onBlockAction handler for "modal""#])
-    }
-
-    @Test func `registering different keys does not log a warning`() {
-        let logs = LogRecorder()
-        let router = Router(logger: logs.makeLogger())
-
-        router.onSlashCommand("/first") { _, _ in }
-        router.onSlashCommand("/second") { _, _ in }
-        router.onGlobalShortcut("shared") { _, _ in }
-        router.onMessageShortcut("shared") { _, _ in }
-        router.onAction("button") { _, _ in }
-        router.onAction("button", blockId: "block-1") { _, _ in }
-        router.onView("modal") { _, _ in }
-        router.onViewSubmission("modal") { _, _ in }
-        router.onViewClosed("modal") { _, _ in }
-        router.onEvent(MessageEvent.self) { _, _, _ in }
-        router.onEvent(AppMentionEvent.self) { _, _, _ in }
-
-        #expect(logs.warnings.isEmpty)
-    }
-
     @Test func `unmatched requests log a warning naming the type and ID`() async throws {
         let cases: [(request: Request, warning: String)] = try [
             (
@@ -454,65 +412,6 @@ struct AppRouterTests {
 
         #expect(matched)
         #expect(logs.warnings.isEmpty)
-    }
-}
-
-/// A keyed registration, for checking that registering the same key twice is logged.
-enum Registration: CaseIterable {
-    case slashCommand
-    case globalShortcut
-    case messageShortcut
-    case action
-    case actionInBlock
-    case view
-    case viewSubmission
-    case viewClosed
-    case typedEvent
-
-    func register(on router: Router) {
-        switch self {
-        case .slashCommand:
-            router.onSlashCommand("/test") { _, _ in }
-        case .globalShortcut:
-            router.onGlobalShortcut("shortcut") { _, _ in }
-        case .messageShortcut:
-            router.onMessageShortcut("shortcut") { _, _ in }
-        case .action:
-            router.onAction("button") { _, _ in }
-        case .actionInBlock:
-            router.onAction("button", blockId: "block-1") { _, _ in }
-        case .view:
-            router.onView("modal") { _, _ in }
-        case .viewSubmission:
-            router.onViewSubmission("modal") { _, _ in }
-        case .viewClosed:
-            router.onViewClosed("modal") { _, _ in }
-        case .typedEvent:
-            router.onEvent(MessageEvent.self) { _, _, _ in }
-        }
-    }
-
-    var expectedWarning: String {
-        switch self {
-        case .slashCommand:
-            #"Replaced the onSlashCommand handler for "/test""#
-        case .globalShortcut:
-            #"Replaced the onGlobalShortcut handler for "shortcut""#
-        case .messageShortcut:
-            #"Replaced the onMessageShortcut handler for "shortcut""#
-        case .action:
-            #"Replaced the onAction handler for "button""#
-        case .actionInBlock:
-            #"Replaced the onAction handler for "button" in block "block-1""#
-        case .view:
-            #"Replaced the onView handler for "modal""#
-        case .viewSubmission:
-            #"Replaced the onViewSubmission handler for "modal""#
-        case .viewClosed:
-            #"Replaced the onViewClosed handler for "modal""#
-        case .typedEvent:
-            "Replaced the onEvent handler for SlackApp.MessageEvent"
-        }
     }
 }
 

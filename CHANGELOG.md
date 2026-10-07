@@ -13,7 +13,6 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 * Added `Router.onAction(_:blockId:handler:)`, which matches the interacted element's `action_id`, and its `block_id` when given, like Bolt's `app.action(...)`. Unlike `onBlockAction`, it handles elements in messages as well as in modals and App Home - #155
 * Added `BlockActionsPayload.blockActions`, following java-slack-sdk's `BlockActionPayload.Action`, with each action's `actionId`, `blockId`, `actionTs`, and selected values such as `value`, `selectedOption`, `selectedOptions`, `selectedUser`, `selectedDate`, `selectedDateTime`, and `richTextValue`, and `BlockActionsPayload.containsAction(_:blockId:)` - #155
-* Added warnings when a `Router` registration replaces the handler registered earlier for the same command, `callback_id`, `action_id`, or event type. The warning names the API and the key, like Bolt for Java's `Replaced the handler for ...`, and is logged with the `SlackApp.Router` logger label, which follows the app's `LoggingSystem` bootstrap - #163
 * Added optional `recordChannel`, `codeChannel`, and `agentSession` fields to swift-slack's conversation `Properties`, with `RecordChannel`, `CodeChannel`, and `AgentSession` models matching java-slack-sdk payloads - #149
 
 ### Changed
