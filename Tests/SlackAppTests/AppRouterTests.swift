@@ -382,7 +382,7 @@ struct AppRouterTests {
             )
 
             #expect(!matched)
-            #expect(logs.warnings == [warning])
+            #expect(await logs.warnings() == [warning])
         }
     }
 
@@ -397,7 +397,7 @@ struct AppRouterTests {
         )
 
         #expect(!matched)
-        #expect(logs.warnings == [#"No handler matched event "message" (MessageEvent)"#])
+        #expect(await logs.warnings() == [#"No handler matched event "message" (MessageEvent)"#])
     }
 
     @Test func `requests handled by a fallback handler do not log a warning`() async throws {
@@ -411,7 +411,7 @@ struct AppRouterTests {
         )
 
         #expect(matched)
-        #expect(logs.warnings.isEmpty)
+        #expect(await logs.warnings().isEmpty)
     }
 }
 
