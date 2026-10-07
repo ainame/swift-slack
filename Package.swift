@@ -144,6 +144,7 @@ let package = Package(
             dependencies: [
                 "SlackApp",
                 "SlackClient",
+                "SlackBlockKit",
                 "SlackModels",
                 .product(name: "NIOCore", package: "swift-nio"),
             ],

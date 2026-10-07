@@ -23,6 +23,9 @@ enum SocketModeAcknowledger {
                 )
                 try await send(payload, writer: writer)
             },
+            optionsHandler: { response in
+                try await send(SocketModeOptionsAck(envelopeId: envelopeId, payload: response), writer: writer)
+            },
         )
     }
 
@@ -49,6 +52,16 @@ private struct SocketModeViewAck: Encodable {
             case view
         }
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case envelopeId = "envelope_id"
+        case payload
+    }
+}
+
+struct SocketModeOptionsAck: Encodable {
+    let envelopeId: String
+    let payload: OptionsResponse
 
     private enum CodingKeys: String, CodingKey {
         case envelopeId = "envelope_id"

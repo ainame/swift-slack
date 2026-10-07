@@ -12,6 +12,7 @@ public enum InteractivePayload: Decodable, Hashable, Sendable {
     case blockActions(BlockActionsPayload)
     case viewSubmission(ViewSubmissionPayload)
     case viewClosed(ViewClosedPayload)
+    case blockSuggestion(BlockSuggestionPayload)
     case unsupported(String)
 }
 
@@ -23,6 +24,7 @@ extension InteractivePayload {
         case let .blockActions(payload): payload._type
         case let .viewClosed(payload): payload._type
         case let .viewSubmission(payload): payload._type
+        case let .blockSuggestion(payload): payload._type
         case let .unsupported(t): t
         }
     }

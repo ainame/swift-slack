@@ -25,6 +25,8 @@ public struct InteractiveEnvelope: Decodable, Hashable, Sendable {
             body = try .viewSubmission(ViewSubmissionPayload(from: decoder))
         case "view_closed":
             body = try .viewClosed(ViewClosedPayload(from: decoder))
+        case "block_suggestion":
+            body = try .blockSuggestion(BlockSuggestionPayload(from: decoder))
         default:
             body = .unsupported(_type)
         }

@@ -4,6 +4,7 @@ import HTTPTypes
 import Logging
 import OpenAPIRuntime
 @testable import SlackApp
+import SlackBlockKit
 import SlackClient
 import Testing
 
@@ -342,6 +343,57 @@ struct AppHTTPHandlerTests {
         #expect(await logs.warnings() == [#"No handler matched block_actions with action_id "button-id" and block_id "block-1""#])
     }
 
+    @Test func `block suggestion is acknowledged with options`() async throws {
+        let router = Router()
+        router.onBlockSuggestion("assignee") { context, payload in
+            try await context.ack(options: [
+                OptionObject(text: TextObject(type: .plainText, text: "Ann"), value: "U1"),
+                OptionObject(text: TextObject(type: .plainText, text: payload.value), value: "U2"),
+            ])
+        }
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
+        let request = try signedBlockSuggestionRequest(value: "Bo")
+
+        let (response, responseBody) = try await app.handle(request.0, body: request.1)
+
+        #expect(response.status == .ok)
+        #expect(response.headerFields[.contentType] == "application/json")
+        let body = try JSONSerialization.jsonObject(with: #require(responseBody)) as? NSDictionary
+        #expect(body == [
+            "options": [
+                ["text": ["type": "plain_text", "text": "Ann"], "value": "U1"],
+                ["text": ["type": "plain_text", "text": "Bo"], "value": "U2"],
+            ],
+        ])
+    }
+
+    @Test func `block suggestion is acknowledged with option groups`() async throws {
+        let router = Router()
+        router.onBlockSuggestion("assignee") { context, _ in
+            try await context.ack(optionGroups: [
+                OptionGroupObject(
+                    label: TextObject(type: .plainText, text: "Recent"),
+                    options: [OptionObject(text: TextObject(type: .plainText, text: "Ann"), value: "U1")],
+                ),
+            ])
+        }
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
+        let request = try signedBlockSuggestionRequest(value: "")
+
+        let (response, responseBody) = try await app.handle(request.0, body: request.1)
+
+        #expect(response.status == .ok)
+        let body = try JSONSerialization.jsonObject(with: #require(responseBody)) as? NSDictionary
+        #expect(body == [
+            "option_groups": [
+                [
+                    "label": ["type": "plain_text", "text": "Recent"],
+                    "options": [["text": ["type": "plain_text", "text": "Ann"], "value": "U1"]],
+                ],
+            ],
+        ])
+    }
+
     @Test func `view submission is acknowledged by its handler when a closed handler shares the callback id`() async throws {
         actor Tracker {
             private(set) var submitted = false
@@ -475,6 +527,30 @@ struct AppHTTPHandlerTests {
 
 private func currentTimestamp() -> String {
     String(Int(Date().timeIntervalSince1970))
+}
+
+private func signedBlockSuggestionRequest(value: String) throws -> (HTTPRequest, Data) {
+    let json = """
+    {
+      "type": "block_suggestion",
+      "user": { "id": "U123" },
+      "team": { "id": "T123", "domain": "example" },
+      "api_app_id": "A123",
+      "container": { "type": "message", "message_ts": "123.456", "channel_id": "C123", "is_ephemeral": false },
+      "action_id": "assignee",
+      "block_id": "people",
+      "value": "\(value)"
+    }
+    """
+    let encodedPayload = try #require(json.addingPercentEncoding(withAllowedCharacters: .alphanumerics))
+    return signedRequest(
+        secret: "secret",
+        method: .post,
+        path: "/slack/events",
+        contentType: "application/x-www-form-urlencoded",
+        body: Data("payload=\(encodedPayload)".utf8),
+        timestamp: currentTimestamp(),
+    )
 }
 
 private func makeSlack(signingSecret: String, logger: Logger? = nil) -> Slack {
