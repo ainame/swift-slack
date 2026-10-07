@@ -257,7 +257,7 @@ struct AppHTTPHandlerTests {
 
         #expect(response.status == .ok)
         #expect(responseBody == nil)
-        #expect(logs.warnings == [#"No handler matched slash command "/unknown""#])
+        #expect(await logs.warnings() == [#"No handler matched slash command "/unknown""#])
     }
 
     @Test func `message button dispatches action handler by action id`() async throws {
@@ -339,7 +339,7 @@ struct AppHTTPHandlerTests {
 
         #expect(response.status == .ok)
         #expect(responseBody == nil)
-        #expect(logs.warnings == [#"No handler matched block_actions with action_id "button-id" and block_id "block-1""#])
+        #expect(await logs.warnings() == [#"No handler matched block_actions with action_id "button-id" and block_id "block-1""#])
     }
 
     @Test func `view submission is acknowledged by its handler when a closed handler shares the callback id`() async throws {
