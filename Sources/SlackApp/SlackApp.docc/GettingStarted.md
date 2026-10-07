@@ -99,6 +99,7 @@ Slack requires an acknowledgement within three seconds of delivering a request.
 - Events API handlers registered with `onEvent` are acknowledged automatically. They receive an `EventContext`, which has no `ack`.
 - Slash command, interaction, shortcut, and view handlers receive a `Context` and must call `ack()`. Acknowledge first, then do slower work.
 - View submission handlers can acknowledge with `ack(responseAction:view:)` to update or push a view, or `ack(errors:)` to show validation errors.
+- Block suggestion handlers acknowledge with `ack(options:)` or `ack(optionGroups:)`.
 - Registering another handler of the same kind for the same command, callback ID, or event type replaces the earlier one. `onViewSubmission` and `onViewClosed` can share a callback ID, and `onView` handles only the view payload types that have no type-specific handler.
 - A request that no handler matches is logged as a warning that names its type and ID, such as the command, `action_id`, or `callback_id`. HTTP mode responds with an empty `200 OK`, and Socket Mode sends an empty acknowledgement.
 
@@ -122,6 +123,26 @@ router.onAction("approve", blockId: "request_42") { context, payload in
 To handle every action in a view, use `onInteractive(_:)` and check the payload's `callbackId`.
 
 `onBlockAction(_:)` is deprecated because it was implemented incorrectly: it does not match Bolt, which matches the element's `action_id`, and matches the containing view's `callback_id` instead. It will be removed in a 2027 release. Replace it with `onAction(_:blockId:handler:)` for each element, or with `onInteractive(_:)` for a whole view.
+
+## External select menus
+
+An external select menu loads its options from the app. As the user types, Slack sends a `block_suggestion` request, and `onBlockSuggestion(_:blockId:handler:)` matches it by the menu's `action_id`, like Bolt's `app.options(...)`. Respond with `ack(options:)` or `ack(optionGroups:)`; Slack shows at most 100. The text typed so far is in the payload's `value`.
+
+```swift
+import SlackBlockKitDSL
+
+// The menu, in a message or view
+Input("Assignee") {
+    ExternalSelect().actionId("assignee").minQueryLength(1)
+}
+
+router.onBlockSuggestion("assignee") { context, payload in
+    let matches = people.filter { $0.name.localizedCaseInsensitiveContains(payload.value) }
+    try await context.ack(options: matches.prefix(100).map { Option($0.name).value($0.id).render() })
+}
+```
+
+A suggestion that no `onBlockSuggestion` handler matches goes to `onInteractive(_:)`, or receives an empty acknowledgement and shows no options.
 
 ## Events API payload types
 

@@ -160,6 +160,7 @@ If you have built Slack apps with Bolt for JavaScript or Python, the same concep
 | `app.shortcut('callback_id', ...)` | `router.onGlobalShortcut("callback_id") { ... }`         |
 | `app.action('action_id', ...)`     | `router.onAction("action_id") { ... }`                   |
 | `app.view('callback_id', ...)`     | `router.onViewSubmission("callback_id") { ... }`         |
+| `app.options('action_id', ...)`    | `router.onBlockSuggestion("action_id") { ... }`          |
 | `await ack()` / `await say(...)`   | `try await context.ack()` / `try await context.say(...)` |
 | `client.chat.postMessage({...})`   | `context.client.chatPostMessage(body: .json(...))`       |
 | `socketMode: true`                 | `mode: .socketMode()`                                    |
