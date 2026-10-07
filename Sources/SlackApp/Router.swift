@@ -110,33 +110,14 @@ extension InteractivePayload {
     }
 }
 
-/// A key that handlers are registered under, named in the warning logged when a registration replaces a handler.
-private protocol HandlerKey: Hashable {
-    var logDescription: String { get }
-}
-
-extension String: HandlerKey {
-    fileprivate var logDescription: String {
-        "\"\(self)\""
-    }
-}
-
-private struct ActionKey: HandlerKey {
+private struct ActionKey: Hashable {
     let actionId: String
     let blockId: String?
-
-    var logDescription: String {
-        "\"\(actionId)\"" + (blockId.map { " in block \"\($0)\"" } ?? "")
-    }
 }
 
 #if Events
-private struct TypedEventKey: HandlerKey {
+private struct TypedEventKey: Hashable {
     let typeName: String
-
-    var logDescription: String {
-        typeName
-    }
 
     init<T: SlackEvent>(_: T.Type) {
         typeName = String(reflecting: T.self)
@@ -163,17 +144,8 @@ public class Router {
     private var typedEventHandlers: [TypedEventKey: RequestHandler] = [:]
     #endif
     private var errorHandler: ErrorHandler?
-    private let logger: Logger
 
-    public convenience init() {
-        // Like Bolt for Java's class-level logger, this follows the app's `LoggingSystem` bootstrap. It only logs
-        // registrations that replace an earlier handler; requests that no handler matches use the app's logger.
-        self.init(logger: Logger(label: "SlackApp.Router"))
-    }
-
-    init(logger: Logger) {
-        self.logger = logger
-    }
+    public init() {}
 
     struct FixedRouter {
         private let interactiveHandler: RequestHandler?
@@ -324,7 +296,7 @@ public class Router {
     }
 
     public func onGlobalShortcut(_ callbackId: String, handler: @escaping RequestPayloadHandler<GlobalShortcutPayload>) {
-        register("onGlobalShortcut", callbackId, in: &globalShortcutHandlers) { context, request in
+        globalShortcutHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .shortcut(payload) = interactiveEnvelope.body,
@@ -336,7 +308,7 @@ public class Router {
     }
 
     public func onMessageShortcut(_ callbackId: String, handler: @escaping RequestPayloadHandler<MessageShortcutPayload>) {
-        register("onMessageShortcut", callbackId, in: &messageShortcutHandlers) { context, request in
+        messageShortcutHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .messageAction(payload) = interactiveEnvelope.body,
@@ -353,7 +325,7 @@ public class Router {
     ) {
         precondition(command.hasPrefix("/"), "A command should be registered with `/` prefix; e.g. `/command`")
 
-        register("onSlashCommand", command, in: &slashCommandHandlers) { context, request in
+        slashCommandHandlers[command] = { context, request in
             guard let context = context.requestContext,
                   case let .slashCommand(payload) = request,
                   payload.command == command else {
@@ -374,7 +346,7 @@ public class Router {
         blockId: String? = nil,
         handler: @escaping RequestPayloadHandler<BlockActionsPayload>,
     ) {
-        register("onAction", ActionKey(actionId: actionId, blockId: blockId), in: &actionHandlers) { context, request in
+        actionHandlers[ActionKey(actionId: actionId, blockId: blockId)] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .blockActions(payload) = interactiveEnvelope.body,
@@ -392,7 +364,7 @@ public class Router {
     /// ``onAction(_:blockId:handler:)`` instead.
     @available(*, deprecated, message: "onBlockAction(_:) was implemented incorrectly: it does not match Bolt's app.action and app.blockAction, which match the element's action_id. It matches the containing view's callback_id instead, so it never matches elements in messages. Use onAction(_:blockId:handler:) to match an action_id, or onInteractive(_:) and check payload.callbackId to handle every action in a view. onBlockAction(_:) will be removed in a 2027 release.")
     public func onBlockAction(_ callbackId: String, handler: @escaping RequestPayloadHandler<BlockActionsPayload>) {
-        register("onBlockAction", callbackId, in: &blockActionHandlers) { context, request in
+        blockActionHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .blockActions(payload) = interactiveEnvelope.body,
@@ -409,7 +381,7 @@ public class Router {
     /// ``onViewClosed(_:handler:)`` for the same `callback_id` takes precedence for its payload type, regardless of
     /// registration order. Requests that no view handler matches go to ``onInteractive(_:)``.
     public func onView(_ callbackId: String, handler: @escaping RequestPayloadHandler<InteractivePayload>) {
-        register("onView", callbackId, in: &anyViewHandlers) { context, request in
+        anyViewHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request else { return }
             if case let .viewSubmission(payload) = interactiveEnvelope.body,
@@ -428,7 +400,7 @@ public class Router {
     /// ``onViewClosed(_:handler:)`` for the same `callback_id`. It takes precedence over ``onView(_:handler:)`` for
     /// `view_submission` requests, regardless of registration order.
     public func onViewSubmission(_ callbackId: String, handler: @escaping RequestPayloadHandler<ViewSubmissionPayload>) {
-        register("onViewSubmission", callbackId, in: &viewSubmissionHandlers) { context, request in
+        viewSubmissionHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .viewSubmission(payload) = interactiveEnvelope.body,
@@ -446,7 +418,7 @@ public class Router {
     /// `callback_id`. It takes precedence over ``onView(_:handler:)`` for `view_closed` requests, regardless of
     /// registration order.
     public func onViewClosed(_ callbackId: String, handler: @escaping RequestPayloadHandler<ViewClosedPayload>) {
-        register("onViewClosed", callbackId, in: &viewClosedHandlers) { context, request in
+        viewClosedHandlers[callbackId] = { context, request in
             guard let context = context.requestContext,
                   case let .interactive(interactiveEnvelope) = request,
                   case let .viewClosed(payload) = interactiveEnvelope.body,
@@ -459,19 +431,6 @@ public class Router {
 
     public func onError(_ handler: @escaping ErrorHandler) {
         errorHandler = handler
-    }
-
-    /// Stores `handler` for `key`, warning when it replaces a handler registered earlier, like Bolt for Java's
-    /// `Replaced the handler for ...`.
-    private func register<Key: HandlerKey>(
-        _ api: String,
-        _ key: Key,
-        in handlers: inout [Key: RequestHandler],
-        handler: @escaping RequestHandler,
-    ) {
-        if handlers.updateValue(handler, forKey: key) != nil {
-            logger.warning("Replaced the \(api) handler for \(key.logDescription)")
-        }
     }
 
     #if Events
@@ -487,7 +446,7 @@ public class Router {
         _: T.Type,
         handler: @escaping EventRequestEnvelopePayloadHandler<EventsApiEnvelope<Event>, T>,
     ) {
-        register("onEvent", TypedEventKey(T.self), in: &typedEventHandlers) { context, request in
+        typedEventHandlers[TypedEventKey(T.self)] = { context, request in
             guard let context = context.eventContext,
                   case let .event(payload) = request,
                   let event = payload.event.payload as? T else {
