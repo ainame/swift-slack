@@ -223,6 +223,9 @@ struct AppHTTPHandler {
                     let data = try jsonEncoder.encode(ErrorAckPayload(responseAction: "errors", errors: errors))
                     try await state.storeJSON(data)
                 },
+                optionsHandler: { response in
+                    try await state.storeJSON(jsonEncoder.encode(response))
+                },
             ),
         )
         do {

@@ -100,6 +100,9 @@ extension InteractivePayload {
             describe(callbackId: payload.callbackId)
         case let .viewClosed(payload):
             describe(callbackId: payload.callbackId)
+        case let .blockSuggestion(payload):
+            "\(_type) with action_id \"\(payload.actionId)\""
+                + (payload.blockId.map { " and block_id \"\($0)\"" } ?? "")
         case let .unsupported(type):
             "unsupported interactive payload type \"\(type)\""
         }
@@ -136,6 +139,7 @@ public class Router {
     private var messageShortcutHandlers: [String: RequestHandler] = [:]
     private var actionHandlers: [ActionKey: RequestHandler] = [:]
     private var blockActionHandlers: [String: RequestHandler] = [:]
+    private var blockSuggestionHandlers: [ActionKey: RequestHandler] = [:]
     private var anyViewHandlers: [String: RequestHandler] = [:]
     private var viewSubmissionHandlers: [String: RequestHandler] = [:]
     private var viewClosedHandlers: [String: RequestHandler] = [:]
@@ -154,6 +158,7 @@ public class Router {
         private let messageShortcutHandlers: [String: RequestHandler]
         private let actionHandlers: [ActionKey: RequestHandler]
         private let blockActionHandlers: [String: RequestHandler]
+        private let blockSuggestionHandlers: [ActionKey: RequestHandler]
         private let anyViewHandlers: [String: RequestHandler]
         private let viewSubmissionHandlers: [String: RequestHandler]
         private let viewClosedHandlers: [String: RequestHandler]
@@ -170,6 +175,7 @@ public class Router {
             messageShortcutHandlers = router.messageShortcutHandlers
             actionHandlers = router.actionHandlers
             blockActionHandlers = router.blockActionHandlers
+            blockSuggestionHandlers = router.blockSuggestionHandlers
             anyViewHandlers = router.anyViewHandlers
             viewSubmissionHandlers = router.viewSubmissionHandlers
             viewClosedHandlers = router.viewClosedHandlers
@@ -252,6 +258,12 @@ public class Router {
                     return handler
                 }
                 return interactiveHandler
+            case let .blockSuggestion(payload):
+                if let blockId = payload.blockId,
+                   let handler = blockSuggestionHandlers[ActionKey(actionId: payload.actionId, blockId: blockId)] {
+                    return handler
+                }
+                return blockSuggestionHandlers[ActionKey(actionId: payload.actionId, blockId: nil)] ?? interactiveHandler
             case .unsupported:
                 return interactiveHandler
             }
@@ -351,6 +363,29 @@ public class Router {
                   case let .interactive(interactiveEnvelope) = request,
                   case let .blockActions(payload) = interactiveEnvelope.body,
                   payload.containsAction(actionId, blockId: blockId) else {
+                return
+            }
+            try await handler(context, payload)
+        }
+    }
+
+    /// Registers a handler for `block_suggestion` requests from an external select menu with the given `action_id`.
+    ///
+    /// Slack sends `block_suggestion` as the user types in an `external_select` or `multi_external_select` menu, like
+    /// Bolt's `app.options(...)` in JavaScript and `app.blockSuggestion(...)` in Java. Respond with
+    /// ``Ack/callAsFunction(options:)`` or ``Ack/callAsFunction(optionGroups:)``. Pass `blockId` to match only the menu
+    /// in that block. A handler registered with both IDs takes precedence over one registered with `actionId` only.
+    public func onBlockSuggestion(
+        _ actionId: String,
+        blockId: String? = nil,
+        handler: @escaping RequestPayloadHandler<BlockSuggestionPayload>,
+    ) {
+        blockSuggestionHandlers[ActionKey(actionId: actionId, blockId: blockId)] = { context, request in
+            guard let context = context.requestContext,
+                  case let .interactive(interactiveEnvelope) = request,
+                  case let .blockSuggestion(payload) = interactiveEnvelope.body,
+                  payload.actionId == actionId,
+                  blockId == nil || payload.blockId == blockId else {
                 return
             }
             try await handler(context, payload)

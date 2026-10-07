@@ -413,6 +413,75 @@ struct AppRouterTests {
         #expect(matched)
         #expect(await logs.warnings().isEmpty)
     }
+
+    @Test func `block suggestion dispatches by action id`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onBlockSuggestion("assignee") { _, payload in await tracker.set(payload.value) }
+        router.onBlockSuggestion("other") { _, _ in await tracker.set("other") }
+
+        #expect(try await dispatch(router, makeBlockSuggestionEnvelope(actionId: "assignee", blockId: "people", value: "ann")))
+        #expect(await tracker.value == "ann")
+    }
+
+    @Test func `block suggestion handler with block id takes precedence regardless of registration order`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onBlockSuggestion("assignee", blockId: "people") { _, _ in await tracker.set("block") }
+        router.onBlockSuggestion("assignee") { _, _ in await tracker.set("action") }
+
+        #expect(try await dispatch(router, makeBlockSuggestionEnvelope(actionId: "assignee", blockId: "people")))
+        #expect(await tracker.value == "block")
+
+        #expect(try await dispatch(router, makeBlockSuggestionEnvelope(actionId: "assignee", blockId: "other")))
+        #expect(await tracker.value == "action")
+    }
+
+    @Test func `block suggestion without a matching handler goes to onInteractive`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onInteractive { _, envelope in await tracker.set(envelope._type) }
+        router.onBlockSuggestion("assignee", blockId: "people") { _, _ in await tracker.set("block") }
+        // onAction matches block_actions only, even for the same action_id.
+        router.onAction("location") { _, _ in await tracker.set("action") }
+
+        #expect(try await dispatch(router, makeBlockSuggestionEnvelope(actionId: "location", blockId: "people")))
+        #expect(await tracker.value == "block_suggestion")
+    }
+
+    @Test func `unmatched block suggestion logs a warning naming its IDs`() async throws {
+        let logs = LogRecorder()
+        let router = Router()
+        router.onBlockSuggestion("other") { _, _ in }
+
+        let matched = try await Router.FixedRouter(from: router).dispatch(
+            context: .request(makeRequestContext(logger: logs.makeLogger())),
+            request: .interactive(makeBlockSuggestionEnvelope(actionId: "assignee", blockId: "people")),
+        )
+
+        #expect(!matched)
+        #expect(await logs.warnings() == [#"No handler matched block_suggestion with action_id "assignee" and block_id "people""#])
+    }
+}
+
+private func makeBlockSuggestionEnvelope(
+    actionId: String,
+    blockId: String,
+    value: String = "",
+) throws -> InteractiveEnvelope {
+    let json = """
+    {
+      "type": "block_suggestion",
+      "user": { "id": "U123" },
+      "team": { "id": "T123", "domain": "example" },
+      "api_app_id": "A123",
+      "container": { "type": "message", "message_ts": "123.456", "channel_id": "C123", "is_ephemeral": false },
+      "action_id": "\(actionId)",
+      "block_id": "\(blockId)",
+      "value": "\(value)"
+    }
+    """
+    return try JSONDecoder().decode(InteractiveEnvelope.self, from: Data(json.utf8))
 }
 
 private func makeSlashCommandPayload(command: String) throws -> SlashCommandsPayload {
@@ -618,6 +687,7 @@ private func makeRequestContext(logger: Logger = Logger(label: "test")) async ->
             basicHandler: {},
             viewHandler: { _, _ in },
             errorHandler: { _ in },
+            optionsHandler: { _ in },
         ),
     )
 }
