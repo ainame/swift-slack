@@ -410,7 +410,12 @@ public class Router {
         }
     }
 
-    /// Registers a handler for `view_submission` and `view_closed` requests from a view with the given `callback_id`.
+    /// Registers a handler for `view_submission` requests from a view with the given `callback_id`, like Bolt's
+    /// `app.view` in JavaScript and Python.
+    ///
+    /// Unlike Bolt, if the view sets `notify_on_close`, this handler also receives `view_closed` requests, so it
+    /// must acknowledge both payload types. Prefer ``onViewSubmission(_:handler:)`` and
+    /// ``onViewClosed(_:handler:)``, which receive typed payloads.
     ///
     /// This is a fallback: a handler registered with ``onViewSubmission(_:handler:)`` or
     /// ``onViewClosed(_:handler:)`` for the same `callback_id` takes precedence for its payload type, regardless of
