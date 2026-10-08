@@ -69,6 +69,8 @@ struct ViewFieldsCheckCommand {
                 print("== \(check.label): view_id \(viewId), hash \(decoded.hash ?? "none")")
 
                 let line: String
+                // The view to show the result in. A successful push puts a new view on top, so its result goes there.
+                var resultViewId = viewId
                 switch check {
                 case .rawDecodedFields:
                     var view = try jsonObject(View.modal(next))
@@ -90,7 +92,11 @@ struct ViewFieldsCheckCommand {
                     var view = try jsonObject(View.modal(next))
                     view["hash"] = decoded.hash
                     let body: [String: Any] = ["trigger_id": payload.triggerId ?? "", "view": view]
-                    line = try await summary(check, callSlack(token: token, "views.push", body))
+                    let response = try await callSlack(token: token, "views.push", body)
+                    if let pushedViewId = (response["view"] as? [String: Any])?["id"] as? String {
+                        resultViewId = pushedViewId
+                    }
+                    line = summary(check, response)
                 case .clientDecodedFields:
                     let view = View.modal(withDecodedFields(next, from: decoded))
                     print("→ swift-slack views.update view keys: \(try jsonObject(view).keys.sorted())")
@@ -104,7 +110,7 @@ struct ViewFieldsCheckCommand {
                 // Show the result with a fresh view that carries no decoded fields.
                 print("== \(line)")
                 _ = try await context.client.viewsUpdate(
-                    body: .json(.init(viewId: viewId, view: .modal(modal(results: previous + [line])))),
+                    body: .json(.init(viewId: resultViewId, view: .modal(modal(results: previous + [line])))),
                 )
             }
         }
