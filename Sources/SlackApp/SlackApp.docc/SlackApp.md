@@ -13,6 +13,7 @@ In app code, `import SlackKit`, which re-exports this module along with `SlackCl
 ### Essentials
 
 - <doc:GettingStarted>
+- <doc:InteractionIdentifiers>
 - <doc:Examples>
 - <doc:MigrationGuide>
 
