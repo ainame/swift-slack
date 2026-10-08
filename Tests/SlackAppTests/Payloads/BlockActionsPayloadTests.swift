@@ -53,6 +53,8 @@ struct BlockActionsPayloadTests {
           },
           "view": {
             "type": "modal",
+            "id": "V123",
+            "hash": "1571318366.2468e46f",
             "callback_id": "nag_modal",
             "title": {
               "type": "plain_text",
@@ -67,7 +69,8 @@ struct BlockActionsPayloadTests {
 
         #expect(payload.container._type == "view")
         #expect(payload.container.viewId == "V123")
-        #expect(payload.view != nil)
+        #expect(payload.view?.id == "V123")
+        #expect(payload.view?.hash == "1571318366.2468e46f")
         #expect(payload.callbackId == "nag_modal")
     }
 
