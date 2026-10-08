@@ -4,13 +4,13 @@ import SlackBlockKit
 /// Provides acknowledgment functionality for Slack app interactions.
 public struct Ack: Sendable {
     private let basicHandler: @Sendable () async throws -> Void
-    private let viewHandler: @Sendable (ResponseAction, View) async throws -> Void
+    private let viewHandler: @Sendable (String, View?) async throws -> Void
     private let errorHandler: @Sendable ([String: String]) async throws -> Void
     private let optionsHandler: @Sendable (OptionsResponse) async throws -> Void
 
     init(
         basicHandler: @Sendable @escaping () async throws -> Void,
-        viewHandler: @Sendable @escaping (ResponseAction, View) async throws -> Void,
+        viewHandler: @Sendable @escaping (String, View?) async throws -> Void,
         errorHandler: @Sendable @escaping ([String: String]) async throws -> Void,
         optionsHandler: @Sendable @escaping (OptionsResponse) async throws -> Void,
     ) {
@@ -25,7 +25,14 @@ public struct Ack: Sendable {
     }
 
     public func callAsFunction(responseAction: ResponseAction, view: View) async throws {
-        try await viewHandler(responseAction, view)
+        try await viewHandler(responseAction.rawValue, view)
+    }
+
+    /// Responds to a `view_submission` request with a response action that takes no view.
+    ///
+    /// Use `.clear` to close every view in the modal stack, like Bolt's `ack({ response_action: "clear" })`.
+    public func callAsFunction(responseAction: ViewlessResponseAction) async throws {
+        try await viewHandler(responseAction.rawValue, nil)
     }
 
     public func callAsFunction(errors: [String: String]) async throws {
@@ -62,6 +69,12 @@ extension Ack {
     public enum ResponseAction: String, Sendable {
         case update
         case push
+        case clear
+    }
+
+    /// A `view_submission` response action that is sent without a view.
+    public enum ViewlessResponseAction: String, Sendable {
+        /// Closes every view in the modal stack.
         case clear
     }
 }

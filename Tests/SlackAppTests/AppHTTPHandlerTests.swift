@@ -435,6 +435,33 @@ struct AppHTTPHandlerTests {
         #expect(await tracker.submitted)
     }
 
+    @Test func `view submission is acknowledged with a clear response action`() async throws {
+        let router = Router()
+        router.onViewSubmission("feedback_modal") { context, _ in
+            try await context.ack(responseAction: .clear)
+        }
+
+        let payload = """
+        {"type":"view_submission","user":{"id":"U123"},"api_app_id":"A123","token":"legacy-token","trigger_id":"trigger","team":{"id":"T123","domain":"example"},"view":{"id":"V123","team_id":"T123","type":"modal","callback_id":"feedback_modal","title":{"type":"plain_text","text":"Test"},"blocks":[],"state":{"values":{}}}}
+        """
+        let encodedPayload = try #require(payload.addingPercentEncoding(withAllowedCharacters: .alphanumerics))
+        let request = signedRequest(
+            secret: "secret",
+            method: .post,
+            path: "/slack/events",
+            contentType: "application/x-www-form-urlencoded",
+            body: Data("payload=\(encodedPayload)".utf8),
+            timestamp: currentTimestamp(),
+        )
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
+
+        let (response, responseBody) = try await app.handle(request.0, body: request.1)
+
+        #expect(response.status == .ok)
+        let body = try JSONSerialization.jsonObject(with: #require(responseBody)) as? NSDictionary
+        #expect(body == ["response_action": "clear"])
+    }
+
     @Test func `view closed without a closed handler returns OK`() async throws {
         let router = Router()
         router.onViewSubmission("feedback_modal") { context, _ in

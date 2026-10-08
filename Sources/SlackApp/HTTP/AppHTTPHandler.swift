@@ -54,7 +54,7 @@ struct AppHTTPHandler {
 
     private struct ViewAckPayload: Encodable {
         let responseAction: String
-        let view: View
+        let view: View?
 
         private enum CodingKeys: String, CodingKey {
             case responseAction = "response_action"
@@ -216,7 +216,7 @@ struct AppHTTPHandler {
                     try await state.storeEmptyIfNeeded()
                 },
                 viewHandler: { responseAction, view in
-                    let data = try jsonEncoder.encode(ViewAckPayload(responseAction: responseAction.rawValue, view: view))
+                    let data = try jsonEncoder.encode(ViewAckPayload(responseAction: responseAction, view: view))
                     try await state.storeJSON(data)
                 },
                 errorHandler: { errors in

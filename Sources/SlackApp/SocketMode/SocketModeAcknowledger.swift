@@ -12,7 +12,7 @@ enum SocketModeAcknowledger {
             viewHandler: { responseAction, view in
                 let payload = SocketModeViewAck(
                     envelopeId: envelopeId,
-                    payload: .init(responseAction: responseAction.rawValue, view: view),
+                    payload: .init(responseAction: responseAction, view: view),
                 )
                 try await send(payload, writer: writer)
             },
@@ -39,13 +39,13 @@ enum SocketModeAcknowledger {
     }
 }
 
-private struct SocketModeViewAck: Encodable {
+struct SocketModeViewAck: Encodable {
     let envelopeId: String
     let payload: Payload
 
     struct Payload: Encodable {
         let responseAction: String
-        let view: View
+        let view: View?
 
         private enum CodingKeys: String, CodingKey {
             case responseAction = "response_action"
