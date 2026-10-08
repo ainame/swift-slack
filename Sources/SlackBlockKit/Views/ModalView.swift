@@ -14,6 +14,7 @@ public struct ModalView: Codable, Hashable, Sendable {
     public let submitDisabled: Bool?
     public let state: StateValuesObject?
     public let id: String?
+    public let hash: String?
 
     public init(
         title: TextObject,
@@ -28,6 +29,7 @@ public struct ModalView: Codable, Hashable, Sendable {
         submitDisabled: Bool? = nil,
         state: StateValuesObject? = nil,
         id: String? = nil,
+        hash: String? = nil,
     ) {
         type = "modal"
         self.title = title
@@ -42,6 +44,7 @@ public struct ModalView: Codable, Hashable, Sendable {
         self.submitDisabled = submitDisabled
         self.state = state
         self.id = id
+        self.hash = hash
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -58,5 +61,6 @@ public struct ModalView: Codable, Hashable, Sendable {
         case submitDisabled = "submit_disabled"
         case state
         case id
+        case hash
     }
 }

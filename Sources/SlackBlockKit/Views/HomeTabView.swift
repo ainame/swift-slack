@@ -8,6 +8,7 @@ public struct HomeTabView: Codable, Hashable, Sendable {
     public let externalId: String?
     public let state: StateValuesObject?
     public let id: String?
+    public let hash: String?
 
     public init(
         blocks: [Block],
@@ -16,6 +17,7 @@ public struct HomeTabView: Codable, Hashable, Sendable {
         externalId: String? = nil,
         state: StateValuesObject? = nil,
         id: String? = nil,
+        hash: String? = nil,
     ) {
         type = "home"
         self.blocks = blocks
@@ -24,6 +26,7 @@ public struct HomeTabView: Codable, Hashable, Sendable {
         self.externalId = externalId
         self.state = state
         self.id = id
+        self.hash = hash
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -34,5 +37,6 @@ public struct HomeTabView: Codable, Hashable, Sendable {
         case externalId = "external_id"
         case state
         case id
+        case hash
     }
 }

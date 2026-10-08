@@ -59,6 +59,15 @@ public enum View: Codable, Hashable, Sendable {
         }
     }
 
+    public var hash: String? {
+        switch self {
+        case let .modal(view):
+            view.hash
+        case let .homeTab(view):
+            view.hash
+        }
+    }
+
     public var state: StateValuesObject? {
         switch self {
         case let .modal(view):
