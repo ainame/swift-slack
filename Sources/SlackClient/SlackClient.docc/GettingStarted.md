@@ -8,7 +8,7 @@ Add swift-slack and a transport package to your `Package.swift`. This example us
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ainame/swift-slack.git", from: "2026.10.1"),
+    .package(url: "https://github.com/ainame/swift-slack.git", from: "2026.10.2"),
     .package(url: "https://github.com/swift-server/swift-openapi-async-http-client.git", from: "1.1.0"),
 ],
 ```

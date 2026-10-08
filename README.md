@@ -97,7 +97,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/ainame/swift-slack.git",
-            from: "2026.10.1"
+            from: "2026.10.2"
         )
     ],
     targets: [
@@ -246,7 +246,7 @@ The default package traits include the Web API, events, and Socket Mode. For sma
 ```swift
 .package(
     url: "https://github.com/ainame/swift-slack.git",
-    from: "2026.10.1",
+    from: "2026.10.2",
     traits: ["SocketMode", "Events", "WebAPI_Chat", "WebAPI_Views"]
 )
 ```
