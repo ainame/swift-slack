@@ -63,4 +63,22 @@ public struct ModalView: Codable, Hashable, Sendable {
         case id
         case hash
     }
+
+    // Slack sends `id`, `state`, and `hash` in views but rejects them inside the `view` argument of `views.*` methods
+    // and acknowledgements, so they're decoded but not encoded. `views.update` takes the ID and `hash` as separate
+    // arguments.
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(type, forKey: .type)
+        try container.encode(title, forKey: .title)
+        try container.encode(blocks, forKey: .blocks)
+        try container.encodeIfPresent(close, forKey: .close)
+        try container.encodeIfPresent(submit, forKey: .submit)
+        try container.encodeIfPresent(privateMetadata, forKey: .privateMetadata)
+        try container.encodeIfPresent(callbackId, forKey: .callbackId)
+        try container.encodeIfPresent(clearOnClose, forKey: .clearOnClose)
+        try container.encodeIfPresent(notifyOnClose, forKey: .notifyOnClose)
+        try container.encodeIfPresent(externalId, forKey: .externalId)
+        try container.encodeIfPresent(submitDisabled, forKey: .submitDisabled)
+    }
 }
