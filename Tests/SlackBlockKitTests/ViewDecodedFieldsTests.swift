@@ -55,8 +55,9 @@ struct ViewDecodedFieldsTests {
 }
 
 /// Guards `ModalView` and `HomeTabView`'s hand-written `encode(to:)`: decoding a view with every field set must set
-/// every stored property, and encoding it must write every field except `id`, `state`, and `hash`. A property added
-/// later fails this test until the fixture and `encode(to:)` include it.
+/// every stored property, and encoding it must write every field except `id`, `state`, and `hash`, each under its
+/// own key with its own value. A property added later fails this test until the fixture and `encode(to:)` include it.
+/// Fixture values differ where they can, so a field written under another field's key fails too.
 struct ViewEncodingCoverageTests {
     @Test
     func `modal view encodes every field except id, state, and hash`() throws {
@@ -70,9 +71,9 @@ struct ViewEncodingCoverageTests {
           "private_metadata": "metadata",
           "callback_id": "callback",
           "clear_on_close": true,
-          "notify_on_close": true,
+          "notify_on_close": false,
           "external_id": "external",
-          "submit_disabled": false,
+          "submit_disabled": true,
           "state": { "values": {} },
           "id": "V123",
           "hash": "1.a"
@@ -107,6 +108,21 @@ struct ViewEncodingCoverageTests {
         let input = try #require(JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any])
         let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(view)) as? [String: Any])
         #expect(input.count == properties.count)
-        #expect(Set(encoded.keys) == Set(input.keys).subtracting(["id", "state", "hash"]))
+        let expected = input.filter { !["id", "state", "hash"].contains($0.key) }
+        #expect(NSDictionary(dictionary: encoded) == NSDictionary(dictionary: expected))
+    }
+
+    // Unset optional fields must be left out, not encoded as null.
+    @Test(arguments: [
+        #"{"type":"modal","title":{"type":"plain_text","text":"Title"},"blocks":[]}"#,
+        #"{"type":"home","blocks":[]}"#,
+    ])
+    func `views without optional fields encode only the required ones`(json: String) throws {
+        let view = try JSONDecoder().decode(View.self, from: Data(json.utf8))
+
+        let input = try JSONSerialization.jsonObject(with: Data(json.utf8)) as? NSDictionary
+        let encoded = try JSONSerialization.jsonObject(with: JSONEncoder().encode(view)) as? NSDictionary
+
+        #expect(encoded == input)
     }
 }
