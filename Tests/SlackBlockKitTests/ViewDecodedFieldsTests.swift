@@ -53,3 +53,60 @@ struct ViewDecodedFieldsTests {
         #expect(encoded["callback_id"] as? String == view.callbackId)
     }
 }
+
+/// Guards `ModalView` and `HomeTabView`'s hand-written `encode(to:)`: decoding a view with every field set must set
+/// every stored property, and encoding it must write every field except `id`, `state`, and `hash`. A property added
+/// later fails this test until the fixture and `encode(to:)` include it.
+struct ViewEncodingCoverageTests {
+    @Test
+    func `modal view encodes every field except id, state, and hash`() throws {
+        try expectCoverage(of: ModalView.self, json: """
+        {
+          "type": "modal",
+          "title": { "type": "plain_text", "text": "Title" },
+          "blocks": [],
+          "close": { "type": "plain_text", "text": "Close" },
+          "submit": { "type": "plain_text", "text": "Submit" },
+          "private_metadata": "metadata",
+          "callback_id": "callback",
+          "clear_on_close": true,
+          "notify_on_close": true,
+          "external_id": "external",
+          "submit_disabled": false,
+          "state": { "values": {} },
+          "id": "V123",
+          "hash": "1.a"
+        }
+        """)
+    }
+
+    @Test
+    func `home tab view encodes every field except id, state, and hash`() throws {
+        try expectCoverage(of: HomeTabView.self, json: """
+        {
+          "type": "home",
+          "blocks": [],
+          "private_metadata": "metadata",
+          "callback_id": "callback",
+          "external_id": "external",
+          "state": { "values": {} },
+          "id": "V456",
+          "hash": "1.b"
+        }
+        """)
+    }
+
+    private func expectCoverage<T: Codable>(of _: T.Type, json: String) throws {
+        let view = try JSONDecoder().decode(T.self, from: Data(json.utf8))
+        let properties = Mirror(reflecting: view).children
+        for property in properties {
+            let isNil = if case Optional<Any>.none = property.value { true } else { false }
+            #expect(!isNil, "The fixture doesn't set \(property.label ?? "a property")")
+        }
+
+        let input = try #require(JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any])
+        let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(view)) as? [String: Any])
+        #expect(input.count == properties.count)
+        #expect(Set(encoded.keys) == Set(input.keys).subtracting(["id", "state", "hash"]))
+    }
+}
