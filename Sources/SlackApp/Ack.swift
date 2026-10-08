@@ -69,6 +69,7 @@ extension Ack {
     public enum ResponseAction: String, Sendable {
         case update
         case push
+        @available(*, deprecated, message: "Slack documents clear without a view. Use ack(responseAction: .clear), which sends it without one. ResponseAction.clear will be removed in a 2027 release.")
         case clear
     }
 

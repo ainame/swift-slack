@@ -15,7 +15,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * Added `BlockActionsPayload.blockActions`, following java-slack-sdk's `BlockActionPayload.Action`, with each action's `actionId`, `blockId`, `actionTs`, and selected values such as `value`, `selectedOption`, `selectedOptions`, `selectedUser`, `selectedDate`, `selectedDateTime`, and `richTextValue`, and `BlockActionsPayload.containsAction(_:blockId:)` - #155
 * Added `Router.onBlockSuggestion(_:blockId:handler:)` and `BlockSuggestionPayload` to serve external select menus, like Bolt's `app.options(...)` and `app.blockSuggestion(...)`. Handlers match the menu's `action_id`, and its `block_id` when given, and respond with the new `ack(options:)` or `ack(optionGroups:)` in HTTP mode and Socket Mode - #165
 * Added `View.hash`, and `hash` on swift-slack's `ModalView` and `HomeTabView`, decoded from the view in `block_actions` and `view_submission` payloads, so apps can pass it to `views.update` to reject an update when the view changed, like java-slack-sdk's `View.hash` - #169
-* Added `ack(responseAction: .clear)` to close every view in the modal stack from a `view_submission` handler, like Bolt's `ack({ response_action: "clear" })`. Previously `clear` could be sent only with a view through `ack(responseAction:view:)` - #169
+* Added `ack(responseAction: .clear)` to close every view in the modal stack from a `view_submission` handler, like Bolt's `ack({ response_action: "clear" })`. Previously `clear` could be sent only with a view through `ack(responseAction:view:)`, which Slack doesn't document - #169
 * Added a `SlackApp` DocC guide on choosing between `action_id` and `callback_id`: which identifier each `Router` method matches, updating a modal from a button with `views.update`, and moving between modal steps - #169
 * Added optional `recordChannel`, `codeChannel`, and `agentSession` fields to swift-slack's conversation `Properties`, with `RecordChannel`, `CodeChannel`, and `AgentSession` models matching java-slack-sdk payloads - #149
 
@@ -31,6 +31,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 * Deprecated `Router.onBlockAction(_:handler:)`, which was implemented incorrectly: it does not match Bolt's `app.action(...)`, which matches the element's `action_id`, and matches the containing view's `callback_id` instead, so it never matches elements in messages. Use `onAction(_:blockId:handler:)` for each element, or `onInteractive(_:)` with `payload.callbackId` for a whole view. It will be removed in a 2027 release - #155
 * Deprecated `BlockActionsPayload.actions`, which returns Block Kit element definitions without `block_id` or selected values, in favor of `blockActions`. It will be removed in a 2027 release - #155
+* Deprecated `Ack.ResponseAction.clear`, which sent `clear` with a view through `ack(responseAction:view:)`, although Slack documents `clear` without one. Use `ack(responseAction: .clear)`. It will be removed in a 2027 release - #169
 * Deprecated the public type `BlockActionsPaylaod`, which misspelled "Payload", and renamed it to `BlockActionsPayload`. The old name remains as a typealias with a fix-it and will be removed in a 2027 release - #155
 
 ### Fixed
