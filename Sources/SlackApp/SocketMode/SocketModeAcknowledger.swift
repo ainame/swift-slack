@@ -5,26 +5,35 @@ import WSClient
 
 enum SocketModeAcknowledger {
     static func makeAck(envelopeId: String, writer: WebSocketOutboundWriter) -> Ack {
-        Ack(
+        makeAck(envelopeId: envelopeId) { text in
+            try await writer.write(.text(text))
+        }
+    }
+
+    /// Builds an `Ack` that encodes each acknowledgement for `envelopeId` and passes the JSON text to `write`.
+    static func makeAck(envelopeId: String, write: @escaping @Sendable (String) async throws -> Void) -> Ack {
+        @Sendable func send(_ payload: some Encodable) async throws {
+            try await write(encode(payload))
+        }
+
+        return Ack(
             basicHandler: {
-                try await sendBasicAck(envelopeId: envelopeId, writer: writer)
+                try await send(SocketModeAcknowledgementMessage(envelopeId: envelopeId))
             },
             viewHandler: { responseAction, view in
-                let payload = SocketModeViewAck(
+                try await send(SocketModeViewAck(
                     envelopeId: envelopeId,
                     payload: .init(responseAction: responseAction, view: view),
-                )
-                try await send(payload, writer: writer)
+                ))
             },
             errorHandler: { errors in
-                let payload = SocketModeErrorAck(
+                try await send(SocketModeErrorAck(
                     envelopeId: envelopeId,
                     payload: .init(responseAction: "errors", errors: errors),
-                )
-                try await send(payload, writer: writer)
+                ))
             },
             optionsHandler: { response in
-                try await send(SocketModeOptionsAck(envelopeId: envelopeId, payload: response), writer: writer)
+                try await send(SocketModeOptionsAck(envelopeId: envelopeId, payload: response))
             },
         )
     }
@@ -34,12 +43,15 @@ enum SocketModeAcknowledger {
     }
 
     private static func send(_ payload: some Encodable, writer: WebSocketOutboundWriter) async throws {
-        let data = try JSONEncoder().encode(payload)
-        try await writer.write(.text(String(decoding: data, as: UTF8.self)))
+        try await writer.write(.text(encode(payload)))
+    }
+
+    private static func encode(_ payload: some Encodable) throws -> String {
+        try String(decoding: JSONEncoder().encode(payload), as: UTF8.self)
     }
 }
 
-struct SocketModeViewAck: Encodable {
+private struct SocketModeViewAck: Encodable {
     let envelopeId: String
     let payload: Payload
 
