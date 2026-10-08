@@ -16,6 +16,8 @@ As an analogy from UIKit, `action_id` is like the `sender` of an action, `callba
 
 > Important: This guide summarizes Slack's documentation as of October 2026. Slack's platform changes over time, so confirm the details on the official pages listed at the end of this guide before you rely on them.
 
+The examples build views with `SlackBlockKitDSL`. Add that product to your target alongside `SlackKit`, and `import SlackBlockKitDSL`.
+
 ## Which identifier each request uses
 
 | Request | Router method | Matches |
@@ -35,7 +37,7 @@ Clicking a button inside a modal sends `block_actions`, not `view_submission`. H
 
 Match the button's `action_id`. When the same `action_id` appears in more than one view, check ``BlockActionsPayload/callbackId`` to find out which view it came from.
 
-Slack doesn't accept a `response_action` in reply to `block_actions`, so to change the modal, acknowledge the request and call `views.update` with the view's ID. Pass the request's `hash` so Slack rejects the update if the view changed since the button was clicked.
+Slack doesn't accept a `response_action` in reply to `block_actions`, so to change the modal, acknowledge the request and call `views.update` with the view's ID.
 
 ```swift
 router.onAction("add_item") { context, payload in
@@ -53,12 +55,14 @@ router.onAction("add_item") { context, payload in
     .callbackId("todo_modal")
 
     _ = try await context.client.viewsUpdate(
-        body: .json(.init(viewId: viewId, view: updated.asView(), hash: payload.hash))
+        body: .json(.init(viewId: viewId, view: updated.asView()))
     )
 }
 ```
 
-`views.update` replaces the whole view. Set the `callback_id`, `submit` button, and any `private_metadata` again on the new view, or they are lost.
+`views.update` replaces the view with the one you pass, so build the new view with every field it needs, including its `callback_id`, `submit` button, and `private_metadata`.
+
+> Note: Slack's `views.update` also accepts the view's `hash` to reject an update when the view changed after the button was clicked. Slack sends it as `view.hash`, which swift-slack's `View` doesn't expose yet, so this example updates the view without that check.
 
 ## Move between steps of a modal
 
@@ -66,7 +70,7 @@ Give each step its own `callback_id`, so each step's submission goes to its own 
 
 When the user moves forward by submitting the modal, reply to the `view_submission` with ``Ack/callAsFunction(responseAction:view:)``. `.update` replaces the current view, and `.push` adds a view on top of it. A plain ``Ack/callAsFunction()`` closes the submitted view. When the user moves forward by clicking a button inside the modal, call `views.update` as in the previous section, or `views.push` with the request's `trigger_id`.
 
-Input values from a replaced view are not sent with later submissions. Carry them forward in `private_metadata`.
+Slack keeps an input's value across an update only when the new view has an input with the same `block_id` and `action_id`. Values from inputs that the next step removes aren't sent with later submissions, so carry them forward in `private_metadata`.
 
 ```swift
 router.onViewSubmission("signup_step1") { context, payload in
