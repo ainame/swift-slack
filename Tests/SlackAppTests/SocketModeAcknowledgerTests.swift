@@ -5,11 +5,24 @@ import SlackBlockKit
 import Testing
 
 struct SocketModeAcknowledgerTests {
-    @Test func `clear acknowledgement omits the view`() throws {
-        let ack = SocketModeViewAck(envelopeId: "env-1", payload: .init(responseAction: "clear", view: nil))
+    @Test func `clear acknowledgement omits the view`() async throws {
+        actor Messages {
+            private(set) var texts: [String] = []
 
-        let json = try JSONSerialization.jsonObject(with: JSONEncoder().encode(ack)) as? NSDictionary
+            func append(_ text: String) {
+                texts.append(text)
+            }
+        }
 
+        let messages = Messages()
+        let ack = SocketModeAcknowledger.makeAck(envelopeId: "env-1") { text in
+            await messages.append(text)
+        }
+
+        try await ack(responseAction: .clear)
+
+        let text = try #require(await messages.texts.first)
+        let json = try JSONSerialization.jsonObject(with: Data(text.utf8)) as? NSDictionary
         #expect(json == ["envelope_id": "env-1", "payload": ["response_action": "clear"]])
     }
 
