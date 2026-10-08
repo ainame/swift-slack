@@ -28,16 +28,19 @@ def main
   system('swift test') or abort "Tests failed"
 
   # Create tag and release
-  system("git tag -a #{new_tag} -m 'Release #{new_tag}'")
-  system("git push origin #{new_tag}")
+  system('git', 'tag', '-a', new_tag, '-m', "Release #{new_tag}") or abort "Failed to create tag #{new_tag}"
+  system('git', 'push', 'origin', new_tag) or abort "Failed to push tag #{new_tag}"
 
-  Tempfile.create(["release-notes-#{new_tag}", '.md']) do |file|
+  # Title releases with the bare version, like earlier releases. `gh release create` prints the release URL.
+  release_url = Tempfile.create(["release-notes-#{new_tag}", '.md']) do |file|
     file.write(notes)
     file.flush
-    system("gh release create #{new_tag} --title 'Release #{new_tag}' --notes-file #{file.path} --draft")
+    output = IO.popen(['gh', 'release', 'create', new_tag, '--title', new_tag, '--notes-file', file.path, '--draft'], &:read)
+    abort "Failed to create the draft release for #{new_tag}" unless $?.success?
+    output.strip
   end
 
-  puts "\n✅ Draft release created! Review at: https://github.com/$(gh repo view --json nameWithOwner -q .nameWithOwner)/releases"
+  puts "\n✅ Draft release created! Review it at: #{release_url}"
 end
 
 # Check prerequisites
