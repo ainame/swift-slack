@@ -11,7 +11,7 @@ By default, every trait except `HummingbirdHTTPAdapter` is enabled. When you lis
 ```swift
 .package(
     url: "https://github.com/ainame/swift-slack.git",
-    from: "2026.10.1",
+    from: "2026.10.2",
     traits: ["WebAPI_Chat", "WebAPI_Views"]
 )
 ```
@@ -21,7 +21,7 @@ To keep the defaults and add an optional trait, include `.defaults`:
 ```swift
 .package(
     url: "https://github.com/ainame/swift-slack.git",
-    from: "2026.10.1",
+    from: "2026.10.2",
     traits: [.defaults, "HummingbirdHTTPAdapter"]
 )
 ```
@@ -81,7 +81,7 @@ A method is generated only when java-slack-sdk has a recorded response for it, s
 A script that posts messages needs only the chat methods:
 
 ```swift
-.package(url: "https://github.com/ainame/swift-slack.git", from: "2026.10.1", traits: [
+.package(url: "https://github.com/ainame/swift-slack.git", from: "2026.10.2", traits: [
     "WebAPI_Chat",
 ])
 ```
@@ -91,7 +91,7 @@ A script that posts messages needs only the chat methods:
 An interactive app that receives events, posts messages, and opens modals:
 
 ```swift
-.package(url: "https://github.com/ainame/swift-slack.git", from: "2026.10.1", traits: [
+.package(url: "https://github.com/ainame/swift-slack.git", from: "2026.10.2", traits: [
     "SocketMode",
     "Events",
     "WebAPI_Chat",
@@ -104,7 +104,7 @@ An interactive app that receives events, posts messages, and opens modals:
 An app that receives signed HTTP requests through Hummingbird:
 
 ```swift
-.package(url: "https://github.com/ainame/swift-slack.git", from: "2026.10.1", traits: [
+.package(url: "https://github.com/ainame/swift-slack.git", from: "2026.10.2", traits: [
     "HummingbirdHTTPAdapter",
     "Events",
     "WebAPI_Chat",

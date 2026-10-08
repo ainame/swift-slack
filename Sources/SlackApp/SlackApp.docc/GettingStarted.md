@@ -8,7 +8,7 @@ Add swift-slack to your package and depend on the `SlackKit` product, which incl
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ainame/swift-slack.git", from: "2026.10.1"),
+    .package(url: "https://github.com/ainame/swift-slack.git", from: "2026.10.2"),
 ],
 targets: [
     .executableTarget(
