@@ -98,7 +98,7 @@ Slack requires an acknowledgement within three seconds of delivering a request.
 
 - Events API handlers registered with `onEvent` are acknowledged automatically. They receive an `EventContext`, which has no `ack`.
 - Slash command, interaction, shortcut, and view handlers receive a `Context` and must call `ack()`. Acknowledge first, then do slower work.
-- View submission handlers can acknowledge with `ack(responseAction:view:)` to update or push a view, or `ack(errors:)` to show validation errors.
+- View submission handlers can acknowledge with `ack(responseAction:view:)` to update or push a view, `ack(responseAction: .clear)` to close every view in the modal stack, or `ack(errors:)` to show validation errors.
 - Block suggestion handlers acknowledge with `ack(options:)` or `ack(optionGroups:)`.
 - Registering another handler of the same kind for the same command, callback ID, or event type replaces the earlier one. `onViewSubmission` and `onViewClosed` can share a callback ID, and `onView` handles only the view payload types that have no type-specific handler.
 - A request that no handler matches is logged as a warning that names its type and ID, such as the command, `action_id`, or `callback_id`. HTTP mode responds with an empty `200 OK`, and Socket Mode sends an empty acknowledgement.
