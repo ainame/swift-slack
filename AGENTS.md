@@ -18,6 +18,7 @@ Shared guidance for coding agents working in this repository, a Swift Slack SDK 
 
 - Use the Swift version recorded in `.swift-version` and the Ruby version recorded in `.ruby-version`.
 - Run `npm ci`, not an unpinned global quicktype install. `package-lock.json` is the generator dependency source of truth.
+- Run `bundle install` for the Ruby scripts, which the `Makefile` and `scripts/generate_all.sh` run through `bundle exec`. `Gemfile.lock` pins json 2.19.1 or later because Ruby 4.0.7's bundled json 2.18.0 has generator GC bugs that intermittently fail `to_json` on Linux.
 - Development tools live in the nested `Tools` package, not the root manifest: `swift-openapi-generator` for code generation, and the SwiftFormat binary target and command plugin behind `make format`. Nothing depends on `Tools`, so `Tools/Package.swift` pins the generator with `exact:` and `Tools/Package.resolved` is committed; the root `Package.resolved` is not.
 - Do not add tool-only dependencies or binary targets to the root manifest. SwiftPM downloads a dependency package's binary targets for every client. `swift-docc-plugin` stays in the root because `make doc` documents the root package's products and clients do not fetch it.
 - When bumping the generator, update `Tools/Package.swift`, run `swift package --package-path Tools update`, then regenerate and commit the lockfile with any generated drift. Keep the root `swift-openapi-runtime` lower bound at or above what that generator version requires.

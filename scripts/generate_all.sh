@@ -33,7 +33,7 @@ rm -rf "${TMP_DIR}/WebAPI" \
 mkdir -p "${TMP_DIR}/WebAPI"
 mkdir -p "${TMP_DIR}/Events"
 
-ruby scripts/generate_webapi.rb
+bundle exec ruby scripts/generate_webapi.rb
 
 # Generate types with public and client with internal to avoid potential conflict other symbols named `Client`
 swift run --package-path Tools --disable-sandbox swift-openapi-generator generate \
@@ -50,10 +50,10 @@ swift run --package-path Tools --disable-sandbox swift-openapi-generator generat
     --output-directory "${TMP_DIR}/WebAPI" \
     "${TMP_DIR}/WebAPI/openapi.json"
 
-ruby scripts/process_webapi.rb "${TMP_DIR}/WebAPI" "Sources/SlackClient/WebAPI/Generated"
+bundle exec ruby scripts/process_webapi.rb "${TMP_DIR}/WebAPI" "Sources/SlackClient/WebAPI/Generated"
 
 # Generate events
-ruby scripts/generate_events.rb
+bundle exec ruby scripts/generate_events.rb
 
 swift run --package-path Tools --disable-sandbox swift-openapi-generator generate \
     --mode types \
@@ -62,6 +62,6 @@ swift run --package-path Tools --disable-sandbox swift-openapi-generator generat
     --output-directory "${TMP_DIR}/Events" \
     "${TMP_DIR}/Events/openapi.json"
 
-ruby scripts/process_events.rb "${TMP_DIR}/Events/Types.swift" "Sources/SlackApp/Events/Generated"
+bundle exec ruby scripts/process_events.rb "${TMP_DIR}/Events/Types.swift" "Sources/SlackApp/Events/Generated"
 
 make format-generated
