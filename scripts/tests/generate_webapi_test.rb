@@ -84,6 +84,51 @@ class GenerateWebapiTest < Minitest::Test
     end
   end
 
+  def test_response_metadata_keeps_next_cursor_when_views_update_sorts_last
+    Dir.mktmpdir do |directory|
+      FileUtils.mkdir_p(File.join(directory, 'schemas'))
+      api_ref_paths = %w[chat/chat.unfurl conversations/conversations.list views/views.update].map do
+        File.join(VENDOR_DIR, "slack-api-ref/methods/#{_1}.json")
+      end
+      # views.update sorts last, has no next_cursor, and its empty warnings array is untyped;
+      # chat.unfurl has string warnings and conversations.list has next_cursor.
+      sample_paths = %w[chat.unfurl conversations.list views.update].map do
+        File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/api/#{_1}.json")
+      end
+
+      capture_io { main(api_ref_paths, sample_paths, directory) }
+      schemas = JSON.parse(File.read(File.join(directory, 'openapi.json'))).fetch('components').fetch('schemas')
+      properties = schemas.dig('ResponseMetadata', 'properties')
+
+      assert_equal %w[messages next_cursor warnings], properties.keys.sort
+      assert_equal({ 'type' => 'array', 'items' => { 'type' => 'string' } }, properties.fetch('warnings'))
+    end
+  end
+
+  def test_unlisted_collision_fails_generation_and_known_collision_keeps_last_wins
+    Dir.mktmpdir do |directory|
+      FileUtils.mkdir_p(File.join(directory, 'schemas'))
+      api_ref_paths = %w[conversations/conversations.list views/views.update].map do
+        File.join(VENDOR_DIR, "slack-api-ref/methods/#{_1}.json")
+      end
+      sample_paths = %w[conversations.list views.update].map do
+        File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/api/#{_1}.json")
+      end
+
+      error = assert_raises(SchemaMergeError) do
+        capture_io { main(api_ref_paths, sample_paths, directory, merge_policies: {}) }
+      end
+      assert_includes error.message, 'ResponseMetadata'
+      assert_includes error.message, 'conversations.list, views.update'
+      assert_includes error.message, 'next_cursor'
+
+      known = { 'ResponseMetadata' => SchemaMergePolicy.known_collision('#177') }
+      capture_io { main(api_ref_paths, sample_paths, directory, merge_policies: known) }
+      schemas = JSON.parse(File.read(File.join(directory, 'openapi.json'))).fetch('components').fetch('schemas')
+      assert_equal %w[messages warnings], schemas.dig('ResponseMetadata', 'properties').keys.sort
+    end
+  end
+
   def test_admin_workflows_search_uses_handwritten_app_workflow
     Dir.mktmpdir do |directory|
       FileUtils.mkdir_p(File.join(directory, 'schemas'))

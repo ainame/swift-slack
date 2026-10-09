@@ -27,15 +27,16 @@ class ConversationPropertiesRefFixerTest < Minitest::Test
   def test_keeps_all_conversation_fields_when_later_fixtures_are_merged
     require 'tmpdir'
     require_relative '../generate_webapi'
-    schemas = Dir.mktmpdir do |directory|
-      %w[admin.conversations.search conversations.info conversations.join conversations.list users.conversations].map do |method|
+    definitions_by_fixture = Dir.mktmpdir do |directory|
+      %w[admin.conversations.search conversations.info conversations.join conversations.list users.conversations].to_h do |method|
         path = File.expand_path("../../vendor/java-slack-sdk/json-logs/samples/api/#{method}.json", __dir__)
         generated = generate_openapi_component(path, directory)
-        JSON.parse(File.read(generated))['definitions']
+        [method, JSON.parse(File.read(generated))['definitions']]
       end
     end
+    schemas = definitions_by_fixture.values
     refute_empty schemas
-    merged = schemas.reduce({}) { |result, definitions| merge_response_schemas!(result, definitions) }
+    merged = SchemaMerge.merge_all(definitions_by_fixture, policies: MERGE_POLICIES)
     ConversationPropertiesRefFixer::FIELDS.each do |field, model|
       assert_equal "#/components/schemas/#{model}", merged.dig('Properties', 'properties', field, '$ref')
       assert_equal 'object', merged.dig(model, 'type')
@@ -62,31 +63,5 @@ class ConversationPropertiesRefFixerTest < Minitest::Test
     original = Marshal.load(Marshal.dump(schema))
     ConversationPropertiesRefFixer.new.walk(schema)
     assert_equal original, schema
-  end
-end
-
-class ResponseSchemaMergeTest < Minitest::Test
-  def test_preserves_future_fields_without_a_visitor_registry
-    require_relative '../generate_webapi'
-    schemas = { 'Properties' => { 'type' => 'object', 'properties' => { 'future_field' => { 'type' => 'string' } } } }
-    incoming = { 'Properties' => { 'type' => 'object', 'properties' => { 'other_field' => { 'type' => 'boolean' } } } }
-    merge_response_schemas!(schemas, incoming)
-    assert_equal %w[future_field other_field], schemas.dig('Properties', 'properties').keys.sort
-    assert_equal ['other_field'], incoming.dig('Properties', 'properties').keys
-  end
-
-  def test_unrelated_same_named_objects_are_not_combined
-    require_relative '../generate_webapi'
-    schemas = { 'AgentSession' => { 'type' => 'object', 'properties' => { 'status' => {} } } }
-    incoming = { 'AgentSession' => { 'type' => 'object', 'properties' => { 'agent_statuses' => {} } } }
-    merge_response_schemas!(schemas, incoming)
-    assert_equal incoming['AgentSession'], schemas['AgentSession']
-  end
-
-  def test_rejects_non_object_conversation_properties
-    require_relative '../generate_webapi'
-    schemas = { 'Properties' => { 'type' => 'string' } }
-    incoming = { 'Properties' => { 'type' => 'object', 'properties' => {} } }
-    assert_raises(RuntimeError) { merge_response_schemas!(schemas, incoming) }
   end
 end

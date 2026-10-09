@@ -5,6 +5,7 @@ require 'json'
 require 'yaml'
 require_relative './lib/visitors'
 require_relative './lib/helpers'
+require_relative './lib/schema_merge_policies'
 
 # Repository sources are UTF-8; do not depend on the caller's locale.
 Encoding.default_external = Encoding::UTF_8
@@ -77,26 +78,7 @@ sample_json_paths = Dir.glob("#{api_dir}*.json").sort
 output_dir = './.tmp/WebAPI'
 FileUtils.mkdir_p(File.join(output_dir, 'schemas'))
 
-# Properties is the same ConversationProperties model across conversation fixtures.
-# Union its fields before replacing the definition; future fixture-only fields must
-# survive too. Keep the existing last-definition policy for overlapping fields and
-# other names: quicktype also reuses names for unrelated models (e.g. AgentSession),
-# which require semantic ref fixers rather than a blanket object union.
-def merge_response_schemas!(schemas, incoming)
-  previous = schemas['Properties']
-  current = incoming['Properties']
-  if previous && current
-    unless [previous, current].all? { _1['type'] == 'object' && _1['properties'].is_a?(Hash) }
-      raise 'Cannot merge conversation Properties: expected object schemas'
-    end
-    incoming = incoming.merge('Properties' => current.merge(
-      'properties' => previous['properties'].merge(current['properties'])
-    ))
-  end
-  schemas.merge!(incoming)
-end
-
-def main(api_ref_paths, sample_json_paths, output_dir)
+def main(api_ref_paths, sample_json_paths, output_dir, merge_policies: MERGE_POLICIES)
   openapi = JSON.parse(File.read(File.join(__dir__, 'lib/base_openapi.json')))
 
   # Generate schemas by quicktype
@@ -109,11 +91,17 @@ def main(api_ref_paths, sample_json_paths, output_dir)
   # so operations reference the name recorded in each generated schema.
   schema_paths = Dir.glob("#{output_dir}/schemas/*.json").sort
   response_model_names = {}
+  definitions_by_fixture = {}
   schema_paths.each do |path|
     json = JSON.parse(File.read(path))
-    merge_response_schemas!(openapi['components']['schemas'], json['definitions'])
-    response_model_names[File.basename(path, '.json')] = json['$ref'].split('/').last
+    fixture = File.basename(path, '.json')
+    definitions_by_fixture[fixture] = json['definitions']
+    response_model_names[fixture] = json['$ref'].split('/').last
   end
+  # Fixtures are merged in sorted order; see lib/schema_merge.rb for the per-name policies.
+  openapi['components']['schemas'].merge!(
+    SchemaMerge.merge_all(definitions_by_fixture, policies: merge_policies)
+  )
 
   # Generate paths
   paths = {}
