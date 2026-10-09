@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     drb (2.2.3)
-    json (2.21.2)
+    json (3.0.2)
     minitest (6.0.6)
       drb (~> 2.0)
       prism (~> 1.5)
@@ -15,12 +15,13 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  json (~> 2.19, >= 2.19.1)
+  json (~> 3.0, >= 3.0.2)
   minitest (~> 6.0)
 
 CHECKSUMS
+  bundler (4.0.20) sha256=7978a8ac648767f5e635bc522445b79e80a52b907a39a36c2d8085ed6bc762ae
   drb (2.2.3) sha256=0b00d6fdb50995fe4a45dea13663493c841112e4068656854646f418fda13373
-  json (2.21.2) sha256=1f1d3b7cf2b3ba1a69beca0bb6db13d5438b80bff3cd54cdaaa620b9b07c1c6a
+  json (3.0.2) sha256=8e6d7e7b11384c21230430cef90b71f14849a34a1f4452796670f7c981bd19df
   minitest (6.0.6) sha256=153ea36d1d987a62942382b61075745042a2b3123b1cd48f4c3675af9cc7d6f1
   prism (1.9.0) sha256=7b530c6a9f92c24300014919c9dcbc055bf4cdf51ec30aed099b06cd6674ef85
 
