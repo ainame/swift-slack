@@ -5,6 +5,9 @@ require 'json'
 require_relative './lib/helpers'
 require_relative './lib/visitors'
 
+# Repository sources are UTF-8; do not depend on the caller's locale.
+Encoding.default_external = Encoding::UTF_8
+
 # Deprecated events are skipped
 UNSUPPORTED_EVENTS = [
   /^Resources/,

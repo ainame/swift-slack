@@ -5,6 +5,9 @@ require 'fileutils'
 require_relative 'lib/content_transformer'
 require_relative 'lib/output'
 
+# Repository sources are UTF-8; do not depend on the caller's locale.
+Encoding.default_external = Encoding::UTF_8
+
 # Handles transformation of generated Events code to extract Event structs
 # and transform them into individual SlackEvent conforming types
 class EventsProcessor
