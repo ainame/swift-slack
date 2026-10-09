@@ -9,8 +9,13 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+### Fixed
+
+* Fixed `ResponseMetadata` losing `next_cursor`, which made cursor pagination unusable from the generated models for methods such as `conversations.list`, `conversations.history`, `users.list`, and `files.list`. The generated `ResponseMetadata` now has `nextCursor`, merged from the java-slack-sdk fixtures that carry it instead of taking the shape of the alphabetically last fixture, `views.update`. **BREAKING**: `ResponseMetadata.warnings` is now `[String]?` instead of `[OpenAPIValueContainer]?`, because fixtures with string warnings now take precedence over fixtures where an empty array left the element type unknown. Code that reads `warnings` as `OpenAPIValueContainer` must read it as `String` - #229
+
 ### Maintenance
 
+* Made the Web API generator fail when two java-slack-sdk fixtures define a nested schema with the same name but different properties and the name has no entry in `scripts/lib/schema_merge_policies.rb`, instead of letting the last fixture silently win. Each name is now `union` (merge the fixtures' properties) or `known_collision` (today's last-wins, tracked in #177); 74 existing collisions are seeded as `known_collision` so generated output is unchanged, and contributors move names to `union` one at a time - #229
 * Added a `Gemfile` that pins json 2.19.1 or later for the generator scripts, which now run through `bundle exec`, because Ruby 4.0.7's bundled json 2.18.0 has generator GC bugs that intermittently failed script tests on Linux. Run `bundle install` before generating - #172
 * Fixed `make generate` and `make test-scripts` failing with `Encoding::InvalidByteSequenceError` in shells without a UTF-8 locale; the generator scripts now read sources as UTF-8 - #176
 
