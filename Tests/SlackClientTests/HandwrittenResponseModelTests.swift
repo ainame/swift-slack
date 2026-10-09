@@ -152,6 +152,36 @@ struct HandwrittenResponseModelTests {
         #endif
     }
 
+    @Test
+    func `response metadata decodes next_cursor`() throws {
+        #if WebAPI_Conversations
+        let json = """
+        {
+            "ok": true,
+            "channels": [],
+            "response_metadata": {
+                "next_cursor": "dGVhbTpDMDYxRkE1UEI=",
+                "messages": ["m"],
+                "warnings": ["w"]
+            }
+        }
+        """
+
+        let response = try JSONDecoder().decode(
+            Components.Schemas.ConversationsListResponse.self,
+            from: #require(json.data(using: .utf8)),
+        )
+
+        let metadata = try #require(response.responseMetadata)
+        #expect(metadata.nextCursor == "dGVhbTpDMDYxRkE1UEI=")
+        #expect(metadata.messages == ["m"])
+        #expect(metadata.warnings?.count == 1)
+
+        let encoded = try JSONEncoder().encode(metadata)
+        #expect(try JSONDecoder().decode(ResponseMetadata.self, from: encoded) == metadata)
+        #endif
+    }
+
     /// Decodes a java-slack-sdk Web API fixture from the vendored submodule.
     private func decodeFixture<T: Decodable>(_ type: T.Type, _ method: String) throws -> T {
         let fixture = URL(filePath: #filePath)
