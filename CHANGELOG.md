@@ -12,6 +12,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 ### Maintenance
 
 * Added a `Gemfile` that pins json 2.19.1 or later for the generator scripts, which now run through `bundle exec`, because Ruby 4.0.7's bundled json 2.18.0 has generator GC bugs that intermittently failed script tests on Linux. Run `bundle install` before generating - #172
+* Fixed `make generate` and `make test-scripts` failing with `Encoding::InvalidByteSequenceError` in shells without a UTF-8 locale; the generator scripts now read sources as UTF-8 - #176
 
 ## [2026.10.2] - 2026-10-08
 
