@@ -9,6 +9,10 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+### Fixed
+
+* Fixed `SlackModels.ResponseMetadata` dropping `next_cursor`, which made cursor pagination impossible for methods such as `conversations.list`, `users.list`, and `files.list`. It is now a hand-written model with a `nextCursor` property; `messages` and `warnings` are unchanged - #228
+
 ### Maintenance
 
 * Added a `Gemfile` that pins json 2.19.1 or later for the generator scripts, which now run through `bundle exec`, because Ruby 4.0.7's bundled json 2.18.0 has generator GC bugs that intermittently failed script tests on Linux. Run `bundle install` before generating - #172
