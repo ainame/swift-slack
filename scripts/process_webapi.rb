@@ -11,6 +11,9 @@ require_relative 'lib/code_generation/slackmodels_extractor'
 require_relative 'lib/code_generation/components_splitter'
 require_relative 'lib/code_generation/operations_splitter'
 
+# Repository sources are UTF-8; do not depend on the caller's locale.
+Encoding.default_external = Encoding::UTF_8
+
 # Handles transformation of generated Swift code to replace specific schema types
 # with custom SlackBlockKit types and add conditional imports
 class CodeTransformer

@@ -6,6 +6,9 @@ require 'yaml'
 require_relative './lib/visitors'
 require_relative './lib/helpers'
 
+# Repository sources are UTF-8; do not depend on the caller's locale.
+Encoding.default_external = Encoding::UTF_8
+
 # Based on the exclusion list in slack-web-api-client:
 # https://github.com/slack-edge/slack-web-api-client/blob/649fb67cc970fe04f05ea3fb215180bd698cee97/scripts/code_generator.rb#L91-L115
 # Patterns are anchored to the start of the method name, as in the reference,

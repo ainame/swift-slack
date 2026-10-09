@@ -1,5 +1,7 @@
 require 'minitest/autorun'
 require 'stringio'
+require 'open3'
+require 'rbconfig'
 require 'tmpdir'
 require_relative '../generate_webapi'
 
@@ -25,6 +27,24 @@ class GenerateWebapiTest < Minitest::Test
       # rtm.connect has a fixture but is a legacy API.
       assert_equal %w[api.test usergroups.list], schema.fetch('paths').keys.sort
       assert_match(/Skip admin\.apps\.permissions\.set: no java-slack-sdk fixture/, stderr)
+    end
+  end
+
+  def test_reads_utf8_sources_under_a_non_utf8_locale
+    Dir.mktmpdir do |directory|
+      path = File.join(directory, 'api.test.json')
+      File.write(path, JSON.generate('desc' => 'Checks the API’s availability', 'args' => {}))
+      script = <<~RUBY
+        require #{File.expand_path('../generate_webapi', __dir__).dump}
+        print generate_openapi_path(ARGV[0], 'APITestResponse').dig(:'api.test', :post, :summary)
+      RUBY
+
+      stdout, stderr, status = Open3.capture3(
+        { 'LANG' => 'C', 'LC_ALL' => 'C' }, RbConfig.ruby, '-e', script, path,
+      )
+
+      assert status.success?, stderr
+      assert_equal 'Checks the API’s availability', stdout.force_encoding(Encoding::UTF_8)
     end
   end
 
