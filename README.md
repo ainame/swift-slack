@@ -16,6 +16,15 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
+> [!IMPORTANT]
+> **Upgrading from 2026.9.x or earlier?** Releases 2026.10.0 through 2026.10.2 include changes that may need code updates.
+>
+> * **Use `router.onAction(_:blockId:)` instead of the deprecated `router.onBlockAction(_:)`.** `onBlockAction` was implemented incorrectly: it matched the view's `callback_id` instead of the element's `action_id`, so it couldn't handle buttons or other elements in messages. `onAction` matches by `action_id`, like Bolt's `app.action(...)`, and works in messages, modals, and App Home. Read selected values from `payload.blockActions` instead of `payload.actions`. Both `onBlockAction` and `payload.actions` will be removed in a 2027 release ([#156](https://github.com/ainame/swift-slack/issues/156)). To see which ID to match, read [Choosing Between action_id and callback_id](https://ainame.github.io/swift-slack/documentation/slackapp/interactionidentifiers).
+> * **2026.10.0 removed 17 Web API operations that 2026.9.x generated incorrectly.** Their response types were mostly empty, often with only an `ok` field, so they returned little useful data. They'll come back once they can be generated properly.
+> * 2026.10.2 has a few small breaking changes, such as the new `InteractivePayload.blockSuggestion` case and `onView` becoming a fallback for `onViewSubmission` and `onViewClosed`.
+>
+> See the [CHANGELOG](CHANGELOG.md) for details and migration steps.
+
 ```swift
 import SlackKit
 
