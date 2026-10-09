@@ -167,6 +167,7 @@ def generate_openapi_component(path, output_dir)
     APITestArgsRefFixer.new,
     AppWorkflowRefFixer.new,
     UsergroupRefFixer.new,
+    ResponseMetadataRefFixer.new,
     WorkflowCollaboratorErrorRefFixer.new,
     OptionalityFixer.new,
     ItemTsOptionalAdder.new,

@@ -131,6 +131,24 @@ class GenerateWebapiTest < Minitest::Test
     end
   end
 
+  def test_response_metadata_uses_handwritten_model
+    Dir.mktmpdir do |directory|
+      FileUtils.mkdir_p(File.join(directory, 'schemas'))
+      # views.update's ResponseMetadata lacks next_cursor and sorts last.
+      methods = %w[conversations.list views.update]
+      api_ref_paths = %w[conversations/conversations.list views/views.update]
+        .map { File.join(VENDOR_DIR, "slack-api-ref/methods/#{_1}.json") }
+      sample_paths = methods.map { File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/api/#{_1}.json") }
+
+      capture_io { main(api_ref_paths, sample_paths, directory) }
+      schemas = JSON.parse(File.read(File.join(directory, 'openapi.json'))).fetch('components').fetch('schemas')
+
+      assert_equal '#/components/schemas/ResponseMetadata',
+                   schemas.dig('ConversationsListResponse', 'properties', 'response_metadata', '$ref')
+      assert_empty schemas.fetch('ResponseMetadata').fetch('properties')
+    end
+  end
+
   def test_warnings_are_reported_once_on_github_actions
     Dir.mktmpdir do |directory|
       summary_path = File.join(directory, 'summary.md')

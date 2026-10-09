@@ -392,6 +392,19 @@ class UsergroupRefFixer
   end
 end
 
+# Every cursor-paginated response carries `response_metadata.next_cursor`, but only some
+# fixtures include it, so the merged `ResponseMetadata` kept the fields of whichever fixture
+# was merged last (just messages/warnings). Use the hand-written SlackModels.ResponseMetadata
+# (com.slack.api.model.ResponseMetadata in java-slack-sdk).
+class ResponseMetadataRefFixer
+  def walk(root)
+    definitions = root['definitions']
+    return unless definitions.is_a?(Hash) && definitions.key?('ResponseMetadata')
+
+    definitions['ResponseMetadata'] = HandwrittenModel.placeholder_schema
+  end
+end
+
 # admin.workflows.collaborators.* report per-user failures in `errors`, whose
 # items quicktype names `Error` like unrelated error shapes in other responses.
 # Use the hand-written SlackModels.WorkflowCollaboratorError.
