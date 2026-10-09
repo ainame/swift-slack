@@ -9,6 +9,10 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+### Maintenance
+
+* Added a `Gemfile` that pins json 2.19.1 or later for the generator scripts, which now run through `bundle exec`, because Ruby 4.0.7's bundled json 2.18.0 has generator GC bugs that intermittently failed script tests on Linux. Run `bundle install` before generating - #172
+
 ## [2026.10.2] - 2026-10-08
 
 This release focuses on the `SlackApp` router and modals. Handlers now match Slack interactions the way Bolt does, external select menus are supported, and fixes stop interactions from silently failing in Socket Mode. Modals can be updated with `view.hash`, closed with `ack(responseAction: .clear)`, and updated from a view Slack sent. The README and DocC guides were rewritten so their examples compile, with a new guide to choosing between `action_id` and `callback_id`. The release has a few small breaking changes, listed in the WARNING below.
