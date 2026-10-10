@@ -1,6 +1,0 @@
-.build/
-inputs/
-all/out/
-all/pkg/
-!openapi.json
-Package.resolved

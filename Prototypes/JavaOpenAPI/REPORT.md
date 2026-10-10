@@ -1,5 +1,11 @@
 # Java-derived Web API types: prototype report
 
+> **Status (2026-10-10): integrated.** The approach below now generates downstream swift-slack's Web API
+> responses *and* events (`make generate`, `scripts/lib/java_openapi`). The prototype scripts and outputs were
+> removed; this report and `reports/api-diff.md` stay as the record of the investigation. Differences from
+> the prototype and the fate of the TODOs are listed in "After integration" at the end. `AGENTS.md` describes
+> the current pipeline.
+
 Repositories are named in full: **upstream java-slack-sdk** (Java models and recorded JSON fixtures), **upstream slack-api-ref** (Slack's method docs and examples), **Apple's swift-openapi-generator** (1.11.0, as pinned in `Tools/`), and **downstream swift-slack** (this repository).
 
 ## Summary
@@ -255,3 +261,23 @@ ruby api_diff.rb                  # needs all/out from decode_all.rb; writes rep
 | `decode_all.rb`, `all/` | all-methods generation and decode (`all/out` and `all/pkg` are git-ignored) |
 | `api_diff.rb`, `reports/api-diff.md` | old vs new API diff |
 | `reports/{new,old}-*.json` | decode results |
+
+## After integration
+
+Changes from the prototype:
+
+- **Events are generated from Java too.** Event classes under `com.slack.api.model.event` are added to the same OpenAPI document, dispatched by their `TYPE_NAME` / `SUBTYPE_NAME` constants, and written to `SlackApp` as `extension Components.Schemas`. Web API and event payloads now share one `User`, `Message`, `File`, ... type.
+- **SlackModels is removed.** Shared models live in `SlackClient` as `Components.Schemas.<Name>` with top-level typealiases (`User`, `Message`, ...). Generation fails if a typealias would clash with a standard library or another module's type.
+- **Gson adapters are explicit.** `gson_adapters.rb` reads the adapter registrations in upstream `GsonFactory.java` and requires a decision for each (SlackBlockKit type, hand-written schema, untyped, declared or unsupported).
+- **Hand-written shapes are OpenAPI schemas**, not Swift: `scripts/handwritten_schemas.yml` (`oneOf` plus generated read accessors through `x-swift-accessors`, `x-java-class` to reuse Java classes).
+- **Type overrides** can also add a field that recorded responses carry but Java does not declare (`added: true`, used for `admin.workflows.collaborators.remove` `errors`), and generation fails on unused entries.
+- **Final `type` fields** are serialized as Gson does (the prototype skipped `final` fields).
+- Response schema names keep today's spelling (`APITestResponse`, `OauthV2AccessResponse`, `IMCloseEvent`, ...), so no `typeOverrides` typealiases are needed for them.
+
+TODOs:
+
+- Pipeline integration, `UNSUPPORTED_METHODS`, response class map: done.
+- Hand-written SlackModels: all removed. `WorkflowCollaboratorError` became a hand-written schema plus overrides, `StepInputValue` and the other Gson adapter shapes (`Attachment.video_html`, `previous_message`, list view grouping) became hand-written schemas, Lists cell `value` became a `oneOf` schema. `Container` moved to SlackApp, and `Enterprise` was added there for interaction payloads.
+- SlackBlockKit: `ConversationFilterObject` keys fixed; `TimePickerElement.timezone` added; image response fields not added (not in Slack's docs); `multi_static_select` accepts `option_groups`; documented block types and elements added (alert, card, carousel, context actions, feedback buttons, icon button, URL input, workflow button); `TriggerObject` and `DispatchActionConfigurationObject` keys fixed as well. `call` and `share_shortcut` are not in Slack's current docs and stay `.unknown`.
+- Fixture checks: `make check-fixtures` decodes all 268 generated methods' and 91 events' upstream fixtures and runs the mismatch scan; both run in CI. Event fixtures needed two more Block Kit placeholder rules (empty conversation filter `include` entries, overflow menus without `options`).
+- Still open: live verification beyond one workspace, the Apple swift-openapi-generator 1.14.0 upgrade, `Payload` naming, the docs-only mismatches, release strategy.
