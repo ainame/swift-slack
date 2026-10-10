@@ -268,6 +268,7 @@ Events API handlers are acknowledged automatically. Slash commands, block action
 - [Package traits](Sources/SlackClient/SlackClient.docc/Traits.md): choose the APIs and integrations your app needs.
 - [API documentation](https://ainame.github.io/swift-slack/documentation): explore the package's modules and types.
 - [Migration guide](Sources/SlackApp/SlackApp.docc/MigrationGuide.md): upgrade from 0.5.x to `SlackApp`.
+- [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md): upgrade apps that used `SlackModels` or spell out Web API and event model types.
 
 ## Contributing
 
