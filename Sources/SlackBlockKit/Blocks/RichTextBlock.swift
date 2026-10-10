@@ -1,4 +1,5 @@
 import Foundation
+import OpenAPIRuntime
 
 public struct RichTextBlock: Codable, Hashable, Sendable {
     public let type: String
@@ -23,6 +24,7 @@ public enum RichTextElementType: Codable, Hashable, Sendable {
     case list(RichTextList)
     case preformatted(RichTextPreformatted)
     case quote(RichTextQuote)
+    case unknown(type: String, payload: OpenAPIObjectContainer)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -39,7 +41,7 @@ public enum RichTextElementType: Codable, Hashable, Sendable {
         case "rich_text_quote":
             self = try .quote(container.decode(RichTextQuote.self))
         default:
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown rich text element type: \(type)")
+            self = try .unknown(type: type, payload: OpenAPIObjectContainer(from: decoder))
         }
     }
 
@@ -55,6 +57,8 @@ public enum RichTextElementType: Codable, Hashable, Sendable {
             try container.encode(element)
         case let .quote(element):
             try container.encode(element)
+        case let .unknown(type, payload):
+            try container.encode(OpenAPIObjectContainer.unknown(type: type, payload: payload))
         }
     }
 
@@ -163,6 +167,7 @@ public enum RichTextContentElement: Codable, Hashable, Sendable {
     case broadcast(RichTextBroadcastElement)
     case color(RichTextColorElement)
     case usergroup(RichTextUsergroupElement)
+    case unknown(type: String, payload: OpenAPIObjectContainer)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -189,7 +194,7 @@ public enum RichTextContentElement: Codable, Hashable, Sendable {
         case "usergroup":
             self = try .usergroup(container.decode(RichTextUsergroupElement.self))
         default:
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown rich text content element type: \(type)")
+            self = try .unknown(type: type, payload: OpenAPIObjectContainer(from: decoder))
         }
     }
 
@@ -215,6 +220,8 @@ public enum RichTextContentElement: Codable, Hashable, Sendable {
             try container.encode(element)
         case let .usergroup(element):
             try container.encode(element)
+        case let .unknown(type, payload):
+            try container.encode(OpenAPIObjectContainer.unknown(type: type, payload: payload))
         }
     }
 
