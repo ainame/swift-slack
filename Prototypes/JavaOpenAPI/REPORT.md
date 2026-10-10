@@ -192,6 +192,17 @@ In total, 97 of the 263 responses have no renamed, changed or removed property, 
   - Fixtures are one sample per method.
   - The API diff is static: it treats unions and enums as leaves and ignores hand-written types that lack the generator's remark comments.
 
+## TODO: SlackBlockKit gaps
+
+Downstream swift-slack's SlackBlockKit is hand-written from Slack's Block Kit docs and is not updated automatically, so some gaps predate this prototype. The gaps below were found while decoding the upstream java-slack-sdk fixtures. They are left for the skill-based SlackBlockKit update process to absorb, not fixed here. Verify each against Slack's current Block Kit docs before adding it.
+
+- **Bug: `ConversationFilterObject` has no `CodingKeys`.** Synthesized Codable uses `excludeExternalSharedChannels` / `excludeBotUsers` as JSON keys instead of `exclude_external_shared_channels` / `exclude_bot_users`. Incoming filters lose those fields, and filters an app sends use the wrong keys. This also affects `main`.
+- **`TimePickerElement.timezone`** is missing. Upstream java-slack-sdk's `TimePickerElement` has it.
+- **Image response fields** are missing on `ImageBlock` / `ImageElement`: `image_width`, `image_height`, `image_bytes`, `is_animated` and `fallback`. Upstream java-slack-sdk declares them. They appear to be fields Slack adds when returning messages, which is unconfirmed against a live response.
+- **Block types in upstream java-slack-sdk but not in SlackBlockKit:** `alert`, `call`, `card`, `carousel`, `context_actions`, `share_shortcut`. They decode as `.unknown` today.
+- **Elements and composition objects in upstream java-slack-sdk but not in SlackBlockKit:** `feedback_buttons`, `icon_button`, `url_text_input`, `workflow_button`, and the `FeedbackButtonObject` composition object.
+- **Context:** in the `chat.postMessage` fixture, 181 paths are dropped on the round trip (52 distinct keys repeated across about 12 Block Kit locations). Most of them are a fixture artifact, not gaps. The recorder merges recorded blocks by array index and injects every Java block class's fields, so the single `actions` block carries the keys of `section`, `image`, `video`, `input`, `file`, `call` and `share_shortcut` blocks. Dropping those keys is correct. Only the items listed above point at real gaps.
+
 ## How to run
 
 Run from `Prototypes/JavaOpenAPI`. The repository root first needs `bundle install`, `git submodule update --init` and `swift build --package-path ../../Tools`. The tree-sitter grammar is built by `make tree-sitter-java` at the root; `generate.sh` runs it, and `TREE_SITTER_JAVA_LIB=<path>` points at another build. Run the Ruby scripts as `BUNDLE_GEMFILE=../../Gemfile bundle exec ruby <script>`.
