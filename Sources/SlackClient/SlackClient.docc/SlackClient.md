@@ -8,7 +8,7 @@ Call the Slack Web API with typed requests and responses.
 
 - ``Slack``, which configures authentication and middleware for a transport you choose
 - generated Web API operations on ``Slack/client``, such as `chatPostMessage` and `viewsOpen`
-- request and response models, re-exported from `SlackModels`
+- request and response models in `Components.Schemas`, with top-level aliases such as `User` and `Message` for the shared models
 
 For Socket Mode, signed HTTP requests, routing, acknowledgements, and Events API payload types, use `SlackKit`, which adds the `SlackApp` runtime on top of this module.
 

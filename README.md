@@ -273,12 +273,12 @@ Events API handlers are acknowledged automatically. Slash commands, block action
 
 Issues and pull requests are welcome. If a Web API method or event is missing or decodes incorrectly, [open an issue](https://github.com/ainame/swift-slack/issues) with the payload you received.
 
-To work on the SDK itself, use the Swift and Ruby versions in [`.swift-version`](.swift-version) and [`.ruby-version`](.ruby-version), plus Node.js 20+. The development toolchain currently uses Swift 6.4; the package manifest's minimum is Swift 6.2.
+To work on the SDK itself, use the Swift and Ruby versions in [`.swift-version`](.swift-version) and [`.ruby-version`](.ruby-version), plus a C compiler for the tree-sitter Java grammar. The development toolchain currently uses Swift 6.4; the package manifest's minimum is Swift 6.2.
 
 ```bash
 git clone --recursive https://github.com/ainame/swift-slack.git
 cd swift-slack
-npm ci
+bundle install
 make generate
 swift test
 ```
@@ -298,7 +298,7 @@ Test the skill manually before enabling the schedule. GitHub Actions continues t
 test PRs; the Schema Update workflow is a manual fallback and should not run while
 an agent sync is running or awaiting review.
 
-Web API request parameters come from [slack-ruby/slack-api-ref](https://github.com/slack-ruby/slack-api-ref). Response and event models are inferred from [Slack's Java SDK samples](https://github.com/slackapi/java-slack-sdk), using quicktype and swift-openapi-generator. Many properties are optional because of schema inference; coverage depends on the available upstream samples.
+Web API request parameters come from [slack-ruby/slack-api-ref](https://github.com/slack-ruby/slack-api-ref). Response and event models are translated from the model classes of [Slack's Java SDK](https://github.com/slackapi/java-slack-sdk) and generated with swift-openapi-generator. Properties other than `ok` are optional, because Slack omits fields depending on the method, the object, and the workspace. Every generated method and event is checked against the Java SDK's recorded payloads (`make check-fixtures`).
 
 ## License
 

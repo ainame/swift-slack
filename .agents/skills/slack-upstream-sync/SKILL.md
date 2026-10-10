@@ -37,31 +37,30 @@ Java model classes, Block Kit, and applicable handwritten runtime behavior. Cons
 upstream examples/tests when behavior is ambiguous. Java-only tooling or unrelated
 implementation changes can be excluded with a reason.
 
-Run `npm ci` and `make generate`. Generation failures are fatal:
+Run `bundle install` and `make generate`. Generation failures are fatal:
 do not ship partial output or bypass the failing command. Fix owning specs/scripts
 or handwritten models, then rerun the complete generation pass. Review additions,
 deletions, generated traits in `Package.swift`, and all three generated trees.
 
 For new or changed API families and payloads:
 
-- Compare fixture keys and upstream model fields with the resulting Swift types.
-  Check nested/shared schema names for collisions, missing fields, inferred types,
-  requiredness, explicit coding keys, and source compatibility changes.
-  When shared-schema overwrites lose fields, audit every field across all fixtures,
-  not just the current delta. Fix the merge for verified instances of the same model
-  before adding field-specific visitors. Do not blindly union unrelated models that
-  happen to share an inferred name; resolve their semantic names or handwritten refs.
-  Repeated fields can also have incompatible shapes: review nested definitions and
-  state the limits of any merge fix.
-- Compilation and successful decoding can hide silent field loss. Exercise a
-  representative fixture and assert meaningful decoded fields; check re-encoding
-  where it exposes data loss. Round trips need not preserve unknown fields unless
-  the model promises that behavior.
-- Follow `AGENTS.md` when a handwritten model is needed. Prefer one when inference
-  creates a collision, incomplete shape, or misleading public type and upstream
-  evidence supports a stable replacement. Explain the choice and add regression
-  coverage. Do not hand-edit generated files or infer Web API responses from Slack
-  reference documentation examples.
+- Response and event types come from the Java classes, so review changed Java model,
+  response and event classes field by field against the generated Swift types.
+  Generation fails on Java constructs it cannot translate, on unresolved type names,
+  on a new Gson adapter without a decision in `scripts/lib/java_openapi/gson_adapters.rb`,
+  on stale or unused entries in `scripts/java_type_overrides.yml` and
+  `scripts/handwritten_schemas.yml`, and on shared model names that clash with
+  existing top-level types. Fix the cause rather than suppressing the check.
+- Run `make check-fixtures`. Every generated method's and event's fixture must decode,
+  and every fixture value that contradicts its schema needs a reviewed entry in
+  `scripts/java_type_overrides.yml`. Mismatches only in slack-api-ref documentation
+  examples are informational.
+- Compilation and successful decoding can hide silent field loss. Check fixture keys
+  that the Java classes do not declare; add an `added` override only when recorded
+  responses carry the field.
+- Follow `AGENTS.md` for the type override and hand-written schema rules. Do not
+  hand-edit generated files or infer Web API responses from Slack reference
+  documentation examples.
 - Inspect handwritten Block Kit and Events changes even if generation is unchanged.
   Explicitly assess additions/removals that affect exhaustive switches or public API.
 
