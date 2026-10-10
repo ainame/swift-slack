@@ -3,7 +3,9 @@ import Foundation
 public struct MultiStaticSelectElement: Codable, Hashable, Sendable {
     public let type: String
     public let actionId: String?
-    public let options: [OptionObject]
+    /// The options to choose from; nil when `optionGroups` is used instead.
+    public let options: [OptionObject]?
+    public let optionGroups: [OptionGroupObject]?
     public let initialOptions: [OptionObject]?
     public let maxSelectedItems: Int?
     public let confirm: ConfirmationDialogObject?
@@ -11,7 +13,8 @@ public struct MultiStaticSelectElement: Codable, Hashable, Sendable {
     public let placeholder: TextObject?
 
     public init(
-        options: [OptionObject],
+        options: [OptionObject]? = nil,
+        optionGroups: [OptionGroupObject]? = nil,
         actionId: String? = nil,
         initialOptions: [OptionObject]? = nil,
         maxSelectedItems: Int? = nil,
@@ -21,6 +24,7 @@ public struct MultiStaticSelectElement: Codable, Hashable, Sendable {
     ) {
         type = "multi_static_select"
         self.options = options
+        self.optionGroups = optionGroups
         self.actionId = actionId
         self.initialOptions = initialOptions
         self.maxSelectedItems = maxSelectedItems
@@ -33,6 +37,7 @@ public struct MultiStaticSelectElement: Codable, Hashable, Sendable {
         case type
         case actionId = "action_id"
         case options
+        case optionGroups = "option_groups"
         case initialOptions = "initial_options"
         case maxSelectedItems = "max_selected_items"
         case confirm
