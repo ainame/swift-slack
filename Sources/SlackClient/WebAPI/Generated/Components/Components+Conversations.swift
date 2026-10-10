@@ -958,6 +958,10 @@ extension Components.Schemas {
         public var channels: [Components.Schemas.Conversation]?
         /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/response_metadata`.
         public var responseMetadata: Components.Schemas.ResponseMetadata?
+        /// Not declared by java-slack-sdk `ConversationsListResponse`, but recorded responses include it.
+        ///
+        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/callstack`.
+        public var callstack: Swift.String?
         /// Creates a new `ConversationsListResponse`.
         ///
         /// - Parameters:
@@ -969,6 +973,7 @@ extension Components.Schemas {
         ///   - provided:
         ///   - channels:
         ///   - responseMetadata:
+        ///   - callstack: Not declared by java-slack-sdk `ConversationsListResponse`, but recorded responses include it.
         public init(
             ok: Swift.Bool,
             warning: Swift.String? = nil,
@@ -978,6 +983,7 @@ extension Components.Schemas {
             provided: Swift.String? = nil,
             channels: [Components.Schemas.Conversation]? = nil,
             responseMetadata: Components.Schemas.ResponseMetadata? = nil,
+            callstack: Swift.String? = nil,
         ) {
             self.ok = ok
             self.warning = warning
@@ -987,6 +993,7 @@ extension Components.Schemas {
             self.provided = provided
             self.channels = channels
             self.responseMetadata = responseMetadata
+            self.callstack = callstack
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -998,6 +1005,7 @@ extension Components.Schemas {
             case provided
             case channels
             case responseMetadata = "response_metadata"
+            case callstack
         }
     }
 

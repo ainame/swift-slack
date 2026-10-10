@@ -473,6 +473,14 @@ extension Components.Schemas {
         public var enterpriseId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/User/enterprise_name`.
         public var enterpriseName: Swift.String?
+        /// Not declared by java-slack-sdk `User`, but recorded responses include it.
+        ///
+        /// - Remark: Generated from `#/components/schemas/User/email`.
+        public var email: Swift.String?
+        /// Not declared by java-slack-sdk `User`, but recorded responses include it.
+        ///
+        /// - Remark: Generated from `#/components/schemas/User/expiration_ts`.
+        public var expirationTs: Swift.Int?
         /// Creates a new `User`.
         ///
         /// - Parameters:
@@ -509,6 +517,8 @@ extension Components.Schemas {
         ///   - teams:
         ///   - enterpriseId:
         ///   - enterpriseName:
+        ///   - email: Not declared by java-slack-sdk `User`, but recorded responses include it.
+        ///   - expirationTs: Not declared by java-slack-sdk `User`, but recorded responses include it.
         public init(
             id: Swift.String? = nil,
             teamId: Swift.String? = nil,
@@ -543,6 +553,8 @@ extension Components.Schemas {
             teams: [Swift.String]? = nil,
             enterpriseId: Swift.String? = nil,
             enterpriseName: Swift.String? = nil,
+            email: Swift.String? = nil,
+            expirationTs: Swift.Int? = nil,
         ) {
             self.id = id
             self.teamId = teamId
@@ -577,6 +589,8 @@ extension Components.Schemas {
             self.teams = teams
             self.enterpriseId = enterpriseId
             self.enterpriseName = enterpriseName
+            self.email = email
+            self.expirationTs = expirationTs
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -613,6 +627,8 @@ extension Components.Schemas {
             case teams
             case enterpriseId = "enterprise_id"
             case enterpriseName = "enterprise_name"
+            case email
+            case expirationTs = "expiration_ts"
         }
     }
 }

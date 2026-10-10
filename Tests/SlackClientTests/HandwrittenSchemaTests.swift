@@ -53,6 +53,16 @@ struct HandwrittenSchemaTests {
     }
     #endif
 
+@Test func `fields that responses carry but java-slack-sdk does not declare are kept`() throws {
+    let activity = try decode(AppActivity.self, #"{ "payload": { "tokens_checked": 12, "extra_message": "m" } }"#)
+    #expect(activity.payload?.tokensChecked == 12)
+    #expect(activity.payload?.extraMessage == "m")
+
+    let user = try decode(User.self, #"{ "id": "W1", "email": "a@example.com", "expiration_ts": 1700000000 }"#)
+    #expect(user.email == "a@example.com")
+    #expect(user.expirationTs == 1_700_000_000)
+}
+
     private func decode<T: Decodable>(_: T.Type, _ json: String) throws -> T {
         try JSONDecoder().decode(T.self, from: Data(json.utf8))
     }

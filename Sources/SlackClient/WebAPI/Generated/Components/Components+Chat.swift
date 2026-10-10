@@ -553,6 +553,8 @@ extension Components.Schemas {
 
             /// - Remark: Generated from `#/components/schemas/ChatScheduleMessageResponse/message/assistant_app_thread`.
             public var assistantAppThread: Components.Schemas.ChatScheduleMessageResponse.MessagePayload.AssistantAppThreadPayload?
+            /// - Remark: Generated from `#/components/schemas/ChatScheduleMessageResponse/message/room`.
+            public var room: Components.Schemas.Room?
             /// Creates a new `MessagePayload`.
             ///
             /// - Parameters:
@@ -567,6 +569,7 @@ extension Components.Schemas {
             ///   - blocks:
             ///   - metadata:
             ///   - assistantAppThread:
+            ///   - room:
             public init(
                 appId: Swift.String? = nil,
                 botId: Swift.String? = nil,
@@ -579,6 +582,7 @@ extension Components.Schemas {
                 blocks: [Components.Schemas.Block]? = nil,
                 metadata: Components.Schemas.ChatScheduleMessageResponse.MessagePayload.MetadataPayload? = nil,
                 assistantAppThread: Components.Schemas.ChatScheduleMessageResponse.MessagePayload.AssistantAppThreadPayload? = nil,
+                room: Components.Schemas.Room? = nil,
             ) {
                 self.appId = appId
                 self.botId = botId
@@ -591,6 +595,7 @@ extension Components.Schemas {
                 self.blocks = blocks
                 self.metadata = metadata
                 self.assistantAppThread = assistantAppThread
+                self.room = room
             }
 
             public enum CodingKeys: String, CodingKey {
@@ -605,6 +610,7 @@ extension Components.Schemas {
                 case blocks
                 case metadata
                 case assistantAppThread = "assistant_app_thread"
+                case room
             }
         }
 

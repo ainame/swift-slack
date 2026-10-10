@@ -249,3 +249,54 @@ com.slack.api.methods.response.admin.workflows.AdminWorkflowsCollaboratorsRemove
   added: true
   reason: Recorded responses carry per-user `errors` as admin.workflows.collaborators.add does.
   evidence: [admin.workflows.collaborators.remove]
+
+# ---- Fields recorded in fixtures that the Java classes do not declare
+com.slack.api.model.admin.AppActivity.Payload#tokens_checked:
+  type: schema
+  schema:
+    type: integer
+  added: true
+  reason: Recorded function execution activity payloads carry the number of checked tokens.
+  evidence: [admin.apps.activities.list]
+com.slack.api.model.admin.AppActivity.Payload#extra_message:
+  type: schema
+  schema:
+    type: string
+  added: true
+  reason: Recorded activity payloads carry an extra message.
+  evidence: [admin.apps.activities.list]
+com.slack.api.model.User#email:
+  type: schema
+  schema:
+    type: string
+  added: true
+  reason: admin.users.getExpiration returns the user's email at the top level of the user object.
+  evidence: [admin.users.getExpiration]
+com.slack.api.model.User#expiration_ts:
+  type: schema
+  schema:
+    type: integer
+  added: true
+  reason: admin.users.getExpiration returns when a guest's account expires.
+  evidence: [admin.users.getExpiration]
+com.slack.api.methods.response.chat.ChatScheduleMessageResponse.ScheduledMessage#room:
+  type: schema
+  schema:
+    x-java-class: com.slack.api.model.Room
+  added: true
+  reason: Recorded scheduled messages carry the huddle `room`, as com.slack.api.model.Message does.
+  evidence: [chat.scheduleMessage]
+com.slack.api.methods.response.reactions.ReactionsGetResponse.Message#room:
+  type: schema
+  schema:
+    x-java-class: com.slack.api.model.Room
+  added: true
+  reason: Recorded messages carry the huddle `room`, as com.slack.api.model.Message does.
+  evidence: [reactions.get]
+com.slack.api.methods.response.conversations.ConversationsListResponse#callstack:
+  type: schema
+  schema:
+    type: string
+  added: true
+  reason: Recorded responses carry Slack's debugging `callstack`, which chat.postMessage declares in Java too.
+  evidence: [conversations.list]

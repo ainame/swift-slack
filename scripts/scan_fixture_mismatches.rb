@@ -10,6 +10,9 @@
 # the recorder's own placeholder at an overridden property is counted separately. Mismatches in upstream
 # slack-api-ref docs examples are printed for information only. SlackBlockKit subtrees are not descended into.
 #
+# A key that the schema does not declare is a mismatch too ("expected undeclared"): the recorder only fills
+# Java fields, so such a key comes from a recorded response. Declare it with an `added` type override.
+#
 # Usage: scan_fixture_mismatches.rb
 
 require 'json'
@@ -117,6 +120,8 @@ class Scanner
           check(child, properties[key], "#{path}.#{key}", source, findings)
         elsif additional.is_a?(Hash)
           check(child, additional, "#{path}.*", source, findings)
+        elsif !additional
+          record(findings.mismatches, source, "#{path}.#{key}", 'undeclared', child)
         end
       end
     when Array

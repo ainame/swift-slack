@@ -267,6 +267,14 @@ extension Components.Schemas {
             public var httpStatusCode: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/AppActivity/payload/provider_key`.
             public var providerKey: Swift.String?
+            /// Not declared by java-slack-sdk `AppActivity.Payload`, but recorded responses include it.
+            ///
+            /// - Remark: Generated from `#/components/schemas/AppActivity/payload/tokens_checked`.
+            public var tokensChecked: Swift.Int?
+            /// Not declared by java-slack-sdk `AppActivity.Payload`, but recorded responses include it.
+            ///
+            /// - Remark: Generated from `#/components/schemas/AppActivity/payload/extra_message`.
+            public var extraMessage: Swift.String?
             /// Creates a new `PayloadPayload`.
             ///
             /// - Parameters:
@@ -307,6 +315,8 @@ extension Components.Schemas {
             ///   - errorStage:
             ///   - httpStatusCode:
             ///   - providerKey:
+            ///   - tokensChecked: Not declared by java-slack-sdk `AppActivity.Payload`, but recorded responses include it.
+            ///   - extraMessage: Not declared by java-slack-sdk `AppActivity.Payload`, but recorded responses include it.
             public init(
                 execOutcome: Swift.String? = nil,
                 workflowName: Swift.String? = nil,
@@ -345,6 +355,8 @@ extension Components.Schemas {
                 errorStage: Swift.String? = nil,
                 httpStatusCode: Swift.Int? = nil,
                 providerKey: Swift.String? = nil,
+                tokensChecked: Swift.Int? = nil,
+                extraMessage: Swift.String? = nil,
             ) {
                 self.execOutcome = execOutcome
                 self.workflowName = workflowName
@@ -383,6 +395,8 @@ extension Components.Schemas {
                 self.errorStage = errorStage
                 self.httpStatusCode = httpStatusCode
                 self.providerKey = providerKey
+                self.tokensChecked = tokensChecked
+                self.extraMessage = extraMessage
             }
 
             public enum CodingKeys: String, CodingKey {
@@ -423,6 +437,8 @@ extension Components.Schemas {
                 case errorStage = "error_stage"
                 case httpStatusCode = "http_status_code"
                 case providerKey = "provider_key"
+                case tokensChecked = "tokens_checked"
+                case extraMessage = "extra_message"
             }
         }
 

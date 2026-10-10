@@ -6,7 +6,7 @@ This release changes where swift-slack's Web API response and event types come f
 
 - **The `SlackModels` module is gone.** Shared models such as `User`, `Message`, `File` and `Conversation` now live in `SlackClient` as `Components.Schemas.<Name>`, with a top-level alias of the same name (`User` is `Components.Schemas.User`).
 - **Web API and events share one set of models.** An event's `Message` or `File` is the same type as a Web API response's.
-- **Models describe every field the Java SDK knows.** Fields that a single recorded sample happened to lack are now present. Across the 268 Web API responses, 467 top-level properties are new and one is gone.
+- **Models describe every field the Java SDK knows.** Fields that a single recorded sample happened to lack are now present. Across the 268 Web API responses, 469 top-level properties are new and none are gone.
 - **Every property is optional except `ok` on responses and `type` on events.** Slack omits fields depending on the method, the object and the workspace.
 - **Requests, method names and response names are unchanged.** `slack.client.chatPostMessage(body: .json(...))`, `.ok.body.json`, `Components.Schemas.ChatPostMessageResponse`, `MessageEvent` and the `Event` enum cases keep their names.
 
@@ -145,4 +145,3 @@ Types that used to be shared but are event-specific in the Java SDK are now nest
 
 - `IMCreatedEvent.channel` is an untyped object, because the Java SDK has not modelled it yet.
 - `Conversation` no longer has fields that only appeared in other methods' samples, such as `memberCount` and `isFrozen`. Admin APIs that return them have their own response types (`AdminConversationsSearchResponse`).
-- `conversations.list` no longer exposes `callstack`, an internal debugging field.

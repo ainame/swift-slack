@@ -183,6 +183,8 @@ extension Components.Schemas {
             public var permalink: Swift.String?
             /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/reactions`.
             public var reactions: [Components.Schemas.Reaction]?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/room`.
+            public var room: Components.Schemas.Room?
             /// Creates a new `MessagePayload`.
             ///
             /// - Parameters:
@@ -202,6 +204,7 @@ extension Components.Schemas {
             ///   - assistantAppThread:
             ///   - permalink:
             ///   - reactions:
+            ///   - room:
             public init(
                 _type: Swift.String? = nil,
                 subtype: Swift.String? = nil,
@@ -219,6 +222,7 @@ extension Components.Schemas {
                 assistantAppThread: Components.Schemas.ReactionsGetResponse.MessagePayload.AssistantAppThreadPayload? = nil,
                 permalink: Swift.String? = nil,
                 reactions: [Components.Schemas.Reaction]? = nil,
+                room: Components.Schemas.Room? = nil,
             ) {
                 self._type = _type
                 self.subtype = subtype
@@ -236,6 +240,7 @@ extension Components.Schemas {
                 self.assistantAppThread = assistantAppThread
                 self.permalink = permalink
                 self.reactions = reactions
+                self.room = room
             }
 
             public enum CodingKeys: String, CodingKey {
@@ -255,6 +260,7 @@ extension Components.Schemas {
                 case assistantAppThread = "assistant_app_thread"
                 case permalink
                 case reactions
+                case room
             }
         }
 
