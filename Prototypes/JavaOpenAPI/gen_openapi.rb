@@ -57,6 +57,10 @@ INTEGER = Set["Integer", "int", "Long", "long", "Short", "short", "BigInteger", 
 NUMBER = Set["Double", "double", "Float", "float", "Number", "BigDecimal"]
 BOOLEAN = Set["Boolean", "boolean"]
 UNTYPED = Set["Object", "JsonElement"]
+# Types outside the parsed sources that are left untyped (`{}`), as written in the Java source.
+# Anything else that cannot be resolved to a parsed class is an error.
+EXTERNAL_UNTYPED = Set["JsonObject", "JsonArray"] # Gson trees: arbitrary JSON, silently `{}`
+EXTERNAL_UNTYPED_REPORTED = Set["InputStream"]    # java.io stream (binary file download): `{}`, listed in gen-report.json
 
 # Things we could not model faithfully; written to gen-report.json.
 REPORT = {
@@ -69,7 +73,7 @@ REPORT = {
   alternate_names: [],
   multi_declarator: [],
   name_collisions: [],
-  generic_unresolved: [],
+  generic_unresolved: [], # always empty now (an unresolvable superclass raises); kept so gen-report.json keeps its shape
 }
 
 # ---------------------------------------------------------------- Java model
@@ -78,8 +82,8 @@ REPORT = {
 JFile = Struct.new(:path, :package, :imports, :classes)
 
 # A declared Java type. `Map<String, List<User>>[]` is name "Map", args [String, List<User>], dims 1.
-# `name` may be dotted (`Outer.Inner`, `java.util.Map`).
-JType = Struct.new(:name, :args, :dims) do
+# `name` may be dotted (`Outer.Inner`, `java.util.Map`). `line` is where it is written, for error messages.
+JType = Struct.new(:name, :args, :dims, :line) do
   def short
     name.split(".").last
   end
@@ -215,7 +219,7 @@ class JavaFileParser
       type = declared_type
       if (dimensions = declarator.child_by_field_name("dimensions")) # C-style `String names[]`
         REPORT[:unsupported_declarators] << "#{cls.fqn}.#{name}"
-        type = JType.new(type.name, type.args, type.dims + text(dimensions).count("["))
+        type = JType.new(type.name, type.args, type.dims + text(dimensions).count("["), type.line)
       end
       JField.new(name, type, serialized_name(modifiers, "#{cls.fqn}.#{name}"))
     end
@@ -265,19 +269,23 @@ class JavaFileParser
   def parse_type(node)
     case node.type
     when :type_identifier, :scoped_type_identifier, :integral_type, :floating_point_type, :boolean_type
-      JType.new(qualified_name(node), [], 0) # `String`, `Outer.Inner`, `int`
+      JType.new(qualified_name(node), [], 0, line_of(node)) # `String`, `Outer.Inner`, `int`
     when :generic_type # `Map<String, X>`: the type, then its type_arguments
       base, arguments = node.each_named.to_a
-      JType.new(parse_type(base).name, arguments.each_named.map { |argument| parse_type(argument) }, 0)
+      JType.new(parse_type(base).name, arguments.each_named.map { |argument| parse_type(argument) }, 0, line_of(node))
     when :array_type # `X[][]`: an element type plus a `dimensions` node
       element = parse_type(node.child_by_field_name("element"))
-      JType.new(element.name, element.args, element.dims + text(node.child_by_field_name("dimensions")).count("["))
+      JType.new(element.name, element.args, element.dims + text(node.child_by_field_name("dimensions")).count("["), element.line)
     when :wildcard
       bound = node.each_named.first
-      bound ? parse_type(bound) : JType.new("Object", [], 0)
+      bound ? parse_type(bound) : JType.new("Object", [], 0, line_of(node))
     else
       fail_at(node, "unsupported type `#{node.type}`")
     end
+  end
+
+  def line_of(node)
+    node.start_point.row + 1
   end
 
   def text(node)
@@ -336,76 +344,59 @@ end
 # ---------------------------------------------------------------- name resolution
 
 # Resolves a (possibly dotted) type name as written inside class `ctx` to a JClass, or nil.
-# Lookup order, like javac: nested classes visible from ctx, then explicit imports, the same package,
-# wildcard imports, and finally a fully-qualified name. `for_super` is for the name in `extends`.
-def resolve_class(ctx, name, for_super: false)
-  parts = name.split(".")
-  first = parts[0]
+# The first segment is looked up with the five steps below, in this order (a simplified javac):
+#   1. nested classes of ctx, then of each enclosing class;
+#   2. explicit single-type imports (`import a.b.Foo;`);
+#   3. the same package;
+#   4. wildcard imports (`import a.b.*;`);
+#   5. a fully-qualified name (`a.b.Foo`, `a.b.Outer.Inner`).
+# Any further segments select nested classes: `Outer.Inner.Deeper`.
+def resolve_class(ctx, name)
+  first, *rest = name.split(".")
+  base = nested_class(ctx, first) ||
+         single_import(ctx.file, first) ||
+         same_package_class(ctx.file, first) ||
+         wildcard_import(ctx.file, first)
+  return select_nested(base, rest) if base
 
-  base = nil
-  unless for_super && first == ctx.name # `class A extends A.B`: A is not yet in scope inside itself
-    base = for_super ? lookup_inner_of_enclosing(ctx, first) : lookup_inner(ctx, first)
-  end
-  base ||= lookup_top_level(ctx.file, first)
-  if base.nil? && parts.size > 1
-    base, parts = lookup_fully_qualified(parts)
-  end
-  return nil if base.nil?
-
-  # Remaining parts select nested classes: `Outer.Inner.Deeper`.
-  parts[1..].each do |part|
-    base = base.inner[part]
-    return nil if base.nil?
-  end
-  base
+  fully_qualified_class(name.split("."))
 end
 
+# Superclass of `cls` (`extends X`), resolved like any other type name. Raises if it cannot be found.
 def resolve_super(cls)
   return nil unless cls.superclass
 
-  resolve_class(cls, cls.superclass.name, for_super: true)
+  resolve_class(cls, cls.superclass.name) or
+    raise "#{cls.file.path}:#{cls.superclass.line}: cannot resolve superclass `#{cls.superclass.name}` of #{cls.fqn}"
 end
 
-# Nested class `name` visible from `cls`: its own, its superclasses', then those of enclosing classes.
-def lookup_inner(cls, name)
-  seen = Set.new.compare_by_identity
-  enclosing = cls
-  while enclosing
-    klass = enclosing
-    while klass && !seen.include?(klass)
-      seen << klass
-      return klass.inner[name] if klass.inner.key?(name)
+# Step 1: a class called `name` nested in `cls`, or in the class around it, and so on outwards.
+# Nested classes inherited from superclasses are not considered.
+def nested_class(cls, name)
+  while cls
+    return cls.inner[name] if cls.inner.key?(name)
 
-      klass = resolve_super(klass)
-    end
-    enclosing = enclosing.outer
+    cls = cls.outer
   end
   nil
 end
 
-# For `extends X`, where X may be a nested class of an enclosing class (but not of the class itself).
-def lookup_inner_of_enclosing(cls, name)
-  enclosing = cls.outer
-  while enclosing
-    return enclosing.inner[name] if enclosing.inner.key?(name)
-
-    enclosing = enclosing.outer
-  end
-  nil
-end
-
-# Top-level class (or class imported by name) called `name` as seen from `file`.
-def lookup_top_level(file, name)
+# Step 2: `import a.b.Foo;` names the class `Foo` exactly.
+def single_import(file, name)
   file.imports.each do |import|
-    next unless import.end_with?(".#{name}")
-
-    found = INDEX[import] || imported_inner_class(import)
+    found = INDEX[import] if import.end_with?(".#{name}")
     return found if found
   end
+  nil
+end
 
-  same_package = BY_PACKAGE.fetch(file.package, {})[name]
-  return same_package if same_package
+# Step 3: a top-level class of the file's own package.
+def same_package_class(file, name)
+  BY_PACKAGE.fetch(file.package, {})[name]
+end
 
+# Step 4: `import a.b.*;` makes every top-level class of package a.b visible.
+def wildcard_import(file, name)
   file.imports.each do |import|
     next unless import.end_with?(".*")
 
@@ -415,19 +406,18 @@ def lookup_top_level(file, name)
   nil
 end
 
-# `import a.b.Outer.Inner;` => Inner, when a.b.Outer is a known class.
-def imported_inner_class(import)
-  outer_name, _, inner_name = import.rpartition(".")
-  INDEX[outer_name]&.inner&.[](inner_name)
+# Step 5: `a.b.Outer.Inner` => the class Inner of the top-level class a.b.Outer (longest known class prefix wins).
+def fully_qualified_class(parts)
+  parts.size.downto(2) do |length|
+    outer = INDEX[parts.first(length).join(".")]
+    return select_nested(outer, parts.drop(length)) if outer
+  end
+  nil
 end
 
-# `a.b.Outer.Inner` => [class a.b.Outer, ["Outer", "Inner"]]: the longest known class prefix and the parts from it on.
-def lookup_fully_qualified(parts)
-  (parts.size - 1).downto(1) do |last|
-    found = INDEX[parts[0..last].join(".")]
-    return [found, parts[last..]] if found
-  end
-  [nil, parts]
+# `Outer` + ["Inner", "Deeper"] => Outer.Inner.Deeper, or nil if a segment is not a nested class.
+def select_nested(klass, names)
+  names.reduce(klass) { |current, name| current&.inner&.[](name) }
 end
 
 # ---------------------------------------------------------------- fields
@@ -443,8 +433,6 @@ def all_fields(cls, stack = [])
   sup = resolve_super(cls)
   if sup && sup.kind == "class" && !stack.include?(sup)
     fields.merge!(all_fields(sup, stack + [cls]))
-  elsif cls.superclass && sup.nil?
-    REPORT[:generic_unresolved] << "#{cls.fqn} extends #{cls.superclass.name}"
   end
   cls.fields.each do |field|
     fields[field.serialized_name || snake(field.name)] = [field, cls]
@@ -509,7 +497,11 @@ end
 def class_schema(type, ctx, where, inline_stack)
   cls = resolve_class(ctx, type.name)
   if cls.nil?
-    note_unknown(type.name, where) unless %w[JsonObject JsonArray].include?(type.name)
+    if EXTERNAL_UNTYPED_REPORTED.include?(type.name)
+      note_unknown(type.name, where)
+    elsif !EXTERNAL_UNTYPED.include?(type.name)
+      raise "#{ctx.file.path}:#{type.line}: cannot resolve type `#{type.name}` (#{where})"
+    end
     {}
   elsif cls.kind == "enum"
     REPORT[:enums] << cls.fqn
