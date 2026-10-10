@@ -87,7 +87,7 @@ public enum View: Codable, Hashable, Sendable {
             view.state
         case let .homeTab(view):
             view.state
-        case let .unknown(_, payload):
+        case .unknown:
             nil
         }
     }
