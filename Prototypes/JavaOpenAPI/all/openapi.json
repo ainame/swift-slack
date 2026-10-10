@@ -9204,7 +9204,27 @@
           "views": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/View"
+              "type": "object",
+              "properties": {
+                "view_id": {
+                  "type": "string"
+                },
+                "file_id": {
+                  "type": "string"
+                },
+                "view_key": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "date_added": {
+                  "type": "integer"
+                },
+                "content_version": {
+                  "type": "integer"
+                }
+              }
             }
           }
         },

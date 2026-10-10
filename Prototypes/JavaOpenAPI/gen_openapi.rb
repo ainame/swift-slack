@@ -523,7 +523,7 @@ def type_schema(type, ctx, where, inline_stack)
       { "type" => "boolean" }
     elsif UNTYPED.include?(short)
       {}
-    elsif OVERRIDES.key?(short)
+    elsif OVERRIDES.key?(short) && !nested_class_named?(ctx, type)
       schema_name, swift_type = OVERRIDES[short]
       override_ref(short, schema_name, swift_type)
     elsif UNTYPED_ADAPTER.include?(short)
@@ -535,6 +535,13 @@ def type_schema(type, ctx, where, inline_stack)
 
   type.dims.times { schema = { "type" => "array", "items" => schema } }
   schema
+end
+
+# A class nested in the model (e.g. AgentsConversationsListViewsResponse.View) shadows the TypeAdapter type of
+# the same simple name, so OVERRIDES must not apply to it.
+def nested_class_named?(ctx, type)
+  cls = resolve_class(ctx, type.name)
+  !cls.nil? && !cls.outer.nil?
 end
 
 # Schema for a type that is (hopefully) one of the parsed Java classes.
