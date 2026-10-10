@@ -9,6 +9,8 @@
 # Environment:
 #   SLACKBLOCKKIT_DIR  directory of swift-slack's hand-written SlackBlockKit sources. Block-kit
 #                      classes whose simple name matches a public type there become typeOverrides.
+#   TREE_SITTER_JAVA_LIB  path of the compiled tree-sitter-java grammar. Defaults to the output of
+#                      `make tree-sitter-java` (.tmp/tree-sitter-java/ in the repository root).
 #
 # Java -> OpenAPI rules:
 #   * Every `<Method>Response` class under com.slack.api.methods.response is a path's 200 schema.
@@ -20,10 +22,14 @@
 #   * Gson TypeAdapter types that swift-slack hand-writes (Block, View, TextObject, ...) are emitted
 #     as empty component schemas and mapped to SlackBlockKit types through `typeOverrides`.
 #   * Enums become strings; unknown/untyped Java types become `{}` and are listed in gen-report.json.
+#
+# The Java sources are read with a tree-sitter syntax tree (see "Java parsing" below), so the
+# script only has to say which tree nodes it cares about.
 
 require "json"
 require "fileutils"
 require "set"
+require "tree_sitter"
 
 sdk_dir, out_path, out_config_path, *methods = ARGV
 abort "usage: #{$PROGRAM_NAME} <java-slack-sdk dir> <out openapi.json> <out config.yaml> method..." if methods.empty?
@@ -52,10 +58,6 @@ NUMBER = Set["Double", "double", "Float", "float", "Number", "BigDecimal"]
 BOOLEAN = Set["Boolean", "boolean"]
 UNTYPED = Set["Object", "JsonElement"]
 
-MODIFIERS = Set["public", "private", "protected", "static", "final", "abstract", "transient", "volatile",
-                "synchronized", "native", "default", "strictfp", "sealed", "non-sealed"]
-CLASS_KINDS = %w[class interface enum record].freeze
-
 # Things we could not model faithfully; written to gen-report.json.
 REPORT = {
   unknown_types: {},
@@ -70,35 +72,34 @@ REPORT = {
   generic_unresolved: [],
 }
 
-# ---------------------------------------------------------------- tokenizer
-
-# Strings, comments, identifiers, numbers and punctuation; whitespace is matched so it can be dropped.
-TOKEN = %r{"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|//[^\n]*|/\*.*?\*/|[A-Za-z_$][A-Za-z0-9_$]*|\d[\w.]*|\.\.\.|->|::|[{}()\[\]<>;=,.@?&|:+\-*/!%^~]|\s+}m
-
-def tokenize(source)
-  source.scan(TOKEN).reject { |t| t.match?(/\A\s/) || t.start_with?("//", "/*") }
-end
-
 # ---------------------------------------------------------------- Java model
 
-JFile = Struct.new(:path, :package, :imports, :classes) do
-  def initialize(path)
-    super(path, "", [], {})
+# One .java file: its package, its imports (as written, `a.b.C` or `a.b.*`) and its top-level classes.
+JFile = Struct.new(:path, :package, :imports, :classes)
+
+# A declared Java type. `Map<String, List<User>>[]` is name "Map", args [String, List<User>], dims 1.
+# `name` may be dotted (`Outer.Inner`, `java.util.Map`).
+JType = Struct.new(:name, :args, :dims) do
+  def short
+    name.split(".").last
   end
 end
 
+# A serialisable instance field. `serialized_name` is the @SerializedName value, if there is one.
+JField = Struct.new(:name, :type, :serialized_name)
+
 class JClass
   attr_reader :name, :kind, :outer, :file, :fields, :inner
-  attr_accessor :extends
+  attr_accessor :superclass
 
   def initialize(name, kind, outer, file)
     @name = name
-    @kind = kind       # class / interface / enum / record
-    @outer = outer     # enclosing JClass or nil
+    @kind = kind        # "class", "interface" or "enum"
+    @outer = outer      # enclosing JClass or nil
     @file = file
-    @extends = nil     # raw superclass type string
-    @fields = []       # [type_tokens, field_name, serialized_name_or_nil]
-    @inner = {}        # name => JClass
+    @superclass = nil   # JType of the `extends` clause (classes only)
+    @fields = []        # [JField]
+    @inner = {}         # name => JClass
   end
 
   def fqn
@@ -106,232 +107,199 @@ class JClass
   end
 end
 
-# ---------------------------------------------------------------- parser
+# ---------------------------------------------------------------- Java parsing
 
-# Index just past the bracket that balances toks[i] (which must be `open`).
-def skip_balanced(toks, i, open, close)
-  depth = 0
-  while i < toks.size
-    if toks[i] == open
-      depth += 1
-    elsif toks[i] == close
-      depth -= 1
-      return i + 1 if depth.zero?
-    end
-    i += 1
-  end
-  i
+# tree-sitter turns Java source into a tree of nodes; `node.type` is the grammar rule (:class_declaration,
+# :field_declaration, ...), `node.child_by_field_name("name")` picks a named part of a node, and
+# `node.each_named` walks its children (punctuation and keywords are "anonymous" and skipped).
+# Print a tree for any Java file with `tree-sitter parse File.java` to see what it looks like.
+GRAMMAR_PATH = ENV.fetch("TREE_SITTER_JAVA_LIB") do
+  extension = RbConfig::CONFIG["host_os"].include?("darwin") ? "dylib" : "so"
+  default = File.expand_path("../../.tmp/tree-sitter-java/libtree-sitter-java.#{extension}", __dir__)
+  abort "tree-sitter-java grammar not built: run `make tree-sitter-java` in the repository root" unless File.exist?(default)
+  default
 end
+JAVA_PARSER = TreeSitter::Parser.new.tap { |parser| parser.language = TreeSitter::Language.load("java", GRAMMAR_PATH) }
 
-# Splits a declaration header into [annotations, remaining tokens].
-# Annotation arguments are kept as token lists.
-def parse_annotations(header)
-  annotations = {}
-  rest = []
-  i = 0
-  while i < header.size
-    if header[i] == "@" && i + 1 < header.size && header[i + 1] != "interface"
-      j = i + 1
-      name = header[j]
-      j += 1
-      while j + 1 < header.size && header[j] == "."
-        name = header[j + 1]
-        j += 2
-      end
-      args = []
-      if j < header.size && header[j] == "("
-        close = skip_balanced(header, j, "(", ")")
-        args = header[j + 1...close - 1]
-        j = close
-      end
-      annotations[name] = args
-      i = j
-    else
-      rest << header[i]
-      i += 1
-    end
-  end
-  [annotations, rest]
-end
+DECLARATION_KINDS = {
+  class_declaration: "class",
+  interface_declaration: "interface",
+  enum_declaration: "enum",
+}.freeze
+COMMENTS = %i[line_comment block_comment].freeze
+# Class members that never contribute JSON properties.
+SKIPPED_MEMBERS = (%i[method_declaration constructor_declaration compact_constructor_declaration
+                      static_initializer block constant_declaration annotation_type_declaration] + COMMENTS).freeze
+# Gson ignores static and transient fields; `final` ones are constants in these model classes.
+NON_PROPERTY_MODIFIERS = %i[static final transient].freeze
 
-def string_literals(tokens)
-  tokens.select { |t| t.start_with?('"') }.map { |t| JSON.parse(t) }
-end
-
-# `extends A.B<C>` tokens => "A.B<C>"
-def extends_clause(rest, ei)
-  implements = rest[ei..].index("implements")
-  stop = implements ? ei + implements : rest.size
-  rest[ei + 1...stop].join(" ").gsub(" . ", ".").gsub(" < ", "<").gsub(" > ", ">")
-end
-
-# Which of class/interface/enum/record a member header declares (nil for fields and methods).
-def declaration_kind(rest)
-  CLASS_KINDS.find do |k|
-    idx = rest.index(k)
-    next false unless idx
-
-    idx.zero? || MODIFIERS.include?(rest[idx - 1]) || rest[0...idx].all? { |t| MODIFIERS.include?(t) }
-  end
-end
-
-# Parses a class body; `i` points just after the opening brace. Returns the index after the closing brace.
-def parse_body(toks, i, cls)
-  n = toks.size
-  if cls.kind == "enum"
-    # Constants are irrelevant; skip the whole body.
-    depth = 1
-    while i < n && depth.positive?
-      depth += 1 if toks[i] == "{"
-      depth -= 1 if toks[i] == "}"
-      i += 1
-    end
-    return i
+# Parses one .java file into a JFile. Raises (with file:line) on syntax errors and on Java constructs
+# this generator does not understand, instead of silently producing a partial model.
+class JavaFileParser
+  def initialize(path)
+    @path = path
+    @source = File.read(path, encoding: "UTF-8")
   end
 
-  while i < n
-    return i + 1 if toks[i] == "}"
+  def parse
+    root = JAVA_PARSER.parse_string(nil, @source).root_node
+    fail_at(find_error(root), "syntax error") if root.has_error?
 
-    if toks[i] == ";"
-      i += 1
-      next
-    end
-
-    # Collect the member header up to `;`, `{` or `=` outside parentheses.
-    start = i
-    paren = 0
-    while i < n
-      t = toks[i]
-      if t == "("
-        paren += 1
-      elsif t == ")"
-        paren -= 1
-      elsif paren.zero? && [";", "{", "="].include?(t)
-        break
-      end
-      i += 1
-    end
-    header = toks[start...i]
-    stop = toks[i]
-    annotations, rest = parse_annotations(header)
-    kind = declaration_kind(rest)
-    kind = "annotation" if header.include?("@") && rest.include?("interface") && rest[0] == "interface"
-
-    if stop == "{"
-      if kind && kind != "annotation"
-        ki = rest.index(kind)
-        inner = JClass.new(rest[ki + 1], kind, cls, cls.file)
-        inner.extends = extends_clause(rest, rest.index("extends")) if rest.include?("extends")
-        cls.inner[inner.name] = inner
-        i = parse_body(toks, i + 1, inner)
+    file = JFile.new(@path, "", [], {})
+    root.each_named do |node|
+      case node.type
+      when :package_declaration
+        file.package = qualified_name(node.named_child(0))
+      when :import_declaration
+        import = parse_import(node)
+        file.imports << import if import
+      when *DECLARATION_KINDS.keys
+        cls = parse_class(node, nil, file)
+        file.classes[cls.name] = cls
+      when :annotation_type_declaration, *COMMENTS
+        next # `@interface` declarations hold no model fields
       else
-        # annotation type, method, constructor or initializer block: skip it
-        i = skip_balanced(toks, i, "{", "}")
+        fail_at(node, "unsupported top-level declaration `#{node.type}`")
       end
-      next
     end
+    file
+  end
 
-    if stop == "="
-      # Skip the initializer up to the `;` at bracket depth 0.
-      depth = 0
-      while i < n
-        t = toks[i]
-        if ["(", "{", "["].include?(t)
-          depth += 1
-        elsif [")", "}", "]"].include?(t)
-          depth -= 1
-        elsif t == ";" && depth.zero?
-          break
+  private
+
+  # `import a.b.C;` => "a.b.C", `import a.b.*;` => "a.b.*", `import static ...;` => nil (not a type import).
+  def parse_import(node)
+    return nil if node.each.any? { |child| child.type == :static }
+
+    name = qualified_name(node.named_child(0))
+    node.each.any? { |child| child.type == :asterisk } ? "#{name}.*" : name
+  end
+
+  def parse_class(node, outer, file)
+    cls = JClass.new(text(node.child_by_field_name("name")), DECLARATION_KINDS.fetch(node.type), outer, file)
+    if (superclass = node.child_by_field_name("superclass"))
+      cls.superclass = parse_type(superclass.named_child(0))
+    end
+    # Enum constants are irrelevant for JSON schemas, so the body of an enum is not read at all.
+    parse_members(node.child_by_field_name("body"), cls) unless cls.kind == "enum"
+    cls
+  end
+
+  def parse_members(body, cls)
+    body.each_named do |member|
+      case member.type
+      when :field_declaration
+        cls.fields.concat(parse_field_declaration(member, cls))
+      when *DECLARATION_KINDS.keys
+        inner = parse_class(member, cls, cls.file)
+        cls.inner[inner.name] = inner
+      when *SKIPPED_MEMBERS
+        next
+      else
+        fail_at(member, "unsupported member `#{member.type}` in #{cls.fqn}")
+      end
+    end
+  end
+
+  # `private @SerializedName("a_b") List<String> aB, c;` => [JField(aB), JField(c)]
+  def parse_field_declaration(node, cls)
+    modifiers = node.each_named.find { |child| child.type == :modifiers }
+    return [] if modifiers && (modifier_keywords(modifiers) & NON_PROPERTY_MODIFIERS).any?
+
+    declarators = node.each_named.select { |child| child.type == :variable_declarator }
+    REPORT[:multi_declarator] << "#{cls.fqn}.#{field_name(declarators.first)}" if declarators.size > 1
+
+    declared_type = parse_type(node.child_by_field_name("type"))
+    declarators.map do |declarator|
+      name = field_name(declarator)
+      type = declared_type
+      if (dimensions = declarator.child_by_field_name("dimensions")) # C-style `String names[]`
+        REPORT[:unsupported_declarators] << "#{cls.fqn}.#{name}"
+        type = JType.new(type.name, type.args, type.dims + text(dimensions).count("["))
+      end
+      JField.new(name, type, serialized_name(modifiers, "#{cls.fqn}.#{name}"))
+    end
+  end
+
+  def field_name(declarator)
+    text(declarator.child_by_field_name("name"))
+  end
+
+  # Keyword modifiers (`:private`, `:static`, ...) of a `modifiers` node; annotations are separate.
+  def modifier_keywords(modifiers)
+    modifiers.each.map(&:type)
+  end
+
+  # The key from `@SerializedName("key")` or `@SerializedName(value = "key", alternate = {...})`, or nil.
+  def serialized_name(modifiers, where)
+    return nil unless modifiers
+
+    annotation = modifiers.each_named.find do |child|
+      %i[annotation marker_annotation].include?(child.type) && text(child.child_by_field_name("name")).end_with?("SerializedName")
+    end
+    return nil unless annotation
+
+    arguments = annotation.child_by_field_name("arguments")
+    fail_at(annotation, "@SerializedName without a name") unless arguments
+
+    name = nil
+    arguments.each_named do |argument|
+      if argument.type == :string_literal
+        name = string_value(argument) # @SerializedName("key")
+      elsif argument.type == :element_value_pair
+        case text(argument.child_by_field_name("key"))
+        when "value" then name = string_value(argument.child_by_field_name("value"))
+        when "alternate" then REPORT[:alternate_names] << where # extra accepted keys; not modelled
         end
-        i += 1
       end
     end
-    i += 1 # the `;`
-
-    # Field (not abstract method, constant or transient state)?
-    next if rest.include?("(")
-    next if cls.kind == "interface" # interface fields are implicitly static final
-    next if rest.any? { |t| %w[static final transient].include?(t) }
-
-    body = rest.reject { |t| MODIFIERS.include?(t) }
-    next if body.size < 2
-
-    name = body.last
-    type_tokens = body[0...-1]
-    REPORT[:multi_declarator] << "#{cls.fqn}.#{name}" if top_level_comma?(type_tokens) # `int a, b;`
-
-    serialized = nil
-    if annotations.key?("SerializedName")
-      serialized = string_literals(annotations["SerializedName"]).first
-      REPORT[:alternate_names] << "#{cls.fqn}.#{name}" if annotations["SerializedName"].include?("alternate")
-    end
-    cls.fields << [type_tokens, name, serialized]
+    fail_at(annotation, "@SerializedName without a name") unless name
+    name
   end
-  i
-end
 
-# Is there a comma outside generic brackets? (`Map<A, B>` has none; `int a, b` does.)
-def top_level_comma?(tokens)
-  depth = 0
-  tokens.each do |t|
-    case t
-    when "<" then depth += 1
-    when ">" then depth -= 1
-    when "," then return true if depth.zero?
-    end
+  def string_value(literal)
+    JSON.parse(text(literal)) # Java string literals are JSON-compatible for the plain names used here
   end
-  false
-end
 
-# Reads tokens up to (not including) `;` and joins them: used for package/import names.
-def read_name(toks, i)
-  parts = []
-  while toks.fetch(i) != ";"
-    parts << toks[i]
-    i += 1
-  end
-  [parts, i + 1]
-end
-
-def parse_file(path)
-  toks = tokenize(File.read(path, encoding: "UTF-8"))
-  jfile = JFile.new(path)
-  i = 0
-  n = toks.size
-  while i < n
-    case toks[i]
-    when "package"
-      parts, i = read_name(toks, i + 1)
-      jfile.package = parts.join
-    when "import"
-      parts, i = read_name(toks, i + 1)
-      jfile.imports << parts.join if !parts.empty? && parts[0] != "static"
+  # Converts a type node into a JType. Wildcards (`? extends X`, `? super X`) become X, a bare `?` Object.
+  def parse_type(node)
+    case node.type
+    when :type_identifier, :scoped_type_identifier, :integral_type, :floating_point_type, :boolean_type
+      JType.new(qualified_name(node), [], 0) # `String`, `Outer.Inner`, `int`
+    when :generic_type # `Map<String, X>`: the type, then its type_arguments
+      base, arguments = node.each_named.to_a
+      JType.new(parse_type(base).name, arguments.each_named.map { |argument| parse_type(argument) }, 0)
+    when :array_type # `X[][]`: an element type plus a `dimensions` node
+      element = parse_type(node.child_by_field_name("element"))
+      JType.new(element.name, element.args, element.dims + text(node.child_by_field_name("dimensions")).count("["))
+    when :wildcard
+      bound = node.each_named.first
+      bound ? parse_type(bound) : JType.new("Object", [], 0)
     else
-      start = i
-      paren = 0
-      while i < n && !(toks[i] == "{" && paren.zero?) && !(toks[i] == ";" && paren.zero?)
-        paren += 1 if toks[i] == "("
-        paren -= 1 if toks[i] == ")"
-        i += 1
-      end
-      header = toks[start...i]
-      if i >= n || toks[i] == ";"
-        i += 1
-        next
-      end
-      _, rest = parse_annotations(header)
-      kind = CLASS_KINDS.find { |k| rest.include?(k) }
-      if kind.nil?
-        i = skip_balanced(toks, i, "{", "}")
-        next
-      end
-      cls = JClass.new(rest[rest.index(kind) + 1], kind, nil, jfile)
-      cls.extends = extends_clause(rest, rest.index("extends")) if rest.include?("extends") && kind == "class"
-      jfile.classes[cls.name] = cls
-      i = parse_body(toks, i + 1, cls)
+      fail_at(node, "unsupported type `#{node.type}`")
     end
   end
-  jfile
+
+  def text(node)
+    @source.byteslice(node.start_byte...node.end_byte)
+  end
+
+  # Source text of a (possibly dotted) name without whitespace.
+  def qualified_name(node)
+    text(node).gsub(/\s+/, "")
+  end
+
+  # Deepest node that tree-sitter flagged as an error or as missing.
+  def find_error(node)
+    return node if node.error? || node.missing?
+
+    node.each_named { |child| return find_error(child) if child.has_error? }
+    node
+  end
+
+  def fail_at(node, message)
+    raise "#{@path}:#{node.start_point.row + 1}: #{message}"
+  end
 end
 
 # ---------------------------------------------------------------- class index
@@ -343,12 +311,7 @@ def index_tree(root)
   Dir.glob("**/*.java", base: root).sort.each do |relative|
     next if File.basename(relative) == "package-info.java"
 
-    begin
-      jfile = parse_file(File.join(root, relative))
-    rescue StandardError => e
-      warn "PARSE FAIL #{relative} #{e.message}"
-      next
-    end
+    jfile = JavaFileParser.new(File.join(root, relative)).parse
     jfile.classes.each_value do |cls|
       INDEX[cls.fqn] = cls
       (BY_PACKAGE[jfile.package] ||= {})[cls.name] = cls
@@ -370,131 +333,26 @@ if (blockkit_dir = ENV["SLACKBLOCKKIT_DIR"]) && !blockkit_dir.empty?
   end
 end
 
-# ---------------------------------------------------------------- type resolution
+# ---------------------------------------------------------------- name resolution
 
-# Parses Java type tokens into [name, [type args], array dimensions]. Raises IndexError on malformed input.
-def split_type(tokens)
-  pos = 0
-  parse = lambda do
-    if tokens.fetch(pos) == "?" # wildcard: `? extends X` => X, bare `?` => Object
-      pos += 1
-      if pos < tokens.size && %w[extends super].include?(tokens[pos])
-        pos += 1
-        next parse.call
-      end
-      next ["Object", [], 0]
-    end
-
-    name = tokens[pos]
-    pos += 1
-    while pos + 1 < tokens.size && tokens[pos] == "." && tokens[pos + 1] != "<"
-      name += ".#{tokens[pos + 1]}"
-      pos += 2
-    end
-    args = []
-    if pos < tokens.size && tokens[pos] == "<"
-      pos += 1
-      until tokens.fetch(pos) == ">"
-        args << parse.call
-        pos += 1 if tokens.fetch(pos) == ","
-      end
-      pos += 1
-    end
-    dims = 0
-    while pos + 1 < tokens.size && tokens[pos] == "[" && tokens[pos + 1] == "]"
-      dims += 1
-      pos += 2
-    end
-    if pos < tokens.size && tokens[pos] == "..."
-      dims += 1
-      pos += 1
-    end
-    [name, args, dims]
-  end
-  parse.call
-end
-
-def resolve_super(cls)
-  return nil unless cls.extends
-
-  resolve_class(cls, split_type(tokenize(cls.extends))[0], for_super: true)
-end
-
-# Inner class `name` visible from `cls`: own, superclass chain, then enclosing classes.
-def lookup_inner(cls, name)
-  seen = Set.new.compare_by_identity
-  c = cls
-  while c
-    k = c
-    while k && !seen.include?(k)
-      seen << k
-      return k.inner[name] if k.inner.key?(name)
-
-      k = resolve_super(k)
-    end
-    c = c.outer
-  end
-  nil
-end
-
-# For `extends X`, where X may be an inner class of an enclosing class (but not of the class itself).
-def lookup_inner_of_enclosing(cls, name)
-  c = cls.outer
-  while c
-    return c.inner[name] if c.inner.key?(name)
-
-    c = c.outer
-  end
-  nil
-end
-
-# Resolves a (possibly dotted) simple name used inside `ctx` to a JClass, or nil.
+# Resolves a (possibly dotted) type name as written inside class `ctx` to a JClass, or nil.
+# Lookup order, like javac: nested classes visible from ctx, then explicit imports, the same package,
+# wildcard imports, and finally a fully-qualified name. `for_super` is for the name in `extends`.
 def resolve_class(ctx, name, for_super: false)
   parts = name.split(".")
   first = parts[0]
+
   base = nil
-  unless for_super && first == ctx.name
+  unless for_super && first == ctx.name # `class A extends A.B`: A is not yet in scope inside itself
     base = for_super ? lookup_inner_of_enclosing(ctx, first) : lookup_inner(ctx, first)
   end
-
-  if base.nil?
-    jfile = ctx.file
-    # explicit imports (including imports of an inner class)
-    jfile.imports.each do |import|
-      next unless import.end_with?(".#{first}")
-
-      base = INDEX[import]
-      if base.nil?
-        outer_name, _, inner_name = import.rpartition(".")
-        outer = INDEX[outer_name]
-        base = outer.inner[inner_name] if outer && outer.inner.key?(inner_name)
-      end
-      break if base
-    end
-    # same package
-    base ||= BY_PACKAGE.fetch(jfile.package, {})[first]
-    # wildcard imports
-    if base.nil?
-      jfile.imports.each do |import|
-        next unless import.end_with?(".*")
-
-        base = BY_PACKAGE.fetch(import[0...-2], {})[first]
-        break if base
-      end
-    end
-    # fully-qualified name
-    if base.nil? && parts.size > 1
-      (parts.size - 1).downto(1) do |k|
-        if (found = INDEX[parts[0..k].join(".")])
-          base = found
-          parts = parts[k..]
-          break
-        end
-      end
-    end
+  base ||= lookup_top_level(ctx.file, first)
+  if base.nil? && parts.size > 1
+    base, parts = lookup_fully_qualified(parts)
   end
   return nil if base.nil?
 
+  # Remaining parts select nested classes: `Outer.Inner.Deeper`.
   parts[1..].each do |part|
     base = base.inner[part]
     return nil if base.nil?
@@ -502,22 +360,94 @@ def resolve_class(ctx, name, for_super: false)
   base
 end
 
+def resolve_super(cls)
+  return nil unless cls.superclass
+
+  resolve_class(cls, cls.superclass.name, for_super: true)
+end
+
+# Nested class `name` visible from `cls`: its own, its superclasses', then those of enclosing classes.
+def lookup_inner(cls, name)
+  seen = Set.new.compare_by_identity
+  enclosing = cls
+  while enclosing
+    klass = enclosing
+    while klass && !seen.include?(klass)
+      seen << klass
+      return klass.inner[name] if klass.inner.key?(name)
+
+      klass = resolve_super(klass)
+    end
+    enclosing = enclosing.outer
+  end
+  nil
+end
+
+# For `extends X`, where X may be a nested class of an enclosing class (but not of the class itself).
+def lookup_inner_of_enclosing(cls, name)
+  enclosing = cls.outer
+  while enclosing
+    return enclosing.inner[name] if enclosing.inner.key?(name)
+
+    enclosing = enclosing.outer
+  end
+  nil
+end
+
+# Top-level class (or class imported by name) called `name` as seen from `file`.
+def lookup_top_level(file, name)
+  file.imports.each do |import|
+    next unless import.end_with?(".#{name}")
+
+    found = INDEX[import] || imported_inner_class(import)
+    return found if found
+  end
+
+  same_package = BY_PACKAGE.fetch(file.package, {})[name]
+  return same_package if same_package
+
+  file.imports.each do |import|
+    next unless import.end_with?(".*")
+
+    found = BY_PACKAGE.fetch(import[0...-2], {})[name]
+    return found if found
+  end
+  nil
+end
+
+# `import a.b.Outer.Inner;` => Inner, when a.b.Outer is a known class.
+def imported_inner_class(import)
+  outer_name, _, inner_name = import.rpartition(".")
+  INDEX[outer_name]&.inner&.[](inner_name)
+end
+
+# `a.b.Outer.Inner` => [class a.b.Outer, ["Outer", "Inner"]]: the longest known class prefix and the parts from it on.
+def lookup_fully_qualified(parts)
+  (parts.size - 1).downto(1) do |last|
+    found = INDEX[parts[0..last].join(".")]
+    return [found, parts[last..]] if found
+  end
+  [nil, parts]
+end
+
+# ---------------------------------------------------------------- fields
+
 # Gson's default FieldNamingPolicy for this SDK: lowerCamel => lower_snake.
 def snake(name)
   name.each_char.with_index.map { |ch, i| ch.match?(/\p{Lu}/) && i.positive? ? "_#{ch.downcase}" : ch.downcase }.join
 end
 
-# JSON key => [type tokens, field name, declaring class], inherited fields first.
+# JSON key => [JField, declaring class], inherited fields first.
 def all_fields(cls, stack = [])
   fields = {}
   sup = resolve_super(cls)
   if sup && sup.kind == "class" && !stack.include?(sup)
     fields.merge!(all_fields(sup, stack + [cls]))
-  elsif cls.extends && sup.nil?
-    REPORT[:generic_unresolved] << "#{cls.fqn} extends #{cls.extends}"
+  elsif cls.superclass && sup.nil?
+    REPORT[:generic_unresolved] << "#{cls.fqn} extends #{cls.superclass.name}"
   end
-  cls.fields.each do |type_tokens, name, serialized|
-    fields[serialized || snake(name)] = [type_tokens, name, cls]
+  cls.fields.each do |field|
+    fields[field.serialized_name || snake(field.name)] = [field, cls]
   end
   fields
 end
@@ -541,15 +471,15 @@ def ref(name)
   { "$ref" => "#/components/schemas/#{name}" }
 end
 
-def type_schema(tree, ctx, where, inline_stack)
-  name, args, dims = tree
-  short = name.split(".").last
+# OpenAPI schema for a JType used inside class `ctx` (`where` names the field, for the report).
+def type_schema(type, ctx, where, inline_stack)
+  short = type.short
 
   schema =
     if COLLECTIONS.include?(short)
-      { "type" => "array", "items" => args.empty? ? {} : type_schema(args[0], ctx, where, inline_stack) }
+      { "type" => "array", "items" => type.args.empty? ? {} : type_schema(type.args[0], ctx, where, inline_stack) }
     elsif MAPS.include?(short)
-      value = args.size > 1 ? type_schema(args[1], ctx, where, inline_stack) : {}
+      value = type.args.size > 1 ? type_schema(type.args[1], ctx, where, inline_stack) : {}
       { "type" => "object", "additionalProperties" => value.empty? ? true : value }
     elsif STRING.include?(short)
       { "type" => "string" }
@@ -563,37 +493,44 @@ def type_schema(tree, ctx, where, inline_stack)
       {}
     elsif OVERRIDES.key?(short)
       schema_name, swift_type = OVERRIDES[short]
-      REPORT[:overrides_used] << "#{short} -> #{swift_type}"
-      OVERRIDE_SCHEMAS[schema_name] = swift_type
-      COMPONENTS[schema_name] ||= {}
-      ref(schema_name)
+      override_ref(short, schema_name, swift_type)
     elsif UNTYPED_ADAPTER.include?(short)
       (REPORT[:untyped_adapter][short] ||= []) << where
       {}
     else
-      cls = resolve_class(ctx, name)
-      if cls.nil?
-        note_unknown(name, where) unless %w[JsonObject JsonArray].include?(name)
-        {}
-      elsif cls.kind == "enum"
-        REPORT[:enums] << cls.fqn
-        { "type" => "string" }
-      elsif shared_component?(cls) && cls.fqn.include?(".model.block") &&
-            (BLOCKKIT_ALIASES.key?(short) || BLOCKKIT_PUBLIC.include?(short))
-        target = BLOCKKIT_ALIASES.fetch(short, short)
-        REPORT[:overrides_used] << "#{short} -> SlackBlockKit.#{target}"
-        OVERRIDE_SCHEMAS[target] = "SlackBlockKit.#{target}"
-        COMPONENTS[target] ||= {}
-        ref(target)
-      elsif shared_component?(cls)
-        component_ref(cls)
-      else
-        inline_schema(cls, inline_stack, where)
-      end
+      class_schema(type, ctx, where, inline_stack)
     end
 
-  dims.times { schema = { "type" => "array", "items" => schema } }
+  type.dims.times { schema = { "type" => "array", "items" => schema } }
   schema
+end
+
+# Schema for a type that is (hopefully) one of the parsed Java classes.
+def class_schema(type, ctx, where, inline_stack)
+  cls = resolve_class(ctx, type.name)
+  if cls.nil?
+    note_unknown(type.name, where) unless %w[JsonObject JsonArray].include?(type.name)
+    {}
+  elsif cls.kind == "enum"
+    REPORT[:enums] << cls.fqn
+    { "type" => "string" }
+  elsif shared_component?(cls) && cls.fqn.include?(".model.block") &&
+        (BLOCKKIT_ALIASES.key?(type.short) || BLOCKKIT_PUBLIC.include?(type.short))
+    target = BLOCKKIT_ALIASES.fetch(type.short, type.short)
+    override_ref(type.short, target, "SlackBlockKit.#{target}")
+  elsif shared_component?(cls)
+    component_ref(cls)
+  else
+    inline_schema(cls, inline_stack, where)
+  end
+end
+
+# `$ref` to an empty placeholder schema that the generator config maps onto a hand-written Swift type.
+def override_ref(java_name, schema_name, swift_type)
+  REPORT[:overrides_used] << "#{java_name} -> #{swift_type}"
+  OVERRIDE_SCHEMAS[schema_name] = swift_type
+  COMPONENTS[schema_name] ||= {}
+  ref(schema_name)
 end
 
 # `$ref` to a shared component, emitting it on first use. Same-named classes from different packages
@@ -623,16 +560,9 @@ end
 # Every property is optional; `required` is only passed for the `ok` of a response.
 def object_schema(cls, inline_stack, where, required: nil, inline: false)
   properties = {}
-  all_fields(cls).each do |key, (type_tokens, field_name, owner)|
-    begin
-      tree = split_type(type_tokens)
-    rescue StandardError
-      note_unknown(type_tokens.join(" "), "#{cls.fqn}.#{field_name}")
-      properties[key] = {}
-      next
-    end
+  all_fields(cls).each do |key, (field, owner)|
     stack = inline ? inline_stack : inline_stack + [cls]
-    properties[key] = type_schema(tree, owner, "#{cls.fqn}.#{field_name}", stack)
+    properties[key] = type_schema(field.type, owner, "#{cls.fqn}.#{field.name}", stack)
   end
   schema = { "type" => "object", "properties" => properties }
   schema["required"] = required if required && !required.empty?
