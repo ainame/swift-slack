@@ -13,6 +13,16 @@ module JavaPlaceholders
   # Hand-written SlackBlockKit schemas: not described by the document, never descended into.
   HAND_WRITTEN = %w[Block View TextObject RichTextBlock].freeze
 
+  # Second rule set: placeholders inside the hand-written Block Kit subtrees (HAND_WRITTEN schemas, whose
+  # contents the document does not describe). ObjectInitializer fills their fields too: `url: ""` and the other
+  # URL properties (SlackBlockKit `URL` / `URL?`), text objects with `type: ""`, and `style: ""`. They are fixture
+  # noise, so they are fixed here instead of being tolerated by SlackBlockKit. URLs, text types and a rich text
+  # list's required style get a valid value; the optional button and confirm `style` is dropped.
+  BLOCK_KIT_URL_KEYS = %w[url image_url title_url provider_icon_url video_url thumbnail_url].freeze
+  BLOCK_KIT_URL = "https://example.com"
+  BLOCK_KIT_TEXT_TYPE = "plain_text"
+  BLOCK_KIT_LIST_STYLE = "bullet" # RichTextListStyle is required, unlike the optional button/confirm styles
+
   module_function
 
   def matches_type?(value, type)
@@ -46,14 +56,50 @@ module JavaPlaceholders
     placeholder?(java_type, value) && !matches_type?(value, schema["type"])
   end
 
+  # Returns a copy of the Block Kit subtree `value` with empty URLs and empty text-object types replaced, and
+  # the number of replacements, as [value, count].
+  def fix_block_kit(value)
+    count = 0
+    walk = lambda do |val|
+      case val
+      when Hash
+        text_object = val.key?("text") && val.key?("type")
+        val.each_with_object({}) do |(key, child), fixed|
+          if key == "style" && child == "" && val["type"] == "rich_text_list"
+            count += 1
+            fixed[key] = BLOCK_KIT_LIST_STYLE
+          elsif key == "style" && child == ""
+            count += 1
+          elsif BLOCK_KIT_URL_KEYS.include?(key) && child == ""
+            count += 1
+            fixed[key] = BLOCK_KIT_URL
+          elsif text_object && key == "type" && child == ""
+            count += 1
+            fixed[key] = BLOCK_KIT_TEXT_TYPE
+          else
+            fixed[key] = walk.(child)
+          end
+        end
+      when Array then val.map { walk.(_1) }
+      else val
+      end
+    end
+    [walk.(value), count]
+  end
+
   # Returns a copy of `value` (a response payload for `schema`) without the placeholder values at overridden
-  # properties, and the number of values removed. `schemas` is components.schemas of the OpenAPI document.
+  # properties, the number of values removed, and the number of Block Kit replacements. `schemas` is components.schemas of the OpenAPI document.
   def strip(value, schema, schemas)
     removed = 0
+    block_kit = 0
     walk = lambda do |val, sch|
       if (ref = sch["$ref"])
         name = File.basename(ref)
-        next val if HAND_WRITTEN.include?(name)
+        if HAND_WRITTEN.include?(name)
+          fixed, count = fix_block_kit(val)
+          block_kit += count
+          next fixed
+        end
 
         sch = schemas.fetch(name)
       end
@@ -75,12 +121,12 @@ module JavaPlaceholders
         val
       end
     end
-    [walk.(value, schema), removed]
+    [walk.(value, schema), removed, block_kit]
   end
 
   # `strip` for the response payload of `method` ("team.info") in an openapi.json `document`.
   def strip_for_method(json, method, document)
-    path_item = document["paths"]["/#{method}"] or return [json, 0]
+    path_item = document["paths"]["/#{method}"] or return [json, 0, 0]
     schema = path_item["post"]["responses"]["200"]["content"]["application/json"]["schema"]
     strip(json, schema, document["components"]["schemas"])
   end
@@ -88,11 +134,11 @@ module JavaPlaceholders
   # Samples contain duplicate keys (the last one wins) and may nest deeply.
   LENIENT = { max_nesting: false, allow_duplicate_key: true }.freeze
 
-  # Writes the fixture `source` of `method` to `dest` without the placeholders; returns how many were removed.
+  # Writes the fixture `source` of `method` to `dest` without the placeholders; returns [placeholders removed, Block Kit replacements].
   def write_stripped_fixture(source, dest, method, document)
     json = JSON.parse(File.read(source, encoding: "UTF-8"), **LENIENT)
-    stripped, removed = strip_for_method(json, method, document)
+    stripped, removed, block_kit = strip_for_method(json, method, document)
     File.write(dest, JSON.generate(stripped))
-    removed
+    [removed, block_kit]
   end
 end

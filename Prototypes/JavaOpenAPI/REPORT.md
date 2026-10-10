@@ -8,7 +8,7 @@ The prototype generates downstream swift-slack's Web API response types from the
 
 What it shows:
 
-- **It covers the whole API.** All 334 methods with a Java response class become 418 schemas and about 79.6k lines of Swift, and the result compiles. With recorder placeholders stripped, 310 of the 334 upstream fixtures decode. The other 24 fail on placeholders inside hand-written SlackBlockKit types, which is accepted (see Known limitations).
+- **It covers the whole API.** All 334 methods with a Java response class become 418 schemas and about 79.6k lines of Swift, and the result compiles. With the recorder's placeholders replaced or stripped, all 334 upstream fixtures decode.
 - **Today's type defects go away at the source.** Same-named schemas are no longer merged last-wins, placeholder values no longer decide types or names, and `type` is no longer forced to be required.
 - **Call sites keep their shape.** Requests and the client layer are unchanged. Response properties keep their names. The differences are type names that apps spell out, some field types, and more fields being available (see Library user impact).
 - **It is not source compatible.** Of 4,826 compared response properties, 62% are unchanged, 9% move to another type name, 2% change type, 8% exist today but not in the new type, and 19% are new.
@@ -68,13 +68,15 @@ Policy:
 
 ## Placeholder stripping
 
-The recorder also wrote Java-typed placeholders into the overridden fields (`original_w: ""`), so strict decoding of those fixtures would fail there even though real responses carry numbers. `java_placeholders.rb` removes exactly those values before decoding: a key marked `x-java-type` whose value equals the recorder's placeholder for that Java type (`""`, `123`, `12.3`, `false`). Nothing else is stripped. `prepare_inputs.rb`, `decode_all.rb` and `scan_mismatch.rb` share it.
+The recorder also wrote Java-typed placeholders into the overridden fields (`original_w: ""`), so strict decoding of those fixtures would fail there even though real responses carry numbers. `java_placeholders.rb` removes exactly those values before decoding: a key marked `x-java-type` whose value equals the recorder's placeholder for that Java type (`""`, `123`, `12.3`, `false`). Nothing else is stripped there. `prepare_inputs.rb`, `decode_all.rb` and `scan_mismatch.rb` share it.
+
+**Block Kit placeholders.** The same recorder also fills the hand-written SlackBlockKit subtrees (the schemas mapped through `typeOverrides`: `Block`, `View`, `TextObject`, `RichTextBlock`, including arrays of them), which the generated schemas do not describe. Inside those subtrees only, `java_placeholders.rb` replaces `""` in URL fields (`url`, `image_url`, `title_url`, `provider_icon_url`, `video_url`, `thumbnail_url`) with `https://example.com`, an empty text-object `type` with `plain_text`, and an empty rich text list `style` with `bullet`; an empty optional button or confirm `style` is dropped. SlackBlockKit and the generated types are not changed. `decode_all.rb` prints the replacement count (24,862).
 
 ## SlackBlockKit changes
 
 Eight hand-written SlackBlockKit enums (`Block`, section accessory, context, actions and input elements, two rich-text element enums, `View`) used to throw on an unknown `type`. That made a single unfamiliar block fail the whole response. They now decode it as `.unknown(type: String, payload: OpenAPIObjectContainer)` and encode it back unchanged, following `SlackModels.Container`.
 
-Invalid URL strings in Block Kit (`url: ""`) still throw. That is accepted because such strings only appear as fixture placeholders.
+Invalid URL strings in Block Kit (`url: ""`) still throw, deliberately: such strings only appear as fixture placeholders, which the decode preprocessing fixes (see Placeholder stripping).
 
 ## Results
 
@@ -83,8 +85,7 @@ Invalid URL strings in Block Kit (`url: ""`) still throw. That is accepted becau
 | step | result |
 |---|---|
 | Java -> OpenAPI -> Swift | 334 methods, 418 schemas, ~79.6k lines, compiles |
-| Decode upstream java-slack-sdk fixtures, placeholders stripped | 310 / 334 (299 before the SlackBlockKit change) |
-| Remaining failures | 23 `url: ""` placeholders in Block Kit URL fields, and 1 `stars.list` with `preview.title.type: ""` (SlackBlockKit `TextObject`) |
+| Decode upstream java-slack-sdk fixtures, placeholders replaced or stripped | 334 / 334 (310 before the Block Kit rule, 299 before the SlackBlockKit change) |
 
 ### Static scan (`scan_mismatch.rb`)
 
@@ -109,11 +110,11 @@ Invalid URL strings in Block Kit (`url: ""`) still throw. That is accepted becau
 | team.info | 0 / 8 | 0 / 15 | 0 / 5 |
 | users.info | 0 / 0 | 0 / 9 | 0 / 0 |
 | conversations.list | 1 / 4 | 1 / 6 | 0, 0 / 3, 2 |
-| chat.postMessage | 0 / 2 | FAIL / FAIL | 0 / 0 |
+| chat.postMessage | 0 / 2 | 181 / FAIL | 0 / 0 |
 | admin.conversations.getConversationPrefs | (no live) | 0 / 6 | example 1 FAIL / 2; example 2 0 / 4 |
 
 - **`conversations.list`:** the 1 live drop is `parent_conversation: null` disappearing on re-encode, and the 1 fixture drop is `callstack`, which Java doesn't declare.
-- **`chat.postMessage`:** the fixture fails on a Block Kit `url: ""` placeholder, both old and new.
+- **`chat.postMessage`:** the new types decode the fixture now that Block Kit placeholders are replaced; the old types still fail on `url: ""`. All 181 fixture drops are keys inside Block Kit objects that the hand-written SlackBlockKit types do not model (the recorder fills every field of every block).
 - **`getConversationPrefs`:** the docs example 1 failure is the docs sending a string where Java declares `List<String>`.
 
 ## Library user impact
@@ -184,7 +185,6 @@ In total, 97 of the 263 responses have no renamed, changed or removed property, 
 ## Known limitations
 
 - **Payload naming.** Apple's swift-openapi-generator derives inline type names from the property name plus the constant `inlineTypeSuffix` (`Payload`); arrays of inline objects get it twice. Neither `nameOverrides` nor any other option up to 1.14.0 changes this. An upstream fix would have to be opt-in, for example using the JSON Schema `title` as the type name.
-- **Placeholders inside SlackBlockKit types** (`url: ""`, `type: ""`) are outside the generated schemas, so they are not stripped. They are accepted as fixture-only decode failures.
 - **Gson adapters** other than Block Kit (audit-log values, workflow step inputs, `File` adapter quirks) are untyped. `gen-report.json` lists `unknown_types` and `untyped_adapter`.
 - **Docs-only mismatches** from upstream slack-api-ref examples are ignored by policy (16 are listed for information). Several are clear docs errors, such as `"is_bot": "string"`.
 - **Coverage of the evidence.**

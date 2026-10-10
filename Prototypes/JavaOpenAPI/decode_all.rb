@@ -96,6 +96,7 @@ sh "swift", "build", "--package-path", PKG, "--product", "DecodeAll"
 FileUtils.rm_rf(OUT)
 FileUtils.mkdir_p(OUT)
 stripped = 0
+block_kit = 0
 document["paths"].each_key do |path|
   method = path.delete_prefix("/")
   source = File.join(FIXTURES, "#{method}.json")
@@ -103,7 +104,9 @@ document["paths"].each_key do |path|
   if RAW
     FileUtils.cp(source, destination)
   else
-    stripped += JavaPlaceholders.write_stripped_fixture(source, destination, method, document)
+    removed, replaced = JavaPlaceholders.write_stripped_fixture(source, destination, method, document)
+    stripped += removed
+    block_kit += replaced
   end
 end
 
@@ -114,6 +117,7 @@ end
 results = output.each_line(chomp: true).map { |line| Result.new(*line.split("\t")) }
 failures, successes = results.partition(&:failed?)
 puts "placeholders removed: #{RAW ? "none (--raw)" : stripped}"
+puts "Block Kit placeholders replaced: #{RAW ? "none (--raw)" : block_kit}"
 puts "decoded #{successes.size}/#{results.size} fixtures"
 failures.group_by { [_1.kind, _1.path] }.sort_by { |cause, group| [-group.size, cause] }.each do |(kind, path), group|
   names = group.first(3).map(&:method).join(", ")
