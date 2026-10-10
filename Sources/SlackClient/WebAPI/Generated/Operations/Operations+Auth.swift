@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Auth
 extension Operations {
+    /// Revokes a token.
+    ///
+    /// - Remark: HTTP `POST /auth.revoke`.
+    /// - Remark: Generated from `#/paths//auth.revoke/post(authRevoke)`.
     public enum AuthRevoke {
         public static let id: Swift.String = "authRevoke"
         public struct Input: Sendable, Hashable {
@@ -159,6 +163,10 @@ extension Operations {
         }
     }
 
+    /// Obtain a full list of workspaces your org-wide app has been approved for.
+    ///
+    /// - Remark: HTTP `POST /auth.teams.list`.
+    /// - Remark: Generated from `#/paths//auth.teams.list/post(authTeamsList)`.
     public enum AuthTeamsList {
         public static let id: Swift.String = "authTeamsList"
         public struct Input: Sendable, Hashable {
@@ -323,6 +331,10 @@ extension Operations {
         }
     }
 
+    /// Checks authentication & identity.
+    ///
+    /// - Remark: HTTP `POST /auth.test`.
+    /// - Remark: Generated from `#/paths//auth.test/post(authTest)`.
     public enum AuthTest {
         public static let id: Swift.String = "authTest"
         public struct Input: Sendable, Hashable {

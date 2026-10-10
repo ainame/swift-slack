@@ -9,133 +9,204 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Pins
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/PinsAddResponse`.
     public struct PinsAddResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/PinsAddResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/PinsAddResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/PinsAddResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/PinsAddResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/PinsAddResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/PinsAddResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/PinsAddResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `PinsAddResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/PinsListResponse`.
     public struct PinsListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/PinsListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/PinsListResponse/items`.
-        public var items: [SlackModels.Item]?
-        /// - Remark: Generated from `#/components/schemas/PinsListResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/PinsListResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/PinsListResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/PinsListResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/PinsListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/PinsListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/PinsListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/PinsListResponse/ItemsPayload`.
+        public struct ItemsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/PinsListResponse/ItemsPayload/type`.
+            public var _type: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/PinsListResponse/ItemsPayload/channel`.
+            public var channel: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/PinsListResponse/ItemsPayload/message`.
+            public var message: Components.Schemas.Message?
+            /// - Remark: Generated from `#/components/schemas/PinsListResponse/ItemsPayload/file`.
+            public var file: Components.Schemas.File?
+            /// - Remark: Generated from `#/components/schemas/PinsListResponse/ItemsPayload/comment`.
+            public var comment: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/PinsListResponse/ItemsPayload/created_by`.
+            public var createdBy: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/PinsListResponse/ItemsPayload/created`.
+            public var created: Swift.Int?
+            /// Creates a new `ItemsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - _type:
+            ///   - channel:
+            ///   - message:
+            ///   - file:
+            ///   - comment:
+            ///   - createdBy:
+            ///   - created:
+            public init(
+                _type: Swift.String? = nil,
+                channel: Swift.String? = nil,
+                message: Components.Schemas.Message? = nil,
+                file: Components.Schemas.File? = nil,
+                comment: Swift.String? = nil,
+                createdBy: Swift.String? = nil,
+                created: Swift.Int? = nil,
+            ) {
+                self._type = _type
+                self.channel = channel
+                self.message = message
+                self.file = file
+                self.comment = comment
+                self.createdBy = createdBy
+                self.created = created
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case _type = "type"
+                case channel
+                case message
+                case file
+                case comment
+                case createdBy = "created_by"
+                case created
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/PinsListResponse/items`.
+        public typealias ItemsPayload = [Components.Schemas.PinsListResponse.ItemsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/PinsListResponse/items`.
+        public var items: Components.Schemas.PinsListResponse.ItemsPayload?
         /// Creates a new `PinsListResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - items:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - items:
         public init(
-            error: Swift.String? = nil,
-            items: [SlackModels.Item]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            items: Components.Schemas.PinsListResponse.ItemsPayload? = nil,
         ) {
-            self.error = error
-            self.items = items
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.items = items
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case items
-            case needed
             case ok
-            case provided
             case warning
+            case error
+            case needed
+            case provided
+            case items
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/PinsRemoveResponse`.
     public struct PinsRemoveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/PinsRemoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/PinsRemoveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/PinsRemoveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/PinsRemoveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/PinsRemoveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/PinsRemoveResponse/provided`.
         public var provided: Swift.String?
         /// Creates a new `PinsRemoveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
         }
     }

@@ -9,1461 +9,2433 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Conversations
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse`.
     public struct ConversationsAcceptSharedInviteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/implicit_approval`.
+        public var implicitApproval: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/can_open_scdm`.
         public var canOpenScdm: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/channel_id`.
         public var channelId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/implicit_approval`.
-        public var implicitApproval: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/invite_id`.
         public var inviteId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/ConversationsAcceptSharedInviteResponse/provided`.
-        public var provided: Swift.String?
         /// Creates a new `ConversationsAcceptSharedInviteResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - implicitApproval:
         ///   - canOpenScdm:
         ///   - channelId:
-        ///   - error:
-        ///   - implicitApproval:
         ///   - inviteId:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            implicitApproval: Swift.Bool? = nil,
             canOpenScdm: Swift.Bool? = nil,
             channelId: Swift.String? = nil,
-            error: Swift.String? = nil,
-            implicitApproval: Swift.Bool? = nil,
             inviteId: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.implicitApproval = implicitApproval
             self.canOpenScdm = canOpenScdm
             self.channelId = channelId
-            self.error = error
-            self.implicitApproval = implicitApproval
             self.inviteId = inviteId
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case implicitApproval = "implicit_approval"
             case canOpenScdm = "can_open_scdm"
             case channelId = "channel_id"
-            case error
-            case implicitApproval = "implicit_approval"
             case inviteId = "invite_id"
-            case needed
-            case ok
-            case provided
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsApproveSharedInviteResponse`.
     public struct ConversationsApproveSharedInviteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ConversationsApproveSharedInviteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsApproveSharedInviteResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsApproveSharedInviteResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsApproveSharedInviteResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsApproveSharedInviteResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsApproveSharedInviteResponse/provided`.
         public var provided: Swift.String?
         /// Creates a new `ConversationsApproveSharedInviteResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsArchiveResponse`.
     public struct ConversationsArchiveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ConversationsArchiveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsArchiveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsArchiveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsArchiveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsArchiveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsArchiveResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsArchiveResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `ConversationsArchiveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse`.
     public struct ConversationsCanvasesCreateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/canvas_id`.
-        public var canvasId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/detail`.
-        public var detail: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/canvas_id`.
+        public var canvasId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/detail`.
+        public var detail: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/ConversationsCanvasesCreateResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `ConversationsCanvasesCreateResponse`.
         ///
         /// - Parameters:
-        ///   - canvasId:
-        ///   - detail:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - canvasId:
+        ///   - detail:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            canvasId: Swift.String? = nil,
-            detail: Swift.String? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            canvasId: Swift.String? = nil,
+            detail: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.canvasId = canvasId
-            self.detail = detail
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.canvasId = canvasId
+            self.detail = detail
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case canvasId = "canvas_id"
-            case detail
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case canvasId = "canvas_id"
+            case detail
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse`.
     public struct ConversationsCloseResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse/already_closed`.
-        public var alreadyClosed: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse/no_op`.
-        public var noOp: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse/no_op`.
+        public var noOp: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/ConversationsCloseResponse/already_closed`.
+        public var alreadyClosed: Swift.Bool?
         /// Creates a new `ConversationsCloseResponse`.
         ///
         /// - Parameters:
-        ///   - alreadyClosed:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - noOp:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - noOp:
+        ///   - alreadyClosed:
         public init(
-            alreadyClosed: Swift.Bool? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            noOp: Swift.Bool? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            noOp: Swift.Bool? = nil,
+            alreadyClosed: Swift.Bool? = nil,
         ) {
-            self.alreadyClosed = alreadyClosed
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.noOp = noOp
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.noOp = noOp
+            self.alreadyClosed = alreadyClosed
         }
 
         public enum CodingKeys: String, CodingKey {
-            case alreadyClosed = "already_closed"
+            case ok
+            case warning
             case error
             case needed
-            case noOp = "no_op"
-            case ok
             case provided
-            case warning
+            case noOp = "no_op"
+            case alreadyClosed = "already_closed"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse`.
     public struct ConversationsCreateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/channel`.
-        public var channel: SlackModels.Channel?
-        /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/detail`.
-        public var detail: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/detail`.
+        public var detail: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsCreateResponse/channel`.
+        public var channel: Components.Schemas.Conversation?
         /// Creates a new `ConversationsCreateResponse`.
         ///
         /// - Parameters:
-        ///   - channel:
-        ///   - detail:
-        ///   - error:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
         ///   - warning:
+        ///   - error:
+        ///   - detail:
+        ///   - needed:
+        ///   - provided:
+        ///   - channel:
         public init(
-            channel: SlackModels.Channel? = nil,
-            detail: Swift.String? = nil,
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            detail: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            channel: Components.Schemas.Conversation? = nil,
         ) {
-            self.channel = channel
-            self.detail = detail
-            self.error = error
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
             self.warning = warning
+            self.error = error
+            self.detail = detail
+            self.needed = needed
+            self.provided = provided
+            self.channel = channel
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channel
-            case detail
-            case error
-            case needed
             case ok
-            case provided
             case warning
+            case error
+            case detail
+            case needed
+            case provided
+            case channel
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsDeclineSharedInviteResponse`.
     public struct ConversationsDeclineSharedInviteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ConversationsDeclineSharedInviteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsDeclineSharedInviteResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsDeclineSharedInviteResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsDeclineSharedInviteResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsDeclineSharedInviteResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsDeclineSharedInviteResponse/provided`.
         public var provided: Swift.String?
         /// Creates a new `ConversationsDeclineSharedInviteResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsExternalInvitePermissionsSetResponse`.
     public struct ConversationsExternalInvitePermissionsSetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ConversationsExternalInvitePermissionsSetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsExternalInvitePermissionsSetResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsExternalInvitePermissionsSetResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsExternalInvitePermissionsSetResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsExternalInvitePermissionsSetResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsExternalInvitePermissionsSetResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsExternalInvitePermissionsSetResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `ConversationsExternalInvitePermissionsSetResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse`.
     public struct ConversationsHistoryResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/channel_actions_count`.
-        public var channelActionsCount: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/channel_actions_ts`.
-        public var channelActionsTs: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/has_more`.
-        public var hasMore: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/latest`.
-        public var latest: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/messages`.
-        public var messages: [SlackModels.Message]?
-        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/oldest`.
-        public var oldest: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/pin_count`.
-        public var pinCount: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/latest`.
+        public var latest: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/oldest`.
+        public var oldest: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/messages`.
+        public var messages: [Components.Schemas.Message]?
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/has_more`.
+        public var hasMore: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/pin_count`.
+        public var pinCount: Swift.Int?
+        /// Type differs from java-slack-sdk: `ConversationsHistoryResponse.channelActionsTs` is declared `String`, but recorded responses send integers.
+        ///
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/channel_actions_ts`.
+        public var channelActionsTs: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/channel_actions_count`.
+        public var channelActionsCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/ConversationsHistoryResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `ConversationsHistoryResponse`.
         ///
         /// - Parameters:
-        ///   - channelActionsCount:
-        ///   - channelActionsTs:
-        ///   - error:
-        ///   - hasMore:
-        ///   - latest:
-        ///   - messages:
-        ///   - needed:
         ///   - ok:
-        ///   - oldest:
-        ///   - pinCount:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - latest:
+        ///   - oldest:
+        ///   - messages:
+        ///   - hasMore:
+        ///   - pinCount:
+        ///   - channelActionsTs: Type differs from java-slack-sdk: `ConversationsHistoryResponse.channelActionsTs` is declared `String`, but recorded responses send integers.
+        ///   - channelActionsCount:
+        ///   - responseMetadata:
         public init(
-            channelActionsCount: Swift.Int? = nil,
-            channelActionsTs: Swift.Int? = nil,
-            error: Swift.String? = nil,
-            hasMore: Swift.Bool? = nil,
-            latest: Swift.String? = nil,
-            messages: [SlackModels.Message]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            oldest: Swift.String? = nil,
-            pinCount: Swift.Int? = nil,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            latest: Swift.String? = nil,
+            oldest: Swift.String? = nil,
+            messages: [Components.Schemas.Message]? = nil,
+            hasMore: Swift.Bool? = nil,
+            pinCount: Swift.Int? = nil,
+            channelActionsTs: Swift.Int? = nil,
+            channelActionsCount: Swift.Int? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.channelActionsCount = channelActionsCount
-            self.channelActionsTs = channelActionsTs
-            self.error = error
-            self.hasMore = hasMore
-            self.latest = latest
-            self.messages = messages
-            self.needed = needed
             self.ok = ok
-            self.oldest = oldest
-            self.pinCount = pinCount
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.latest = latest
+            self.oldest = oldest
+            self.messages = messages
+            self.hasMore = hasMore
+            self.pinCount = pinCount
+            self.channelActionsTs = channelActionsTs
+            self.channelActionsCount = channelActionsCount
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channelActionsCount = "channel_actions_count"
-            case channelActionsTs = "channel_actions_ts"
-            case error
-            case hasMore = "has_more"
-            case latest
-            case messages
-            case needed
             case ok
-            case oldest
-            case pinCount = "pin_count"
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case latest
+            case oldest
+            case messages
+            case hasMore = "has_more"
+            case pinCount = "pin_count"
+            case channelActionsTs = "channel_actions_ts"
+            case channelActionsCount = "channel_actions_count"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsInfoResponse`.
     public struct ConversationsInfoResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsInfoResponse/channel`.
-        public var channel: SlackModels.Channel?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInfoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsInfoResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsInfoResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsInfoResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsInfoResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsInfoResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsInfoResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInfoResponse/channel`.
+        public var channel: Components.Schemas.Conversation?
         /// Creates a new `ConversationsInfoResponse`.
         ///
         /// - Parameters:
-        ///   - channel:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - channel:
         public init(
-            channel: SlackModels.Channel? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            channel: Components.Schemas.Conversation? = nil,
         ) {
-            self.channel = channel
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.channel = channel
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channel
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case channel
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse`.
     public struct ConversationsInviteResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/channel`.
-        public var channel: SlackModels.Channel?
-        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/errors`.
-        public var errors: [SlackModels._Error]?
-        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/ErrorsPayload`.
+        public struct ErrorsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/ErrorsPayload/ok`.
+            public var ok: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/ErrorsPayload/error`.
+            public var error: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/ErrorsPayload/user`.
+            public var user: Swift.String?
+            /// Creates a new `ErrorsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - ok:
+            ///   - error:
+            ///   - user:
+            public init(
+                ok: Swift.Bool? = nil,
+                error: Swift.String? = nil,
+                user: Swift.String? = nil,
+            ) {
+                self.ok = ok
+                self.error = error
+                self.user = user
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case ok
+                case error
+                case user
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/errors`.
+        public typealias ErrorsPayload = [Components.Schemas.ConversationsInviteResponse.ErrorsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/errors`.
+        public var errors: Components.Schemas.ConversationsInviteResponse.ErrorsPayload?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteResponse/channel`.
+        public var channel: Components.Schemas.Conversation?
         /// Creates a new `ConversationsInviteResponse`.
         ///
         /// - Parameters:
-        ///   - channel:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - errors:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - channel:
         public init(
-            channel: SlackModels.Channel? = nil,
-            error: Swift.String? = nil,
-            errors: [SlackModels._Error]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            errors: Components.Schemas.ConversationsInviteResponse.ErrorsPayload? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            channel: Components.Schemas.Conversation? = nil,
         ) {
-            self.channel = channel
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.errors = errors
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.channel = channel
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channel
+            case ok
+            case warning
             case error
             case errors
             case needed
-            case ok
             case provided
-            case warning
+            case channel
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse`.
     public struct ConversationsInviteSharedResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/conf_code`.
-        public var confCode: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/invite_id`.
-        public var inviteId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/is_legacy_shared_channel`.
-        public var isLegacySharedChannel: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/url`.
         public var url: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/invite_id`.
+        public var inviteId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/conf_code`.
+        public var confCode: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsInviteSharedResponse/is_legacy_shared_channel`.
+        public var isLegacySharedChannel: Swift.Bool?
         /// Creates a new `ConversationsInviteSharedResponse`.
         ///
         /// - Parameters:
-        ///   - confCode:
-        ///   - error:
-        ///   - inviteId:
-        ///   - isLegacySharedChannel:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
         ///   - url:
+        ///   - inviteId:
+        ///   - confCode:
+        ///   - isLegacySharedChannel:
         public init(
-            confCode: Swift.String? = nil,
-            error: Swift.String? = nil,
-            inviteId: Swift.String? = nil,
-            isLegacySharedChannel: Swift.Bool? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
             url: Swift.String? = nil,
+            inviteId: Swift.String? = nil,
+            confCode: Swift.String? = nil,
+            isLegacySharedChannel: Swift.Bool? = nil,
         ) {
-            self.confCode = confCode
-            self.error = error
-            self.inviteId = inviteId
-            self.isLegacySharedChannel = isLegacySharedChannel
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
             self.url = url
+            self.inviteId = inviteId
+            self.confCode = confCode
+            self.isLegacySharedChannel = isLegacySharedChannel
         }
 
         public enum CodingKeys: String, CodingKey {
-            case confCode = "conf_code"
-            case error
-            case inviteId = "invite_id"
-            case isLegacySharedChannel = "is_legacy_shared_channel"
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
             case url
+            case inviteId = "invite_id"
+            case confCode = "conf_code"
+            case isLegacySharedChannel = "is_legacy_shared_channel"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsJoinResponse`.
     public struct ConversationsJoinResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsJoinResponse/channel`.
-        public var channel: SlackModels.Channel?
+        /// - Remark: Generated from `#/components/schemas/ConversationsJoinResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsJoinResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsJoinResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsJoinResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsJoinResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsJoinResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsJoinResponse/channel`.
+        public var channel: Components.Schemas.Conversation?
         /// - Remark: Generated from `#/components/schemas/ConversationsJoinResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/ConversationsJoinResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.WarningResponseMetadata?
         /// Creates a new `ConversationsJoinResponse`.
         ///
         /// - Parameters:
-        ///   - channel:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - channel:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            channel: SlackModels.Channel? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            channel: Components.Schemas.Conversation? = nil,
+            responseMetadata: Components.Schemas.WarningResponseMetadata? = nil,
         ) {
-            self.channel = channel
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.channel = channel
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channel
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case channel
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsKickResponse`.
     public struct ConversationsKickResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsKickResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsKickResponse/errors`.
-        public var errors: SlackModels.Errors?
-        /// - Remark: Generated from `#/components/schemas/ConversationsKickResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsKickResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/ConversationsKickResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsKickResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsKickResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsKickResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsKickResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsKickResponse/errors`.
+        public var errors: OpenAPIRuntime.OpenAPIValueContainer?
         /// Creates a new `ConversationsKickResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - errors:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - errors:
         public init(
-            error: Swift.String? = nil,
-            errors: SlackModels.Errors? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            errors: OpenAPIRuntime.OpenAPIValueContainer? = nil,
         ) {
-            self.error = error
-            self.errors = errors
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.errors = errors
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case errors
-            case needed
             case ok
-            case provided
             case warning
+            case error
+            case needed
+            case provided
+            case errors
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsLeaveResponse`.
     public struct ConversationsLeaveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ConversationsLeaveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsLeaveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsLeaveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsLeaveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsLeaveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsLeaveResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsLeaveResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsLeaveResponse/not_in_channel`.
+        public var notInChannel: Swift.Bool?
         /// Creates a new `ConversationsLeaveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - notInChannel:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            notInChannel: Swift.Bool? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.notInChannel = notInChannel
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/ConversationsListResponse`.
-    public struct ConversationsListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/arg`.
-        public var arg: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/callstack`.
-        public var callstack: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/channels`.
-        public var channels: [SlackModels.Channel]?
-        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `ConversationsListResponse`.
-        ///
-        /// - Parameters:
-        ///   - arg:
-        ///   - callstack:
-        ///   - channels:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
-        ///   - warning:
-        public init(
-            arg: Swift.String? = nil,
-            callstack: Swift.String? = nil,
-            channels: [SlackModels.Channel]? = nil,
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.arg = arg
-            self.callstack = callstack
-            self.channels = channels
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case arg
-            case callstack
-            case channels
-            case error
-            case needed
-            case ok
-            case provided
-            case responseMetadata = "response_metadata"
-            case warning
+            case notInChannel = "not_in_channel"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse`.
     public struct ConversationsListConnectInvitesResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/arg`.
-        public var arg: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/invites`.
-        public var invites: [SlackModels.InviteElement]?
-        /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/arg`.
+        public var arg: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/ConversationsListConnectInvitesResponse/invites`.
+        public var invites: [Components.Schemas.ConnectInvite]?
         /// Creates a new `ConversationsListConnectInvitesResponse`.
         ///
         /// - Parameters:
-        ///   - arg:
-        ///   - error:
-        ///   - invites:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
+        ///   - arg:
+        ///   - responseMetadata:
+        ///   - invites:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            arg: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
+            invites: [Components.Schemas.ConnectInvite]? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.arg = arg
+            self.responseMetadata = responseMetadata
+            self.invites = invites
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case arg
+            case responseMetadata = "response_metadata"
+            case invites
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/ConversationsListResponse`.
+    public struct ConversationsListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/arg`.
+        public var arg: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/channels`.
+        public var channels: [Components.Schemas.Conversation]?
+        /// - Remark: Generated from `#/components/schemas/ConversationsListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
+        /// Creates a new `ConversationsListResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - arg:
+        ///   - needed:
+        ///   - provided:
+        ///   - channels:
         ///   - responseMetadata:
         public init(
-            arg: Swift.String? = nil,
-            error: Swift.String? = nil,
-            invites: [SlackModels.InviteElement]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            arg: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            channels: [Components.Schemas.Conversation]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.arg = arg
-            self.error = error
-            self.invites = invites
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.arg = arg
+            self.needed = needed
             self.provided = provided
+            self.channels = channels
             self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case arg
-            case error
-            case invites
-            case needed
             case ok
+            case warning
+            case error
+            case arg
+            case needed
             case provided
+            case channels
             case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsMarkResponse`.
     public struct ConversationsMarkResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ConversationsMarkResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsMarkResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsMarkResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsMarkResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsMarkResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsMarkResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsMarkResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsMarkResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `ConversationsMarkResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse`.
     public struct ConversationsMembersResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/members`.
-        public var members: [Swift.String]?
-        /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/members`.
+        public var members: [Swift.String]?
+        /// - Remark: Generated from `#/components/schemas/ConversationsMembersResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `ConversationsMembersResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - members:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - members:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            members: [Swift.String]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            members: [Swift.String]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.members = members
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.members = members
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case members
-            case needed
             case ok
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case members
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse`.
     public struct ConversationsOpenResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/already_open`.
-        public var alreadyOpen: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/channel`.
-        public var channel: SlackModels.Channel?
+        /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/no_op`.
-        public var noOp: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/no_op`.
+        public var noOp: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/already_open`.
+        public var alreadyOpen: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/ConversationsOpenResponse/channel`.
+        public var channel: Components.Schemas.Conversation?
         /// Creates a new `ConversationsOpenResponse`.
         ///
         /// - Parameters:
-        ///   - alreadyOpen:
-        ///   - channel:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - noOp:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - noOp:
+        ///   - alreadyOpen:
+        ///   - channel:
         public init(
-            alreadyOpen: Swift.Bool? = nil,
-            channel: SlackModels.Channel? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            noOp: Swift.Bool? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            noOp: Swift.Bool? = nil,
+            alreadyOpen: Swift.Bool? = nil,
+            channel: Components.Schemas.Conversation? = nil,
         ) {
-            self.alreadyOpen = alreadyOpen
-            self.channel = channel
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.noOp = noOp
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.noOp = noOp
+            self.alreadyOpen = alreadyOpen
+            self.channel = channel
         }
 
         public enum CodingKeys: String, CodingKey {
-            case alreadyOpen = "already_open"
-            case channel
+            case ok
+            case warning
             case error
             case needed
-            case noOp = "no_op"
-            case ok
             case provided
-            case warning
+            case noOp = "no_op"
+            case alreadyOpen = "already_open"
+            case channel
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsRenameResponse`.
     public struct ConversationsRenameResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsRenameResponse/channel`.
-        public var channel: SlackModels.Channel?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRenameResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsRenameResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsRenameResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsRenameResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRenameResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsRenameResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRenameResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRenameResponse/channel`.
+        public var channel: Components.Schemas.Conversation?
         /// Creates a new `ConversationsRenameResponse`.
         ///
         /// - Parameters:
-        ///   - channel:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - channel:
         public init(
-            channel: SlackModels.Channel? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            channel: Components.Schemas.Conversation? = nil,
         ) {
-            self.channel = channel
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.channel = channel
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channel
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case channel
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse`.
     public struct ConversationsRepliesResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/has_more`.
-        public var hasMore: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/messages`.
-        public var messages: [SlackModels.Message]?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/messages`.
+        public var messages: [Components.Schemas.Message]?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/has_more`.
+        public var hasMore: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRepliesResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `ConversationsRepliesResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - hasMore:
-        ///   - messages:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - messages:
+        ///   - hasMore:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            hasMore: Swift.Bool? = nil,
-            messages: [SlackModels.Message]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            messages: [Components.Schemas.Message]? = nil,
+            hasMore: Swift.Bool? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.hasMore = hasMore
-            self.messages = messages
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.messages = messages
+            self.hasMore = hasMore
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case hasMore = "has_more"
-            case messages
-            case needed
             case ok
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case messages
+            case hasMore = "has_more"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteApproveResponse`.
     public struct ConversationsRequestSharedInviteApproveResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteApproveResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteApproveResponse/invite_id`.
-        public var inviteId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteApproveResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteApproveResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteApproveResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteApproveResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteApproveResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteApproveResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteApproveResponse/invite_id`.
+        public var inviteId: Swift.String?
         /// Creates a new `ConversationsRequestSharedInviteApproveResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - inviteId:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
+        ///   - inviteId:
         public init(
-            error: Swift.String? = nil,
-            inviteId: Swift.String? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
+            inviteId: Swift.String? = nil,
         ) {
-            self.error = error
-            self.inviteId = inviteId
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
+            self.inviteId = inviteId
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case inviteId = "invite_id"
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
+            case inviteId = "invite_id"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteDenyResponse`.
     public struct ConversationsRequestSharedInviteDenyResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteDenyResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteDenyResponse/invite_id`.
-        public var inviteId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteDenyResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteDenyResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteDenyResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteDenyResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteDenyResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteDenyResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteDenyResponse/invite_id`.
+        public var inviteId: Swift.String?
         /// Creates a new `ConversationsRequestSharedInviteDenyResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - inviteId:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
+        ///   - inviteId:
         public init(
-            error: Swift.String? = nil,
-            inviteId: Swift.String? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
+            inviteId: Swift.String? = nil,
         ) {
-            self.error = error
-            self.inviteId = inviteId
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
+            self.inviteId = inviteId
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case inviteId = "invite_id"
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
+            case inviteId = "invite_id"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse`.
     public struct ConversationsRequestSharedInviteListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/invite_requests`.
-        public var inviteRequests: [SlackModels.InviteRequest]?
-        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload`.
+        public struct InviteRequestsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/date_created`.
+            public var dateCreated: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/expires_at`.
+            public var expiresAt: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_team`.
+            public struct InvitingTeamPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_team/id`.
+                public var id: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_team/name`.
+                public var name: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_team/icon`.
+                public var icon: Components.Schemas.TeamIcon?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_team/avatar_base_url`.
+                public var avatarBaseUrl: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_team/is_verified`.
+                public var isVerified: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_team/domain`.
+                public var domain: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_team/date_created`.
+                public var dateCreated: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_team/requires_sponsorship`.
+                public var requiresSponsorship: Swift.Bool?
+                /// Creates a new `InvitingTeamPayload`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                ///   - name:
+                ///   - icon:
+                ///   - avatarBaseUrl:
+                ///   - isVerified:
+                ///   - domain:
+                ///   - dateCreated:
+                ///   - requiresSponsorship:
+                public init(
+                    id: Swift.String? = nil,
+                    name: Swift.String? = nil,
+                    icon: Components.Schemas.TeamIcon? = nil,
+                    avatarBaseUrl: Swift.String? = nil,
+                    isVerified: Swift.Bool? = nil,
+                    domain: Swift.String? = nil,
+                    dateCreated: Swift.Int? = nil,
+                    requiresSponsorship: Swift.Bool? = nil,
+                ) {
+                    self.id = id
+                    self.name = name
+                    self.icon = icon
+                    self.avatarBaseUrl = avatarBaseUrl
+                    self.isVerified = isVerified
+                    self.domain = domain
+                    self.dateCreated = dateCreated
+                    self.requiresSponsorship = requiresSponsorship
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case id
+                    case name
+                    case icon
+                    case avatarBaseUrl = "avatar_base_url"
+                    case isVerified = "is_verified"
+                    case domain
+                    case dateCreated = "date_created"
+                    case requiresSponsorship = "requires_sponsorship"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_team`.
+            public var invitingTeam: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingTeamPayload?
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user`.
+            public struct InvitingUserPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/id`.
+                public var id: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/name`.
+                public var name: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/team_id`.
+                public var teamId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/updated`.
+                public var updated: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/who_can_share_contact_card`.
+                public var whoCanShareContactCard: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile`.
+                public struct ProfilePayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/guest_channels`.
+                    public var guestChannels: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/guest_invited_by`.
+                    public var guestInvitedBy: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/guest_expiration_ts`.
+                    public var guestExpirationTs: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/avatar_hash`.
+                    public var avatarHash: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/status_text`.
+                    public var statusText: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/status_text_canonical`.
+                    public var statusTextCanonical: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/status_emoji`.
+                    public var statusEmoji: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/status_emoji_url`.
+                    public var statusEmojiUrl: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/status_expiration`.
+                    public var statusExpiration: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/display_name`.
+                    public var displayName: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/display_name_normalized`.
+                    public var displayNameNormalized: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/real_name`.
+                    public var realName: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/real_name_normalized`.
+                    public var realNameNormalized: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/bot_id`.
+                    public var botId: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/title`.
+                    public var title: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/email`.
+                    public var email: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/skype`.
+                    public var skype: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/phone`.
+                    public var phone: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/team`.
+                    public var team: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/api_app_id`.
+                    public var apiAppId: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/always_active`.
+                    public var alwaysActive: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/image_original`.
+                    public var imageOriginal: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/image_24`.
+                    public var image24: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/image_32`.
+                    public var image32: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/image_48`.
+                    public var image48: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/image_72`.
+                    public var image72: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/image_192`.
+                    public var image192: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/image_512`.
+                    public var image512: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/image_1024`.
+                    public var image1024: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/is_custom_image`.
+                    public var isCustomImage: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/pronouns`.
+                    public var pronouns: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/StatusEmojiDisplayInfoPayload`.
+                    public struct StatusEmojiDisplayInfoPayloadPayload: Codable, Hashable, Sendable {
+                        /// - Remark: Generated from
+                        /// `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/StatusEmojiDisplayInfoPayload/emoji_name`.
+                        public var emojiName: Swift.String?
+                        /// - Remark: Generated from
+                        /// `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/StatusEmojiDisplayInfoPayload/display_alias`.
+                        public var displayAlias: Swift.String?
+                        /// - Remark: Generated from
+                        /// `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/StatusEmojiDisplayInfoPayload/display_url`.
+                        public var displayUrl: Swift.String?
+                        /// - Remark: Generated from
+                        /// `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/StatusEmojiDisplayInfoPayload/unicode`.
+                        public var unicode: Swift.String?
+                        /// Creates a new `StatusEmojiDisplayInfoPayloadPayload`.
+                        ///
+                        /// - Parameters:
+                        ///   - emojiName:
+                        ///   - displayAlias:
+                        ///   - displayUrl:
+                        ///   - unicode:
+                        public init(
+                            emojiName: Swift.String? = nil,
+                            displayAlias: Swift.String? = nil,
+                            displayUrl: Swift.String? = nil,
+                            unicode: Swift.String? = nil,
+                        ) {
+                            self.emojiName = emojiName
+                            self.displayAlias = displayAlias
+                            self.displayUrl = displayUrl
+                            self.unicode = unicode
+                        }
+
+                        public enum CodingKeys: String, CodingKey {
+                            case emojiName = "emoji_name"
+                            case displayAlias = "display_alias"
+                            case displayUrl = "display_url"
+                            case unicode
+                        }
+                    }
+
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/status_emoji_display_info`.
+                    public typealias StatusEmojiDisplayInfoPayload =
+                        [Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload.ProfilePayload.StatusEmojiDisplayInfoPayloadPayload]
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/status_emoji_display_info`.
+                    public var statusEmojiDisplayInfo: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload.ProfilePayload
+                        .StatusEmojiDisplayInfoPayload?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/fields`.
+                    public struct FieldsPayload: Codable, Hashable, Sendable {
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/fields/additionalProperties`.
+                        public struct AdditionalPropertiesPayload: Codable, Hashable, Sendable {
+                            /// - Remark: Generated from
+                            /// `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/fields/additionalProperties/value`.
+                            public var value: Swift.String?
+                            /// - Remark: Generated from
+                            /// `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/fields/additionalProperties/alt`.
+                            public var alt: Swift.String?
+                            /// - Remark: Generated from
+                            /// `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/fields/additionalProperties/label`.
+                            public var label: Swift.String?
+                            /// Creates a new `AdditionalPropertiesPayload`.
+                            ///
+                            /// - Parameters:
+                            ///   - value:
+                            ///   - alt:
+                            ///   - label:
+                            public init(
+                                value: Swift.String? = nil,
+                                alt: Swift.String? = nil,
+                                label: Swift.String? = nil,
+                            ) {
+                                self.value = value
+                                self.alt = alt
+                                self.label = label
+                            }
+
+                            public enum CodingKeys: String, CodingKey {
+                                case value
+                                case alt
+                                case label
+                            }
+                        }
+
+                        /// A container of undocumented properties.
+                        public var additionalProperties: [String: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload.ProfilePayload
+                            .FieldsPayload.AdditionalPropertiesPayload]
+                        /// Creates a new `FieldsPayload`.
+                        ///
+                        /// - Parameters:
+                        ///   - additionalProperties: A container of undocumented properties.
+                        public init(additionalProperties: [String: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload.ProfilePayload
+                                .FieldsPayload.AdditionalPropertiesPayload] = .init()) {
+                            self.additionalProperties = additionalProperties
+                        }
+
+                        public init(from decoder: any Swift.Decoder) throws {
+                            additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                        }
+
+                        public func encode(to encoder: any Swift.Encoder) throws {
+                            try encoder.encodeAdditionalProperties(additionalProperties)
+                        }
+                    }
+
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/fields`.
+                    public var fields: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload.ProfilePayload.FieldsPayload?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/huddle_state`.
+                    public var huddleState: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/huddle_state_expiration_ts`.
+                    public var huddleStateExpirationTs: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/start_date`.
+                    public var startDate: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/status_clear_on_focus_end`.
+                    public var statusClearOnFocusEnd: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/first_name`.
+                    public var firstName: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile/last_name`.
+                    public var lastName: Swift.String?
+                    /// Creates a new `ProfilePayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - guestChannels:
+                    ///   - guestInvitedBy:
+                    ///   - guestExpirationTs:
+                    ///   - avatarHash:
+                    ///   - statusText:
+                    ///   - statusTextCanonical:
+                    ///   - statusEmoji:
+                    ///   - statusEmojiUrl:
+                    ///   - statusExpiration:
+                    ///   - displayName:
+                    ///   - displayNameNormalized:
+                    ///   - realName:
+                    ///   - realNameNormalized:
+                    ///   - botId:
+                    ///   - title:
+                    ///   - email:
+                    ///   - skype:
+                    ///   - phone:
+                    ///   - team:
+                    ///   - apiAppId:
+                    ///   - alwaysActive:
+                    ///   - imageOriginal:
+                    ///   - image24:
+                    ///   - image32:
+                    ///   - image48:
+                    ///   - image72:
+                    ///   - image192:
+                    ///   - image512:
+                    ///   - image1024:
+                    ///   - isCustomImage:
+                    ///   - pronouns:
+                    ///   - statusEmojiDisplayInfo:
+                    ///   - fields:
+                    ///   - huddleState:
+                    ///   - huddleStateExpirationTs:
+                    ///   - startDate:
+                    ///   - statusClearOnFocusEnd:
+                    ///   - firstName:
+                    ///   - lastName:
+                    public init(
+                        guestChannels: Swift.String? = nil,
+                        guestInvitedBy: Swift.String? = nil,
+                        guestExpirationTs: Swift.Int? = nil,
+                        avatarHash: Swift.String? = nil,
+                        statusText: Swift.String? = nil,
+                        statusTextCanonical: Swift.String? = nil,
+                        statusEmoji: Swift.String? = nil,
+                        statusEmojiUrl: Swift.String? = nil,
+                        statusExpiration: Swift.Int? = nil,
+                        displayName: Swift.String? = nil,
+                        displayNameNormalized: Swift.String? = nil,
+                        realName: Swift.String? = nil,
+                        realNameNormalized: Swift.String? = nil,
+                        botId: Swift.String? = nil,
+                        title: Swift.String? = nil,
+                        email: Swift.String? = nil,
+                        skype: Swift.String? = nil,
+                        phone: Swift.String? = nil,
+                        team: Swift.String? = nil,
+                        apiAppId: Swift.String? = nil,
+                        alwaysActive: Swift.Bool? = nil,
+                        imageOriginal: Swift.String? = nil,
+                        image24: Swift.String? = nil,
+                        image32: Swift.String? = nil,
+                        image48: Swift.String? = nil,
+                        image72: Swift.String? = nil,
+                        image192: Swift.String? = nil,
+                        image512: Swift.String? = nil,
+                        image1024: Swift.String? = nil,
+                        isCustomImage: Swift.Bool? = nil,
+                        pronouns: Swift.String? = nil,
+                        statusEmojiDisplayInfo: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload.ProfilePayload
+                            .StatusEmojiDisplayInfoPayload? = nil,
+                        fields: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload.ProfilePayload.FieldsPayload? = nil,
+                        huddleState: Swift.String? = nil,
+                        huddleStateExpirationTs: Swift.Int? = nil,
+                        startDate: Swift.String? = nil,
+                        statusClearOnFocusEnd: Swift.Bool? = nil,
+                        firstName: Swift.String? = nil,
+                        lastName: Swift.String? = nil,
+                    ) {
+                        self.guestChannels = guestChannels
+                        self.guestInvitedBy = guestInvitedBy
+                        self.guestExpirationTs = guestExpirationTs
+                        self.avatarHash = avatarHash
+                        self.statusText = statusText
+                        self.statusTextCanonical = statusTextCanonical
+                        self.statusEmoji = statusEmoji
+                        self.statusEmojiUrl = statusEmojiUrl
+                        self.statusExpiration = statusExpiration
+                        self.displayName = displayName
+                        self.displayNameNormalized = displayNameNormalized
+                        self.realName = realName
+                        self.realNameNormalized = realNameNormalized
+                        self.botId = botId
+                        self.title = title
+                        self.email = email
+                        self.skype = skype
+                        self.phone = phone
+                        self.team = team
+                        self.apiAppId = apiAppId
+                        self.alwaysActive = alwaysActive
+                        self.imageOriginal = imageOriginal
+                        self.image24 = image24
+                        self.image32 = image32
+                        self.image48 = image48
+                        self.image72 = image72
+                        self.image192 = image192
+                        self.image512 = image512
+                        self.image1024 = image1024
+                        self.isCustomImage = isCustomImage
+                        self.pronouns = pronouns
+                        self.statusEmojiDisplayInfo = statusEmojiDisplayInfo
+                        self.fields = fields
+                        self.huddleState = huddleState
+                        self.huddleStateExpirationTs = huddleStateExpirationTs
+                        self.startDate = startDate
+                        self.statusClearOnFocusEnd = statusClearOnFocusEnd
+                        self.firstName = firstName
+                        self.lastName = lastName
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case guestChannels = "guest_channels"
+                        case guestInvitedBy = "guest_invited_by"
+                        case guestExpirationTs = "guest_expiration_ts"
+                        case avatarHash = "avatar_hash"
+                        case statusText = "status_text"
+                        case statusTextCanonical = "status_text_canonical"
+                        case statusEmoji = "status_emoji"
+                        case statusEmojiUrl = "status_emoji_url"
+                        case statusExpiration = "status_expiration"
+                        case displayName = "display_name"
+                        case displayNameNormalized = "display_name_normalized"
+                        case realName = "real_name"
+                        case realNameNormalized = "real_name_normalized"
+                        case botId = "bot_id"
+                        case title
+                        case email
+                        case skype
+                        case phone
+                        case team
+                        case apiAppId = "api_app_id"
+                        case alwaysActive = "always_active"
+                        case imageOriginal = "image_original"
+                        case image24 = "image_24"
+                        case image32 = "image_32"
+                        case image48 = "image_48"
+                        case image72 = "image_72"
+                        case image192 = "image_192"
+                        case image512 = "image_512"
+                        case image1024 = "image_1024"
+                        case isCustomImage = "is_custom_image"
+                        case pronouns
+                        case statusEmojiDisplayInfo = "status_emoji_display_info"
+                        case fields
+                        case huddleState = "huddle_state"
+                        case huddleStateExpirationTs = "huddle_state_expiration_ts"
+                        case startDate = "start_date"
+                        case statusClearOnFocusEnd = "status_clear_on_focus_end"
+                        case firstName = "first_name"
+                        case lastName = "last_name"
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user/profile`.
+                public var profile: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload.ProfilePayload?
+                /// Creates a new `InvitingUserPayload`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                ///   - name:
+                ///   - teamId:
+                ///   - updated:
+                ///   - whoCanShareContactCard:
+                ///   - profile:
+                public init(
+                    id: Swift.String? = nil,
+                    name: Swift.String? = nil,
+                    teamId: Swift.String? = nil,
+                    updated: Swift.Int? = nil,
+                    whoCanShareContactCard: Swift.String? = nil,
+                    profile: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload.ProfilePayload? = nil,
+                ) {
+                    self.id = id
+                    self.name = name
+                    self.teamId = teamId
+                    self.updated = updated
+                    self.whoCanShareContactCard = whoCanShareContactCard
+                    self.profile = profile
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case id
+                    case name
+                    case teamId = "team_id"
+                    case updated
+                    case whoCanShareContactCard = "who_can_share_contact_card"
+                    case profile
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/inviting_user`.
+            public var invitingUser: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload?
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel`.
+            public struct ChannelPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/id`.
+                public var id: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/is_im`.
+                public var isIm: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/is_private`.
+                public var isPrivate: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/date_created`.
+                public var dateCreated: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/name`.
+                public var name: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload`.
+                public struct ConnectionsPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload/is_private`.
+                    public var isPrivate: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload/team`.
+                    public struct TeamPayload: Codable, Hashable, Sendable {
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload/team/id`.
+                        public var id: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload/team/name`.
+                        public var name: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload/team/icon`.
+                        public var icon: Components.Schemas.TeamIcon?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload/team/avatar_base_url`.
+                        public var avatarBaseUrl: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload/team/is_verified`.
+                        public var isVerified: Swift.Bool?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload/team/domain`.
+                        public var domain: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload/team/date_created`.
+                        public var dateCreated: Swift.Int?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload/team/requires_sponsorship`.
+                        public var requiresSponsorship: Swift.Bool?
+                        /// Creates a new `TeamPayload`.
+                        ///
+                        /// - Parameters:
+                        ///   - id:
+                        ///   - name:
+                        ///   - icon:
+                        ///   - avatarBaseUrl:
+                        ///   - isVerified:
+                        ///   - domain:
+                        ///   - dateCreated:
+                        ///   - requiresSponsorship:
+                        public init(
+                            id: Swift.String? = nil,
+                            name: Swift.String? = nil,
+                            icon: Components.Schemas.TeamIcon? = nil,
+                            avatarBaseUrl: Swift.String? = nil,
+                            isVerified: Swift.Bool? = nil,
+                            domain: Swift.String? = nil,
+                            dateCreated: Swift.Int? = nil,
+                            requiresSponsorship: Swift.Bool? = nil,
+                        ) {
+                            self.id = id
+                            self.name = name
+                            self.icon = icon
+                            self.avatarBaseUrl = avatarBaseUrl
+                            self.isVerified = isVerified
+                            self.domain = domain
+                            self.dateCreated = dateCreated
+                            self.requiresSponsorship = requiresSponsorship
+                        }
+
+                        public enum CodingKeys: String, CodingKey {
+                            case id
+                            case name
+                            case icon
+                            case avatarBaseUrl = "avatar_base_url"
+                            case isVerified = "is_verified"
+                            case domain
+                            case dateCreated = "date_created"
+                            case requiresSponsorship = "requires_sponsorship"
+                        }
+                    }
+
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/ConnectionsPayload/team`.
+                    public var team: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.ConnectionsPayloadPayload.TeamPayload?
+                    /// Creates a new `ConnectionsPayloadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - isPrivate:
+                    ///   - team:
+                    public init(
+                        isPrivate: Swift.Bool? = nil,
+                        team: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.ConnectionsPayloadPayload.TeamPayload? = nil,
+                    ) {
+                        self.isPrivate = isPrivate
+                        self.team = team
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case isPrivate = "is_private"
+                        case team
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/connections`.
+                public typealias ConnectionsPayload = [Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.ConnectionsPayloadPayload]
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/connections`.
+                public var connections: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.ConnectionsPayload?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload`.
+                public struct PendingConnectionsPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload/is_private`.
+                    public var isPrivate: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload/team`.
+                    public struct TeamPayload: Codable, Hashable, Sendable {
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload/team/id`.
+                        public var id: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload/team/name`.
+                        public var name: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload/team/icon`.
+                        public var icon: Components.Schemas.TeamIcon?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload/team/avatar_base_url`.
+                        public var avatarBaseUrl: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload/team/is_verified`.
+                        public var isVerified: Swift.Bool?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload/team/domain`.
+                        public var domain: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload/team/date_created`.
+                        public var dateCreated: Swift.Int?
+                        /// - Remark: Generated from
+                        /// `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload/team/requires_sponsorship`.
+                        public var requiresSponsorship: Swift.Bool?
+                        /// Creates a new `TeamPayload`.
+                        ///
+                        /// - Parameters:
+                        ///   - id:
+                        ///   - name:
+                        ///   - icon:
+                        ///   - avatarBaseUrl:
+                        ///   - isVerified:
+                        ///   - domain:
+                        ///   - dateCreated:
+                        ///   - requiresSponsorship:
+                        public init(
+                            id: Swift.String? = nil,
+                            name: Swift.String? = nil,
+                            icon: Components.Schemas.TeamIcon? = nil,
+                            avatarBaseUrl: Swift.String? = nil,
+                            isVerified: Swift.Bool? = nil,
+                            domain: Swift.String? = nil,
+                            dateCreated: Swift.Int? = nil,
+                            requiresSponsorship: Swift.Bool? = nil,
+                        ) {
+                            self.id = id
+                            self.name = name
+                            self.icon = icon
+                            self.avatarBaseUrl = avatarBaseUrl
+                            self.isVerified = isVerified
+                            self.domain = domain
+                            self.dateCreated = dateCreated
+                            self.requiresSponsorship = requiresSponsorship
+                        }
+
+                        public enum CodingKeys: String, CodingKey {
+                            case id
+                            case name
+                            case icon
+                            case avatarBaseUrl = "avatar_base_url"
+                            case isVerified = "is_verified"
+                            case domain
+                            case dateCreated = "date_created"
+                            case requiresSponsorship = "requires_sponsorship"
+                        }
+                    }
+
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PendingConnectionsPayload/team`.
+                    public var team: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.PendingConnectionsPayloadPayload.TeamPayload?
+                    /// Creates a new `PendingConnectionsPayloadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - isPrivate:
+                    ///   - team:
+                    public init(
+                        isPrivate: Swift.Bool? = nil,
+                        team: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.PendingConnectionsPayloadPayload.TeamPayload? = nil,
+                    ) {
+                        self.isPrivate = isPrivate
+                        self.team = team
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case isPrivate = "is_private"
+                        case team
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/pending_connections`.
+                public typealias PendingConnectionsPayload =
+                    [Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.PendingConnectionsPayloadPayload]
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/pending_connections`.
+                public var pendingConnections: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.PendingConnectionsPayload?
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload`.
+                public struct PreviousConnectionsPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload/is_private`.
+                    public var isPrivate: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload/team`.
+                    public struct TeamPayload: Codable, Hashable, Sendable {
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload/team/id`.
+                        public var id: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload/team/name`.
+                        public var name: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload/team/icon`.
+                        public var icon: Components.Schemas.TeamIcon?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload/team/avatar_base_url`.
+                        public var avatarBaseUrl: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload/team/is_verified`.
+                        public var isVerified: Swift.Bool?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload/team/domain`.
+                        public var domain: Swift.String?
+                        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload/team/date_created`.
+                        public var dateCreated: Swift.Int?
+                        /// - Remark: Generated from
+                        /// `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload/team/requires_sponsorship`.
+                        public var requiresSponsorship: Swift.Bool?
+                        /// Creates a new `TeamPayload`.
+                        ///
+                        /// - Parameters:
+                        ///   - id:
+                        ///   - name:
+                        ///   - icon:
+                        ///   - avatarBaseUrl:
+                        ///   - isVerified:
+                        ///   - domain:
+                        ///   - dateCreated:
+                        ///   - requiresSponsorship:
+                        public init(
+                            id: Swift.String? = nil,
+                            name: Swift.String? = nil,
+                            icon: Components.Schemas.TeamIcon? = nil,
+                            avatarBaseUrl: Swift.String? = nil,
+                            isVerified: Swift.Bool? = nil,
+                            domain: Swift.String? = nil,
+                            dateCreated: Swift.Int? = nil,
+                            requiresSponsorship: Swift.Bool? = nil,
+                        ) {
+                            self.id = id
+                            self.name = name
+                            self.icon = icon
+                            self.avatarBaseUrl = avatarBaseUrl
+                            self.isVerified = isVerified
+                            self.domain = domain
+                            self.dateCreated = dateCreated
+                            self.requiresSponsorship = requiresSponsorship
+                        }
+
+                        public enum CodingKeys: String, CodingKey {
+                            case id
+                            case name
+                            case icon
+                            case avatarBaseUrl = "avatar_base_url"
+                            case isVerified = "is_verified"
+                            case domain
+                            case dateCreated = "date_created"
+                            case requiresSponsorship = "requires_sponsorship"
+                        }
+                    }
+
+                    /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/PreviousConnectionsPayload/team`.
+                    public var team: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.PreviousConnectionsPayloadPayload.TeamPayload?
+                    /// Creates a new `PreviousConnectionsPayloadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - isPrivate:
+                    ///   - team:
+                    public init(
+                        isPrivate: Swift.Bool? = nil,
+                        team: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.PreviousConnectionsPayloadPayload.TeamPayload? = nil,
+                    ) {
+                        self.isPrivate = isPrivate
+                        self.team = team
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case isPrivate = "is_private"
+                        case team
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/previous_connections`.
+                public typealias PreviousConnectionsPayload =
+                    [Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.PreviousConnectionsPayloadPayload]
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel/previous_connections`.
+                public var previousConnections: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.PreviousConnectionsPayload?
+                /// Creates a new `ChannelPayload`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                ///   - isIm:
+                ///   - isPrivate:
+                ///   - dateCreated:
+                ///   - name:
+                ///   - connections:
+                ///   - pendingConnections:
+                ///   - previousConnections:
+                public init(
+                    id: Swift.String? = nil,
+                    isIm: Swift.Bool? = nil,
+                    isPrivate: Swift.Bool? = nil,
+                    dateCreated: Swift.Int? = nil,
+                    name: Swift.String? = nil,
+                    connections: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.ConnectionsPayload? = nil,
+                    pendingConnections: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.PendingConnectionsPayload? = nil,
+                    previousConnections: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload.PreviousConnectionsPayload? = nil,
+                ) {
+                    self.id = id
+                    self.isIm = isIm
+                    self.isPrivate = isPrivate
+                    self.dateCreated = dateCreated
+                    self.name = name
+                    self.connections = connections
+                    self.pendingConnections = pendingConnections
+                    self.previousConnections = previousConnections
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case id
+                    case isIm = "is_im"
+                    case isPrivate = "is_private"
+                    case dateCreated = "date_created"
+                    case name
+                    case connections
+                    case pendingConnections = "pending_connections"
+                    case previousConnections = "previous_connections"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/channel`.
+            public var channel: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload?
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/is_external_limited`.
+            public var isExternalLimited: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/date_last_updated`.
+            public var dateLastUpdated: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/target_user`.
+            public struct TargetUserPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/target_user/recipient_email`.
+                public var recipientEmail: Swift.String?
+                /// Creates a new `TargetUserPayload`.
+                ///
+                /// - Parameters:
+                ///   - recipientEmail:
+                public init(recipientEmail: Swift.String? = nil) {
+                    self.recipientEmail = recipientEmail
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case recipientEmail = "recipient_email"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/InviteRequestsPayload/target_user`.
+            public var targetUser: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.TargetUserPayload?
+            /// Creates a new `InviteRequestsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - dateCreated:
+            ///   - expiresAt:
+            ///   - invitingTeam:
+            ///   - invitingUser:
+            ///   - channel:
+            ///   - isExternalLimited:
+            ///   - dateLastUpdated:
+            ///   - targetUser:
+            public init(
+                id: Swift.String? = nil,
+                dateCreated: Swift.Int? = nil,
+                expiresAt: Swift.Int? = nil,
+                invitingTeam: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingTeamPayload? = nil,
+                invitingUser: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload? = nil,
+                channel: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.ChannelPayload? = nil,
+                isExternalLimited: Swift.Bool? = nil,
+                dateLastUpdated: Swift.Int? = nil,
+                targetUser: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.TargetUserPayload? = nil,
+            ) {
+                self.id = id
+                self.dateCreated = dateCreated
+                self.expiresAt = expiresAt
+                self.invitingTeam = invitingTeam
+                self.invitingUser = invitingUser
+                self.channel = channel
+                self.isExternalLimited = isExternalLimited
+                self.dateLastUpdated = dateLastUpdated
+                self.targetUser = targetUser
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case dateCreated = "date_created"
+                case expiresAt = "expires_at"
+                case invitingTeam = "inviting_team"
+                case invitingUser = "inviting_user"
+                case channel
+                case isExternalLimited = "is_external_limited"
+                case dateLastUpdated = "date_last_updated"
+                case targetUser = "target_user"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/invite_requests`.
+        public typealias InviteRequestsPayload = [Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/ConversationsRequestSharedInviteListResponse/invite_requests`.
+        public var inviteRequests: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayload?
         /// Creates a new `ConversationsRequestSharedInviteListResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - inviteRequests:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
+        ///   - inviteRequests:
         public init(
-            error: Swift.String? = nil,
-            inviteRequests: [SlackModels.InviteRequest]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
+            inviteRequests: Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayload? = nil,
         ) {
-            self.error = error
-            self.inviteRequests = inviteRequests
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
+            self.inviteRequests = inviteRequests
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case inviteRequests = "invite_requests"
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
+            case inviteRequests = "invite_requests"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsSetPurposeResponse`.
     public struct ConversationsSetPurposeResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsSetPurposeResponse/channel`.
-        public var channel: SlackModels.Channel?
+        /// - Remark: Generated from `#/components/schemas/ConversationsSetPurposeResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsSetPurposeResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsSetPurposeResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsSetPurposeResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsSetPurposeResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsSetPurposeResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsSetPurposeResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsSetPurposeResponse/channel`.
+        public var channel: Components.Schemas.Conversation?
         /// Creates a new `ConversationsSetPurposeResponse`.
         ///
         /// - Parameters:
-        ///   - channel:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - channel:
         public init(
-            channel: SlackModels.Channel? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            channel: Components.Schemas.Conversation? = nil,
         ) {
-            self.channel = channel
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.channel = channel
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channel
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case channel
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsSetTopicResponse`.
     public struct ConversationsSetTopicResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ConversationsSetTopicResponse/channel`.
-        public var channel: SlackModels.Channel?
+        /// - Remark: Generated from `#/components/schemas/ConversationsSetTopicResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsSetTopicResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsSetTopicResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsSetTopicResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsSetTopicResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsSetTopicResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsSetTopicResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ConversationsSetTopicResponse/channel`.
+        public var channel: Components.Schemas.Conversation?
         /// Creates a new `ConversationsSetTopicResponse`.
         ///
         /// - Parameters:
-        ///   - channel:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - channel:
         public init(
-            channel: SlackModels.Channel? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            channel: Components.Schemas.Conversation? = nil,
         ) {
-            self.channel = channel
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.channel = channel
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channel
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case channel
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ConversationsUnarchiveResponse`.
     public struct ConversationsUnarchiveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ConversationsUnarchiveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ConversationsUnarchiveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsUnarchiveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ConversationsUnarchiveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsUnarchiveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ConversationsUnarchiveResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ConversationsUnarchiveResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `ConversationsUnarchiveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 }

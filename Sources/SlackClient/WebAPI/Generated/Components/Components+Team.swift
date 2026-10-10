@@ -9,512 +9,1743 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Team
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse`.
     public struct TeamAccessLogsResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/logins`.
-        public var logins: [SlackModels.Login]?
-        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/paging`.
-        public var paging: SlackModels.Paging?
-        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/logins`.
+        public var logins: [Components.Schemas.Login]?
+        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/paging`.
+        public var paging: Components.Schemas.Paging?
+        /// - Remark: Generated from `#/components/schemas/TeamAccessLogsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `TeamAccessLogsResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - logins:
-        ///   - needed:
         ///   - ok:
-        ///   - paging:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - logins:
+        ///   - paging:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            logins: [SlackModels.Login]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            paging: SlackModels.Paging? = nil,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            logins: [Components.Schemas.Login]? = nil,
+            paging: Components.Schemas.Paging? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.logins = logins
-            self.needed = needed
             self.ok = ok
-            self.paging = paging
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.logins = logins
+            self.paging = paging
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case logins
-            case needed
             case ok
-            case paging
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case logins
+            case paging
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse`.
     public struct TeamBillableInfoResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/billable_info`.
-        public var billableInfo: OpenAPIRuntime.OpenAPIObjectContainer?
+        /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/billable_info`.
+        public struct BillableInfoPayload: Codable, Hashable, Sendable {
+            /// A container of undocumented properties.
+            public var additionalProperties: [String: Components.Schemas.BillableInfo]
+            /// Creates a new `BillableInfoPayload`.
+            ///
+            /// - Parameters:
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(additionalProperties: [String: Components.Schemas.BillableInfo] = .init()) {
+                self.additionalProperties = additionalProperties
+            }
+
+            public init(from decoder: any Swift.Decoder) throws {
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+            }
+
+            public func encode(to encoder: any Swift.Encoder) throws {
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/billable_info`.
+        public var billableInfo: Components.Schemas.TeamBillableInfoResponse.BillableInfoPayload?
         /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/TeamBillableInfoResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `TeamBillableInfoResponse`.
         ///
         /// - Parameters:
-        ///   - billableInfo:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - billableInfo:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            billableInfo: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            billableInfo: Components.Schemas.TeamBillableInfoResponse.BillableInfoPayload? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.billableInfo = billableInfo
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.billableInfo = billableInfo
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case billableInfo = "billable_info"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case billableInfo = "billable_info"
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse`.
     public struct TeamBillingInfoResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse/plan`.
-        public var plan: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamBillingInfoResponse/plan`.
+        public var plan: Swift.String?
         /// Creates a new `TeamBillingInfoResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - plan:
         ///   - provided:
-        ///   - warning:
+        ///   - plan:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            plan: Swift.String? = nil,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            plan: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
-            self.plan = plan
             self.provided = provided
-            self.warning = warning
+            self.plan = plan
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
-            case plan
             case provided
-            case warning
+            case plan
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsDisconnectResponse`.
     public struct TeamExternalTeamsDisconnectResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsDisconnectResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsDisconnectResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsDisconnectResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsDisconnectResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsDisconnectResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsDisconnectResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsDisconnectResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsDisconnectResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `TeamExternalTeamsDisconnectResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse`.
     public struct TeamExternalTeamsListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/organizations`.
-        public var organizations: [SlackModels.Organization]?
         /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload`.
+        public struct OrganizationsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/team_id`.
+            public var teamId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/team_name`.
+            public var teamName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/team_domain`.
+            public var teamDomain: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/public_channel_count`.
+            public var publicChannelCount: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/private_channel_count`.
+            public var privateChannelCount: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/im_channel_count`.
+            public var imChannelCount: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/mpim_channel_count`.
+            public var mpimChannelCount: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/ConnectedWorkspacesPayload`.
+            public struct ConnectedWorkspacesPayloadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/ConnectedWorkspacesPayload/workspace_id`.
+                public var workspaceId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/ConnectedWorkspacesPayload/workspace_name`.
+                public var workspaceName: Swift.String?
+                /// Creates a new `ConnectedWorkspacesPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - workspaceId:
+                ///   - workspaceName:
+                public init(
+                    workspaceId: Swift.String? = nil,
+                    workspaceName: Swift.String? = nil,
+                ) {
+                    self.workspaceId = workspaceId
+                    self.workspaceName = workspaceName
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case workspaceId = "workspace_id"
+                    case workspaceName = "workspace_name"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/connected_workspaces`.
+            public typealias ConnectedWorkspacesPayload = [Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.ConnectedWorkspacesPayloadPayload]
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/connected_workspaces`.
+            public var connectedWorkspaces: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.ConnectedWorkspacesPayload?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs`.
+            public struct SlackConnectPrefsPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allow_sc_file_uploads`.
+                public struct AllowScFileUploadsPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allow_sc_file_uploads/value`.
+                    public var value: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allow_sc_file_uploads/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allow_sc_file_uploads/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allow_sc_file_uploads/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `AllowScFileUploadsPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - value:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        value: Swift.Bool? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self.value = value
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case value
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allow_sc_file_uploads`.
+                public var allowScFileUploads: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AllowScFileUploadsPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/approved_org_info`.
+                public struct ApprovedOrgInfoPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/approved_org_info/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/approved_org_info/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/approved_org_info/approval_type`.
+                    public var approvalType: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/approved_org_info/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `ApprovedOrgInfoPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - approvalType:
+                    ///   - source:
+                    public init(
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        approvalType: Swift.String? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.approvalType = approvalType
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case actor
+                        case dateUpdate = "date_update"
+                        case approvalType = "approval_type"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/approved_org_info`.
+                public var approvedOrgInfo: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.ApprovedOrgInfoPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/profile_visibility`.
+                public struct ProfileVisibilityPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/profile_visibility/type`.
+                    public var _type: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/profile_visibility/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/profile_visibility/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/profile_visibility/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `ProfileVisibilityPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - _type:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        _type: Swift.String? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self._type = _type
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case _type = "type"
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/profile_visibility`.
+                public var profileVisibility: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.ProfileVisibilityPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_workspaces`.
+                public struct AllowedWorkspacesPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_workspaces/type`.
+                    public var _type: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_workspaces/team_ids`.
+                    public var teamIds: [Swift.String]?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_workspaces/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_workspaces/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_workspaces/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `AllowedWorkspacesPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - _type:
+                    ///   - teamIds:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        _type: Swift.String? = nil,
+                        teamIds: [Swift.String]? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self._type = _type
+                        self.teamIds = teamIds
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case _type = "type"
+                        case teamIds = "team_ids"
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_workspaces`.
+                public var allowedWorkspaces: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AllowedWorkspacesPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_canvas_sharing`.
+                public struct AllowedCanvasSharingPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_canvas_sharing/value`.
+                    public var value: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_canvas_sharing/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_canvas_sharing/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_canvas_sharing/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `AllowedCanvasSharingPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - value:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        value: Swift.Bool? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self.value = value
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case value
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_canvas_sharing`.
+                public var allowedCanvasSharing: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AllowedCanvasSharingPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_list_sharing`.
+                public struct AllowedListSharingPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_list_sharing/value`.
+                    public var value: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_list_sharing/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_list_sharing/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_list_sharing/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `AllowedListSharingPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - value:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        value: Swift.Bool? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self.value = value
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case value
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/allowed_list_sharing`.
+                public var allowedListSharing: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AllowedListSharingPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_permissions`.
+                public struct AwayTeamScInvitePermissionsPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_permissions/type`.
+                    public var _type: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_permissions/team_ids`.
+                    public var teamIds: [Swift.String]?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_permissions/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_permissions/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_permissions/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `AwayTeamScInvitePermissionsPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - _type:
+                    ///   - teamIds:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        _type: Swift.String? = nil,
+                        teamIds: [Swift.String]? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self._type = _type
+                        self.teamIds = teamIds
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case _type = "type"
+                        case teamIds = "team_ids"
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_permissions`.
+                public var awayTeamScInvitePermissions: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AwayTeamScInvitePermissionsPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_require_2fa`.
+                public struct AwayTeamScInviteRequire2faPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_require_2fa/type`.
+                    public var _type: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_require_2fa/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_require_2fa/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_require_2fa/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `AwayTeamScInviteRequire2faPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - _type:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        _type: Swift.Bool? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self._type = _type
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case _type = "type"
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/away_team_sc_invite_require_2fa`.
+                public var awayTeamScInviteRequire2fa: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AwayTeamScInviteRequire2faPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/accept_sc_invites`.
+                public struct AcceptScInvitesPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/accept_sc_invites/type`.
+                    public var _type: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/accept_sc_invites/accept_in_workspace_ids`.
+                    public var acceptInWorkspaceIds: [Swift.String]?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/accept_sc_invites/invalid_workspace_ids`.
+                    public var invalidWorkspaceIds: [Swift.String]?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/accept_sc_invites/use_allowed_workspaces`.
+                    public var useAllowedWorkspaces: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/accept_sc_invites/accept_private`.
+                    public var acceptPrivate: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/accept_sc_invites/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/accept_sc_invites/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/accept_sc_invites/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `AcceptScInvitesPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - _type:
+                    ///   - acceptInWorkspaceIds:
+                    ///   - invalidWorkspaceIds:
+                    ///   - useAllowedWorkspaces:
+                    ///   - acceptPrivate:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        _type: Swift.String? = nil,
+                        acceptInWorkspaceIds: [Swift.String]? = nil,
+                        invalidWorkspaceIds: [Swift.String]? = nil,
+                        useAllowedWorkspaces: Swift.Bool? = nil,
+                        acceptPrivate: Swift.Bool? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self._type = _type
+                        self.acceptInWorkspaceIds = acceptInWorkspaceIds
+                        self.invalidWorkspaceIds = invalidWorkspaceIds
+                        self.useAllowedWorkspaces = useAllowedWorkspaces
+                        self.acceptPrivate = acceptPrivate
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case _type = "type"
+                        case acceptInWorkspaceIds = "accept_in_workspace_ids"
+                        case invalidWorkspaceIds = "invalid_workspace_ids"
+                        case useAllowedWorkspaces = "use_allowed_workspaces"
+                        case acceptPrivate = "accept_private"
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/accept_sc_invites`.
+                public var acceptScInvites: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AcceptScInvitesPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_channel_limited_access`.
+                public struct ScChannelLimitedAccessPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_channel_limited_access/type`.
+                    public var _type: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_channel_limited_access/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_channel_limited_access/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_channel_limited_access/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `ScChannelLimitedAccessPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - _type:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        _type: Swift.String? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self._type = _type
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case _type = "type"
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_channel_limited_access`.
+                public var scChannelLimitedAccess: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.ScChannelLimitedAccessPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_mpdm_to_private`.
+                public struct ScMpdmToPrivatePayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_mpdm_to_private/type`.
+                    public var _type: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_mpdm_to_private/accept_in_workspace_id`.
+                    public var acceptInWorkspaceId: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_mpdm_to_private/invalid_workspace_ids`.
+                    public var invalidWorkspaceIds: [Swift.String]?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_mpdm_to_private/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_mpdm_to_private/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_mpdm_to_private/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `ScMpdmToPrivatePayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - _type:
+                    ///   - acceptInWorkspaceId:
+                    ///   - invalidWorkspaceIds:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        _type: Swift.String? = nil,
+                        acceptInWorkspaceId: Swift.String? = nil,
+                        invalidWorkspaceIds: [Swift.String]? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self._type = _type
+                        self.acceptInWorkspaceId = acceptInWorkspaceId
+                        self.invalidWorkspaceIds = invalidWorkspaceIds
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case _type = "type"
+                        case acceptInWorkspaceId = "accept_in_workspace_id"
+                        case invalidWorkspaceIds = "invalid_workspace_ids"
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/sc_mpdm_to_private`.
+                public var scMpdmToPrivate: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.ScMpdmToPrivatePayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/external_awareness_context_bar`.
+                public struct ExternalAwarenessContextBarPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/external_awareness_context_bar/type`.
+                    public var _type: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/external_awareness_context_bar/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/external_awareness_context_bar/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/external_awareness_context_bar/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `ExternalAwarenessContextBarPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - _type:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        _type: Swift.String? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self._type = _type
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case _type = "type"
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/external_awareness_context_bar`.
+                public var externalAwarenessContextBar: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.ExternalAwarenessContextBarPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/require_sc_channel_for_sc_dm`.
+                public struct RequireScChannelForScDmPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/require_sc_channel_for_sc_dm/value`.
+                    public var value: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/require_sc_channel_for_sc_dm/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/require_sc_channel_for_sc_dm/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/require_sc_channel_for_sc_dm/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `RequireScChannelForScDmPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - value:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        value: Swift.Bool? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self.value = value
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case value
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/require_sc_channel_for_sc_dm`.
+                public var requireScChannelForScDm: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.RequireScChannelForScDmPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested`.
+                public struct SharedChannelInviteRequestedPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/enabled`.
+                    public var enabled: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/usergroup_include`.
+                    public struct UsergroupIncludePayload: Codable, Hashable, Sendable {
+                        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/usergroup_include/id`.
+                        public var id: Swift.String?
+                        /// - Remark: Generated from
+                        /// `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/usergroup_include/team_id`.
+                        public var teamId: Swift.String?
+                        /// Creates a new `UsergroupIncludePayload`.
+                        ///
+                        /// - Parameters:
+                        ///   - id:
+                        ///   - teamId:
+                        public init(
+                            id: Swift.String? = nil,
+                            teamId: Swift.String? = nil,
+                        ) {
+                            self.id = id
+                            self.teamId = teamId
+                        }
+
+                        public enum CodingKeys: String, CodingKey {
+                            case id
+                            case teamId = "team_id"
+                        }
+                    }
+
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/usergroup_include`.
+                    public var usergroupInclude: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.SharedChannelInviteRequestedPayload
+                        .UsergroupIncludePayload?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/usergroup_exclude`.
+                    public struct UsergroupExcludePayload: Codable, Hashable, Sendable {
+                        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/usergroup_exclude/id`.
+                        public var id: Swift.String?
+                        /// - Remark: Generated from
+                        /// `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/usergroup_exclude/team_id`.
+                        public var teamId: Swift.String?
+                        /// Creates a new `UsergroupExcludePayload`.
+                        ///
+                        /// - Parameters:
+                        ///   - id:
+                        ///   - teamId:
+                        public init(
+                            id: Swift.String? = nil,
+                            teamId: Swift.String? = nil,
+                        ) {
+                            self.id = id
+                            self.teamId = teamId
+                        }
+
+                        public enum CodingKeys: String, CodingKey {
+                            case id
+                            case teamId = "team_id"
+                        }
+                    }
+
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/usergroup_exclude`.
+                    public var usergroupExclude: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.SharedChannelInviteRequestedPayload
+                        .UsergroupExcludePayload?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/approval_destination`.
+                    public struct ApprovalDestinationPayload: Codable, Hashable, Sendable {
+                        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/approval_destination/all_who_can_manage_shared_channels`.
+                        public var allWhoCanManageSharedChannels: Swift.Bool?
+                        /// - Remark: Generated from
+                        /// `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/approval_destination/channel_id`.
+                        public var channelId: Swift.String?
+                        /// Creates a new `ApprovalDestinationPayload`.
+                        ///
+                        /// - Parameters:
+                        ///   - allWhoCanManageSharedChannels:
+                        ///   - channelId:
+                        public init(
+                            allWhoCanManageSharedChannels: Swift.Bool? = nil,
+                            channelId: Swift.String? = nil,
+                        ) {
+                            self.allWhoCanManageSharedChannels = allWhoCanManageSharedChannels
+                            self.channelId = channelId
+                        }
+
+                        public enum CodingKeys: String, CodingKey {
+                            case allWhoCanManageSharedChannels = "all_who_can_manage_shared_channels"
+                            case channelId = "channel_id"
+                        }
+                    }
+
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/approval_destination`.
+                    public var approvalDestination: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.SharedChannelInviteRequestedPayload
+                        .ApprovalDestinationPayload?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/actor`.
+                    public var actor: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/date_update`.
+                    public var dateUpdate: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested/source`.
+                    public var source: Swift.String?
+                    /// Creates a new `SharedChannelInviteRequestedPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - enabled:
+                    ///   - usergroupInclude:
+                    ///   - usergroupExclude:
+                    ///   - approvalDestination:
+                    ///   - actor:
+                    ///   - dateUpdate:
+                    ///   - source:
+                    public init(
+                        enabled: Swift.Bool? = nil,
+                        usergroupInclude: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.SharedChannelInviteRequestedPayload
+                            .UsergroupIncludePayload? = nil,
+                        usergroupExclude: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.SharedChannelInviteRequestedPayload
+                            .UsergroupExcludePayload? = nil,
+                        approvalDestination: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.SharedChannelInviteRequestedPayload
+                            .ApprovalDestinationPayload? = nil,
+                        actor: Swift.String? = nil,
+                        dateUpdate: Swift.Int? = nil,
+                        source: Swift.String? = nil,
+                    ) {
+                        self.enabled = enabled
+                        self.usergroupInclude = usergroupInclude
+                        self.usergroupExclude = usergroupExclude
+                        self.approvalDestination = approvalDestination
+                        self.actor = actor
+                        self.dateUpdate = dateUpdate
+                        self.source = source
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case enabled
+                        case usergroupInclude = "usergroup_include"
+                        case usergroupExclude = "usergroup_exclude"
+                        case approvalDestination = "approval_destination"
+                        case actor
+                        case dateUpdate = "date_update"
+                        case source
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs/shared_channel_invite_requested`.
+                public var sharedChannelInviteRequested: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.SharedChannelInviteRequestedPayload?
+                /// Creates a new `SlackConnectPrefsPayload`.
+                ///
+                /// - Parameters:
+                ///   - allowScFileUploads:
+                ///   - approvedOrgInfo:
+                ///   - profileVisibility:
+                ///   - allowedWorkspaces:
+                ///   - allowedCanvasSharing:
+                ///   - allowedListSharing:
+                ///   - awayTeamScInvitePermissions:
+                ///   - awayTeamScInviteRequire2fa:
+                ///   - acceptScInvites:
+                ///   - scChannelLimitedAccess:
+                ///   - scMpdmToPrivate:
+                ///   - externalAwarenessContextBar:
+                ///   - requireScChannelForScDm:
+                ///   - sharedChannelInviteRequested:
+                public init(
+                    allowScFileUploads: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AllowScFileUploadsPayload? = nil,
+                    approvedOrgInfo: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.ApprovedOrgInfoPayload? = nil,
+                    profileVisibility: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.ProfileVisibilityPayload? = nil,
+                    allowedWorkspaces: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AllowedWorkspacesPayload? = nil,
+                    allowedCanvasSharing: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AllowedCanvasSharingPayload? = nil,
+                    allowedListSharing: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AllowedListSharingPayload? = nil,
+                    awayTeamScInvitePermissions: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AwayTeamScInvitePermissionsPayload? = nil,
+                    awayTeamScInviteRequire2fa: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AwayTeamScInviteRequire2faPayload? = nil,
+                    acceptScInvites: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.AcceptScInvitesPayload? = nil,
+                    scChannelLimitedAccess: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.ScChannelLimitedAccessPayload? = nil,
+                    scMpdmToPrivate: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.ScMpdmToPrivatePayload? = nil,
+                    externalAwarenessContextBar: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.ExternalAwarenessContextBarPayload? = nil,
+                    requireScChannelForScDm: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.RequireScChannelForScDmPayload? = nil,
+                    sharedChannelInviteRequested: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload.SharedChannelInviteRequestedPayload? = nil,
+                ) {
+                    self.allowScFileUploads = allowScFileUploads
+                    self.approvedOrgInfo = approvedOrgInfo
+                    self.profileVisibility = profileVisibility
+                    self.allowedWorkspaces = allowedWorkspaces
+                    self.allowedCanvasSharing = allowedCanvasSharing
+                    self.allowedListSharing = allowedListSharing
+                    self.awayTeamScInvitePermissions = awayTeamScInvitePermissions
+                    self.awayTeamScInviteRequire2fa = awayTeamScInviteRequire2fa
+                    self.acceptScInvites = acceptScInvites
+                    self.scChannelLimitedAccess = scChannelLimitedAccess
+                    self.scMpdmToPrivate = scMpdmToPrivate
+                    self.externalAwarenessContextBar = externalAwarenessContextBar
+                    self.requireScChannelForScDm = requireScChannelForScDm
+                    self.sharedChannelInviteRequested = sharedChannelInviteRequested
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case allowScFileUploads = "allow_sc_file_uploads"
+                    case approvedOrgInfo = "approved_org_info"
+                    case profileVisibility = "profile_visibility"
+                    case allowedWorkspaces = "allowed_workspaces"
+                    case allowedCanvasSharing = "allowed_canvas_sharing"
+                    case allowedListSharing = "allowed_list_sharing"
+                    case awayTeamScInvitePermissions = "away_team_sc_invite_permissions"
+                    case awayTeamScInviteRequire2fa = "away_team_sc_invite_require_2fa"
+                    case acceptScInvites = "accept_sc_invites"
+                    case scChannelLimitedAccess = "sc_channel_limited_access"
+                    case scMpdmToPrivate = "sc_mpdm_to_private"
+                    case externalAwarenessContextBar = "external_awareness_context_bar"
+                    case requireScChannelForScDm = "require_sc_channel_for_sc_dm"
+                    case sharedChannelInviteRequested = "shared_channel_invite_requested"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/slack_connect_prefs`.
+            public var slackConnectPrefs: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/connection_status`.
+            public var connectionStatus: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/last_active_timestamp`.
+            public var lastActiveTimestamp: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/is_sponsored`.
+            public var isSponsored: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/canvas`.
+            public struct CanvasPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/canvas/total_count`.
+                public var totalCount: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/canvas/OwnershipDetailsPayload`.
+                public struct OwnershipDetailsPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/canvas/OwnershipDetailsPayload/team_id`.
+                    public var teamId: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/canvas/OwnershipDetailsPayload/count`.
+                    public var count: Swift.Int?
+                    /// Creates a new `OwnershipDetailsPayloadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - teamId:
+                    ///   - count:
+                    public init(
+                        teamId: Swift.String? = nil,
+                        count: Swift.Int? = nil,
+                    ) {
+                        self.teamId = teamId
+                        self.count = count
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case teamId = "team_id"
+                        case count
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/canvas/ownership_details`.
+                public typealias OwnershipDetailsPayload = [Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.CanvasPayload.OwnershipDetailsPayloadPayload]
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/canvas/ownership_details`.
+                public var ownershipDetails: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.CanvasPayload.OwnershipDetailsPayload?
+                /// Creates a new `CanvasPayload`.
+                ///
+                /// - Parameters:
+                ///   - totalCount:
+                ///   - ownershipDetails:
+                public init(
+                    totalCount: Swift.Int? = nil,
+                    ownershipDetails: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.CanvasPayload.OwnershipDetailsPayload? = nil,
+                ) {
+                    self.totalCount = totalCount
+                    self.ownershipDetails = ownershipDetails
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case totalCount = "total_count"
+                    case ownershipDetails = "ownership_details"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/canvas`.
+            public var canvas: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.CanvasPayload?
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/lists`.
+            public struct ListsPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/lists/total_count`.
+                public var totalCount: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/lists/OwnershipDetailsPayload`.
+                public struct OwnershipDetailsPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/lists/OwnershipDetailsPayload/team_id`.
+                    public var teamId: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/lists/OwnershipDetailsPayload/count`.
+                    public var count: Swift.Int?
+                    /// Creates a new `OwnershipDetailsPayloadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - teamId:
+                    ///   - count:
+                    public init(
+                        teamId: Swift.String? = nil,
+                        count: Swift.Int? = nil,
+                    ) {
+                        self.teamId = teamId
+                        self.count = count
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case teamId = "team_id"
+                        case count
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/lists/ownership_details`.
+                public typealias OwnershipDetailsPayload = [Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.ListsPayload.OwnershipDetailsPayloadPayload]
+                /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/lists/ownership_details`.
+                public var ownershipDetails: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.ListsPayload.OwnershipDetailsPayload?
+                /// Creates a new `ListsPayload`.
+                ///
+                /// - Parameters:
+                ///   - totalCount:
+                ///   - ownershipDetails:
+                public init(
+                    totalCount: Swift.Int? = nil,
+                    ownershipDetails: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.ListsPayload.OwnershipDetailsPayload? = nil,
+                ) {
+                    self.totalCount = totalCount
+                    self.ownershipDetails = ownershipDetails
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case totalCount = "total_count"
+                    case ownershipDetails = "ownership_details"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/OrganizationsPayload/lists`.
+            public var lists: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.ListsPayload?
+            /// Creates a new `OrganizationsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - teamId:
+            ///   - teamName:
+            ///   - teamDomain:
+            ///   - publicChannelCount:
+            ///   - privateChannelCount:
+            ///   - imChannelCount:
+            ///   - mpimChannelCount:
+            ///   - connectedWorkspaces:
+            ///   - slackConnectPrefs:
+            ///   - connectionStatus:
+            ///   - lastActiveTimestamp:
+            ///   - isSponsored:
+            ///   - canvas:
+            ///   - lists:
+            public init(
+                teamId: Swift.String? = nil,
+                teamName: Swift.String? = nil,
+                teamDomain: Swift.String? = nil,
+                publicChannelCount: Swift.Int? = nil,
+                privateChannelCount: Swift.Int? = nil,
+                imChannelCount: Swift.Int? = nil,
+                mpimChannelCount: Swift.Int? = nil,
+                connectedWorkspaces: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.ConnectedWorkspacesPayload? = nil,
+                slackConnectPrefs: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.SlackConnectPrefsPayload? = nil,
+                connectionStatus: Swift.String? = nil,
+                lastActiveTimestamp: Swift.Int? = nil,
+                isSponsored: Swift.Bool? = nil,
+                canvas: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.CanvasPayload? = nil,
+                lists: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload.ListsPayload? = nil,
+            ) {
+                self.teamId = teamId
+                self.teamName = teamName
+                self.teamDomain = teamDomain
+                self.publicChannelCount = publicChannelCount
+                self.privateChannelCount = privateChannelCount
+                self.imChannelCount = imChannelCount
+                self.mpimChannelCount = mpimChannelCount
+                self.connectedWorkspaces = connectedWorkspaces
+                self.slackConnectPrefs = slackConnectPrefs
+                self.connectionStatus = connectionStatus
+                self.lastActiveTimestamp = lastActiveTimestamp
+                self.isSponsored = isSponsored
+                self.canvas = canvas
+                self.lists = lists
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case teamId = "team_id"
+                case teamName = "team_name"
+                case teamDomain = "team_domain"
+                case publicChannelCount = "public_channel_count"
+                case privateChannelCount = "private_channel_count"
+                case imChannelCount = "im_channel_count"
+                case mpimChannelCount = "mpim_channel_count"
+                case connectedWorkspaces = "connected_workspaces"
+                case slackConnectPrefs = "slack_connect_prefs"
+                case connectionStatus = "connection_status"
+                case lastActiveTimestamp = "last_active_timestamp"
+                case isSponsored = "is_sponsored"
+                case canvas
+                case lists
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/organizations`.
+        public typealias OrganizationsPayload = [Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/organizations`.
+        public var organizations: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayload?
         /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/total_count`.
         public var totalCount: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamExternalTeamsListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `TeamExternalTeamsListResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - organizations:
         ///   - provided:
-        ///   - responseMetadata:
+        ///   - organizations:
         ///   - totalCount:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            organizations: [SlackModels.Organization]? = nil,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            organizations: Components.Schemas.TeamExternalTeamsListResponse.OrganizationsPayload? = nil,
             totalCount: Swift.Int? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
-            self.organizations = organizations
             self.provided = provided
-            self.responseMetadata = responseMetadata
+            self.organizations = organizations
             self.totalCount = totalCount
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
-            case organizations
             case provided
-            case responseMetadata = "response_metadata"
+            case organizations
             case totalCount = "total_count"
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/TeamInfoResponse`.
     public struct TeamInfoResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/TeamInfoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/TeamInfoResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamInfoResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamInfoResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamInfoResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/TeamInfoResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamInfoResponse/team`.
-        public var team: SlackModels.Team?
-        /// - Remark: Generated from `#/components/schemas/TeamInfoResponse/warning`.
-        public var warning: Swift.String?
+        public var team: Components.Schemas.Team?
         /// Creates a new `TeamInfoResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - team:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            team: SlackModels.Team? = nil,
-            warning: Swift.String? = nil,
+            team: Components.Schemas.Team? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.team = team
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case team
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse`.
     public struct TeamIntegrationLogsResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/logs`.
-        public var logs: [SlackModels.Log]?
-        /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/paging`.
-        public var paging: SlackModels.Paging?
-        /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/logs`.
+        public var logs: [Components.Schemas.IntegrationLog]?
+        /// - Remark: Generated from `#/components/schemas/TeamIntegrationLogsResponse/paging`.
+        public var paging: Components.Schemas.Paging?
         /// Creates a new `TeamIntegrationLogsResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - logs:
-        ///   - needed:
         ///   - ok:
-        ///   - paging:
-        ///   - provided:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - logs:
+        ///   - paging:
         public init(
-            error: Swift.String? = nil,
-            logs: [SlackModels.Log]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            paging: SlackModels.Paging? = nil,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            logs: [Components.Schemas.IntegrationLog]? = nil,
+            paging: Components.Schemas.Paging? = nil,
         ) {
-            self.error = error
-            self.logs = logs
-            self.needed = needed
             self.ok = ok
-            self.paging = paging
-            self.provided = provided
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.logs = logs
+            self.paging = paging
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case logs
-            case needed
             case ok
-            case paging
-            case provided
             case warning
+            case error
+            case needed
+            case provided
+            case logs
+            case paging
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse`.
     public struct TeamPreferencesListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/allow_message_deletion`.
-        public var allowMessageDeletion: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/disable_file_uploads`.
-        public var disableFileUploads: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/display_real_names`.
-        public var displayRealNames: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/msg_edit_window_mins`.
-        public var msgEditWindowMins: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/msg_edit_window_mins`.
+        public var msgEditWindowMins: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/allow_message_deletion`.
+        public var allowMessageDeletion: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/display_real_names`.
+        public var displayRealNames: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/disable_file_uploads`.
+        public var disableFileUploads: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamPreferencesListResponse/who_can_post_general`.
         public var whoCanPostGeneral: Swift.String?
         /// Creates a new `TeamPreferencesListResponse`.
         ///
         /// - Parameters:
-        ///   - allowMessageDeletion:
-        ///   - disableFileUploads:
-        ///   - displayRealNames:
-        ///   - error:
-        ///   - msgEditWindowMins:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - msgEditWindowMins:
+        ///   - allowMessageDeletion:
+        ///   - displayRealNames:
+        ///   - disableFileUploads:
         ///   - whoCanPostGeneral:
         public init(
-            allowMessageDeletion: Swift.Bool? = nil,
-            disableFileUploads: Swift.String? = nil,
-            displayRealNames: Swift.Bool? = nil,
-            error: Swift.String? = nil,
-            msgEditWindowMins: Swift.Int? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            msgEditWindowMins: Swift.Int? = nil,
+            allowMessageDeletion: Swift.Bool? = nil,
+            displayRealNames: Swift.Bool? = nil,
+            disableFileUploads: Swift.String? = nil,
             whoCanPostGeneral: Swift.String? = nil,
         ) {
-            self.allowMessageDeletion = allowMessageDeletion
-            self.disableFileUploads = disableFileUploads
-            self.displayRealNames = displayRealNames
-            self.error = error
-            self.msgEditWindowMins = msgEditWindowMins
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.msgEditWindowMins = msgEditWindowMins
+            self.allowMessageDeletion = allowMessageDeletion
+            self.displayRealNames = displayRealNames
+            self.disableFileUploads = disableFileUploads
             self.whoCanPostGeneral = whoCanPostGeneral
         }
 
         public enum CodingKeys: String, CodingKey {
-            case allowMessageDeletion = "allow_message_deletion"
-            case disableFileUploads = "disable_file_uploads"
-            case displayRealNames = "display_real_names"
-            case error
-            case msgEditWindowMins = "msg_edit_window_mins"
-            case needed
             case ok
-            case provided
             case warning
+            case error
+            case needed
+            case provided
+            case msgEditWindowMins = "msg_edit_window_mins"
+            case allowMessageDeletion = "allow_message_deletion"
+            case displayRealNames = "display_real_names"
+            case disableFileUploads = "disable_file_uploads"
             case whoCanPostGeneral = "who_can_post_general"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse`.
     public struct TeamProfileGetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile`.
-        public var profile: SlackModels.TeamProfile?
         /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile`.
+        public struct ProfilePayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload`.
+            public struct FieldsPayloadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/id`.
+                public var id: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/section_id`.
+                public var sectionId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/field_name`.
+                public var fieldName: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/ordering`.
+                public var ordering: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/label`.
+                public var label: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/hint`.
+                public var hint: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/type`.
+                public var _type: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/possible_values`.
+                public var possibleValues: [Swift.String]?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/options`.
+                public struct OptionsPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/options/is_protected`.
+                    public var isProtected: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/options/is_scim`.
+                    public var isScim: Swift.Bool?
+                    /// Creates a new `OptionsPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - isProtected:
+                    ///   - isScim:
+                    public init(
+                        isProtected: Swift.Bool? = nil,
+                        isScim: Swift.Bool? = nil,
+                    ) {
+                        self.isProtected = isProtected
+                        self.isScim = isScim
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case isProtected = "is_protected"
+                        case isScim = "is_scim"
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/options`.
+                public var options: Components.Schemas.TeamProfileGetResponse.ProfilePayload.FieldsPayloadPayload.OptionsPayload?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/is_hidden`.
+                public var isHidden: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/is_inverse`.
+                public var isInverse: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/permissions`.
+                public struct PermissionsPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/permissions/api`.
+                    public var api: [Swift.String]?
+                    /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/permissions/ui`.
+                    public var ui: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/permissions/scim`.
+                    public var scim: Swift.Bool?
+                    /// Creates a new `PermissionsPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - api:
+                    ///   - ui:
+                    ///   - scim:
+                    public init(
+                        api: [Swift.String]? = nil,
+                        ui: Swift.Bool? = nil,
+                        scim: Swift.Bool? = nil,
+                    ) {
+                        self.api = api
+                        self.ui = ui
+                        self.scim = scim
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case api
+                        case ui
+                        case scim
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/FieldsPayload/permissions`.
+                public var permissions: Components.Schemas.TeamProfileGetResponse.ProfilePayload.FieldsPayloadPayload.PermissionsPayload?
+                /// Creates a new `FieldsPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                ///   - sectionId:
+                ///   - fieldName:
+                ///   - ordering:
+                ///   - label:
+                ///   - hint:
+                ///   - _type:
+                ///   - possibleValues:
+                ///   - options:
+                ///   - isHidden:
+                ///   - isInverse:
+                ///   - permissions:
+                public init(
+                    id: Swift.String? = nil,
+                    sectionId: Swift.String? = nil,
+                    fieldName: Swift.String? = nil,
+                    ordering: Swift.Int? = nil,
+                    label: Swift.String? = nil,
+                    hint: Swift.String? = nil,
+                    _type: Swift.String? = nil,
+                    possibleValues: [Swift.String]? = nil,
+                    options: Components.Schemas.TeamProfileGetResponse.ProfilePayload.FieldsPayloadPayload.OptionsPayload? = nil,
+                    isHidden: Swift.Bool? = nil,
+                    isInverse: Swift.Bool? = nil,
+                    permissions: Components.Schemas.TeamProfileGetResponse.ProfilePayload.FieldsPayloadPayload.PermissionsPayload? = nil,
+                ) {
+                    self.id = id
+                    self.sectionId = sectionId
+                    self.fieldName = fieldName
+                    self.ordering = ordering
+                    self.label = label
+                    self.hint = hint
+                    self._type = _type
+                    self.possibleValues = possibleValues
+                    self.options = options
+                    self.isHidden = isHidden
+                    self.isInverse = isInverse
+                    self.permissions = permissions
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case id
+                    case sectionId = "section_id"
+                    case fieldName = "field_name"
+                    case ordering
+                    case label
+                    case hint
+                    case _type = "type"
+                    case possibleValues = "possible_values"
+                    case options
+                    case isHidden = "is_hidden"
+                    case isInverse = "is_inverse"
+                    case permissions
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/fields`.
+            public typealias FieldsPayload = [Components.Schemas.TeamProfileGetResponse.ProfilePayload.FieldsPayloadPayload]
+            /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/fields`.
+            public var fields: Components.Schemas.TeamProfileGetResponse.ProfilePayload.FieldsPayload?
+            /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/SectionsPayload`.
+            public struct SectionsPayloadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/SectionsPayload/id`.
+                public var id: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/SectionsPayload/team_id`.
+                public var teamId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/SectionsPayload/section_type`.
+                public var sectionType: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/SectionsPayload/label`.
+                public var label: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/SectionsPayload/order`.
+                public var order: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/SectionsPayload/is_hidden`.
+                public var isHidden: Swift.Bool?
+                /// Creates a new `SectionsPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                ///   - teamId:
+                ///   - sectionType:
+                ///   - label:
+                ///   - order:
+                ///   - isHidden:
+                public init(
+                    id: Swift.String? = nil,
+                    teamId: Swift.String? = nil,
+                    sectionType: Swift.String? = nil,
+                    label: Swift.String? = nil,
+                    order: Swift.Int? = nil,
+                    isHidden: Swift.Bool? = nil,
+                ) {
+                    self.id = id
+                    self.teamId = teamId
+                    self.sectionType = sectionType
+                    self.label = label
+                    self.order = order
+                    self.isHidden = isHidden
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case id
+                    case teamId = "team_id"
+                    case sectionType = "section_type"
+                    case label
+                    case order
+                    case isHidden = "is_hidden"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/sections`.
+            public typealias SectionsPayload = [Components.Schemas.TeamProfileGetResponse.ProfilePayload.SectionsPayloadPayload]
+            /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile/sections`.
+            public var sections: Components.Schemas.TeamProfileGetResponse.ProfilePayload.SectionsPayload?
+            /// Creates a new `ProfilePayload`.
+            ///
+            /// - Parameters:
+            ///   - fields:
+            ///   - sections:
+            public init(
+                fields: Components.Schemas.TeamProfileGetResponse.ProfilePayload.FieldsPayload? = nil,
+                sections: Components.Schemas.TeamProfileGetResponse.ProfilePayload.SectionsPayload? = nil,
+            ) {
+                self.fields = fields
+                self.sections = sections
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case fields
+                case sections
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/TeamProfileGetResponse/profile`.
+        public var profile: Components.Schemas.TeamProfileGetResponse.ProfilePayload?
         /// Creates a new `TeamProfileGetResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - profile:
         ///   - provided:
-        ///   - warning:
+        ///   - profile:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            profile: SlackModels.TeamProfile? = nil,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            profile: Components.Schemas.TeamProfileGetResponse.ProfilePayload? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
-            self.profile = profile
             self.provided = provided
-            self.warning = warning
+            self.profile = profile
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
-            case profile
             case provided
-            case warning
+            case profile
         }
     }
 }

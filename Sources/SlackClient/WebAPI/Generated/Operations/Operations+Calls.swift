@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Calls
 extension Operations {
+    /// Registers a new Call.
+    ///
+    /// - Remark: HTTP `POST /calls.add`.
+    /// - Remark: Generated from `#/paths//calls.add/post(callsAdd)`.
     public enum CallsAdd {
         public static let id: Swift.String = "callsAdd"
         public struct Input: Sendable, Hashable {
@@ -219,6 +223,10 @@ extension Operations {
         }
     }
 
+    /// Ends a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.end`.
+    /// - Remark: Generated from `#/paths//calls.end/post(callsEnd)`.
     public enum CallsEnd {
         public static let id: Swift.String = "callsEnd"
         public struct Input: Sendable, Hashable {
@@ -375,6 +383,10 @@ extension Operations {
         }
     }
 
+    /// Returns information about a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.info`.
+    /// - Remark: Generated from `#/paths//calls.info/post(callsInfo)`.
     public enum CallsInfo {
         public static let id: Swift.String = "callsInfo"
         public struct Input: Sendable, Hashable {
@@ -521,6 +533,10 @@ extension Operations {
         }
     }
 
+    /// Registers new participants added to a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.participants.add`.
+    /// - Remark: Generated from `#/paths//calls.participants.add/post(callsParticipantsAdd)`.
     public enum CallsParticipantsAdd {
         public static let id: Swift.String = "callsParticipantsAdd"
         public struct Input: Sendable, Hashable {
@@ -677,6 +693,10 @@ extension Operations {
         }
     }
 
+    /// Registers participants removed from a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.participants.remove`.
+    /// - Remark: Generated from `#/paths//calls.participants.remove/post(callsParticipantsRemove)`.
     public enum CallsParticipantsRemove {
         public static let id: Swift.String = "callsParticipantsRemove"
         public struct Input: Sendable, Hashable {
@@ -833,6 +853,10 @@ extension Operations {
         }
     }
 
+    /// Updates information about a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.update`.
+    /// - Remark: Generated from `#/paths//calls.update/post(callsUpdate)`.
     public enum CallsUpdate {
         public static let id: Swift.String = "callsUpdate"
         public struct Input: Sendable, Hashable {

@@ -9,1197 +9,1379 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Admin
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse`.
     public struct AdminAppsActivitiesListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/activities`.
-        public var activities: [SlackModels.Activity]?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/activities`.
+        public var activities: [Components.Schemas.AppActivity]?
         /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsActivitiesListResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminAppsActivitiesListResponse`.
         ///
         /// - Parameters:
-        ///   - activities:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - activities:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            activities: [SlackModels.Activity]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            activities: [Components.Schemas.AppActivity]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.activities = activities
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.activities = activities
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case activities
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case activities
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAppsApproveResponse`.
     public struct AdminAppsApproveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsApproveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsApproveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsApproveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsApproveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsApproveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsApproveResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsApproveResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AdminAppsApproveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAppsApprovedListResponse`.
     public struct AdminAppsApprovedListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminAppsApprovedListResponse/approved_apps`.
-        public var approvedApps: [SlackModels.ApprovedApp]?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsApprovedListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsApprovedListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsApprovedListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsApprovedListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsApprovedListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsApprovedListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsApprovedListResponse/approved_apps`.
+        public var approvedApps: [Components.Schemas.ApprovedApp]?
         /// - Remark: Generated from `#/components/schemas/AdminAppsApprovedListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsApprovedListResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminAppsApprovedListResponse`.
         ///
         /// - Parameters:
-        ///   - approvedApps:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - approvedApps:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            approvedApps: [SlackModels.ApprovedApp]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            approvedApps: [Components.Schemas.ApprovedApp]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.approvedApps = approvedApps
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.approvedApps = approvedApps
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case approvedApps = "approved_apps"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case approvedApps = "approved_apps"
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAppsClearResolutionResponse`.
     public struct AdminAppsClearResolutionResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsClearResolutionResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsClearResolutionResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsClearResolutionResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsClearResolutionResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsClearResolutionResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsClearResolutionResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsClearResolutionResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AdminAppsClearResolutionResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse`.
     public struct AdminAppsConfigLookupResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/configs`.
-        public var configs: [SlackModels.Config]?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/configs`.
+        public var configs: [Components.Schemas.AppConfig]?
         /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigLookupResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminAppsConfigLookupResponse`.
         ///
         /// - Parameters:
-        ///   - configs:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - configs:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            configs: [SlackModels.Config]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            configs: [Components.Schemas.AppConfig]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.configs = configs
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.configs = configs
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case configs
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case configs
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAppsConfigSetResponse`.
     public struct AdminAppsConfigSetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigSetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigSetResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsConfigSetResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsConfigSetResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigSetResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsConfigSetResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigSetResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsConfigSetResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminAppsConfigSetResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse`.
     public struct AdminAppsRequestsCancelResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminAppsRequestsCancelResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsListResponse`.
     public struct AdminAppsRequestsListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsListResponse/app_requests`.
-        public var appRequests: [SlackModels.AppRequest]?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsListResponse/app_requests`.
+        public var appRequests: [Components.Schemas.AppRequest]?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsListResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminAppsRequestsListResponse`.
         ///
         /// - Parameters:
-        ///   - appRequests:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - appRequests:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            appRequests: [SlackModels.AppRequest]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            appRequests: [Components.Schemas.AppRequest]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.appRequests = appRequests
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.appRequests = appRequests
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case appRequests = "app_requests"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case appRequests = "app_requests"
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictResponse`.
     public struct AdminAppsRestrictResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AdminAppsRestrictResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictedListResponse`.
     public struct AdminAppsRestrictedListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictedListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictedListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictedListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictedListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictedListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictedListResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictedListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictedListResponse/restricted_apps`.
-        public var restrictedApps: [SlackModels.RestrictedApp]?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictedListResponse/warning`.
-        public var warning: Swift.String?
+        public var restrictedApps: [Components.Schemas.RestrictedApp]?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsRestrictedListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminAppsRestrictedListResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - restrictedApps:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            restrictedApps: [SlackModels.RestrictedApp]? = nil,
-            warning: Swift.String? = nil,
+            restrictedApps: [Components.Schemas.RestrictedApp]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.restrictedApps = restrictedApps
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case restrictedApps = "restricted_apps"
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAppsUninstallResponse`.
     public struct AdminAppsUninstallResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsUninstallResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsUninstallResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsUninstallResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAppsUninstallResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsUninstallResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAppsUninstallResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAppsUninstallResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AdminAppsUninstallResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse`.
     public struct AdminAuthPolicyAssignEntitiesResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse/entity_total_count`.
-        public var entityTotalCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse/entity_total_count`.
+        public var entityTotalCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyAssignEntitiesResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminAuthPolicyAssignEntitiesResponse`.
         ///
         /// - Parameters:
-        ///   - entityTotalCount:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - entityTotalCount:
+        ///   - responseMetadata:
         public init(
-            entityTotalCount: Swift.Int? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            entityTotalCount: Swift.Int? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.entityTotalCount = entityTotalCount
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.entityTotalCount = entityTotalCount
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case entityTotalCount = "entity_total_count"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case entityTotalCount = "entity_total_count"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse`.
     public struct AdminAuthPolicyGetEntitiesResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/entities`.
-        public var entities: [SlackModels.Entity]?
-        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/entity_total_count`.
-        public var entityTotalCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/EntitiesPayload`.
+        public struct EntitiesPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/EntitiesPayload/entity_type`.
+            public var entityType: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/EntitiesPayload/entity_id`.
+            public var entityId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/EntitiesPayload/date_added`.
+            public var dateAdded: Swift.Int?
+            /// Creates a new `EntitiesPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - entityType:
+            ///   - entityId:
+            ///   - dateAdded:
+            public init(
+                entityType: Swift.String? = nil,
+                entityId: Swift.String? = nil,
+                dateAdded: Swift.Int? = nil,
+            ) {
+                self.entityType = entityType
+                self.entityId = entityId
+                self.dateAdded = dateAdded
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case entityType = "entity_type"
+                case entityId = "entity_id"
+                case dateAdded = "date_added"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/entities`.
+        public typealias EntitiesPayload = [Components.Schemas.AdminAuthPolicyGetEntitiesResponse.EntitiesPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/entities`.
+        public var entities: Components.Schemas.AdminAuthPolicyGetEntitiesResponse.EntitiesPayload?
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/entity_total_count`.
+        public var entityTotalCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyGetEntitiesResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminAuthPolicyGetEntitiesResponse`.
         ///
         /// - Parameters:
-        ///   - entities:
-        ///   - entityTotalCount:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - entities:
+        ///   - entityTotalCount:
+        ///   - responseMetadata:
         public init(
-            entities: [SlackModels.Entity]? = nil,
-            entityTotalCount: Swift.Int? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            entities: Components.Schemas.AdminAuthPolicyGetEntitiesResponse.EntitiesPayload? = nil,
+            entityTotalCount: Swift.Int? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.entities = entities
-            self.entityTotalCount = entityTotalCount
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.entities = entities
+            self.entityTotalCount = entityTotalCount
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case entities
-            case entityTotalCount = "entity_total_count"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case entities
+            case entityTotalCount = "entity_total_count"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyRemoveEntitiesResponse`.
     public struct AdminAuthPolicyRemoveEntitiesResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyRemoveEntitiesResponse/entity_total_count`.
-        public var entityTotalCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyRemoveEntitiesResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyRemoveEntitiesResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyRemoveEntitiesResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyRemoveEntitiesResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyRemoveEntitiesResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyRemoveEntitiesResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyRemoveEntitiesResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyRemoveEntitiesResponse/entity_total_count`.
+        public var entityTotalCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/AdminAuthPolicyRemoveEntitiesResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminAuthPolicyRemoveEntitiesResponse`.
         ///
         /// - Parameters:
-        ///   - entityTotalCount:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - entityTotalCount:
+        ///   - responseMetadata:
         public init(
-            entityTotalCount: Swift.Int? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            entityTotalCount: Swift.Int? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.entityTotalCount = entityTotalCount
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.entityTotalCount = entityTotalCount
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case entityTotalCount = "entity_total_count"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case entityTotalCount = "entity_total_count"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminBarriersCreateResponse`.
     public struct AdminBarriersCreateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminBarriersCreateResponse/barrier`.
-        public var barrier: SlackModels.Barrier?
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersCreateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersCreateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminBarriersCreateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminBarriersCreateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminBarriersCreateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminBarriersCreateResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersCreateResponse/barrier`.
+        public var barrier: Components.Schemas.InformationBarrier?
         /// - Remark: Generated from `#/components/schemas/AdminBarriersCreateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminBarriersCreateResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminBarriersCreateResponse`.
         ///
         /// - Parameters:
-        ///   - barrier:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - barrier:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            barrier: SlackModels.Barrier? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            barrier: Components.Schemas.InformationBarrier? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.barrier = barrier
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.barrier = barrier
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case barrier
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case barrier
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminBarriersDeleteResponse`.
     public struct AdminBarriersDeleteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersDeleteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersDeleteResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminBarriersDeleteResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminBarriersDeleteResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminBarriersDeleteResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminBarriersDeleteResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminBarriersDeleteResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersDeleteResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminBarriersDeleteResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse`.
     public struct AdminBarriersListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/barriers`.
-        public var barriers: [SlackModels.Barrier]?
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/barriers`.
+        public var barriers: [Components.Schemas.InformationBarrier]?
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminBarriersListResponse`.
         ///
         /// - Parameters:
-        ///   - barriers:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - barriers:
+        ///   - responseMetadata:
         public init(
-            barriers: [SlackModels.Barrier]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            barriers: [Components.Schemas.InformationBarrier]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.barriers = barriers
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.barriers = barriers
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case barriers
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case barriers
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminBarriersUpdateResponse`.
     public struct AdminBarriersUpdateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminBarriersUpdateResponse/barrier`.
-        public var barrier: SlackModels.Barrier?
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersUpdateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersUpdateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminBarriersUpdateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminBarriersUpdateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminBarriersUpdateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminBarriersUpdateResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminBarriersUpdateResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersUpdateResponse/barrier`.
+        public var barrier: Components.Schemas.InformationBarrier?
+        /// - Remark: Generated from `#/components/schemas/AdminBarriersUpdateResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminBarriersUpdateResponse`.
         ///
         /// - Parameters:
-        ///   - barrier:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - barrier:
+        ///   - responseMetadata:
         public init(
-            barrier: SlackModels.Barrier? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            barrier: Components.Schemas.InformationBarrier? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.barrier = barrier
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.barrier = barrier
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case barrier
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case barrier
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsArchiveResponse`.
     public struct AdminConversationsArchiveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsArchiveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsArchiveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsArchiveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsArchiveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsArchiveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsArchiveResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsArchiveResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsArchiveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse`.
     public struct AdminConversationsBulkArchiveResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/bulk_action_id`.
-        public var bulkActionId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/not_added`.
-        public var notAdded: [SlackModels.NotAdded]?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/bulk_action_id`.
+        public var bulkActionId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/NotAddedPayload`.
+        public struct NotAddedPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/NotAddedPayload/channel_id`.
+            public var channelId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/NotAddedPayload/errors`.
+            public var errors: [Swift.String]?
+            /// Creates a new `NotAddedPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - channelId:
+            ///   - errors:
+            public init(
+                channelId: Swift.String? = nil,
+                errors: [Swift.String]? = nil,
+            ) {
+                self.channelId = channelId
+                self.errors = errors
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case channelId = "channel_id"
+                case errors
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/not_added`.
+        public typealias NotAddedPayload = [Components.Schemas.AdminConversationsBulkArchiveResponse.NotAddedPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/not_added`.
+        public var notAdded: Components.Schemas.AdminConversationsBulkArchiveResponse.NotAddedPayload?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkArchiveResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsBulkArchiveResponse`.
         ///
         /// - Parameters:
-        ///   - bulkActionId:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - notAdded:
-        ///   - ok:
         ///   - provided:
+        ///   - bulkActionId:
+        ///   - notAdded:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            bulkActionId: Swift.String? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            notAdded: [SlackModels.NotAdded]? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            bulkActionId: Swift.String? = nil,
+            notAdded: Components.Schemas.AdminConversationsBulkArchiveResponse.NotAddedPayload? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
-            self.bulkActionId = bulkActionId
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.notAdded = notAdded
-            self.ok = ok
             self.provided = provided
+            self.bulkActionId = bulkActionId
+            self.notAdded = notAdded
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case bulkActionId = "bulk_action_id"
+            case ok
+            case warning
             case error
             case needed
-            case notAdded = "not_added"
-            case ok
             case provided
+            case bulkActionId = "bulk_action_id"
+            case notAdded = "not_added"
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse`.
     public struct AdminConversationsBulkDeleteResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/bulk_action_id`.
-        public var bulkActionId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/not_added`.
-        public var notAdded: [SlackModels.NotAdded]?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/bulk_action_id`.
+        public var bulkActionId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/NotAddedPayload`.
+        public struct NotAddedPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/NotAddedPayload/channel_id`.
+            public var channelId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/NotAddedPayload/errors`.
+            public var errors: [Swift.String]?
+            /// Creates a new `NotAddedPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - channelId:
+            ///   - errors:
+            public init(
+                channelId: Swift.String? = nil,
+                errors: [Swift.String]? = nil,
+            ) {
+                self.channelId = channelId
+                self.errors = errors
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case channelId = "channel_id"
+                case errors
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/not_added`.
+        public typealias NotAddedPayload = [Components.Schemas.AdminConversationsBulkDeleteResponse.NotAddedPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/not_added`.
+        public var notAdded: Components.Schemas.AdminConversationsBulkDeleteResponse.NotAddedPayload?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkDeleteResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsBulkDeleteResponse`.
         ///
         /// - Parameters:
-        ///   - bulkActionId:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - notAdded:
-        ///   - ok:
         ///   - provided:
+        ///   - bulkActionId:
+        ///   - notAdded:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            bulkActionId: Swift.String? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            notAdded: [SlackModels.NotAdded]? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            bulkActionId: Swift.String? = nil,
+            notAdded: Components.Schemas.AdminConversationsBulkDeleteResponse.NotAddedPayload? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
-            self.bulkActionId = bulkActionId
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.notAdded = notAdded
-            self.ok = ok
             self.provided = provided
+            self.bulkActionId = bulkActionId
+            self.notAdded = notAdded
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case bulkActionId = "bulk_action_id"
+            case ok
+            case warning
             case error
             case needed
-            case notAdded = "not_added"
-            case ok
             case provided
+            case bulkActionId = "bulk_action_id"
+            case notAdded = "not_added"
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse`.
     public struct AdminConversationsBulkMoveResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/bulk_action_id`.
-        public var bulkActionId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/not_added`.
-        public var notAdded: [SlackModels.NotAdded]?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/bulk_action_id`.
+        public var bulkActionId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/NotAddedPayload`.
+        public struct NotAddedPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/NotAddedPayload/channel_id`.
+            public var channelId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/NotAddedPayload/errors`.
+            public var errors: [Swift.String]?
+            /// Creates a new `NotAddedPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - channelId:
+            ///   - errors:
+            public init(
+                channelId: Swift.String? = nil,
+                errors: [Swift.String]? = nil,
+            ) {
+                self.channelId = channelId
+                self.errors = errors
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case channelId = "channel_id"
+                case errors
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/not_added`.
+        public typealias NotAddedPayload = [Components.Schemas.AdminConversationsBulkMoveResponse.NotAddedPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/not_added`.
+        public var notAdded: Components.Schemas.AdminConversationsBulkMoveResponse.NotAddedPayload?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsBulkMoveResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsBulkMoveResponse`.
         ///
         /// - Parameters:
-        ///   - bulkActionId:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - notAdded:
-        ///   - ok:
         ///   - provided:
+        ///   - bulkActionId:
+        ///   - notAdded:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            bulkActionId: Swift.String? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            notAdded: [SlackModels.NotAdded]? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            bulkActionId: Swift.String? = nil,
+            notAdded: Components.Schemas.AdminConversationsBulkMoveResponse.NotAddedPayload? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
-            self.bulkActionId = bulkActionId
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.notAdded = notAdded
-            self.ok = ok
             self.provided = provided
+            self.bulkActionId = bulkActionId
+            self.notAdded = notAdded
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case bulkActionId = "bulk_action_id"
+            case ok
+            case warning
             case error
             case needed
-            case notAdded = "not_added"
-            case ok
             case provided
+            case bulkActionId = "bulk_action_id"
+            case notAdded = "not_added"
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPrivateResponse`.
     public struct AdminConversationsConvertToPrivateResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPrivateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPrivateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPrivateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPrivateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPrivateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPrivateResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPrivateResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsConvertToPrivateResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse`.
-    public struct AdminConversationsConvertToPublicResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// Creates a new `AdminConversationsConvertToPublicResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
+            case provided
+            case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse`.
+    public struct AdminConversationsConvertToPublicResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsConvertToPublicResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// Creates a new `AdminConversationsConvertToPublicResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
             case ok
+            case warning
+            case error
+            case needed
             case provided
             case responseMetadata = "response_metadata"
         }
@@ -1207,533 +1389,817 @@ extension Components.Schemas {
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse`.
     public struct AdminConversationsCreateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/channel_id`.
-        public var channelId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/channel_id`.
+        public var channelId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsCreateResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsCreateResponse`.
         ///
         /// - Parameters:
-        ///   - channelId:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - channelId:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            channelId: Swift.String? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            channelId: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
-            self.channelId = channelId
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.channelId = channelId
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channelId = "channel_id"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case channelId = "channel_id"
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsDeleteResponse`.
     public struct AdminConversationsDeleteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsDeleteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsDeleteResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsDeleteResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsDeleteResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsDeleteResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsDeleteResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsDeleteResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsDeleteResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsDeleteResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
         ///   - warning:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse`.
-    public struct AdminConversationsDisconnectSharedResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse/provided`.
-        public var provided: Swift.String?
-        /// Creates a new `AdminConversationsDisconnectSharedResponse`.
-        ///
-        /// - Parameters:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse`.
-    public struct AdminConversationsEkmListOriginalConnectedChannelInfoResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AdminConversationsEkmListOriginalConnectedChannelInfoResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - warning:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse`.
-    public struct AdminConversationsGetConversationPrefsResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs`.
-        public var prefs: SlackModels.Prefs?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/provided`.
-        public var provided: Swift.String?
-        /// Creates a new `AdminConversationsGetConversationPrefsResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - prefs:
-        ///   - provided:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            prefs: SlackModels.Prefs? = nil,
-            provided: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.prefs = prefs
-            self.provided = provided
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case prefs
-            case provided
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse`.
-    public struct AdminConversationsGetCustomRetentionResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/duration_days`.
-        public var durationDays: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/is_policy_enabled`.
-        public var isPolicyEnabled: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AdminConversationsGetCustomRetentionResponse`.
-        ///
-        /// - Parameters:
-        ///   - durationDays:
-        ///   - error:
-        ///   - isPolicyEnabled:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - warning:
-        public init(
-            durationDays: Swift.Int? = nil,
-            error: Swift.String? = nil,
-            isPolicyEnabled: Swift.Bool? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.durationDays = durationDays
-            self.error = error
-            self.isPolicyEnabled = isPolicyEnabled
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case durationDays = "duration_days"
-            case error
-            case isPolicyEnabled = "is_policy_enabled"
-            case needed
-            case ok
-            case provided
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse`.
-    public struct AdminConversationsGetTeamsResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/team_ids`.
-        public var teamIds: [Swift.String]?
-        /// Creates a new `AdminConversationsGetTeamsResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - teamIds:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            teamIds: [Swift.String]? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.teamIds = teamIds
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-            case teamIds = "team_ids"
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse`.
-    public struct AdminConversationsInviteResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/failed_user_ids`.
-        public var failedUserIds: SlackModels.FailedUserIDS?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/provided`.
-        public var provided: Swift.String?
-        /// Creates a new `AdminConversationsInviteResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - failedUserIds:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        public init(
-            error: Swift.String? = nil,
-            failedUserIds: SlackModels.FailedUserIDS? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.failedUserIds = failedUserIds
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case failedUserIds = "failed_user_ids"
-            case needed
-            case ok
-            case provided
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse`.
-    public struct AdminConversationsLookupResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/channel_ids`.
-        public var channelIds: [Swift.String]?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// Creates a new `AdminConversationsLookupResponse`.
-        ///
-        /// - Parameters:
-        ///   - channelIds:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
         public init(
-            channelIds: [Swift.String]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
-            self.channelIds = channelIds
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channelIds = "channel_ids"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse`.
+    public struct AdminConversationsDisconnectSharedResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsDisconnectSharedResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// Creates a new `AdminConversationsDisconnectSharedResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse`.
+    public struct AdminConversationsEkmListOriginalConnectedChannelInfoResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsEkmListOriginalConnectedChannelInfoResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// Creates a new `AdminConversationsEkmListOriginalConnectedChannelInfoResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse`.
+    public struct AdminConversationsGetConversationPrefsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs`.
+        public struct PrefsPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/who_can_post`.
+            public struct WhoCanPostPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/who_can_post/type`.
+                public var _type: [Swift.String]?
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/who_can_post/user`.
+                public var user: [Swift.String]?
+                /// Creates a new `WhoCanPostPayload`.
+                ///
+                /// - Parameters:
+                ///   - _type:
+                ///   - user:
+                public init(
+                    _type: [Swift.String]? = nil,
+                    user: [Swift.String]? = nil,
+                ) {
+                    self._type = _type
+                    self.user = user
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case _type = "type"
+                    case user
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/who_can_post`.
+            public var whoCanPost: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.WhoCanPostPayload?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/can_thread`.
+            public struct CanThreadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/can_thread/type`.
+                public var _type: [Swift.String]?
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/can_thread/user`.
+                public var user: [Swift.String]?
+                /// Creates a new `CanThreadPayload`.
+                ///
+                /// - Parameters:
+                ///   - _type:
+                ///   - user:
+                public init(
+                    _type: [Swift.String]? = nil,
+                    user: [Swift.String]? = nil,
+                ) {
+                    self._type = _type
+                    self.user = user
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case _type = "type"
+                    case user
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/can_thread`.
+            public var canThread: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.CanThreadPayload?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/membership_limit`.
+            public struct MembershipLimitPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/membership_limit/value`.
+                public var value: Swift.Int?
+                /// Creates a new `MembershipLimitPayload`.
+                ///
+                /// - Parameters:
+                ///   - value:
+                public init(value: Swift.Int? = nil) {
+                    self.value = value
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case value
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/membership_limit`.
+            public var membershipLimit: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.MembershipLimitPayload?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/can_huddle`.
+            public struct CanHuddlePayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/can_huddle/enabled`.
+                public var enabled: Swift.Bool?
+                /// Creates a new `CanHuddlePayload`.
+                ///
+                /// - Parameters:
+                ///   - enabled:
+                public init(enabled: Swift.Bool? = nil) {
+                    self.enabled = enabled
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case enabled
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/can_huddle`.
+            public var canHuddle: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.CanHuddlePayload?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/enable_at_channel`.
+            public struct EnableAtChannelPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/enable_at_channel/enabled`.
+                public var enabled: Swift.Bool?
+                /// Creates a new `EnableAtChannelPayload`.
+                ///
+                /// - Parameters:
+                ///   - enabled:
+                public init(enabled: Swift.Bool? = nil) {
+                    self.enabled = enabled
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case enabled
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/enable_at_channel`.
+            public var enableAtChannel: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.EnableAtChannelPayload?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/enable_at_here`.
+            public struct EnableAtHerePayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/enable_at_here/enabled`.
+                public var enabled: Swift.Bool?
+                /// Creates a new `EnableAtHerePayload`.
+                ///
+                /// - Parameters:
+                ///   - enabled:
+                public init(enabled: Swift.Bool? = nil) {
+                    self.enabled = enabled
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case enabled
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs/enable_at_here`.
+            public var enableAtHere: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.EnableAtHerePayload?
+            /// Creates a new `PrefsPayload`.
+            ///
+            /// - Parameters:
+            ///   - whoCanPost:
+            ///   - canThread:
+            ///   - membershipLimit:
+            ///   - canHuddle:
+            ///   - enableAtChannel:
+            ///   - enableAtHere:
+            public init(
+                whoCanPost: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.WhoCanPostPayload? = nil,
+                canThread: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.CanThreadPayload? = nil,
+                membershipLimit: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.MembershipLimitPayload? = nil,
+                canHuddle: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.CanHuddlePayload? = nil,
+                enableAtChannel: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.EnableAtChannelPayload? = nil,
+                enableAtHere: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload.EnableAtHerePayload? = nil,
+            ) {
+                self.whoCanPost = whoCanPost
+                self.canThread = canThread
+                self.membershipLimit = membershipLimit
+                self.canHuddle = canHuddle
+                self.enableAtChannel = enableAtChannel
+                self.enableAtHere = enableAtHere
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case whoCanPost = "who_can_post"
+                case canThread = "can_thread"
+                case membershipLimit = "membership_limit"
+                case canHuddle = "can_huddle"
+                case enableAtChannel = "enable_at_channel"
+                case enableAtHere = "enable_at_here"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/prefs`.
+        public var prefs: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetConversationPrefsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// Creates a new `AdminConversationsGetConversationPrefsResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - prefs:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            prefs: Components.Schemas.AdminConversationsGetConversationPrefsResponse.PrefsPayload? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.prefs = prefs
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case prefs
+            case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse`.
+    public struct AdminConversationsGetCustomRetentionResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/is_policy_enabled`.
+        public var isPolicyEnabled: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/duration_days`.
+        public var durationDays: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetCustomRetentionResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// Creates a new `AdminConversationsGetCustomRetentionResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - isPolicyEnabled:
+        ///   - durationDays:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            isPolicyEnabled: Swift.Bool? = nil,
+            durationDays: Swift.Int? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.isPolicyEnabled = isPolicyEnabled
+            self.durationDays = durationDays
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case isPolicyEnabled = "is_policy_enabled"
+            case durationDays = "duration_days"
+            case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse`.
+    public struct AdminConversationsGetTeamsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/team_ids`.
+        public var teamIds: [Swift.String]?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsGetTeamsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// Creates a new `AdminConversationsGetTeamsResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - teamIds:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            teamIds: [Swift.String]? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.teamIds = teamIds
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case teamIds = "team_ids"
+            case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse`.
+    public struct AdminConversationsInviteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/failed_user_ids`.
+        public struct FailedUserIdsPayload: Codable, Hashable, Sendable {
+            /// A container of undocumented properties.
+            public var additionalProperties: [String: Swift.String]
+            /// Creates a new `FailedUserIdsPayload`.
+            ///
+            /// - Parameters:
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(additionalProperties: [String: Swift.String] = .init()) {
+                self.additionalProperties = additionalProperties
+            }
+
+            public init(from decoder: any Swift.Decoder) throws {
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+            }
+
+            public func encode(to encoder: any Swift.Encoder) throws {
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/failed_user_ids`.
+        public var failedUserIds: Components.Schemas.AdminConversationsInviteResponse.FailedUserIdsPayload?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsInviteResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// Creates a new `AdminConversationsInviteResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - failedUserIds:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            failedUserIds: Components.Schemas.AdminConversationsInviteResponse.FailedUserIdsPayload? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.failedUserIds = failedUserIds
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case failedUserIds = "failed_user_ids"
+            case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse`.
+    public struct AdminConversationsLookupResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/channel_ids`.
+        public var channelIds: [Swift.String]?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsLookupResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
+        /// Creates a new `AdminConversationsLookupResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - channelIds:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            channelIds: [Swift.String]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.channelIds = channelIds
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case channelIds = "channel_ids"
             case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsRemoveCustomRetentionResponse`.
     public struct AdminConversationsRemoveCustomRetentionResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRemoveCustomRetentionResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRemoveCustomRetentionResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsRemoveCustomRetentionResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsRemoveCustomRetentionResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRemoveCustomRetentionResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsRemoveCustomRetentionResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRemoveCustomRetentionResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRemoveCustomRetentionResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsRemoveCustomRetentionResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
         ///   - warning:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse`.
-    public struct AdminConversationsRenameResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse/provided`.
-        public var provided: Swift.String?
-        /// Creates a new `AdminConversationsRenameResponse`.
-        ///
-        /// - Parameters:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse`.
-    public struct AdminConversationsRestrictAccessAddGroupResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// Creates a new `AdminConversationsRestrictAccessAddGroupResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
+            case provided
+            case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse`.
+    public struct AdminConversationsRenameResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRenameResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// Creates a new `AdminConversationsRenameResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
             case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse`.
+    public struct AdminConversationsRestrictAccessAddGroupResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessAddGroupResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// Creates a new `AdminConversationsRestrictAccessAddGroupResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
             case provided
             case responseMetadata = "response_metadata"
         }
@@ -1741,91 +2207,103 @@ extension Components.Schemas {
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessListGroupsResponse`.
     public struct AdminConversationsRestrictAccessListGroupsResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessListGroupsResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessListGroupsResponse/group_ids`.
-        public var groupIds: [Swift.String]?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessListGroupsResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessListGroupsResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessListGroupsResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessListGroupsResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessListGroupsResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessListGroupsResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessListGroupsResponse/group_ids`.
+        public var groupIds: [Swift.String]?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessListGroupsResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsRestrictAccessListGroupsResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - groupIds:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
+        ///   - groupIds:
         ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            groupIds: [Swift.String]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            groupIds: [Swift.String]? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.groupIds = groupIds
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
+            self.groupIds = groupIds
             self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case groupIds = "group_ids"
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
+            case groupIds = "group_ids"
             case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessRemoveGroupResponse`.
     public struct AdminConversationsRestrictAccessRemoveGroupResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessRemoveGroupResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessRemoveGroupResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessRemoveGroupResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessRemoveGroupResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessRemoveGroupResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessRemoveGroupResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsRestrictAccessRemoveGroupResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsRestrictAccessRemoveGroupResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
         }
@@ -1833,1837 +2311,2544 @@ extension Components.Schemas {
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse`.
     public struct AdminConversationsSearchResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/conversations`.
-        public var conversations: [SlackModels.Conversation]?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/next_cursor`.
-        public var nextCursor: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload`.
+        public struct ConversationsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/name`.
+            public var name: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/purpose`.
+            public var purpose: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/member_count`.
+            public var memberCount: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/created`.
+            public var created: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/creator_id`.
+            public var creatorId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/is_private`.
+            public var isPrivate: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/is_archived`.
+            public var isArchived: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/is_general`.
+            public var isGeneral: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/last_activity_ts`.
+            public var lastActivityTs: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/is_ext_shared`.
+            public var isExtShared: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/is_global_shared`.
+            public var isGlobalShared: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/is_org_default`.
+            public var isOrgDefault: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/is_org_mandatory`.
+            public var isOrgMandatory: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/is_org_shared`.
+            public var isOrgShared: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/is_frozen`.
+            public var isFrozen: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/external_user_count`.
+            public var externalUserCount: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/channel_manager_count`.
+            public var channelManagerCount: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/internal_team_ids`.
+            public var internalTeamIds: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/internal_team_ids_count`.
+            public var internalTeamIdsCount: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/internal_team_ids_sample_team`.
+            public var internalTeamIdsSampleTeam: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/pending_connected_team_ids`.
+            public var pendingConnectedTeamIds: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/connected_team_ids`.
+            public var connectedTeamIds: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/connected_limited_team_ids`.
+            public var connectedLimitedTeamIds: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/channel_email_addresses`.
+            public var channelEmailAddresses: [Components.Schemas.ChannelEmailAddress]?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/context_team_id`.
+            public var contextTeamId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/is_pending_ext_shared`.
+            public var isPendingExtShared: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/is_disconnect_in_progress`.
+            public var isDisconnectInProgress: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/conversation_host_id`.
+            public var conversationHostId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/canvas`.
+            public struct CanvasPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/canvas/total_count`.
+                public var totalCount: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/canvas/OwnershipDetailsPayload`.
+                public struct OwnershipDetailsPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/canvas/OwnershipDetailsPayload/count`.
+                    public var count: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/canvas/OwnershipDetailsPayload/team_id`.
+                    public var teamId: Swift.String?
+                    /// Creates a new `OwnershipDetailsPayloadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - count:
+                    ///   - teamId:
+                    public init(
+                        count: Swift.Int? = nil,
+                        teamId: Swift.String? = nil,
+                    ) {
+                        self.count = count
+                        self.teamId = teamId
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case count
+                        case teamId = "team_id"
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/canvas/ownership_details`.
+                public typealias OwnershipDetailsPayload = [Components.Schemas.AdminConversationsSearchResponse.ConversationsPayloadPayload.CanvasPayload.OwnershipDetailsPayloadPayload]
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/canvas/ownership_details`.
+                public var ownershipDetails: Components.Schemas.AdminConversationsSearchResponse.ConversationsPayloadPayload.CanvasPayload.OwnershipDetailsPayload?
+                /// Creates a new `CanvasPayload`.
+                ///
+                /// - Parameters:
+                ///   - totalCount:
+                ///   - ownershipDetails:
+                public init(
+                    totalCount: Swift.Int? = nil,
+                    ownershipDetails: Components.Schemas.AdminConversationsSearchResponse.ConversationsPayloadPayload.CanvasPayload.OwnershipDetailsPayload? = nil,
+                ) {
+                    self.totalCount = totalCount
+                    self.ownershipDetails = ownershipDetails
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case totalCount = "total_count"
+                    case ownershipDetails = "ownership_details"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/canvas`.
+            public var canvas: Components.Schemas.AdminConversationsSearchResponse.ConversationsPayloadPayload.CanvasPayload?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/lists`.
+            public struct ListsPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/lists/total_count`.
+                public var totalCount: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/lists/OwnershipDetailsPayload`.
+                public struct OwnershipDetailsPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/lists/OwnershipDetailsPayload/count`.
+                    public var count: Swift.Int?
+                    /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/lists/OwnershipDetailsPayload/team_id`.
+                    public var teamId: Swift.String?
+                    /// Creates a new `OwnershipDetailsPayloadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - count:
+                    ///   - teamId:
+                    public init(
+                        count: Swift.Int? = nil,
+                        teamId: Swift.String? = nil,
+                    ) {
+                        self.count = count
+                        self.teamId = teamId
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case count
+                        case teamId = "team_id"
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/lists/ownership_details`.
+                public typealias OwnershipDetailsPayload = [Components.Schemas.AdminConversationsSearchResponse.ConversationsPayloadPayload.ListsPayload.OwnershipDetailsPayloadPayload]
+                /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/lists/ownership_details`.
+                public var ownershipDetails: Components.Schemas.AdminConversationsSearchResponse.ConversationsPayloadPayload.ListsPayload.OwnershipDetailsPayload?
+                /// Creates a new `ListsPayload`.
+                ///
+                /// - Parameters:
+                ///   - totalCount:
+                ///   - ownershipDetails:
+                public init(
+                    totalCount: Swift.Int? = nil,
+                    ownershipDetails: Components.Schemas.AdminConversationsSearchResponse.ConversationsPayloadPayload.ListsPayload.OwnershipDetailsPayload? = nil,
+                ) {
+                    self.totalCount = totalCount
+                    self.ownershipDetails = ownershipDetails
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case totalCount = "total_count"
+                    case ownershipDetails = "ownership_details"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/lists`.
+            public var lists: Components.Schemas.AdminConversationsSearchResponse.ConversationsPayloadPayload.ListsPayload?
+            /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/ConversationsPayload/properties`.
+            public var properties: Components.Schemas.ConversationProperties?
+            /// Creates a new `ConversationsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - name:
+            ///   - purpose:
+            ///   - memberCount:
+            ///   - created:
+            ///   - creatorId:
+            ///   - isPrivate:
+            ///   - isArchived:
+            ///   - isGeneral:
+            ///   - lastActivityTs:
+            ///   - isExtShared:
+            ///   - isGlobalShared:
+            ///   - isOrgDefault:
+            ///   - isOrgMandatory:
+            ///   - isOrgShared:
+            ///   - isFrozen:
+            ///   - externalUserCount:
+            ///   - channelManagerCount:
+            ///   - internalTeamIds:
+            ///   - internalTeamIdsCount:
+            ///   - internalTeamIdsSampleTeam:
+            ///   - pendingConnectedTeamIds:
+            ///   - connectedTeamIds:
+            ///   - connectedLimitedTeamIds:
+            ///   - channelEmailAddresses:
+            ///   - contextTeamId:
+            ///   - isPendingExtShared:
+            ///   - isDisconnectInProgress:
+            ///   - conversationHostId:
+            ///   - canvas:
+            ///   - lists:
+            ///   - properties:
+            public init(
+                id: Swift.String? = nil,
+                name: Swift.String? = nil,
+                purpose: Swift.String? = nil,
+                memberCount: Swift.Int? = nil,
+                created: Swift.Int? = nil,
+                creatorId: Swift.String? = nil,
+                isPrivate: Swift.Bool? = nil,
+                isArchived: Swift.Bool? = nil,
+                isGeneral: Swift.Bool? = nil,
+                lastActivityTs: Swift.Int? = nil,
+                isExtShared: Swift.Bool? = nil,
+                isGlobalShared: Swift.Bool? = nil,
+                isOrgDefault: Swift.Bool? = nil,
+                isOrgMandatory: Swift.Bool? = nil,
+                isOrgShared: Swift.Bool? = nil,
+                isFrozen: Swift.Bool? = nil,
+                externalUserCount: Swift.Int? = nil,
+                channelManagerCount: Swift.Int? = nil,
+                internalTeamIds: [Swift.String]? = nil,
+                internalTeamIdsCount: Swift.Int? = nil,
+                internalTeamIdsSampleTeam: Swift.String? = nil,
+                pendingConnectedTeamIds: [Swift.String]? = nil,
+                connectedTeamIds: [Swift.String]? = nil,
+                connectedLimitedTeamIds: [Swift.String]? = nil,
+                channelEmailAddresses: [Components.Schemas.ChannelEmailAddress]? = nil,
+                contextTeamId: Swift.String? = nil,
+                isPendingExtShared: Swift.Bool? = nil,
+                isDisconnectInProgress: Swift.Bool? = nil,
+                conversationHostId: Swift.String? = nil,
+                canvas: Components.Schemas.AdminConversationsSearchResponse.ConversationsPayloadPayload.CanvasPayload? = nil,
+                lists: Components.Schemas.AdminConversationsSearchResponse.ConversationsPayloadPayload.ListsPayload? = nil,
+                properties: Components.Schemas.ConversationProperties? = nil,
+            ) {
+                self.id = id
+                self.name = name
+                self.purpose = purpose
+                self.memberCount = memberCount
+                self.created = created
+                self.creatorId = creatorId
+                self.isPrivate = isPrivate
+                self.isArchived = isArchived
+                self.isGeneral = isGeneral
+                self.lastActivityTs = lastActivityTs
+                self.isExtShared = isExtShared
+                self.isGlobalShared = isGlobalShared
+                self.isOrgDefault = isOrgDefault
+                self.isOrgMandatory = isOrgMandatory
+                self.isOrgShared = isOrgShared
+                self.isFrozen = isFrozen
+                self.externalUserCount = externalUserCount
+                self.channelManagerCount = channelManagerCount
+                self.internalTeamIds = internalTeamIds
+                self.internalTeamIdsCount = internalTeamIdsCount
+                self.internalTeamIdsSampleTeam = internalTeamIdsSampleTeam
+                self.pendingConnectedTeamIds = pendingConnectedTeamIds
+                self.connectedTeamIds = connectedTeamIds
+                self.connectedLimitedTeamIds = connectedLimitedTeamIds
+                self.channelEmailAddresses = channelEmailAddresses
+                self.contextTeamId = contextTeamId
+                self.isPendingExtShared = isPendingExtShared
+                self.isDisconnectInProgress = isDisconnectInProgress
+                self.conversationHostId = conversationHostId
+                self.canvas = canvas
+                self.lists = lists
+                self.properties = properties
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case name
+                case purpose
+                case memberCount = "member_count"
+                case created
+                case creatorId = "creator_id"
+                case isPrivate = "is_private"
+                case isArchived = "is_archived"
+                case isGeneral = "is_general"
+                case lastActivityTs = "last_activity_ts"
+                case isExtShared = "is_ext_shared"
+                case isGlobalShared = "is_global_shared"
+                case isOrgDefault = "is_org_default"
+                case isOrgMandatory = "is_org_mandatory"
+                case isOrgShared = "is_org_shared"
+                case isFrozen = "is_frozen"
+                case externalUserCount = "external_user_count"
+                case channelManagerCount = "channel_manager_count"
+                case internalTeamIds = "internal_team_ids"
+                case internalTeamIdsCount = "internal_team_ids_count"
+                case internalTeamIdsSampleTeam = "internal_team_ids_sample_team"
+                case pendingConnectedTeamIds = "pending_connected_team_ids"
+                case connectedTeamIds = "connected_team_ids"
+                case connectedLimitedTeamIds = "connected_limited_team_ids"
+                case channelEmailAddresses = "channel_email_addresses"
+                case contextTeamId = "context_team_id"
+                case isPendingExtShared = "is_pending_ext_shared"
+                case isDisconnectInProgress = "is_disconnect_in_progress"
+                case conversationHostId = "conversation_host_id"
+                case canvas
+                case lists
+                case properties
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/conversations`.
+        public typealias ConversationsPayload = [Components.Schemas.AdminConversationsSearchResponse.ConversationsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/conversations`.
+        public var conversations: Components.Schemas.AdminConversationsSearchResponse.ConversationsPayload?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/next_cursor`.
+        public var nextCursor: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/total_count`.
         public var totalCount: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSearchResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsSearchResponse`.
         ///
         /// - Parameters:
-        ///   - conversations:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - nextCursor:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
+        ///   - conversations:
+        ///   - nextCursor:
         ///   - totalCount:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
-            conversations: [SlackModels.Conversation]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            nextCursor: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            conversations: Components.Schemas.AdminConversationsSearchResponse.ConversationsPayload? = nil,
+            nextCursor: Swift.String? = nil,
             totalCount: Swift.Int? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
-            self.conversations = conversations
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.nextCursor = nextCursor
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
+            self.conversations = conversations
+            self.nextCursor = nextCursor
             self.totalCount = totalCount
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case conversations
+            case ok
+            case warning
             case error
             case needed
-            case nextCursor = "next_cursor"
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
+            case conversations
+            case nextCursor = "next_cursor"
             case totalCount = "total_count"
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsSetConversationPrefsResponse`.
     public struct AdminConversationsSetConversationPrefsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetConversationPrefsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetConversationPrefsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSetConversationPrefsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSetConversationPrefsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetConversationPrefsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSetConversationPrefsResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetConversationPrefsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsSetConversationPrefsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsSetCustomRetentionResponse`.
     public struct AdminConversationsSetCustomRetentionResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetCustomRetentionResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetCustomRetentionResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSetCustomRetentionResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSetCustomRetentionResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetCustomRetentionResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSetCustomRetentionResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetCustomRetentionResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetCustomRetentionResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsSetCustomRetentionResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsSetTeamsResponse`.
     public struct AdminConversationsSetTeamsResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetTeamsResponse/channel`.
-        public var channel: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetTeamsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetTeamsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSetTeamsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSetTeamsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetTeamsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsSetTeamsResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetTeamsResponse/channel`.
+        public var channel: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsSetTeamsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsSetTeamsResponse`.
         ///
         /// - Parameters:
-        ///   - channel:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - channel:
+        ///   - responseMetadata:
         public init(
-            channel: Swift.String? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
+            channel: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
-            self.channel = channel
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.channel = channel
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channel
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case channel
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminConversationsUnarchiveResponse`.
     public struct AdminConversationsUnarchiveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsUnarchiveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsUnarchiveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsUnarchiveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminConversationsUnarchiveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminConversationsUnarchiveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminConversationsUnarchiveResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminConversationsUnarchiveResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminConversationsUnarchiveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse`.
-    public struct AdminEmojiAddResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AdminEmojiAddResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminEmojiAddAliasResponse`.
     public struct AdminEmojiAddAliasResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddAliasResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddAliasResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiAddAliasResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiAddAliasResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddAliasResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminEmojiAddAliasResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiAddAliasResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddAliasResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminEmojiAddAliasResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse`.
+    public struct AdminEmojiAddResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiAddResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// Creates a new `AdminEmojiAddResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
             case warning
+            case error
+            case needed
+            case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse`.
     public struct AdminEmojiListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/emoji`.
-        public var emoji: OpenAPIRuntime.OpenAPIObjectContainer?
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/emoji`.
+        public struct EmojiPayload: Codable, Hashable, Sendable {
+            /// A container of undocumented properties.
+            public var additionalProperties: [String: Components.Schemas.Emoji]
+            /// Creates a new `EmojiPayload`.
+            ///
+            /// - Parameters:
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(additionalProperties: [String: Components.Schemas.Emoji] = .init()) {
+                self.additionalProperties = additionalProperties
+            }
+
+            public init(from decoder: any Swift.Decoder) throws {
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+            }
+
+            public func encode(to encoder: any Swift.Encoder) throws {
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/emoji`.
+        public var emoji: Components.Schemas.AdminEmojiListResponse.EmojiPayload?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiListResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminEmojiListResponse`.
         ///
         /// - Parameters:
-        ///   - emoji:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - emoji:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            emoji: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            emoji: Components.Schemas.AdminEmojiListResponse.EmojiPayload? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.emoji = emoji
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.emoji = emoji
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case emoji
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case emoji
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminEmojiRemoveResponse`.
     public struct AdminEmojiRemoveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiRemoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiRemoveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiRemoveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiRemoveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiRemoveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminEmojiRemoveResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiRemoveResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiRemoveResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminEmojiRemoveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminEmojiRenameResponse`.
     public struct AdminEmojiRenameResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiRenameResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminEmojiRenameResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiRenameResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiRenameResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiRenameResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminEmojiRenameResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminEmojiRenameResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminEmojiRenameResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminEmojiRenameResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse`.
     public struct AdminFunctionsListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/functions`.
-        public var functions: [SlackModels.Function]?
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/functions`.
+        public var functions: [Components.Schemas.AppFunction]?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminFunctionsListResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - functions:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - functions:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            functions: [SlackModels.Function]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            functions: [Components.Schemas.AppFunction]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.functions = functions
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.functions = functions
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case functions
-            case needed
             case ok
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case functions
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse`.
     public struct AdminFunctionsPermissionsLookupResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/errors`.
-        public var errors: SlackModels.Errors?
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/metadata`.
-        public var metadata: OpenAPIRuntime.OpenAPIObjectContainer?
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/permissions`.
-        public var permissions: OpenAPIRuntime.OpenAPIObjectContainer?
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/permissions`.
+        public struct PermissionsPayload: Codable, Hashable, Sendable {
+            /// A container of undocumented properties.
+            public var additionalProperties: [String: Components.Schemas.AppFunctionPermissions]
+            /// Creates a new `PermissionsPayload`.
+            ///
+            /// - Parameters:
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(additionalProperties: [String: Components.Schemas.AppFunctionPermissions] = .init()) {
+                self.additionalProperties = additionalProperties
+            }
+
+            public init(from decoder: any Swift.Decoder) throws {
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+            }
+
+            public func encode(to encoder: any Swift.Encoder) throws {
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/permissions`.
+        public var permissions: Components.Schemas.AdminFunctionsPermissionsLookupResponse.PermissionsPayload?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/metadata`.
+        public struct MetadataPayload: Codable, Hashable, Sendable {
+            /// A container of undocumented properties.
+            public var additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer
+            /// Creates a new `MetadataPayload`.
+            ///
+            /// - Parameters:
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer = .init()) {
+                self.additionalProperties = additionalProperties
+            }
+
+            public init(from decoder: any Swift.Decoder) throws {
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+            }
+
+            public func encode(to encoder: any Swift.Encoder) throws {
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/metadata`.
+        public var metadata: Components.Schemas.AdminFunctionsPermissionsLookupResponse.MetadataPayload?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsLookupResponse/errors`.
+        public var errors: OpenAPIRuntime.OpenAPIValueContainer?
         /// Creates a new `AdminFunctionsPermissionsLookupResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - errors:
-        ///   - metadata:
-        ///   - needed:
         ///   - ok:
-        ///   - permissions:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - permissions:
+        ///   - metadata:
+        ///   - responseMetadata:
+        ///   - errors:
         public init(
-            error: Swift.String? = nil,
-            errors: SlackModels.Errors? = nil,
-            metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            permissions: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            permissions: Components.Schemas.AdminFunctionsPermissionsLookupResponse.PermissionsPayload? = nil,
+            metadata: Components.Schemas.AdminFunctionsPermissionsLookupResponse.MetadataPayload? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
+            errors: OpenAPIRuntime.OpenAPIValueContainer? = nil,
         ) {
-            self.error = error
-            self.errors = errors
-            self.metadata = metadata
-            self.needed = needed
             self.ok = ok
-            self.permissions = permissions
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.permissions = permissions
+            self.metadata = metadata
+            self.responseMetadata = responseMetadata
+            self.errors = errors
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case errors
-            case metadata
-            case needed
             case ok
-            case permissions
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case permissions
+            case metadata
+            case responseMetadata = "response_metadata"
+            case errors
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsSetResponse`.
     public struct AdminFunctionsPermissionsSetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsSetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsSetResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsSetResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsSetResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsSetResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsSetResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsSetResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminFunctionsPermissionsSetResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminFunctionsPermissionsSetResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApproveResponse`.
     public struct AdminInviteRequestsApproveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApproveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApproveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApproveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApproveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApproveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApproveResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApproveResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AdminInviteRequestsApproveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse`.
     public struct AdminInviteRequestsApprovedListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/approved_requests`.
-        public var approvedRequests: [SlackModels.ApprovedRequest]?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/ApprovedRequestsPayload`.
+        public struct ApprovedRequestsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/ApprovedRequestsPayload/invite_request`.
+            public var inviteRequest: Components.Schemas.InviteRequest?
+            /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/ApprovedRequestsPayload/approved_by`.
+            public struct ApprovedByPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/ApprovedRequestsPayload/approved_by/actor_type`.
+                public var actorType: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/ApprovedRequestsPayload/approved_by/actor_id`.
+                public var actorId: Swift.String?
+                /// Creates a new `ApprovedByPayload`.
+                ///
+                /// - Parameters:
+                ///   - actorType:
+                ///   - actorId:
+                public init(
+                    actorType: Swift.String? = nil,
+                    actorId: Swift.String? = nil,
+                ) {
+                    self.actorType = actorType
+                    self.actorId = actorId
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case actorType = "actor_type"
+                    case actorId = "actor_id"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/ApprovedRequestsPayload/approved_by`.
+            public var approvedBy: Components.Schemas.AdminInviteRequestsApprovedListResponse.ApprovedRequestsPayloadPayload.ApprovedByPayload?
+            /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/ApprovedRequestsPayload/invite`.
+            public var invite: Components.Schemas.Invite?
+            /// Creates a new `ApprovedRequestsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - inviteRequest:
+            ///   - approvedBy:
+            ///   - invite:
+            public init(
+                inviteRequest: Components.Schemas.InviteRequest? = nil,
+                approvedBy: Components.Schemas.AdminInviteRequestsApprovedListResponse.ApprovedRequestsPayloadPayload.ApprovedByPayload? = nil,
+                invite: Components.Schemas.Invite? = nil,
+            ) {
+                self.inviteRequest = inviteRequest
+                self.approvedBy = approvedBy
+                self.invite = invite
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case inviteRequest = "invite_request"
+                case approvedBy = "approved_by"
+                case invite
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/approved_requests`.
+        public typealias ApprovedRequestsPayload = [Components.Schemas.AdminInviteRequestsApprovedListResponse.ApprovedRequestsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/approved_requests`.
+        public var approvedRequests: Components.Schemas.AdminInviteRequestsApprovedListResponse.ApprovedRequestsPayload?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsApprovedListResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminInviteRequestsApprovedListResponse`.
         ///
         /// - Parameters:
-        ///   - approvedRequests:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - approvedRequests:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            approvedRequests: [SlackModels.ApprovedRequest]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            approvedRequests: Components.Schemas.AdminInviteRequestsApprovedListResponse.ApprovedRequestsPayload? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.approvedRequests = approvedRequests
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.approvedRequests = approvedRequests
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case approvedRequests = "approved_requests"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case approvedRequests = "approved_requests"
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse`.
     public struct AdminInviteRequestsDeniedListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/denied_requests`.
-        public var deniedRequests: [SlackModels.DeniedRequest]?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/DeniedRequestsPayload`.
+        public struct DeniedRequestsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/DeniedRequestsPayload/invite_request`.
+            public var inviteRequest: Components.Schemas.InviteRequest?
+            /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/DeniedRequestsPayload/denied_by`.
+            public struct DeniedByPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/DeniedRequestsPayload/denied_by/actor_type`.
+                public var actorType: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/DeniedRequestsPayload/denied_by/actor_id`.
+                public var actorId: Swift.String?
+                /// Creates a new `DeniedByPayload`.
+                ///
+                /// - Parameters:
+                ///   - actorType:
+                ///   - actorId:
+                public init(
+                    actorType: Swift.String? = nil,
+                    actorId: Swift.String? = nil,
+                ) {
+                    self.actorType = actorType
+                    self.actorId = actorId
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case actorType = "actor_type"
+                    case actorId = "actor_id"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/DeniedRequestsPayload/denied_by`.
+            public var deniedBy: Components.Schemas.AdminInviteRequestsDeniedListResponse.DeniedRequestsPayloadPayload.DeniedByPayload?
+            /// Creates a new `DeniedRequestsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - inviteRequest:
+            ///   - deniedBy:
+            public init(
+                inviteRequest: Components.Schemas.InviteRequest? = nil,
+                deniedBy: Components.Schemas.AdminInviteRequestsDeniedListResponse.DeniedRequestsPayloadPayload.DeniedByPayload? = nil,
+            ) {
+                self.inviteRequest = inviteRequest
+                self.deniedBy = deniedBy
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case inviteRequest = "invite_request"
+                case deniedBy = "denied_by"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/denied_requests`.
+        public typealias DeniedRequestsPayload = [Components.Schemas.AdminInviteRequestsDeniedListResponse.DeniedRequestsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/denied_requests`.
+        public var deniedRequests: Components.Schemas.AdminInviteRequestsDeniedListResponse.DeniedRequestsPayload?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDeniedListResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminInviteRequestsDeniedListResponse`.
         ///
         /// - Parameters:
-        ///   - deniedRequests:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - deniedRequests:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            deniedRequests: [SlackModels.DeniedRequest]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            deniedRequests: Components.Schemas.AdminInviteRequestsDeniedListResponse.DeniedRequestsPayload? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.deniedRequests = deniedRequests
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.deniedRequests = deniedRequests
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case deniedRequests = "denied_requests"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case deniedRequests = "denied_requests"
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDenyResponse`.
     public struct AdminInviteRequestsDenyResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDenyResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDenyResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDenyResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDenyResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDenyResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDenyResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsDenyResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AdminInviteRequestsDenyResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse`.
     public struct AdminInviteRequestsListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/invite_requests`.
-        public var inviteRequests: [SlackModels.InviteRequest]?
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/invite_requests`.
+        public var inviteRequests: [Components.Schemas.InviteRequest]?
+        /// - Remark: Generated from `#/components/schemas/AdminInviteRequestsListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminInviteRequestsListResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - inviteRequests:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - inviteRequests:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            inviteRequests: [SlackModels.InviteRequest]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            inviteRequests: [Components.Schemas.InviteRequest]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.inviteRequests = inviteRequests
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.inviteRequests = inviteRequests
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case inviteRequests = "invite_requests"
-            case needed
             case ok
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case inviteRequests = "invite_requests"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse`.
     public struct AdminRolesAddAssignmentsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/RejectedUsersPayload`.
+        public struct RejectedUsersPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/RejectedUsersPayload/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/RejectedUsersPayload/error`.
+            public var error: Swift.String?
+            /// Creates a new `RejectedUsersPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - error:
+            public init(
+                id: Swift.String? = nil,
+                error: Swift.String? = nil,
+            ) {
+                self.id = id
+                self.error = error
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case error
+            }
+        }
+
         /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/rejected_users`.
-        public var rejectedUsers: [SlackModels.RejectedUser]?
-        /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/warning`.
-        public var warning: Swift.String?
+        public typealias RejectedUsersPayload = [Components.Schemas.AdminRolesAddAssignmentsResponse.RejectedUsersPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/rejected_users`.
+        public var rejectedUsers: Components.Schemas.AdminRolesAddAssignmentsResponse.RejectedUsersPayload?
+        /// - Remark: Generated from `#/components/schemas/AdminRolesAddAssignmentsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminRolesAddAssignmentsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - rejectedUsers:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            rejectedUsers: [SlackModels.RejectedUser]? = nil,
-            warning: Swift.String? = nil,
+            rejectedUsers: Components.Schemas.AdminRolesAddAssignmentsResponse.RejectedUsersPayload? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.rejectedUsers = rejectedUsers
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case rejectedUsers = "rejected_users"
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse`.
     public struct AdminRolesListAssignmentsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/role_assignments`.
-        public var roleAssignments: [SlackModels.RoleAssignment]?
-        /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/warning`.
-        public var warning: Swift.String?
+        public var roleAssignments: [Components.Schemas.RoleAssignment]?
+        /// - Remark: Generated from `#/components/schemas/AdminRolesListAssignmentsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminRolesListAssignmentsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - roleAssignments:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            roleAssignments: [SlackModels.RoleAssignment]? = nil,
-            warning: Swift.String? = nil,
+            roleAssignments: [Components.Schemas.RoleAssignment]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.roleAssignments = roleAssignments
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case roleAssignments = "role_assignments"
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminRolesRemoveAssignmentsResponse`.
     public struct AdminRolesRemoveAssignmentsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminRolesRemoveAssignmentsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminRolesRemoveAssignmentsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminRolesRemoveAssignmentsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminRolesRemoveAssignmentsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminRolesRemoveAssignmentsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminRolesRemoveAssignmentsResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminRolesRemoveAssignmentsResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminRolesRemoveAssignmentsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminRolesRemoveAssignmentsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse`.
     public struct AdminTeamsAdminsListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/admin_ids`.
-        public var adminIds: [Swift.String]?
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/admin_ids`.
+        public var adminIds: [Swift.String]?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsAdminsListResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminTeamsAdminsListResponse`.
         ///
         /// - Parameters:
-        ///   - adminIds:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - adminIds:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            adminIds: [Swift.String]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            adminIds: [Swift.String]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.adminIds = adminIds
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.adminIds = adminIds
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case adminIds = "admin_ids"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case adminIds = "admin_ids"
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminTeamsCreateResponse`.
     public struct AdminTeamsCreateResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsCreateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsCreateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsCreateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsCreateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsCreateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminTeamsCreateResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsCreateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsCreateResponse/team`.
         public var team: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsCreateResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminTeamsCreateResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - team:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             team: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.team = team
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case team
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse`.
     public struct AdminTeamsListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/TeamsPayload`.
+        public struct TeamsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/TeamsPayload/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/TeamsPayload/name`.
+            public var name: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/TeamsPayload/team_url`.
+            public var teamUrl: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/TeamsPayload/discoverability`.
+            public var discoverability: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/TeamsPayload/primary_owner`.
+            public struct PrimaryOwnerPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/TeamsPayload/primary_owner/user_id`.
+                public var userId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/TeamsPayload/primary_owner/email`.
+                public var email: Swift.String?
+                /// Creates a new `PrimaryOwnerPayload`.
+                ///
+                /// - Parameters:
+                ///   - userId:
+                ///   - email:
+                public init(
+                    userId: Swift.String? = nil,
+                    email: Swift.String? = nil,
+                ) {
+                    self.userId = userId
+                    self.email = email
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case userId = "user_id"
+                    case email
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/TeamsPayload/primary_owner`.
+            public var primaryOwner: Components.Schemas.AdminTeamsListResponse.TeamsPayloadPayload.PrimaryOwnerPayload?
+            /// Creates a new `TeamsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - name:
+            ///   - teamUrl:
+            ///   - discoverability:
+            ///   - primaryOwner:
+            public init(
+                id: Swift.String? = nil,
+                name: Swift.String? = nil,
+                teamUrl: Swift.String? = nil,
+                discoverability: Swift.String? = nil,
+                primaryOwner: Components.Schemas.AdminTeamsListResponse.TeamsPayloadPayload.PrimaryOwnerPayload? = nil,
+            ) {
+                self.id = id
+                self.name = name
+                self.teamUrl = teamUrl
+                self.discoverability = discoverability
+                self.primaryOwner = primaryOwner
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case name
+                case teamUrl = "team_url"
+                case discoverability
+                case primaryOwner = "primary_owner"
+            }
+        }
+
         /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/teams`.
-        public var teams: [SlackModels.Team]?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/warning`.
-        public var warning: Swift.String?
+        public typealias TeamsPayload = [Components.Schemas.AdminTeamsListResponse.TeamsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/teams`.
+        public var teams: Components.Schemas.AdminTeamsListResponse.TeamsPayload?
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminTeamsListResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - teams:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            teams: [SlackModels.Team]? = nil,
-            warning: Swift.String? = nil,
+            teams: Components.Schemas.AdminTeamsListResponse.TeamsPayload? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.teams = teams
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case teams
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse`.
     public struct AdminTeamsOwnersListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/owner_ids`.
-        public var ownerIds: [Swift.String]?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/owner_ids`.
+        public var ownerIds: [Swift.String]?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsOwnersListResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminTeamsOwnersListResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - ownerIds:
         ///   - provided:
+        ///   - ownerIds:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            ownerIds: [Swift.String]? = nil,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            ownerIds: [Swift.String]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
-            self.ownerIds = ownerIds
             self.provided = provided
+            self.ownerIds = ownerIds
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
-            case ownerIds = "owner_ids"
             case provided
+            case ownerIds = "owner_ids"
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsInfoResponse`.
     public struct AdminTeamsSettingsInfoResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsInfoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsInfoResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsInfoResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsInfoResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsInfoResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsInfoResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsInfoResponse/team`.
-        public var team: SlackModels.Team?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsInfoResponse/warning`.
-        public var warning: Swift.String?
+        public var team: Components.Schemas.Team?
         /// Creates a new `AdminTeamsSettingsInfoResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - team:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            team: SlackModels.Team? = nil,
-            warning: Swift.String? = nil,
+            team: Components.Schemas.Team? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.team = team
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case team
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDefaultChannelsResponse`.
     public struct AdminTeamsSettingsSetDefaultChannelsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDefaultChannelsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDefaultChannelsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDefaultChannelsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDefaultChannelsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDefaultChannelsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDefaultChannelsResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDefaultChannelsResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDefaultChannelsResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminTeamsSettingsSetDefaultChannelsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDescriptionResponse`.
     public struct AdminTeamsSettingsSetDescriptionResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDescriptionResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDescriptionResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDescriptionResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDescriptionResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDescriptionResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDescriptionResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDescriptionResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AdminTeamsSettingsSetDescriptionResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDiscoverabilityResponse`.
     public struct AdminTeamsSettingsSetDiscoverabilityResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDiscoverabilityResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDiscoverabilityResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDiscoverabilityResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDiscoverabilityResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDiscoverabilityResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDiscoverabilityResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDiscoverabilityResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetDiscoverabilityResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminTeamsSettingsSetDiscoverabilityResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetIconResponse`.
     public struct AdminTeamsSettingsSetIconResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetIconResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetIconResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetIconResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetIconResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetIconResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetIconResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetIconResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetIconResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminTeamsSettingsSetIconResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetNameResponse`.
     public struct AdminTeamsSettingsSetNameResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetNameResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetNameResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetNameResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetNameResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetNameResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetNameResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminTeamsSettingsSetNameResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AdminTeamsSettingsSetNameResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddChannelsResponse`.
     public struct AdminUsergroupsAddChannelsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddChannelsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddChannelsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddChannelsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddChannelsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddChannelsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddChannelsResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddChannelsResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddChannelsResponse/invalid_channels`.
+        public var invalidChannels: [Swift.String]?
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddChannelsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsergroupsAddChannelsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - invalidChannels:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            invalidChannels: [Swift.String]? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.invalidChannels = invalidChannels
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case invalidChannels = "invalid_channels"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddTeamsResponse`.
     public struct AdminUsergroupsAddTeamsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddTeamsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddTeamsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddTeamsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddTeamsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddTeamsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddTeamsResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddTeamsResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsAddTeamsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsergroupsAddTeamsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsergroupsListChannelsResponse`.
     public struct AdminUsergroupsListChannelsResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsListChannelsResponse/channels`.
-        public var channels: [SlackModels.Channel]?
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsListChannelsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsListChannelsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsListChannelsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsListChannelsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsListChannelsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsListChannelsResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsListChannelsResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsListChannelsResponse/channels`.
+        public var channels: [Components.Schemas.Conversation]?
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsListChannelsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsergroupsListChannelsResponse`.
         ///
         /// - Parameters:
-        ///   - channels:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - channels:
+        ///   - responseMetadata:
         public init(
-            channels: [SlackModels.Channel]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            channels: [Components.Schemas.Conversation]? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
-            self.channels = channels
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.channels = channels
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channels
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case channels
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsergroupsRemoveChannelsResponse`.
     public struct AdminUsergroupsRemoveChannelsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsRemoveChannelsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsRemoveChannelsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsRemoveChannelsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsRemoveChannelsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsRemoveChannelsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsergroupsRemoveChannelsResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsRemoveChannelsResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsergroupsRemoveChannelsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsergroupsRemoveChannelsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersAssignResponse`.
     public struct AdminUsersAssignResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersAssignResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersAssignResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersAssignResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersAssignResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersAssignResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersAssignResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersAssignResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsersAssignResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersGetExpirationResponse`.
     public struct AdminUsersGetExpirationResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersGetExpirationResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersGetExpirationResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersGetExpirationResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersGetExpirationResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersGetExpirationResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersGetExpirationResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersGetExpirationResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/AdminUsersGetExpirationResponse/user`.
-        public var user: SlackModels.User?
+        public var user: Components.Schemas.User?
         /// Creates a new `AdminUsersGetExpirationResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         ///   - user:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            user: SlackModels.User? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+            user: Components.Schemas.User? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
             self.user = user
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
             case user
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersInviteResponse`.
     public struct AdminUsersInviteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersInviteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersInviteResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersInviteResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersInviteResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersInviteResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersInviteResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersInviteResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsersInviteResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
         }
@@ -3671,854 +4856,1282 @@ extension Components.Schemas {
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse`.
     public struct AdminUsersListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload`.
+        public struct UsersPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/email`.
+            public var email: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/username`.
+            public var username: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/full_name`.
+            public var fullName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/is_admin`.
+            public var isAdmin: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/is_owner`.
+            public var isOwner: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/is_primary_owner`.
+            public var isPrimaryOwner: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/is_restricted`.
+            public var isRestricted: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/is_ultra_restricted`.
+            public var isUltraRestricted: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/is_bot`.
+            public var isBot: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/is_active`.
+            public var isActive: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/has_2fa`.
+            public var has2fa: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/has_sso`.
+            public var hasSso: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/expiration_ts`.
+            public var expirationTs: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/date_created`.
+            public var dateCreated: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/roles`.
+            public var roles: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/workspaces`.
+            public var workspaces: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/UsersPayload/last_active_ts`.
+            public var lastActiveTs: Swift.Int?
+            /// Creates a new `UsersPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - email:
+            ///   - username:
+            ///   - fullName:
+            ///   - isAdmin:
+            ///   - isOwner:
+            ///   - isPrimaryOwner:
+            ///   - isRestricted:
+            ///   - isUltraRestricted:
+            ///   - isBot:
+            ///   - isActive:
+            ///   - has2fa:
+            ///   - hasSso:
+            ///   - expirationTs:
+            ///   - dateCreated:
+            ///   - roles:
+            ///   - workspaces:
+            ///   - lastActiveTs:
+            public init(
+                id: Swift.String? = nil,
+                email: Swift.String? = nil,
+                username: Swift.String? = nil,
+                fullName: Swift.String? = nil,
+                isAdmin: Swift.Bool? = nil,
+                isOwner: Swift.Bool? = nil,
+                isPrimaryOwner: Swift.Bool? = nil,
+                isRestricted: Swift.Bool? = nil,
+                isUltraRestricted: Swift.Bool? = nil,
+                isBot: Swift.Bool? = nil,
+                isActive: Swift.Bool? = nil,
+                has2fa: Swift.Bool? = nil,
+                hasSso: Swift.Bool? = nil,
+                expirationTs: Swift.Int? = nil,
+                dateCreated: Swift.Int? = nil,
+                roles: [Swift.String]? = nil,
+                workspaces: [Swift.String]? = nil,
+                lastActiveTs: Swift.Int? = nil,
+            ) {
+                self.id = id
+                self.email = email
+                self.username = username
+                self.fullName = fullName
+                self.isAdmin = isAdmin
+                self.isOwner = isOwner
+                self.isPrimaryOwner = isPrimaryOwner
+                self.isRestricted = isRestricted
+                self.isUltraRestricted = isUltraRestricted
+                self.isBot = isBot
+                self.isActive = isActive
+                self.has2fa = has2fa
+                self.hasSso = hasSso
+                self.expirationTs = expirationTs
+                self.dateCreated = dateCreated
+                self.roles = roles
+                self.workspaces = workspaces
+                self.lastActiveTs = lastActiveTs
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case email
+                case username
+                case fullName = "full_name"
+                case isAdmin = "is_admin"
+                case isOwner = "is_owner"
+                case isPrimaryOwner = "is_primary_owner"
+                case isRestricted = "is_restricted"
+                case isUltraRestricted = "is_ultra_restricted"
+                case isBot = "is_bot"
+                case isActive = "is_active"
+                case has2fa = "has_2fa"
+                case hasSso = "has_sso"
+                case expirationTs = "expiration_ts"
+                case dateCreated = "date_created"
+                case roles
+                case workspaces
+                case lastActiveTs = "last_active_ts"
+            }
+        }
+
         /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/users`.
-        public var users: [SlackModels.User]?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/warning`.
-        public var warning: Swift.String?
+        public typealias UsersPayload = [Components.Schemas.AdminUsersListResponse.UsersPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/users`.
+        public var users: Components.Schemas.AdminUsersListResponse.UsersPayload?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminUsersListResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - users:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            users: [SlackModels.User]? = nil,
-            warning: Swift.String? = nil,
+            users: Components.Schemas.AdminUsersListResponse.UsersPayload? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.users = users
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case users
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersRemoveResponse`.
     public struct AdminUsersRemoveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersRemoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersRemoveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersRemoveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersRemoveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersRemoveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersRemoveResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersRemoveResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsersRemoveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersSessionClearSettingsResponse`.
     public struct AdminUsersSessionClearSettingsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionClearSettingsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionClearSettingsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionClearSettingsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionClearSettingsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionClearSettingsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionClearSettingsResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionClearSettingsResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionClearSettingsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsersSessionClearSettingsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse`.
     public struct AdminUsersSessionGetSettingsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/no_settings_applied`.
-        public var noSettingsApplied: [Swift.String]?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/SessionSettingsPayload`.
+        public struct SessionSettingsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/SessionSettingsPayload/user_id`.
+            public var userId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/SessionSettingsPayload/desktop_app_browser_quit`.
+            public var desktopAppBrowserQuit: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/SessionSettingsPayload/duration`.
+            public var duration: Swift.Int?
+            /// Creates a new `SessionSettingsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - userId:
+            ///   - desktopAppBrowserQuit:
+            ///   - duration:
+            public init(
+                userId: Swift.String? = nil,
+                desktopAppBrowserQuit: Swift.Bool? = nil,
+                duration: Swift.Int? = nil,
+            ) {
+                self.userId = userId
+                self.desktopAppBrowserQuit = desktopAppBrowserQuit
+                self.duration = duration
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case userId = "user_id"
+                case desktopAppBrowserQuit = "desktop_app_browser_quit"
+                case duration
+            }
+        }
+
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/session_settings`.
-        public var sessionSettings: [SlackModels.SessionSetting]?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/warning`.
-        public var warning: Swift.String?
+        public typealias SessionSettingsPayload = [Components.Schemas.AdminUsersSessionGetSettingsResponse.SessionSettingsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/session_settings`.
+        public var sessionSettings: Components.Schemas.AdminUsersSessionGetSettingsResponse.SessionSettingsPayload?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/no_settings_applied`.
+        public var noSettingsApplied: [Swift.String]?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionGetSettingsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsersSessionGetSettingsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - noSettingsApplied:
-        ///   - ok:
         ///   - provided:
         ///   - sessionSettings:
-        ///   - warning:
+        ///   - noSettingsApplied:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            noSettingsApplied: [Swift.String]? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            sessionSettings: [SlackModels.SessionSetting]? = nil,
-            warning: Swift.String? = nil,
+            sessionSettings: Components.Schemas.AdminUsersSessionGetSettingsResponse.SessionSettingsPayload? = nil,
+            noSettingsApplied: [Swift.String]? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.noSettingsApplied = noSettingsApplied
-            self.ok = ok
             self.provided = provided
             self.sessionSettings = sessionSettings
-            self.warning = warning
+            self.noSettingsApplied = noSettingsApplied
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case noSettingsApplied = "no_settings_applied"
-            case ok
             case provided
             case sessionSettings = "session_settings"
-            case warning
+            case noSettingsApplied = "no_settings_applied"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersSessionInvalidateResponse`.
     public struct AdminUsersSessionInvalidateResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionInvalidateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionInvalidateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionInvalidateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionInvalidateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionInvalidateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionInvalidateResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionInvalidateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionInvalidateResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsersSessionInvalidateResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse`.
     public struct AdminUsersSessionListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/active_sessions`.
-        public var activeSessions: [SlackModels.ActiveSession]?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload`.
+        public struct ActiveSessionsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/user_id`.
+            public var userId: Swift.String?
+            /// Type differs from java-slack-sdk: `AdminUsersSessionListResponse.ActiveSession.sessionId` is declared `String`, but recorded responses send integers.
+            ///
+            /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/session_id`.
+            public var sessionId: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/team_id`.
+            public var teamId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/created`.
+            public struct CreatedPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/created/device_hardware`.
+                public var deviceHardware: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/created/os`.
+                public var os: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/created/os_version`.
+                public var osVersion: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/created/slack_client_version`.
+                public var slackClientVersion: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/created/ip`.
+                public var ip: Swift.String?
+                /// Creates a new `CreatedPayload`.
+                ///
+                /// - Parameters:
+                ///   - deviceHardware:
+                ///   - os:
+                ///   - osVersion:
+                ///   - slackClientVersion:
+                ///   - ip:
+                public init(
+                    deviceHardware: Swift.String? = nil,
+                    os: Swift.String? = nil,
+                    osVersion: Swift.String? = nil,
+                    slackClientVersion: Swift.String? = nil,
+                    ip: Swift.String? = nil,
+                ) {
+                    self.deviceHardware = deviceHardware
+                    self.os = os
+                    self.osVersion = osVersion
+                    self.slackClientVersion = slackClientVersion
+                    self.ip = ip
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case deviceHardware = "device_hardware"
+                    case os
+                    case osVersion = "os_version"
+                    case slackClientVersion = "slack_client_version"
+                    case ip
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/created`.
+            public var created: Components.Schemas.AdminUsersSessionListResponse.ActiveSessionsPayloadPayload.CreatedPayload?
+            /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/recent`.
+            public struct RecentPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/recent/device_hardware`.
+                public var deviceHardware: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/recent/os`.
+                public var os: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/recent/os_version`.
+                public var osVersion: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/recent/slack_client_version`.
+                public var slackClientVersion: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/recent/ip`.
+                public var ip: Swift.String?
+                /// Creates a new `RecentPayload`.
+                ///
+                /// - Parameters:
+                ///   - deviceHardware:
+                ///   - os:
+                ///   - osVersion:
+                ///   - slackClientVersion:
+                ///   - ip:
+                public init(
+                    deviceHardware: Swift.String? = nil,
+                    os: Swift.String? = nil,
+                    osVersion: Swift.String? = nil,
+                    slackClientVersion: Swift.String? = nil,
+                    ip: Swift.String? = nil,
+                ) {
+                    self.deviceHardware = deviceHardware
+                    self.os = os
+                    self.osVersion = osVersion
+                    self.slackClientVersion = slackClientVersion
+                    self.ip = ip
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case deviceHardware = "device_hardware"
+                    case os
+                    case osVersion = "os_version"
+                    case slackClientVersion = "slack_client_version"
+                    case ip
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/ActiveSessionsPayload/recent`.
+            public var recent: Components.Schemas.AdminUsersSessionListResponse.ActiveSessionsPayloadPayload.RecentPayload?
+            /// Creates a new `ActiveSessionsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - userId:
+            ///   - sessionId: Type differs from java-slack-sdk: `AdminUsersSessionListResponse.ActiveSession.sessionId` is declared `String`, but recorded responses send integers.
+            ///   - teamId:
+            ///   - created:
+            ///   - recent:
+            public init(
+                userId: Swift.String? = nil,
+                sessionId: Swift.Int? = nil,
+                teamId: Swift.String? = nil,
+                created: Components.Schemas.AdminUsersSessionListResponse.ActiveSessionsPayloadPayload.CreatedPayload? = nil,
+                recent: Components.Schemas.AdminUsersSessionListResponse.ActiveSessionsPayloadPayload.RecentPayload? = nil,
+            ) {
+                self.userId = userId
+                self.sessionId = sessionId
+                self.teamId = teamId
+                self.created = created
+                self.recent = recent
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case userId = "user_id"
+                case sessionId = "session_id"
+                case teamId = "team_id"
+                case created
+                case recent
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/active_sessions`.
+        public typealias ActiveSessionsPayload = [Components.Schemas.AdminUsersSessionListResponse.ActiveSessionsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/active_sessions`.
+        public var activeSessions: Components.Schemas.AdminUsersSessionListResponse.ActiveSessionsPayload?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionListResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminUsersSessionListResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
         ///   - activeSessions:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            activeSessions: [SlackModels.ActiveSession]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            activeSessions: Components.Schemas.AdminUsersSessionListResponse.ActiveSessionsPayload? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
             self.activeSessions = activeSessions
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
             case activeSessions = "active_sessions"
-            case error
-            case needed
-            case ok
-            case provided
             case responseMetadata = "response_metadata"
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse`.
-    public struct AdminUsersSessionResetResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AdminUsersSessionResetResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - warning:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetBulkResponse`.
     public struct AdminUsersSessionResetBulkResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetBulkResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetBulkResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetBulkResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetBulkResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetBulkResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetBulkResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetBulkResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AdminUsersSessionResetBulkResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse`.
+    public struct AdminUsersSessionResetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionResetResponse/provided`.
+        public var provided: Swift.String?
+        /// Creates a new `AdminUsersSessionResetResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
             case warning
+            case error
+            case needed
+            case provided
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersSessionSetSettingsResponse`.
     public struct AdminUsersSessionSetSettingsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionSetSettingsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionSetSettingsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionSetSettingsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionSetSettingsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionSetSettingsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersSessionSetSettingsResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionSetSettingsResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSessionSetSettingsResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsersSessionSetSettingsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersSetAdminResponse`.
     public struct AdminUsersSetAdminResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetAdminResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetAdminResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetAdminResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetAdminResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSetAdminResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetAdminResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetAdminResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsersSetAdminResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersSetExpirationResponse`.
     public struct AdminUsersSetExpirationResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetExpirationResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetExpirationResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetExpirationResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetExpirationResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSetExpirationResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetExpirationResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetExpirationResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsersSetExpirationResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersSetOwnerResponse`.
     public struct AdminUsersSetOwnerResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetOwnerResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetOwnerResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetOwnerResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetOwnerResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSetOwnerResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetOwnerResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetOwnerResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsersSetOwnerResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersSetRegularResponse`.
     public struct AdminUsersSetRegularResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetRegularResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetRegularResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetRegularResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetRegularResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersSetRegularResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersSetRegularResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminUsersSetRegularResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `AdminUsersSetRegularResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminUsersUnsupportedVersionsExportResponse`.
     public struct AdminUsersUnsupportedVersionsExportResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminUsersUnsupportedVersionsExportResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminUsersUnsupportedVersionsExportResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersUnsupportedVersionsExportResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminUsersUnsupportedVersionsExportResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersUnsupportedVersionsExportResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminUsersUnsupportedVersionsExportResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminUsersUnsupportedVersionsExportResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AdminUsersUnsupportedVersionsExportResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse`.
     public struct AdminWorkflowsCollaboratorsAddResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/errors`.
-        public var errors: [SlackModels.WorkflowCollaboratorError]?
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
+        /// Type differs from java-slack-sdk: `AdminWorkflowsCollaboratorsAddResponse.errors` is declared `List<Error>`, but recorded responses send values of another shape.
+        ///
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsAddResponse/errors`.
+        public var errors: [Components.Schemas.WorkflowCollaboratorError]?
         /// Creates a new `AdminWorkflowsCollaboratorsAddResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - errors:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
         ///   - responseMetadata:
+        ///   - errors: Type differs from java-slack-sdk: `AdminWorkflowsCollaboratorsAddResponse.errors` is declared `List<Error>`, but recorded responses send values of another shape.
         public init(
-            error: Swift.String? = nil,
-            errors: [SlackModels.WorkflowCollaboratorError]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
+            errors: [Components.Schemas.WorkflowCollaboratorError]? = nil,
         ) {
-            self.error = error
-            self.errors = errors
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
             self.responseMetadata = responseMetadata
+            self.errors = errors
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case errors
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
             case responseMetadata = "response_metadata"
+            case errors
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse`.
     public struct AdminWorkflowsCollaboratorsRemoveResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/errors`.
-        public var errors: [SlackModels.WorkflowCollaboratorError]?
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
+        /// Not declared by java-slack-sdk `AdminWorkflowsCollaboratorsRemoveResponse`, but recorded responses include it.
+        ///
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsCollaboratorsRemoveResponse/errors`.
+        public var errors: [Components.Schemas.WorkflowCollaboratorError]?
         /// Creates a new `AdminWorkflowsCollaboratorsRemoveResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - errors:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
+        ///   - responseMetadata:
+        ///   - errors: Not declared by java-slack-sdk `AdminWorkflowsCollaboratorsRemoveResponse`, but recorded responses include it.
         public init(
-            error: Swift.String? = nil,
-            errors: [SlackModels.WorkflowCollaboratorError]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
+            errors: [Components.Schemas.WorkflowCollaboratorError]? = nil,
         ) {
-            self.error = error
-            self.errors = errors
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
+            self.responseMetadata = responseMetadata
+            self.errors = errors
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case errors
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
+            case responseMetadata = "response_metadata"
+            case errors
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminWorkflowsPermissionsLookupResponse`.
     public struct AdminWorkflowsPermissionsLookupResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsPermissionsLookupResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsPermissionsLookupResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsPermissionsLookupResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsPermissionsLookupResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsPermissionsLookupResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsPermissionsLookupResponse/permissions`.
-        public var permissions: OpenAPIRuntime.OpenAPIObjectContainer?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsPermissionsLookupResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsPermissionsLookupResponse/permissions`.
+        public struct PermissionsPayload: Codable, Hashable, Sendable {
+            /// A container of undocumented properties.
+            public var additionalProperties: [String: Components.Schemas.AppWorkflowPermissions]
+            /// Creates a new `PermissionsPayload`.
+            ///
+            /// - Parameters:
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(additionalProperties: [String: Components.Schemas.AppWorkflowPermissions] = .init()) {
+                self.additionalProperties = additionalProperties
+            }
+
+            public init(from decoder: any Swift.Decoder) throws {
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+            }
+
+            public func encode(to encoder: any Swift.Encoder) throws {
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsPermissionsLookupResponse/permissions`.
+        public var permissions: Components.Schemas.AdminWorkflowsPermissionsLookupResponse.PermissionsPayload?
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsPermissionsLookupResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminWorkflowsPermissionsLookupResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - permissions:
         ///   - provided:
+        ///   - permissions:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            permissions: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
             provided: Swift.String? = nil,
+            permissions: Components.Schemas.AdminWorkflowsPermissionsLookupResponse.PermissionsPayload? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
-            self.permissions = permissions
             self.provided = provided
+            self.permissions = permissions
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
-            case permissions
             case provided
+            case permissions
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse`.
     public struct AdminWorkflowsSearchResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/workflows`.
+        public var workflows: [Components.Schemas.AppWorkflow]?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/total_found`.
         public var totalFound: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/workflows`.
-        public var workflows: [SlackModels.AppWorkflow]?
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsSearchResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminWorkflowsSearchResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
-        ///   - totalFound:
         ///   - workflows:
+        ///   - totalFound:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            workflows: [Components.Schemas.AppWorkflow]? = nil,
             totalFound: Swift.Int? = nil,
-            workflows: [SlackModels.AppWorkflow]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
-            self.totalFound = totalFound
             self.workflows = workflows
+            self.totalFound = totalFound
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
-            case totalFound = "total_found"
             case workflows
+            case totalFound = "total_found"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AdminWorkflowsUnpublishResponse`.
     public struct AdminWorkflowsUnpublishResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsUnpublishResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsUnpublishResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsUnpublishResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsUnpublishResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsUnpublishResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsUnpublishResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AdminWorkflowsUnpublishResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AdminWorkflowsUnpublishResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AdminWorkflowsUnpublishResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 }

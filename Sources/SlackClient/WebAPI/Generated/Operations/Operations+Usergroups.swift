@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Usergroups
 extension Operations {
+    /// Create a User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.create`.
+    /// - Remark: Generated from `#/paths//usergroups.create/post(usergroupsCreate)`.
     public enum UsergroupsCreate {
         public static let id: Swift.String = "usergroupsCreate"
         public struct Input: Sendable, Hashable {
@@ -217,6 +221,10 @@ extension Operations {
         }
     }
 
+    /// Disable an existing User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.disable`.
+    /// - Remark: Generated from `#/paths//usergroups.disable/post(usergroupsDisable)`.
     public enum UsergroupsDisable {
         public static let id: Swift.String = "usergroupsDisable"
         public struct Input: Sendable, Hashable {
@@ -381,6 +389,10 @@ extension Operations {
         }
     }
 
+    /// Enable a User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.enable`.
+    /// - Remark: Generated from `#/paths//usergroups.enable/post(usergroupsEnable)`.
     public enum UsergroupsEnable {
         public static let id: Swift.String = "usergroupsEnable"
         public struct Input: Sendable, Hashable {
@@ -545,6 +557,10 @@ extension Operations {
         }
     }
 
+    /// List all User Groups for a team.
+    ///
+    /// - Remark: HTTP `POST /usergroups.list`.
+    /// - Remark: Generated from `#/paths//usergroups.list/post(usergroupsList)`.
     public enum UsergroupsList {
         public static let id: Swift.String = "usergroupsList"
         public struct Input: Sendable, Hashable {
@@ -717,6 +733,10 @@ extension Operations {
         }
     }
 
+    /// Update an existing User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.update`.
+    /// - Remark: Generated from `#/paths//usergroups.update/post(usergroupsUpdate)`.
     public enum UsergroupsUpdate {
         public static let id: Swift.String = "usergroupsUpdate"
         public struct Input: Sendable, Hashable {
@@ -929,6 +949,10 @@ extension Operations {
         }
     }
 
+    /// List all users in a User Group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.users.list`.
+    /// - Remark: Generated from `#/paths//usergroups.users.list/post(usergroupsUsersList)`.
     public enum UsergroupsUsersList {
         public static let id: Swift.String = "usergroupsUsersList"
         public struct Input: Sendable, Hashable {
@@ -1093,6 +1117,10 @@ extension Operations {
         }
     }
 
+    /// Update the list of users for a user group.
+    ///
+    /// - Remark: HTTP `POST /usergroups.users.update`.
+    /// - Remark: Generated from `#/paths//usergroups.users.update/post(usergroupsUsersUpdate)`.
     public enum UsergroupsUsersUpdate {
         public static let id: Swift.String = "usergroupsUsersUpdate"
         public struct Input: Sendable, Hashable {

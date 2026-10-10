@@ -9,745 +9,771 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Files
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse`.
     public struct FilesCompleteUploadExternalResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/files`.
-        public var files: [SlackModels.File]?
-        /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/files`.
+        public var files: [Components.Schemas.File]?
+        /// - Remark: Generated from `#/components/schemas/FilesCompleteUploadExternalResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `FilesCompleteUploadExternalResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - files:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - files:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            files: [SlackModels.File]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            files: [Components.Schemas.File]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.files = files
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.files = files
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case files
-            case needed
             case ok
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case files
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesDeleteResponse`.
     public struct FilesDeleteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/FilesDeleteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/FilesDeleteResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesDeleteResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesDeleteResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesDeleteResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/FilesDeleteResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesDeleteResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `FilesDeleteResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse`.
     public struct FilesGetUploadURLExternalResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/file_id`.
-        public var fileId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/upload_url`.
-        public var uploadUrl: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/file_id`.
+        public var fileId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/upload_url`.
+        public var uploadUrl: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesGetUploadURLExternalResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `FilesGetUploadURLExternalResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - fileId:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
-        ///   - uploadUrl:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - fileId:
+        ///   - uploadUrl:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            fileId: Swift.String? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            uploadUrl: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            fileId: Swift.String? = nil,
+            uploadUrl: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.fileId = fileId
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
-            self.uploadUrl = uploadUrl
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.fileId = fileId
+            self.uploadUrl = uploadUrl
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case fileId = "file_id"
-            case needed
             case ok
-            case provided
-            case responseMetadata = "response_metadata"
-            case uploadUrl = "upload_url"
             case warning
+            case error
+            case needed
+            case provided
+            case fileId = "file_id"
+            case uploadUrl = "upload_url"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesInfoResponse`.
     public struct FilesInfoResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/comments`.
-        public var comments: [SlackModels.Comment]?
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content`.
-        public var content: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content_highlight_css`.
-        public var contentHighlightCss: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content_highlight_html`.
-        public var contentHighlightHtml: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content_highlight_html_truncated`.
-        public var contentHighlightHtmlTruncated: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/file`.
-        public var file: SlackModels.File?
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/is_truncated`.
-        public var isTruncated: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/paging`.
-        public var paging: SlackModels.Paging?
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/file`.
+        public var file: Components.Schemas.File?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content`.
+        public var content: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content_highlight_html`.
+        public var contentHighlightHtml: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content_highlight_css`.
+        public var contentHighlightCss: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/is_truncated`.
+        public var isTruncated: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content_highlight_html_truncated`.
+        public var contentHighlightHtmlTruncated: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/comments`.
+        public var comments: [Components.Schemas.FileComment]?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/paging`.
+        public var paging: Components.Schemas.Paging?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `FilesInfoResponse`.
         ///
         /// - Parameters:
-        ///   - comments:
-        ///   - content:
-        ///   - contentHighlightCss:
-        ///   - contentHighlightHtml:
-        ///   - contentHighlightHtmlTruncated:
-        ///   - error:
-        ///   - file:
-        ///   - isTruncated:
-        ///   - needed:
         ///   - ok:
-        ///   - paging:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - file:
+        ///   - content:
+        ///   - contentHighlightHtml:
+        ///   - contentHighlightCss:
+        ///   - isTruncated:
+        ///   - contentHighlightHtmlTruncated:
+        ///   - comments:
+        ///   - paging:
+        ///   - responseMetadata:
         public init(
-            comments: [SlackModels.Comment]? = nil,
-            content: Swift.String? = nil,
-            contentHighlightCss: Swift.String? = nil,
-            contentHighlightHtml: Swift.String? = nil,
-            contentHighlightHtmlTruncated: Swift.Bool? = nil,
-            error: Swift.String? = nil,
-            file: SlackModels.File? = nil,
-            isTruncated: Swift.Bool? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            paging: SlackModels.Paging? = nil,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            file: Components.Schemas.File? = nil,
+            content: Swift.String? = nil,
+            contentHighlightHtml: Swift.String? = nil,
+            contentHighlightCss: Swift.String? = nil,
+            isTruncated: Swift.Bool? = nil,
+            contentHighlightHtmlTruncated: Swift.Bool? = nil,
+            comments: [Components.Schemas.FileComment]? = nil,
+            paging: Components.Schemas.Paging? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.comments = comments
-            self.content = content
-            self.contentHighlightCss = contentHighlightCss
-            self.contentHighlightHtml = contentHighlightHtml
-            self.contentHighlightHtmlTruncated = contentHighlightHtmlTruncated
-            self.error = error
-            self.file = file
-            self.isTruncated = isTruncated
-            self.needed = needed
             self.ok = ok
-            self.paging = paging
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.file = file
+            self.content = content
+            self.contentHighlightHtml = contentHighlightHtml
+            self.contentHighlightCss = contentHighlightCss
+            self.isTruncated = isTruncated
+            self.contentHighlightHtmlTruncated = contentHighlightHtmlTruncated
+            self.comments = comments
+            self.paging = paging
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case comments
-            case content
-            case contentHighlightCss = "content_highlight_css"
-            case contentHighlightHtml = "content_highlight_html"
-            case contentHighlightHtmlTruncated = "content_highlight_html_truncated"
-            case error
-            case file
-            case isTruncated = "is_truncated"
-            case needed
             case ok
-            case paging
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case file
+            case content
+            case contentHighlightHtml = "content_highlight_html"
+            case contentHighlightCss = "content_highlight_css"
+            case isTruncated = "is_truncated"
+            case contentHighlightHtmlTruncated = "content_highlight_html_truncated"
+            case comments
+            case paging
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesListResponse`.
     public struct FilesListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesListResponse/files`.
-        public var files: [SlackModels.File]?
-        /// - Remark: Generated from `#/components/schemas/FilesListResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesListResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/FilesListResponse/paging`.
-        public var paging: SlackModels.Paging?
-        /// - Remark: Generated from `#/components/schemas/FilesListResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesListResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesListResponse/files`.
+        public var files: [Components.Schemas.File]?
+        /// - Remark: Generated from `#/components/schemas/FilesListResponse/paging`.
+        public var paging: Components.Schemas.Paging?
         /// Creates a new `FilesListResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - files:
-        ///   - needed:
         ///   - ok:
-        ///   - paging:
-        ///   - provided:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - files:
+        ///   - paging:
         public init(
-            error: Swift.String? = nil,
-            files: [SlackModels.File]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            paging: SlackModels.Paging? = nil,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            files: [Components.Schemas.File]? = nil,
+            paging: Components.Schemas.Paging? = nil,
         ) {
-            self.error = error
-            self.files = files
-            self.needed = needed
             self.ok = ok
-            self.paging = paging
-            self.provided = provided
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.files = files
+            self.paging = paging
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case files
-            case needed
             case ok
-            case paging
-            case provided
             case warning
+            case error
+            case needed
+            case provided
+            case files
+            case paging
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse`.
     public struct FilesRemoteAddResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/file`.
-        public var file: SlackModels.File?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteAddResponse/file`.
+        public var file: Components.Schemas.File?
         /// Creates a new `FilesRemoteAddResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - file:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - file:
         public init(
-            error: Swift.String? = nil,
-            file: SlackModels.File? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            file: Components.Schemas.File? = nil,
         ) {
-            self.error = error
-            self.file = file
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.file = file
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case file
-            case needed
             case ok
-            case provided
             case warning
+            case error
+            case needed
+            case provided
+            case file
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse`.
     public struct FilesRemoteInfoResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/file`.
-        public var file: SlackModels.File?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteInfoResponse/file`.
+        public var file: Components.Schemas.File?
         /// Creates a new `FilesRemoteInfoResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - file:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - file:
         public init(
-            error: Swift.String? = nil,
-            file: SlackModels.File? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            file: Components.Schemas.File? = nil,
         ) {
-            self.error = error
-            self.file = file
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.file = file
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case file
-            case needed
             case ok
-            case provided
             case warning
+            case error
+            case needed
+            case provided
+            case file
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse`.
     public struct FilesRemoteListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/files`.
-        public var files: [SlackModels.File]?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/files`.
+        public var files: [Components.Schemas.File]?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `FilesRemoteListResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - files:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - files:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            files: [SlackModels.File]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            files: [Components.Schemas.File]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.files = files
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.files = files
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case files
-            case needed
             case ok
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case files
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesRemoteRemoveResponse`.
     public struct FilesRemoteRemoveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteRemoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteRemoveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteRemoveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteRemoveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteRemoveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/FilesRemoteRemoveResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteRemoveResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `FilesRemoteRemoveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse`.
     public struct FilesRemoteShareResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/file`.
-        public var file: SlackModels.File?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteShareResponse/file`.
+        public var file: Components.Schemas.File?
         /// Creates a new `FilesRemoteShareResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - file:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - file:
         public init(
-            error: Swift.String? = nil,
-            file: SlackModels.File? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            file: Components.Schemas.File? = nil,
         ) {
-            self.error = error
-            self.file = file
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.file = file
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case file
-            case needed
             case ok
-            case provided
             case warning
+            case error
+            case needed
+            case provided
+            case file
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse`.
     public struct FilesRemoteUpdateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/file`.
-        public var file: SlackModels.File?
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRemoteUpdateResponse/file`.
+        public var file: Components.Schemas.File?
         /// Creates a new `FilesRemoteUpdateResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - file:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - file:
         public init(
-            error: Swift.String? = nil,
-            file: SlackModels.File? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            file: Components.Schemas.File? = nil,
         ) {
-            self.error = error
-            self.file = file
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.file = file
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case file
-            case needed
             case ok
-            case provided
             case warning
+            case error
+            case needed
+            case provided
+            case file
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesRevokePublicURLResponse`.
     public struct FilesRevokePublicURLResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesRevokePublicURLResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesRevokePublicURLResponse/file`.
-        public var file: SlackModels.File?
-        /// - Remark: Generated from `#/components/schemas/FilesRevokePublicURLResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRevokePublicURLResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/FilesRevokePublicURLResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRevokePublicURLResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRevokePublicURLResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesRevokePublicURLResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesRevokePublicURLResponse/file`.
+        public var file: Components.Schemas.File?
         /// Creates a new `FilesRevokePublicURLResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - file:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
+        ///   - file:
         public init(
-            error: Swift.String? = nil,
-            file: SlackModels.File? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
+            file: Components.Schemas.File? = nil,
         ) {
-            self.error = error
-            self.file = file
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
+            self.file = file
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case file
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
+            case file
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse`.
     public struct FilesSharedPublicURLResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse/file`.
-        public var file: SlackModels.File?
-        /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse/file`.
+        public var file: Components.Schemas.File?
+        /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse/comments`.
+        public var comments: [Components.Schemas.FileComment]?
+        /// - Remark: Generated from `#/components/schemas/FilesSharedPublicURLResponse/paging`.
+        public var paging: Components.Schemas.Paging?
         /// Creates a new `FilesSharedPublicURLResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - file:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
+        ///   - file:
+        ///   - comments:
+        ///   - paging:
         public init(
-            error: Swift.String? = nil,
-            file: SlackModels.File? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
+            file: Components.Schemas.File? = nil,
+            comments: [Components.Schemas.FileComment]? = nil,
+            paging: Components.Schemas.Paging? = nil,
         ) {
-            self.error = error
-            self.file = file
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
+            self.file = file
+            self.comments = comments
+            self.paging = paging
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case file
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
+            case file
+            case comments
+            case paging
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FilesUploadResponse`.
     public struct FilesUploadResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/FilesUploadResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FilesUploadResponse/file`.
-        public var file: SlackModels.File?
-        /// - Remark: Generated from `#/components/schemas/FilesUploadResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesUploadResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/FilesUploadResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesUploadResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesUploadResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesUploadResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesUploadResponse/file`.
+        public var file: Components.Schemas.File?
         /// Creates a new `FilesUploadResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - file:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
+        ///   - file:
         public init(
-            error: Swift.String? = nil,
-            file: SlackModels.File? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
+            file: Components.Schemas.File? = nil,
         ) {
-            self.error = error
-            self.file = file
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
+            self.file = file
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case file
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
+            case file
         }
     }
 }

@@ -11,6 +11,7 @@ import struct Foundation.Date
 import struct Foundation.URL
 #endif
 import HTTPTypes
+import SlackBlockKit
 
 extension Client {
     /// Set the status for an AI assistant thread.

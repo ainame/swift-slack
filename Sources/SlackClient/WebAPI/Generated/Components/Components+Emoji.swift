@@ -9,78 +9,122 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Emoji
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/EmojiListResponse`.
     public struct EmojiListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/cache_ts`.
-        public var cacheTs: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/categories`.
-        public var categories: [SlackModels.Category]?
-        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/categories_version`.
-        public var categoriesVersion: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/emoji`.
-        public var emoji: OpenAPIRuntime.OpenAPIObjectContainer?
+        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/EmojiListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/EmojiListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/EmojiListResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/emoji`.
+        public struct EmojiPayload: Codable, Hashable, Sendable {
+            /// A container of undocumented properties.
+            public var additionalProperties: [String: Swift.String]
+            /// Creates a new `EmojiPayload`.
+            ///
+            /// - Parameters:
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(additionalProperties: [String: Swift.String] = .init()) {
+                self.additionalProperties = additionalProperties
+            }
+
+            public init(from decoder: any Swift.Decoder) throws {
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+            }
+
+            public func encode(to encoder: any Swift.Encoder) throws {
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/emoji`.
+        public var emoji: Components.Schemas.EmojiListResponse.EmojiPayload?
+        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/cache_ts`.
+        public var cacheTs: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/categories_version`.
+        public var categoriesVersion: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/CategoriesPayload`.
+        public struct CategoriesPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/EmojiListResponse/CategoriesPayload/name`.
+            public var name: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/EmojiListResponse/CategoriesPayload/emoji_names`.
+            public var emojiNames: [Swift.String]?
+            /// Creates a new `CategoriesPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - name:
+            ///   - emojiNames:
+            public init(
+                name: Swift.String? = nil,
+                emojiNames: [Swift.String]? = nil,
+            ) {
+                self.name = name
+                self.emojiNames = emojiNames
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case name
+                case emojiNames = "emoji_names"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/categories`.
+        public typealias CategoriesPayload = [Components.Schemas.EmojiListResponse.CategoriesPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/EmojiListResponse/categories`.
+        public var categories: Components.Schemas.EmojiListResponse.CategoriesPayload?
         /// Creates a new `EmojiListResponse`.
         ///
         /// - Parameters:
-        ///   - cacheTs:
-        ///   - categories:
-        ///   - categoriesVersion:
-        ///   - emoji:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - emoji:
+        ///   - cacheTs:
+        ///   - categoriesVersion:
+        ///   - categories:
         public init(
-            cacheTs: Swift.String? = nil,
-            categories: [SlackModels.Category]? = nil,
-            categoriesVersion: Swift.String? = nil,
-            emoji: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            emoji: Components.Schemas.EmojiListResponse.EmojiPayload? = nil,
+            cacheTs: Swift.String? = nil,
+            categoriesVersion: Swift.String? = nil,
+            categories: Components.Schemas.EmojiListResponse.CategoriesPayload? = nil,
         ) {
-            self.cacheTs = cacheTs
-            self.categories = categories
-            self.categoriesVersion = categoriesVersion
-            self.emoji = emoji
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.emoji = emoji
+            self.cacheTs = cacheTs
+            self.categoriesVersion = categoriesVersion
+            self.categories = categories
         }
 
         public enum CodingKeys: String, CodingKey {
-            case cacheTs = "cache_ts"
-            case categories
-            case categoriesVersion = "categories_version"
-            case emoji
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case emoji
+            case cacheTs = "cache_ts"
+            case categoriesVersion = "categories_version"
+            case categories
         }
     }
 }

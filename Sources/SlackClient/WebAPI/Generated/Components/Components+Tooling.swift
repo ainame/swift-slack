@@ -9,90 +9,92 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Tooling
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse`.
     public struct ToolingTokensRotateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/exp`.
-        public var exp: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/iat`.
-        public var iat: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/refresh_token`.
-        public var refreshToken: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/team_id`.
-        public var teamId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/token`.
         public var token: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/refresh_token`.
+        public var refreshToken: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/team_id`.
+        public var teamId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/user_id`.
         public var userId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/iat`.
+        public var iat: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/exp`.
+        public var exp: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/ToolingTokensRotateResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `ToolingTokensRotateResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - exp:
-        ///   - iat:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
-        ///   - refreshToken:
-        ///   - responseMetadata:
-        ///   - teamId:
         ///   - token:
+        ///   - refreshToken:
+        ///   - teamId:
         ///   - userId:
+        ///   - iat:
+        ///   - exp:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            exp: Swift.Int? = nil,
-            iat: Swift.Int? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
-            refreshToken: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            teamId: Swift.String? = nil,
             token: Swift.String? = nil,
+            refreshToken: Swift.String? = nil,
+            teamId: Swift.String? = nil,
             userId: Swift.String? = nil,
+            iat: Swift.Int? = nil,
+            exp: Swift.Int? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.exp = exp
-            self.iat = iat
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
-            self.refreshToken = refreshToken
-            self.responseMetadata = responseMetadata
-            self.teamId = teamId
             self.token = token
+            self.refreshToken = refreshToken
+            self.teamId = teamId
             self.userId = userId
+            self.iat = iat
+            self.exp = exp
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case exp
-            case iat
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
-            case refreshToken = "refresh_token"
-            case responseMetadata = "response_metadata"
-            case teamId = "team_id"
             case token
+            case refreshToken = "refresh_token"
+            case teamId = "team_id"
             case userId = "user_id"
+            case iat
+            case exp
+            case responseMetadata = "response_metadata"
         }
     }
 }

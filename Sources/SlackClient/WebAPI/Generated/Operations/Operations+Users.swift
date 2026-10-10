@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Users
 extension Operations {
+    /// List conversations the calling user is a member of.
+    ///
+    /// - Remark: HTTP `POST /users.conversations`.
+    /// - Remark: Generated from `#/paths//users.conversations/post(usersConversations)`.
     public enum UsersConversations {
         public static let id: Swift.String = "usersConversations"
         public struct Input: Sendable, Hashable {
@@ -213,6 +217,10 @@ extension Operations {
         }
     }
 
+    /// Delete the user profile photo
+    ///
+    /// - Remark: HTTP `POST /users.deletePhoto`.
+    /// - Remark: Generated from `#/paths//users.deletePhoto/post(usersDeletePhoto)`.
     public enum UsersDeletePhoto {
         public static let id: Swift.String = "usersDeletePhoto"
         public struct Input: Sendable, Hashable {
@@ -349,6 +357,10 @@ extension Operations {
         }
     }
 
+    /// Look up an email address to see if someone is discoverable on Slack
+    ///
+    /// - Remark: HTTP `POST /users.discoverableContacts.lookup`.
+    /// - Remark: Generated from `#/paths//users.discoverableContacts.lookup/post(usersDiscoverableContactsLookup)`.
     public enum UsersDiscoverableContactsLookup {
         public static let id: Swift.String = "usersDiscoverableContactsLookup"
         public struct Input: Sendable, Hashable {
@@ -495,6 +507,10 @@ extension Operations {
         }
     }
 
+    /// Gets user presence information.
+    ///
+    /// - Remark: HTTP `POST /users.getPresence`.
+    /// - Remark: Generated from `#/paths//users.getPresence/post(usersGetPresence)`.
     public enum UsersGetPresence {
         public static let id: Swift.String = "usersGetPresence"
         public struct Input: Sendable, Hashable {
@@ -641,6 +657,10 @@ extension Operations {
         }
     }
 
+    /// Get a user's identity.
+    ///
+    /// - Remark: HTTP `POST /users.identity`.
+    /// - Remark: Generated from `#/paths//users.identity/post(usersIdentity)`.
     public enum UsersIdentity {
         public static let id: Swift.String = "usersIdentity"
         public struct Input: Sendable, Hashable {
@@ -777,6 +797,10 @@ extension Operations {
         }
     }
 
+    /// Gets information about a user.
+    ///
+    /// - Remark: HTTP `POST /users.info`.
+    /// - Remark: Generated from `#/paths//users.info/post(usersInfo)`.
     public enum UsersInfo {
         public static let id: Swift.String = "usersInfo"
         public struct Input: Sendable, Hashable {
@@ -933,6 +957,10 @@ extension Operations {
         }
     }
 
+    /// Lists all users in a Slack team.
+    ///
+    /// - Remark: HTTP `POST /users.list`.
+    /// - Remark: Generated from `#/paths//users.list/post(usersList)`.
     public enum UsersList {
         public static let id: Swift.String = "usersList"
         public struct Input: Sendable, Hashable {
@@ -1109,6 +1137,10 @@ extension Operations {
         }
     }
 
+    /// Find a user with an email address.
+    ///
+    /// - Remark: HTTP `POST /users.lookupByEmail`.
+    /// - Remark: Generated from `#/paths//users.lookupByEmail/post(usersLookupByEmail)`.
     public enum UsersLookupByEmail {
         public static let id: Swift.String = "usersLookupByEmail"
         public struct Input: Sendable, Hashable {
@@ -1255,6 +1287,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve a user's profile information, including their custom status.
+    ///
+    /// - Remark: HTTP `POST /users.profile.get`.
+    /// - Remark: Generated from `#/paths//users.profile.get/post(usersProfileGet)`.
     public enum UsersProfileGet {
         public static let id: Swift.String = "usersProfileGet"
         public struct Input: Sendable, Hashable {
@@ -1411,6 +1447,10 @@ extension Operations {
         }
     }
 
+    /// Set a user's profile information, including custom status.
+    ///
+    /// - Remark: HTTP `POST /users.profile.set`.
+    /// - Remark: Generated from `#/paths//users.profile.set/post(usersProfileSet)`.
     public enum UsersProfileSet {
         public static let id: Swift.String = "usersProfileSet"
         public struct Input: Sendable, Hashable {
@@ -1583,6 +1623,10 @@ extension Operations {
         }
     }
 
+    /// Marked a user as active. Deprecated and non-functional.
+    ///
+    /// - Remark: HTTP `POST /users.setActive`.
+    /// - Remark: Generated from `#/paths//users.setActive/post(usersSetActive)`.
     public enum UsersSetActive {
         public static let id: Swift.String = "usersSetActive"
         public struct Input: Sendable, Hashable {
@@ -1719,6 +1763,10 @@ extension Operations {
         }
     }
 
+    /// Set the user profile photo
+    ///
+    /// - Remark: HTTP `POST /users.setPhoto`.
+    /// - Remark: Generated from `#/paths//users.setPhoto/post(usersSetPhoto)`.
     public enum UsersSetPhoto {
         public static let id: Swift.String = "usersSetPhoto"
         public struct Input: Sendable, Hashable {
@@ -1883,6 +1931,10 @@ extension Operations {
         }
     }
 
+    /// Manually sets user presence.
+    ///
+    /// - Remark: HTTP `POST /users.setPresence`.
+    /// - Remark: Generated from `#/paths//users.setPresence/post(usersSetPresence)`.
     public enum UsersSetPresence {
         public static let id: Swift.String = "usersSetPresence"
         public struct Input: Sendable, Hashable {

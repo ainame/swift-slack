@@ -9,74 +9,95 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Migration
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse`.
     public struct MigrationExchangeResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/enterprise_id`.
-        public var enterpriseId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/invalid_user_ids`.
-        public var invalidUserIds: [Swift.String]?
-        /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/team_id`.
         public var teamId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/enterprise_id`.
+        public var enterpriseId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/invalid_user_ids`.
+        public var invalidUserIds: [Swift.String]?
         /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/user_id_map`.
-        public var userIdMap: OpenAPIRuntime.OpenAPIObjectContainer?
-        /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/warning`.
-        public var warning: Swift.String?
+        public struct UserIdMapPayload: Codable, Hashable, Sendable {
+            /// A container of undocumented properties.
+            public var additionalProperties: [String: Swift.String]
+            /// Creates a new `UserIdMapPayload`.
+            ///
+            /// - Parameters:
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(additionalProperties: [String: Swift.String] = .init()) {
+                self.additionalProperties = additionalProperties
+            }
+
+            public init(from decoder: any Swift.Decoder) throws {
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+            }
+
+            public func encode(to encoder: any Swift.Encoder) throws {
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/MigrationExchangeResponse/user_id_map`.
+        public var userIdMap: Components.Schemas.MigrationExchangeResponse.UserIdMapPayload?
         /// Creates a new `MigrationExchangeResponse`.
         ///
         /// - Parameters:
-        ///   - enterpriseId:
-        ///   - error:
-        ///   - invalidUserIds:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
         ///   - teamId:
+        ///   - enterpriseId:
+        ///   - invalidUserIds:
         ///   - userIdMap:
-        ///   - warning:
         public init(
-            enterpriseId: Swift.String? = nil,
-            error: Swift.String? = nil,
-            invalidUserIds: [Swift.String]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
             teamId: Swift.String? = nil,
-            userIdMap: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
-            warning: Swift.String? = nil,
+            enterpriseId: Swift.String? = nil,
+            invalidUserIds: [Swift.String]? = nil,
+            userIdMap: Components.Schemas.MigrationExchangeResponse.UserIdMapPayload? = nil,
         ) {
-            self.enterpriseId = enterpriseId
-            self.error = error
-            self.invalidUserIds = invalidUserIds
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
             self.teamId = teamId
+            self.enterpriseId = enterpriseId
+            self.invalidUserIds = invalidUserIds
             self.userIdMap = userIdMap
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case enterpriseId = "enterprise_id"
-            case error
-            case invalidUserIds = "invalid_user_ids"
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
             case teamId = "team_id"
+            case enterpriseId = "enterprise_id"
+            case invalidUserIds = "invalid_user_ids"
             case userIdMap = "user_id_map"
-            case warning
         }
     }
 }

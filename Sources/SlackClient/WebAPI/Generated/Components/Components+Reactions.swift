@@ -9,219 +9,914 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Reactions
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/ReactionsAddResponse`.
     public struct ReactionsAddResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ReactionsAddResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ReactionsAddResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ReactionsAddResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ReactionsAddResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ReactionsAddResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ReactionsAddResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ReactionsAddResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `ReactionsAddResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse`.
     public struct ReactionsGetResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/channel`.
-        public var channel: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message`.
-        public var message: SlackModels.Message?
-        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/type`.
-        public var _type: Swift.String
-        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/warning`.
-        public var warning: Swift.String?
+        public var _type: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/channel`.
+        public var channel: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message`.
+        public struct MessagePayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/type`.
+            public var _type: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/subtype`.
+            public var subtype: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/text`.
+            public var text: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/ts`.
+            public var ts: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/user`.
+            public var user: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/username`.
+            public var username: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/team`.
+            public var team: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/app_id`.
+            public var appId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/bot_id`.
+            public var botId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/bot_profile`.
+            public var botProfile: Components.Schemas.BotProfile?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/attachments`.
+            public var attachments: [Components.Schemas.Attachment]?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/blocks`.
+            public var blocks: [Components.Schemas.Block]?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/metadata`.
+            public struct MetadataPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/metadata/event_type`.
+                public var eventType: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/metadata/event_payload`.
+                public struct EventPayloadPayload: Codable, Hashable, Sendable {
+                    /// A container of undocumented properties.
+                    public var additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer
+                    /// Creates a new `EventPayloadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - additionalProperties: A container of undocumented properties.
+                    public init(additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer = .init()) {
+                        self.additionalProperties = additionalProperties
+                    }
+
+                    public init(from decoder: any Swift.Decoder) throws {
+                        additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                    }
+
+                    public func encode(to encoder: any Swift.Encoder) throws {
+                        try encoder.encodeAdditionalProperties(additionalProperties)
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/metadata/event_payload`.
+                public var eventPayload: Components.Schemas.ReactionsGetResponse.MessagePayload.MetadataPayload.EventPayloadPayload?
+                /// Creates a new `MetadataPayload`.
+                ///
+                /// - Parameters:
+                ///   - eventType:
+                ///   - eventPayload:
+                public init(
+                    eventType: Swift.String? = nil,
+                    eventPayload: Components.Schemas.ReactionsGetResponse.MessagePayload.MetadataPayload.EventPayloadPayload? = nil,
+                ) {
+                    self.eventType = eventType
+                    self.eventPayload = eventPayload
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case eventType = "event_type"
+                    case eventPayload = "event_payload"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/metadata`.
+            public var metadata: Components.Schemas.ReactionsGetResponse.MessagePayload.MetadataPayload?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/assistant_app_thread`.
+            public struct AssistantAppThreadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/assistant_app_thread/title`.
+                public var title: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/assistant_app_thread/title_blocks`.
+                public var titleBlocks: [Components.Schemas.Block]?
+                /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/assistant_app_thread/first_user_thread_reply`.
+                public var firstUserThreadReply: Swift.String?
+                /// Creates a new `AssistantAppThreadPayload`.
+                ///
+                /// - Parameters:
+                ///   - title:
+                ///   - titleBlocks:
+                ///   - firstUserThreadReply:
+                public init(
+                    title: Swift.String? = nil,
+                    titleBlocks: [Components.Schemas.Block]? = nil,
+                    firstUserThreadReply: Swift.String? = nil,
+                ) {
+                    self.title = title
+                    self.titleBlocks = titleBlocks
+                    self.firstUserThreadReply = firstUserThreadReply
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case title
+                    case titleBlocks = "title_blocks"
+                    case firstUserThreadReply = "first_user_thread_reply"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/assistant_app_thread`.
+            public var assistantAppThread: Components.Schemas.ReactionsGetResponse.MessagePayload.AssistantAppThreadPayload?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/permalink`.
+            public var permalink: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message/reactions`.
+            public var reactions: [Components.Schemas.Reaction]?
+            /// Creates a new `MessagePayload`.
+            ///
+            /// - Parameters:
+            ///   - _type:
+            ///   - subtype:
+            ///   - text:
+            ///   - ts:
+            ///   - user:
+            ///   - username:
+            ///   - team:
+            ///   - appId:
+            ///   - botId:
+            ///   - botProfile:
+            ///   - attachments:
+            ///   - blocks:
+            ///   - metadata:
+            ///   - assistantAppThread:
+            ///   - permalink:
+            ///   - reactions:
+            public init(
+                _type: Swift.String? = nil,
+                subtype: Swift.String? = nil,
+                text: Swift.String? = nil,
+                ts: Swift.String? = nil,
+                user: Swift.String? = nil,
+                username: Swift.String? = nil,
+                team: Swift.String? = nil,
+                appId: Swift.String? = nil,
+                botId: Swift.String? = nil,
+                botProfile: Components.Schemas.BotProfile? = nil,
+                attachments: [Components.Schemas.Attachment]? = nil,
+                blocks: [Components.Schemas.Block]? = nil,
+                metadata: Components.Schemas.ReactionsGetResponse.MessagePayload.MetadataPayload? = nil,
+                assistantAppThread: Components.Schemas.ReactionsGetResponse.MessagePayload.AssistantAppThreadPayload? = nil,
+                permalink: Swift.String? = nil,
+                reactions: [Components.Schemas.Reaction]? = nil,
+            ) {
+                self._type = _type
+                self.subtype = subtype
+                self.text = text
+                self.ts = ts
+                self.user = user
+                self.username = username
+                self.team = team
+                self.appId = appId
+                self.botId = botId
+                self.botProfile = botProfile
+                self.attachments = attachments
+                self.blocks = blocks
+                self.metadata = metadata
+                self.assistantAppThread = assistantAppThread
+                self.permalink = permalink
+                self.reactions = reactions
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case _type = "type"
+                case subtype
+                case text
+                case ts
+                case user
+                case username
+                case team
+                case appId = "app_id"
+                case botId = "bot_id"
+                case botProfile = "bot_profile"
+                case attachments
+                case blocks
+                case metadata
+                case assistantAppThread = "assistant_app_thread"
+                case permalink
+                case reactions
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/ReactionsGetResponse/message`.
+        public var message: Components.Schemas.ReactionsGetResponse.MessagePayload?
         /// Creates a new `ReactionsGetResponse`.
         ///
         /// - Parameters:
-        ///   - channel:
-        ///   - error:
-        ///   - message:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
         ///   - _type:
-        ///   - warning:
+        ///   - channel:
+        ///   - message:
         public init(
-            channel: Swift.String? = nil,
-            error: Swift.String? = nil,
-            message: SlackModels.Message? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            _type: Swift.String,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            _type: Swift.String? = nil,
+            channel: Swift.String? = nil,
+            message: Components.Schemas.ReactionsGetResponse.MessagePayload? = nil,
         ) {
-            self.channel = channel
-            self.error = error
-            self.message = message
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
             self._type = _type
-            self.warning = warning
+            self.channel = channel
+            self.message = message
         }
 
         public enum CodingKeys: String, CodingKey {
-            case channel
-            case error
-            case message
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
             case _type = "type"
-            case warning
+            case channel
+            case message
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ReactionsListResponse`.
     public struct ReactionsListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/items`.
-        public var items: [SlackModels.Item]?
-        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/paging`.
-        public var paging: SlackModels.Paging?
-        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload`.
+        public struct ItemsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/type`.
+            public var _type: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/channel`.
+            public var channel: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message`.
+            public struct MessagePayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/type`.
+                public var _type: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/subtype`.
+                public var subtype: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/channel`.
+                public var channel: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/text`.
+                public var text: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/attachments`.
+                public var attachments: [Components.Schemas.Attachment]?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/blocks`.
+                public var blocks: [Components.Schemas.Block]?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/metadata`.
+                public struct MetadataPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/metadata/event_type`.
+                    public var eventType: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/metadata/event_payload`.
+                    public struct EventPayloadPayload: Codable, Hashable, Sendable {
+                        /// A container of undocumented properties.
+                        public var additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer
+                        /// Creates a new `EventPayloadPayload`.
+                        ///
+                        /// - Parameters:
+                        ///   - additionalProperties: A container of undocumented properties.
+                        public init(additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer = .init()) {
+                            self.additionalProperties = additionalProperties
+                        }
+
+                        public init(from decoder: any Swift.Decoder) throws {
+                            additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                        }
+
+                        public func encode(to encoder: any Swift.Encoder) throws {
+                            try encoder.encodeAdditionalProperties(additionalProperties)
+                        }
+                    }
+
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/metadata/event_payload`.
+                    public var eventPayload: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.MetadataPayload.EventPayloadPayload?
+                    /// Creates a new `MetadataPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - eventType:
+                    ///   - eventPayload:
+                    public init(
+                        eventType: Swift.String? = nil,
+                        eventPayload: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.MetadataPayload.EventPayloadPayload? = nil,
+                    ) {
+                        self.eventType = eventType
+                        self.eventPayload = eventPayload
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case eventType = "event_type"
+                        case eventPayload = "event_payload"
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/metadata`.
+                public var metadata: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.MetadataPayload?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/assistant_app_thread`.
+                public struct AssistantAppThreadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/assistant_app_thread/title`.
+                    public var title: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/assistant_app_thread/title_blocks`.
+                    public var titleBlocks: [Components.Schemas.Block]?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/assistant_app_thread/first_user_thread_reply`.
+                    public var firstUserThreadReply: Swift.String?
+                    /// Creates a new `AssistantAppThreadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - title:
+                    ///   - titleBlocks:
+                    ///   - firstUserThreadReply:
+                    public init(
+                        title: Swift.String? = nil,
+                        titleBlocks: [Components.Schemas.Block]? = nil,
+                        firstUserThreadReply: Swift.String? = nil,
+                    ) {
+                        self.title = title
+                        self.titleBlocks = titleBlocks
+                        self.firstUserThreadReply = firstUserThreadReply
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case title
+                        case titleBlocks = "title_blocks"
+                        case firstUserThreadReply = "first_user_thread_reply"
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/assistant_app_thread`.
+                public var assistantAppThread: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.AssistantAppThreadPayload?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/ts`.
+                public var ts: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/team`.
+                public var team: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user`.
+                public var user: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/username`.
+                public var username: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/app_id`.
+                public var appId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/bot_id`.
+                public var botId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/permalink`.
+                public var permalink: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/files`.
+                public var files: [Components.Schemas.File]?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/upload`.
+                public var upload: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/display_as_bot`.
+                public var displayAsBot: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/is_locked`.
+                public var isLocked: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/reactions`.
+                public var reactions: [Components.Schemas.Reaction]?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/thread_ts`.
+                public var threadTs: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/reply_count`.
+                public var replyCount: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/reply_users_count`.
+                public var replyUsersCount: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/latest_reply`.
+                public var latestReply: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/parent_user_id`.
+                public var parentUserId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/reply_users`.
+                public var replyUsers: [Swift.String]?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/RepliesPayload`.
+                public struct RepliesPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/RepliesPayload/user`.
+                    public var user: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/RepliesPayload/ts`.
+                    public var ts: Swift.String?
+                    /// Creates a new `RepliesPayloadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - user:
+                    ///   - ts:
+                    public init(
+                        user: Swift.String? = nil,
+                        ts: Swift.String? = nil,
+                    ) {
+                        self.user = user
+                        self.ts = ts
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case user
+                        case ts
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/replies`.
+                public typealias RepliesPayload = [Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.RepliesPayloadPayload]
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/replies`.
+                public var replies: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.RepliesPayload?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/subscribed`.
+                public var subscribed: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/last_read`.
+                public var lastRead: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/client_msg_id`.
+                public var clientMsgId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/inviter`.
+                public var inviter: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_team`.
+                public var userTeam: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/source_team`.
+                public var sourceTeam: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/icons`.
+                public struct IconsPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/icons/image_36`.
+                    public var image36: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/icons/image_48`.
+                    public var image48: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/icons/image_64`.
+                    public var image64: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/icons/image_72`.
+                    public var image72: Swift.String?
+                    /// Creates a new `IconsPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - image36:
+                    ///   - image48:
+                    ///   - image64:
+                    ///   - image72:
+                    public init(
+                        image36: Swift.String? = nil,
+                        image48: Swift.String? = nil,
+                        image64: Swift.String? = nil,
+                        image72: Swift.String? = nil,
+                    ) {
+                        self.image36 = image36
+                        self.image48 = image48
+                        self.image64 = image64
+                        self.image72 = image72
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case image36 = "image_36"
+                        case image48 = "image_48"
+                        case image64 = "image_64"
+                        case image72 = "image_72"
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/icons`.
+                public var icons: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.IconsPayload?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_profile`.
+                public struct UserProfilePayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_profile/avatar_hash`.
+                    public var avatarHash: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_profile/image_72`.
+                    public var image72: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_profile/first_name`.
+                    public var firstName: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_profile/real_name`.
+                    public var realName: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_profile/display_name`.
+                    public var displayName: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_profile/team`.
+                    public var team: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_profile/name`.
+                    public var name: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_profile/is_restricted`.
+                    public var isRestricted: Swift.Bool?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_profile/is_ultra_restricted`.
+                    public var isUltraRestricted: Swift.Bool?
+                    /// Creates a new `UserProfilePayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - avatarHash:
+                    ///   - image72:
+                    ///   - firstName:
+                    ///   - realName:
+                    ///   - displayName:
+                    ///   - team:
+                    ///   - name:
+                    ///   - isRestricted:
+                    ///   - isUltraRestricted:
+                    public init(
+                        avatarHash: Swift.String? = nil,
+                        image72: Swift.String? = nil,
+                        firstName: Swift.String? = nil,
+                        realName: Swift.String? = nil,
+                        displayName: Swift.String? = nil,
+                        team: Swift.String? = nil,
+                        name: Swift.String? = nil,
+                        isRestricted: Swift.Bool? = nil,
+                        isUltraRestricted: Swift.Bool? = nil,
+                    ) {
+                        self.avatarHash = avatarHash
+                        self.image72 = image72
+                        self.firstName = firstName
+                        self.realName = realName
+                        self.displayName = displayName
+                        self.team = team
+                        self.name = name
+                        self.isRestricted = isRestricted
+                        self.isUltraRestricted = isUltraRestricted
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case avatarHash = "avatar_hash"
+                        case image72 = "image_72"
+                        case firstName = "first_name"
+                        case realName = "real_name"
+                        case displayName = "display_name"
+                        case team
+                        case name
+                        case isRestricted = "is_restricted"
+                        case isUltraRestricted = "is_ultra_restricted"
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/user_profile`.
+                public var userProfile: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.UserProfilePayload?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/bot_profile`.
+                public var botProfile: Components.Schemas.BotProfile?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/room`.
+                public var room: Components.Schemas.Room?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/no_notifications`.
+                public var noNotifications: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/edited`.
+                public struct EditedPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/edited/user`.
+                    public var user: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/edited/ts`.
+                    public var ts: Swift.String?
+                    /// Creates a new `EditedPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - user:
+                    ///   - ts:
+                    public init(
+                        user: Swift.String? = nil,
+                        ts: Swift.String? = nil,
+                    ) {
+                        self.user = user
+                        self.ts = ts
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case user
+                        case ts
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message/edited`.
+                public var edited: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.EditedPayload?
+                /// Creates a new `MessagePayload`.
+                ///
+                /// - Parameters:
+                ///   - _type:
+                ///   - subtype:
+                ///   - channel:
+                ///   - text:
+                ///   - attachments:
+                ///   - blocks:
+                ///   - metadata:
+                ///   - assistantAppThread:
+                ///   - ts:
+                ///   - team:
+                ///   - user:
+                ///   - username:
+                ///   - appId:
+                ///   - botId:
+                ///   - permalink:
+                ///   - files:
+                ///   - upload:
+                ///   - displayAsBot:
+                ///   - isLocked:
+                ///   - reactions:
+                ///   - threadTs:
+                ///   - replyCount:
+                ///   - replyUsersCount:
+                ///   - latestReply:
+                ///   - parentUserId:
+                ///   - replyUsers:
+                ///   - replies:
+                ///   - subscribed:
+                ///   - lastRead:
+                ///   - clientMsgId:
+                ///   - inviter:
+                ///   - userTeam:
+                ///   - sourceTeam:
+                ///   - icons:
+                ///   - userProfile:
+                ///   - botProfile:
+                ///   - room:
+                ///   - noNotifications:
+                ///   - edited:
+                public init(
+                    _type: Swift.String? = nil,
+                    subtype: Swift.String? = nil,
+                    channel: Swift.String? = nil,
+                    text: Swift.String? = nil,
+                    attachments: [Components.Schemas.Attachment]? = nil,
+                    blocks: [Components.Schemas.Block]? = nil,
+                    metadata: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.MetadataPayload? = nil,
+                    assistantAppThread: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.AssistantAppThreadPayload? = nil,
+                    ts: Swift.String? = nil,
+                    team: Swift.String? = nil,
+                    user: Swift.String? = nil,
+                    username: Swift.String? = nil,
+                    appId: Swift.String? = nil,
+                    botId: Swift.String? = nil,
+                    permalink: Swift.String? = nil,
+                    files: [Components.Schemas.File]? = nil,
+                    upload: Swift.Bool? = nil,
+                    displayAsBot: Swift.Bool? = nil,
+                    isLocked: Swift.Bool? = nil,
+                    reactions: [Components.Schemas.Reaction]? = nil,
+                    threadTs: Swift.String? = nil,
+                    replyCount: Swift.Int? = nil,
+                    replyUsersCount: Swift.Int? = nil,
+                    latestReply: Swift.String? = nil,
+                    parentUserId: Swift.String? = nil,
+                    replyUsers: [Swift.String]? = nil,
+                    replies: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.RepliesPayload? = nil,
+                    subscribed: Swift.Bool? = nil,
+                    lastRead: Swift.String? = nil,
+                    clientMsgId: Swift.String? = nil,
+                    inviter: Swift.String? = nil,
+                    userTeam: Swift.String? = nil,
+                    sourceTeam: Swift.String? = nil,
+                    icons: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.IconsPayload? = nil,
+                    userProfile: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.UserProfilePayload? = nil,
+                    botProfile: Components.Schemas.BotProfile? = nil,
+                    room: Components.Schemas.Room? = nil,
+                    noNotifications: Swift.Bool? = nil,
+                    edited: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload.EditedPayload? = nil,
+                ) {
+                    self._type = _type
+                    self.subtype = subtype
+                    self.channel = channel
+                    self.text = text
+                    self.attachments = attachments
+                    self.blocks = blocks
+                    self.metadata = metadata
+                    self.assistantAppThread = assistantAppThread
+                    self.ts = ts
+                    self.team = team
+                    self.user = user
+                    self.username = username
+                    self.appId = appId
+                    self.botId = botId
+                    self.permalink = permalink
+                    self.files = files
+                    self.upload = upload
+                    self.displayAsBot = displayAsBot
+                    self.isLocked = isLocked
+                    self.reactions = reactions
+                    self.threadTs = threadTs
+                    self.replyCount = replyCount
+                    self.replyUsersCount = replyUsersCount
+                    self.latestReply = latestReply
+                    self.parentUserId = parentUserId
+                    self.replyUsers = replyUsers
+                    self.replies = replies
+                    self.subscribed = subscribed
+                    self.lastRead = lastRead
+                    self.clientMsgId = clientMsgId
+                    self.inviter = inviter
+                    self.userTeam = userTeam
+                    self.sourceTeam = sourceTeam
+                    self.icons = icons
+                    self.userProfile = userProfile
+                    self.botProfile = botProfile
+                    self.room = room
+                    self.noNotifications = noNotifications
+                    self.edited = edited
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case _type = "type"
+                    case subtype
+                    case channel
+                    case text
+                    case attachments
+                    case blocks
+                    case metadata
+                    case assistantAppThread = "assistant_app_thread"
+                    case ts
+                    case team
+                    case user
+                    case username
+                    case appId = "app_id"
+                    case botId = "bot_id"
+                    case permalink
+                    case files
+                    case upload
+                    case displayAsBot = "display_as_bot"
+                    case isLocked = "is_locked"
+                    case reactions
+                    case threadTs = "thread_ts"
+                    case replyCount = "reply_count"
+                    case replyUsersCount = "reply_users_count"
+                    case latestReply = "latest_reply"
+                    case parentUserId = "parent_user_id"
+                    case replyUsers = "reply_users"
+                    case replies
+                    case subscribed
+                    case lastRead = "last_read"
+                    case clientMsgId = "client_msg_id"
+                    case inviter
+                    case userTeam = "user_team"
+                    case sourceTeam = "source_team"
+                    case icons
+                    case userProfile = "user_profile"
+                    case botProfile = "bot_profile"
+                    case room
+                    case noNotifications = "no_notifications"
+                    case edited
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/ItemsPayload/message`.
+            public var message: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload?
+            /// Creates a new `ItemsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - _type:
+            ///   - channel:
+            ///   - message:
+            public init(
+                _type: Swift.String? = nil,
+                channel: Swift.String? = nil,
+                message: Components.Schemas.ReactionsListResponse.ItemsPayloadPayload.MessagePayload? = nil,
+            ) {
+                self._type = _type
+                self.channel = channel
+                self.message = message
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case _type = "type"
+                case channel
+                case message
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/items`.
+        public typealias ItemsPayload = [Components.Schemas.ReactionsListResponse.ItemsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/items`.
+        public var items: Components.Schemas.ReactionsListResponse.ItemsPayload?
+        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/paging`.
+        public var paging: Components.Schemas.Paging?
+        /// - Remark: Generated from `#/components/schemas/ReactionsListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `ReactionsListResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - items:
-        ///   - needed:
         ///   - ok:
-        ///   - paging:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - items:
+        ///   - paging:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            items: [SlackModels.Item]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            paging: SlackModels.Paging? = nil,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            items: Components.Schemas.ReactionsListResponse.ItemsPayload? = nil,
+            paging: Components.Schemas.Paging? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.items = items
-            self.needed = needed
             self.ok = ok
-            self.paging = paging
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.items = items
+            self.paging = paging
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case items
-            case needed
             case ok
-            case paging
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case items
+            case paging
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ReactionsRemoveResponse`.
     public struct ReactionsRemoveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ReactionsRemoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ReactionsRemoveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ReactionsRemoveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ReactionsRemoveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ReactionsRemoveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ReactionsRemoveResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ReactionsRemoveResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `ReactionsRemoveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 }

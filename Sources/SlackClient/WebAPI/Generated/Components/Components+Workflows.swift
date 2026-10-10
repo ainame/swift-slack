@@ -9,195 +9,191 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Workflows
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedAddResponse`.
     public struct WorkflowsFeaturedAddResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedAddResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedAddResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedAddResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedAddResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedAddResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedAddResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedAddResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `WorkflowsFeaturedAddResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse`.
     public struct WorkflowsFeaturedListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/featured_workflows`.
-        public var featuredWorkflows: [SlackModels.FeaturedWorkflow]?
-        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/invalid_channel_ids`.
-        public var invalidChannelIds: [Swift.String]?
-        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/featured_workflows`.
+        public var featuredWorkflows: [Components.Schemas.FeaturedWorkflow]?
+        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedListResponse/invalid_channel_ids`.
+        public var invalidChannelIds: [Swift.String]?
         /// Creates a new `WorkflowsFeaturedListResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
+        ///   - needed:
+        ///   - provided:
         ///   - featuredWorkflows:
         ///   - invalidChannelIds:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - warning:
         public init(
-            error: Swift.String? = nil,
-            featuredWorkflows: [SlackModels.FeaturedWorkflow]? = nil,
-            invalidChannelIds: [Swift.String]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            featuredWorkflows: [Components.Schemas.FeaturedWorkflow]? = nil,
+            invalidChannelIds: [Swift.String]? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
+            self.needed = needed
+            self.provided = provided
             self.featuredWorkflows = featuredWorkflows
             self.invalidChannelIds = invalidChannelIds
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
+            case needed
+            case provided
             case featuredWorkflows = "featured_workflows"
             case invalidChannelIds = "invalid_channel_ids"
-            case needed
-            case ok
-            case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedRemoveResponse`.
     public struct WorkflowsFeaturedRemoveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedRemoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedRemoveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedRemoveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedRemoveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedRemoveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedRemoveResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedRemoveResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `WorkflowsFeaturedRemoveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedSetResponse`.
     public struct WorkflowsFeaturedSetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedSetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedSetResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedSetResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedSetResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedSetResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedSetResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/WorkflowsFeaturedSetResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `WorkflowsFeaturedSetResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 }

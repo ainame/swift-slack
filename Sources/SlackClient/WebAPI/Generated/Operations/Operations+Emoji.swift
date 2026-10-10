@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Emoji
 extension Operations {
+    /// Lists custom emoji for a team.
+    ///
+    /// - Remark: HTTP `POST /emoji.list`.
+    /// - Remark: Generated from `#/paths//emoji.list/post(emojiList)`.
     public enum EmojiList {
         public static let id: Swift.String = "emojiList"
         public struct Input: Sendable, Hashable {

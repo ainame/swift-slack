@@ -11,6 +11,7 @@ import struct Foundation.Date
 import struct Foundation.URL
 #endif
 import HTTPTypes
+import SlackBlockKit
 
 extension Client {
     /// Sends an ephemeral message to a user in a channel.

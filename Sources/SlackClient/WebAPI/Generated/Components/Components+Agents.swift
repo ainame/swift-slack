@@ -9,117 +9,117 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Agents
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/AgentsSessionsRenameResponse`.
     public struct AgentsSessionsRenameResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AgentsSessionsRenameResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AgentsSessionsRenameResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AgentsSessionsRenameResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AgentsSessionsRenameResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AgentsSessionsRenameResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AgentsSessionsRenameResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AgentsSessionsRenameResponse/title`.
         public var title: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AgentsSessionsRenameResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AgentsSessionsRenameResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - title:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
             title: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.title = title
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case title
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse`.
     public struct AgentsSessionsSetStatusResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse/agent_status`.
-        public var agentStatus: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse/status`.
         public var status: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse/agent_status`.
+        public var agentStatus: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse/title`.
         public var title: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AgentsSessionsSetStatusResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `AgentsSessionsSetStatusResponse`.
         ///
         /// - Parameters:
-        ///   - agentStatus:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - status:
+        ///   - agentStatus:
         ///   - title:
-        ///   - warning:
         public init(
-            agentStatus: Swift.String? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
             status: Swift.String? = nil,
+            agentStatus: Swift.String? = nil,
             title: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
-            self.agentStatus = agentStatus
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.status = status
+            self.agentStatus = agentStatus
             self.title = title
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case agentStatus = "agent_status"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case status
+            case agentStatus = "agent_status"
             case title
-            case warning
         }
     }
 }

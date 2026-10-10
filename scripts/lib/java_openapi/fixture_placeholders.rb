@@ -13,8 +13,9 @@ require 'json'
 #     placeholder for that Java type and contradicts the override.
 #   * Placeholders inside Block Kit subtrees, which downstream swift-slack's hand-written SlackBlockKit
 #     decodes (empty component schemas in the document). There, `""` URLs become https://example.com, an empty
-#     text object `type` becomes plain_text, an empty rich text list `style` becomes bullet, and an empty
-#     optional button or confirm `style` is dropped.
+#     text object `type` becomes plain_text, an empty rich text list `style` becomes bullet, an empty
+#     optional button or confirm `style` is dropped, `""` entries of a conversation filter's `include` are
+#     dropped, and an overflow menu without `options` (a list the recorder left null) gets an empty list.
 module FixturePlaceholders
   PLACEHOLDERS = { 'string' => '', 'integer' => 123, 'number' => 12.3, 'boolean' => false }.freeze
   BLOCK_KIT_URL_KEYS = %w[url image_url title_url provider_icon_url video_url thumbnail_url].freeze
@@ -130,6 +131,7 @@ module FixturePlaceholders
 
     def fix_block_kit_object(object)
       text_object = object.key?('text') && object.key?('type')
+      object = object.merge('options' => replaced([])) if object['type'] == 'overflow' && !object.key?('options')
       object.each_with_object({}) do |(key, child), fixed|
         if key == 'style' && child == '' && object['type'] == 'rich_text_list'
           fixed[key] = replaced(BLOCK_KIT_LIST_STYLE)
@@ -139,6 +141,9 @@ module FixturePlaceholders
           fixed[key] = replaced(BLOCK_KIT_URL)
         elsif text_object && key == 'type' && child == ''
           fixed[key] = replaced(BLOCK_KIT_TEXT_TYPE)
+        elsif key == 'include' && child.is_a?(Array) && child.include?('')
+          @counts.block_kit += child.count('')
+          fixed[key] = child - ['']
         else
           fixed[key] = fix_block_kit(child)
         end

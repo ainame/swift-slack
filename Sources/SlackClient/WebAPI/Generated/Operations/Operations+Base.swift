@@ -9,5 +9,7 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
+import SlackBlockKit
+
 /// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
 public enum Operations {}

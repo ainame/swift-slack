@@ -5,5 +5,5 @@ source "https://rubygems.org"
 gem "json", "~> 3.0", ">= 3.0.2"
 gem "minitest", "~> 6.0"
 
-# Prototypes/JavaOpenAPI parses java-slack-sdk sources with tree-sitter (grammar: vendor/tree-sitter-java).
+# scripts/lib/java_openapi parses java-slack-sdk sources with tree-sitter (grammar: vendor/tree-sitter-java).
 gem "ruby_tree_sitter", "~> 2.1"

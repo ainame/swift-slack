@@ -9,218 +9,259 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Auth
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/AuthRevokeResponse`.
     public struct AuthRevokeResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AuthRevokeResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AuthRevokeResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AuthRevokeResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AuthRevokeResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthRevokeResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AuthRevokeResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthRevokeResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthRevokeResponse/revoked`.
+        public var revoked: Swift.Bool?
         /// Creates a new `AuthRevokeResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - revoked:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            revoked: Swift.Bool? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.revoked = revoked
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case revoked
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse`.
     public struct AuthTeamsListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/TeamsPayload`.
+        public struct TeamsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/TeamsPayload/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/TeamsPayload/name`.
+            public var name: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/TeamsPayload/icon`.
+            public var icon: Components.Schemas.TeamIcon?
+            /// Creates a new `TeamsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - name:
+            ///   - icon:
+            public init(
+                id: Swift.String? = nil,
+                name: Swift.String? = nil,
+                icon: Components.Schemas.TeamIcon? = nil,
+            ) {
+                self.id = id
+                self.name = name
+                self.icon = icon
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case name
+                case icon
+            }
+        }
+
         /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/teams`.
-        public var teams: [SlackModels.Team]?
-        /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/warning`.
-        public var warning: Swift.String?
+        public typealias TeamsPayload = [Components.Schemas.AuthTeamsListResponse.TeamsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/teams`.
+        public var teams: Components.Schemas.AuthTeamsListResponse.TeamsPayload?
+        /// - Remark: Generated from `#/components/schemas/AuthTeamsListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AuthTeamsListResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - teams:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            teams: [SlackModels.Team]? = nil,
-            warning: Swift.String? = nil,
+            teams: Components.Schemas.AuthTeamsListResponse.TeamsPayload? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.teams = teams
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case teams
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/AuthTestResponse`.
     public struct AuthTestResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/context`.
+        public var context: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/url`.
+        public var url: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/team`.
+        public var team: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/user`.
+        public var user: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/bot_id`.
+        public var botId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/team_id`.
+        public var teamId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/user_id`.
+        public var userId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/enterprise_id`.
+        public var enterpriseId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AuthTestResponse/app_id`.
         public var appId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AuthTestResponse/app_name`.
         public var appName: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/bot_id`.
-        public var botId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/enterprise_id`.
-        public var enterpriseId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/expires_in`.
-        public var expiresIn: Swift.Int?
         /// - Remark: Generated from `#/components/schemas/AuthTestResponse/is_enterprise_install`.
         public var isEnterpriseInstall: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/team`.
-        public var team: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/team_id`.
-        public var teamId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/url`.
-        public var url: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/user`.
-        public var user: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/user_id`.
-        public var userId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AuthTestResponse/expires_in`.
+        public var expiresIn: Swift.Int?
         /// Creates a new `AuthTestResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - context:
+        ///   - needed:
+        ///   - provided:
+        ///   - url:
+        ///   - team:
+        ///   - user:
+        ///   - botId:
+        ///   - teamId:
+        ///   - userId:
+        ///   - enterpriseId:
         ///   - appId:
         ///   - appName:
-        ///   - botId:
-        ///   - enterpriseId:
-        ///   - error:
-        ///   - expiresIn:
         ///   - isEnterpriseInstall:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - team:
-        ///   - teamId:
-        ///   - url:
-        ///   - user:
-        ///   - userId:
-        ///   - warning:
+        ///   - expiresIn:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            context: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            url: Swift.String? = nil,
+            team: Swift.String? = nil,
+            user: Swift.String? = nil,
+            botId: Swift.String? = nil,
+            teamId: Swift.String? = nil,
+            userId: Swift.String? = nil,
+            enterpriseId: Swift.String? = nil,
             appId: Swift.String? = nil,
             appName: Swift.String? = nil,
-            botId: Swift.String? = nil,
-            enterpriseId: Swift.String? = nil,
-            error: Swift.String? = nil,
-            expiresIn: Swift.Int? = nil,
             isEnterpriseInstall: Swift.Bool? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            team: Swift.String? = nil,
-            teamId: Swift.String? = nil,
-            url: Swift.String? = nil,
-            user: Swift.String? = nil,
-            userId: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            expiresIn: Swift.Int? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.context = context
+            self.needed = needed
+            self.provided = provided
+            self.url = url
+            self.team = team
+            self.user = user
+            self.botId = botId
+            self.teamId = teamId
+            self.userId = userId
+            self.enterpriseId = enterpriseId
             self.appId = appId
             self.appName = appName
-            self.botId = botId
-            self.enterpriseId = enterpriseId
-            self.error = error
-            self.expiresIn = expiresIn
             self.isEnterpriseInstall = isEnterpriseInstall
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.team = team
-            self.teamId = teamId
-            self.url = url
-            self.user = user
-            self.userId = userId
-            self.warning = warning
+            self.expiresIn = expiresIn
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case context
+            case needed
+            case provided
+            case url
+            case team
+            case user
+            case botId = "bot_id"
+            case teamId = "team_id"
+            case userId = "user_id"
+            case enterpriseId = "enterprise_id"
             case appId = "app_id"
             case appName = "app_name"
-            case botId = "bot_id"
-            case enterpriseId = "enterprise_id"
-            case error
-            case expiresIn = "expires_in"
             case isEnterpriseInstall = "is_enterprise_install"
-            case needed
-            case ok
-            case provided
-            case team
-            case teamId = "team_id"
-            case url
-            case user
-            case userId = "user_id"
-            case warning
+            case expiresIn = "expires_in"
         }
     }
 }

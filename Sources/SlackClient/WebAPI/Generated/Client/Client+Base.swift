@@ -10,6 +10,7 @@ import struct Foundation.Date
 import struct Foundation.URL
 #endif
 import HTTPTypes
+import SlackBlockKit
 
 struct Client: APIProtocol {
     /// The underlying HTTP client.

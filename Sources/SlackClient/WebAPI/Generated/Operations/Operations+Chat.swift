@@ -9,18 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackBlockKit)
 import SlackBlockKit
-#endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
 
 #if WebAPI_Chat
 extension Operations {
+    /// Sends an ephemeral message to a user in a channel.
+    ///
+    /// - Remark: HTTP `POST /chat.postEphemeral`.
+    /// - Remark: Generated from `#/paths//chat.postEphemeral/post(chatPostEphemeral)`.
     public enum ChatPostEphemeral {
         public static let id: Swift.String = "chatPostEphemeral"
         public struct Input: Sendable, Hashable {
@@ -48,11 +44,11 @@ extension Operations {
                     /// A JSON-based array of structured attachments, presented as a URL-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/chat.postEphemeral/POST/requestBody/json/attachments`.
-                    public var attachments: [SlackModels.Attachment]?
+                    public var attachments: [Components.Schemas.Attachment]?
                     /// A JSON-based array of structured blocks, presented as a URL-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/chat.postEphemeral/POST/requestBody/json/blocks`.
-                    public var blocks: [SlackBlockKit.Block]?
+                    public var blocks: [Components.Schemas.Block]?
                     /// Channel, private group, or IM channel to send message to. Can be an encoded ID, or a name.
                     ///
                     /// - Remark: Generated from `#/paths/chat.postEphemeral/POST/requestBody/json/channel`.
@@ -122,8 +118,8 @@ extension Operations {
                     ///   - username: Set your bot's user name.
                     public init(
                         asUser: Swift.Bool? = nil,
-                        attachments: [SlackModels.Attachment]? = nil,
-                        blocks: [SlackBlockKit.Block]? = nil,
+                        attachments: [Components.Schemas.Attachment]? = nil,
+                        blocks: [Components.Schemas.Block]? = nil,
                         channel: Swift.String,
                         iconEmoji: Swift.String? = nil,
                         iconUrl: Swift.String? = nil,
@@ -279,6 +275,10 @@ extension Operations {
         }
     }
 
+    /// Sends a message to a channel.
+    ///
+    /// - Remark: HTTP `POST /chat.postMessage`.
+    /// - Remark: Generated from `#/paths//chat.postMessage/post(chatPostMessage)`.
     public enum ChatPostMessage {
         public static let id: Swift.String = "chatPostMessage"
         public struct Input: Sendable, Hashable {
@@ -306,11 +306,11 @@ extension Operations {
                     /// A JSON-based array of structured attachments, presented as a URL-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/chat.postMessage/POST/requestBody/json/attachments`.
-                    public var attachments: [SlackModels.Attachment]?
+                    public var attachments: [Components.Schemas.Attachment]?
                     /// A JSON-based array of structured blocks, presented as a URL-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/chat.postMessage/POST/requestBody/json/blocks`.
-                    public var blocks: [SlackBlockKit.Block]?
+                    public var blocks: [Components.Schemas.Block]?
                     /// An encoded ID or channel name that represents a channel, private group, or IM channel to send the message to. See below for more details.
                     ///
                     /// - Remark: Generated from `#/paths/chat.postMessage/POST/requestBody/json/channel`.
@@ -404,8 +404,8 @@ extension Operations {
                     ///   - unfurlAppLinks: Pass true to unfurl links from installed apps, or false to prevent app links from unfurling. When omitted, app links follow the unfurl_links setting.
                     public init(
                         asUser: Swift.Bool? = nil,
-                        attachments: [SlackModels.Attachment]? = nil,
-                        blocks: [SlackBlockKit.Block]? = nil,
+                        attachments: [Components.Schemas.Attachment]? = nil,
+                        blocks: [Components.Schemas.Block]? = nil,
                         channel: Swift.String,
                         currentDraftLastUpdatedTs: Swift.String? = nil,
                         iconEmoji: Swift.String? = nil,
@@ -576,6 +576,10 @@ extension Operations {
         }
     }
 
+    /// Schedules a message to be sent to a channel.
+    ///
+    /// - Remark: HTTP `POST /chat.scheduleMessage`.
+    /// - Remark: Generated from `#/paths//chat.scheduleMessage/post(chatScheduleMessage)`.
     public enum ChatScheduleMessage {
         public static let id: Swift.String = "chatScheduleMessage"
         public struct Input: Sendable, Hashable {
@@ -603,11 +607,11 @@ extension Operations {
                     /// A JSON-based array of structured attachments, presented as a URL-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/chat.scheduleMessage/POST/requestBody/json/attachments`.
-                    public var attachments: [SlackModels.Attachment]?
+                    public var attachments: [Components.Schemas.Attachment]?
                     /// A JSON-based array of structured blocks, presented as a URL-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/chat.scheduleMessage/POST/requestBody/json/blocks`.
-                    public var blocks: [SlackBlockKit.Block]?
+                    public var blocks: [Components.Schemas.Block]?
                     /// Channel, private group, or DM channel to send message to. Can be an encoded ID, or a name. See below for more details.
                     ///
                     /// - Remark: Generated from `#/paths/chat.scheduleMessage/POST/requestBody/json/channel`.
@@ -673,8 +677,8 @@ extension Operations {
                     /// member of that workspace.
                     public init(
                         asUser: Swift.Bool? = nil,
-                        attachments: [SlackModels.Attachment]? = nil,
-                        blocks: [SlackBlockKit.Block]? = nil,
+                        attachments: [Components.Schemas.Attachment]? = nil,
+                        blocks: [Components.Schemas.Block]? = nil,
                         channel: Swift.String,
                         linkNames: Swift.Bool? = nil,
                         markdownText: Swift.String? = nil,
@@ -830,6 +834,10 @@ extension Operations {
         }
     }
 
+    /// Updates a message.
+    ///
+    /// - Remark: HTTP `POST /chat.update`.
+    /// - Remark: Generated from `#/paths//chat.update/post(chatUpdate)`.
     public enum ChatUpdate {
         public static let id: Swift.String = "chatUpdate"
         public struct Input: Sendable, Hashable {
@@ -857,7 +865,7 @@ extension Operations {
                     /// A JSON-based array of structured attachments, presented as a URL-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/chat.update/POST/requestBody/json/attachments`.
-                    public var attachments: [SlackModels.Attachment]?
+                    public var attachments: [Components.Schemas.Attachment]?
                     /// A JSON-based array of structured attachments, presented as a URL-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/chat.update/POST/requestBody/json/unfurled_attachments`.
@@ -865,7 +873,7 @@ extension Operations {
                     /// A JSON-based array of structured blocks, presented as a URL-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/chat.update/POST/requestBody/json/blocks`.
-                    public var blocks: [SlackBlockKit.Block]?
+                    public var blocks: [Components.Schemas.Block]?
                     /// Accepts message text formatted in markdown. This argument should not be used in conjunction with blocks or text. Limit this field to 12,000 characters.
                     ///
                     /// - Remark: Generated from `#/paths/chat.update/POST/requestBody/json/markdown_text`.
@@ -927,9 +935,9 @@ extension Operations {
                     ///   - fileIds: Array of new file ids that will be sent with this message.
                     public init(
                         asUser: Swift.Bool? = nil,
-                        attachments: [SlackModels.Attachment]? = nil,
+                        attachments: [Components.Schemas.Attachment]? = nil,
                         unfurledAttachments: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
-                        blocks: [SlackBlockKit.Block]? = nil,
+                        blocks: [Components.Schemas.Block]? = nil,
                         markdownText: Swift.String? = nil,
                         metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
                         channel: Swift.String,
@@ -1081,6 +1089,10 @@ extension Operations {
         }
     }
 
+    /// Appends text to an existing streaming conversation.
+    ///
+    /// - Remark: HTTP `POST /chat.appendStream`.
+    /// - Remark: Generated from `#/paths//chat.appendStream/post(chatAppendStream)`.
     public enum ChatAppendStream {
         public static let id: Swift.String = "chatAppendStream"
         public struct Input: Sendable, Hashable {
@@ -1253,6 +1265,10 @@ extension Operations {
         }
     }
 
+    /// Deletes a message.
+    ///
+    /// - Remark: HTTP `POST /chat.delete`.
+    /// - Remark: Generated from `#/paths//chat.delete/post(chatDelete)`.
     public enum ChatDelete {
         public static let id: Swift.String = "chatDelete"
         public struct Input: Sendable, Hashable {
@@ -1419,6 +1435,10 @@ extension Operations {
         }
     }
 
+    /// Deletes a pending scheduled message from the queue.
+    ///
+    /// - Remark: HTTP `POST /chat.deleteScheduledMessage`.
+    /// - Remark: Generated from `#/paths//chat.deleteScheduledMessage/post(chatDeleteScheduledMessage)`.
     public enum ChatDeleteScheduledMessage {
         public static let id: Swift.String = "chatDeleteScheduledMessage"
         public struct Input: Sendable, Hashable {
@@ -1585,6 +1605,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve a permalink URL for a specific extant message
+    ///
+    /// - Remark: HTTP `POST /chat.getPermalink`.
+    /// - Remark: Generated from `#/paths//chat.getPermalink/post(chatGetPermalink)`.
     public enum ChatGetPermalink {
         public static let id: Swift.String = "chatGetPermalink"
         public struct Input: Sendable, Hashable {
@@ -1741,6 +1765,10 @@ extension Operations {
         }
     }
 
+    /// Share a me message into a channel.
+    ///
+    /// - Remark: HTTP `POST /chat.meMessage`.
+    /// - Remark: Generated from `#/paths//chat.meMessage/post(chatMeMessage)`.
     public enum ChatMeMessage {
         public static let id: Swift.String = "chatMeMessage"
         public struct Input: Sendable, Hashable {
@@ -1897,6 +1925,10 @@ extension Operations {
         }
     }
 
+    /// Returns a list of scheduled messages.
+    ///
+    /// - Remark: HTTP `POST /chat.scheduledMessages.list`.
+    /// - Remark: Generated from `#/paths//chat.scheduledMessages.list/post(chatScheduledMessagesList)`.
     public enum ChatScheduledMessagesList {
         public static let id: Swift.String = "chatScheduledMessagesList"
         public struct Input: Sendable, Hashable {
@@ -2085,6 +2117,10 @@ extension Operations {
         }
     }
 
+    /// Starts a new streaming conversation.
+    ///
+    /// - Remark: HTTP `POST /chat.startStream`.
+    /// - Remark: Generated from `#/paths//chat.startStream/post(chatStartStream)`.
     public enum ChatStartStream {
         public static let id: Swift.String = "chatStartStream"
         public struct Input: Sendable, Hashable {
@@ -2309,6 +2345,10 @@ extension Operations {
         }
     }
 
+    /// Stops a streaming conversation.
+    ///
+    /// - Remark: HTTP `POST /chat.stopStream`.
+    /// - Remark: Generated from `#/paths//chat.stopStream/post(chatStopStream)`.
     public enum ChatStopStream {
         public static let id: Swift.String = "chatStopStream"
         public struct Input: Sendable, Hashable {
@@ -2348,7 +2388,7 @@ extension Operations {
                     /// A list of blocks that will be rendered at the bottom of the finalized message.
                     ///
                     /// - Remark: Generated from `#/paths/chat.stopStream/POST/requestBody/json/blocks`.
-                    public var blocks: [SlackBlockKit.Block]?
+                    public var blocks: [Components.Schemas.Block]?
                     /// JSON object with event_type and event_payload fields, presented as a URL-encoded string. Metadata you post to Slack is accessible to any app or user who is a member of that
                     /// workspace.
                     ///
@@ -2374,7 +2414,7 @@ extension Operations {
                         chunks: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
                         ts: Swift.String,
                         markdownText: Swift.String? = nil,
-                        blocks: [SlackBlockKit.Block]? = nil,
+                        blocks: [Components.Schemas.Block]? = nil,
                         metadata: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
                         sessionStatus: Swift.String? = nil,
                     ) {
@@ -2507,6 +2547,10 @@ extension Operations {
         }
     }
 
+    /// Provide custom unfurl behavior for user-posted URLs
+    ///
+    /// - Remark: HTTP `POST /chat.unfurl`.
+    /// - Remark: Generated from `#/paths//chat.unfurl/post(chatUnfurl)`.
     public enum ChatUnfurl {
         public static let id: Swift.String = "chatUnfurl"
         public struct Input: Sendable, Hashable {

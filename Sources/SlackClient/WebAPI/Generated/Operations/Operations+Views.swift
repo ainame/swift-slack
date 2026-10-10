@@ -9,14 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackBlockKit)
 import SlackBlockKit
-#endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
 
 #if WebAPI_Views
 extension Operations {
+    /// Open a view for a user.
+    ///
+    /// - Remark: HTTP `POST /views.open`.
+    /// - Remark: Generated from `#/paths//views.open/post(viewsOpen)`.
     public enum ViewsOpen {
         public static let id: Swift.String = "viewsOpen"
         public struct Input: Sendable, Hashable {
@@ -48,7 +48,7 @@ extension Operations {
                     /// A view payload. This must be a JSON-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/views.open/POST/requestBody/json/view`.
-                    public var view: SlackBlockKit.View
+                    public var view: Components.Schemas.View
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -58,7 +58,7 @@ extension Operations {
                     public init(
                         triggerId: Swift.String? = nil,
                         interactivityPointer: Swift.String? = nil,
-                        view: SlackBlockKit.View,
+                        view: Components.Schemas.View,
                     ) {
                         self.triggerId = triggerId
                         self.interactivityPointer = interactivityPointer
@@ -181,6 +181,10 @@ extension Operations {
         }
     }
 
+    /// Push a view onto the stack of a root view.
+    ///
+    /// - Remark: HTTP `POST /views.push`.
+    /// - Remark: Generated from `#/paths//views.push/post(viewsPush)`.
     public enum ViewsPush {
         public static let id: Swift.String = "viewsPush"
         public struct Input: Sendable, Hashable {
@@ -212,7 +216,7 @@ extension Operations {
                     /// A view payload. This must be a JSON-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/views.push/POST/requestBody/json/view`.
-                    public var view: SlackBlockKit.View
+                    public var view: Components.Schemas.View
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -222,7 +226,7 @@ extension Operations {
                     public init(
                         triggerId: Swift.String? = nil,
                         interactivityPointer: Swift.String? = nil,
-                        view: SlackBlockKit.View,
+                        view: Components.Schemas.View,
                     ) {
                         self.triggerId = triggerId
                         self.interactivityPointer = interactivityPointer
@@ -345,6 +349,10 @@ extension Operations {
         }
     }
 
+    /// Update an existing view.
+    ///
+    /// - Remark: HTTP `POST /views.update`.
+    /// - Remark: Generated from `#/paths//views.update/post(viewsUpdate)`.
     public enum ViewsUpdate {
         public static let id: Swift.String = "viewsUpdate"
         public struct Input: Sendable, Hashable {
@@ -376,7 +384,7 @@ extension Operations {
                     /// A view object. This must be a JSON-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/views.update/POST/requestBody/json/view`.
-                    public var view: SlackBlockKit.View
+                    public var view: Components.Schemas.View
                     /// A string that represents view state to protect against possible race conditions.
                     ///
                     /// - Remark: Generated from `#/paths/views.update/POST/requestBody/json/hash`.
@@ -392,7 +400,7 @@ extension Operations {
                     public init(
                         viewId: Swift.String? = nil,
                         externalId: Swift.String? = nil,
-                        view: SlackBlockKit.View,
+                        view: Components.Schemas.View,
                         hash: Swift.String? = nil,
                     ) {
                         self.viewId = viewId
@@ -518,6 +526,10 @@ extension Operations {
         }
     }
 
+    /// Publish a static view for a User.
+    ///
+    /// - Remark: HTTP `POST /views.publish`.
+    /// - Remark: Generated from `#/paths//views.publish/post(viewsPublish)`.
     public enum ViewsPublish {
         public static let id: Swift.String = "viewsPublish"
         public struct Input: Sendable, Hashable {
@@ -545,7 +557,7 @@ extension Operations {
                     /// A view payload. This must be a JSON-encoded string.
                     ///
                     /// - Remark: Generated from `#/paths/views.publish/POST/requestBody/json/view`.
-                    public var view: SlackBlockKit.View
+                    public var view: Components.Schemas.View
                     /// A string that represents view state to protect against possible race conditions.
                     ///
                     /// - Remark: Generated from `#/paths/views.publish/POST/requestBody/json/hash`.
@@ -563,7 +575,7 @@ extension Operations {
                     ///   - interactivityPointer:
                     public init(
                         userId: Swift.String,
-                        view: SlackBlockKit.View,
+                        view: Components.Schemas.View,
                         hash: Swift.String? = nil,
                         interactivityPointer: Swift.String? = nil,
                     ) {

@@ -8,26 +8,64 @@ require_relative '../generate_webapi'
 class GenerateWebapiTest < Minitest::Test
   VENDOR_DIR = File.expand_path('../../vendor', __dir__)
 
+  def build(methods, events: [])
+    api_ref_paths = methods.map { |method| Dir.glob(File.join(VENDOR_DIR, "slack-api-ref/methods/*/#{method}.json")).first }
+    event_paths = events.map { |event| File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/events/#{event}Payload.json") }
+    openapi = nil
+    _, stderr = capture_io { openapi, = build_openapi(api_ref_paths, methods.to_set - ['admin.apps.permissions.set'], event_paths) }
+    [openapi, stderr]
+  end
+
   def test_only_supported_methods_with_java_fixtures_are_generated
-    Dir.mktmpdir do |directory|
-      FileUtils.mkdir_p(File.join(directory, 'schemas'))
-      api_ref_paths = %w[
-        usergroups/usergroups.list
-        api/api.test
-        rtm/rtm.connect
-        admin/admin.apps.permissions.set
-      ].map { File.join(VENDOR_DIR, "slack-api-ref/methods/#{_1}.json") }
-      sample_paths = %w[usergroups.list api.test rtm.connect].map do
-        File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/api/#{_1}.json")
-      end
+    openapi, stderr = build(%w[usergroups.list api.test rtm.connect admin.apps.permissions.set])
 
-      _, stderr = capture_io { main(api_ref_paths, sample_paths, directory) }
-      schema = JSON.parse(File.read(File.join(directory, 'openapi.json')))
+    # rtm.connect has a fixture but is a legacy API.
+    assert_equal %w[api.test usergroups.list], openapi.fetch('paths').keys.sort
+    assert_match(/Skip admin\.apps\.permissions\.set: no java-slack-sdk fixture/, stderr)
+  end
 
-      # rtm.connect has a fixture but is a legacy API.
-      assert_equal %w[api.test usergroups.list], schema.fetch('paths').keys.sort
-      assert_match(/Skip admin\.apps\.permissions\.set: no java-slack-sdk fixture/, stderr)
+  def test_responses_come_from_java_response_classes
+    openapi, = build(%w[api.test oauth.v2.access])
+    schemas = openapi.dig('components', 'schemas')
+
+    reference = openapi.dig('paths', 'api.test', 'post', 'responses', '200', 'content', 'application/json', 'schema', '$ref')
+    assert_equal '#/components/schemas/APITestResponse', reference
+    assert_equal %w[ok], schemas.dig('APITestResponse', 'required')
+    assert_equal 'object', schemas.dig('APITestResponse', 'properties', 'args', 'type')
+    assert schemas.key?('OauthV2AccessResponse'), 'oauth.v2.access uses OAuthV2AccessResponse in java-slack-sdk'
+  end
+
+  def test_top_level_model_classes_are_shared_schemas
+    openapi, = build(%w[users.info conversations.info])
+    schemas = openapi.dig('components', 'schemas')
+
+    assert_equal '#/components/schemas/User', schemas.dig('UsersInfoResponse', 'properties', 'user', '$ref')
+    assert_equal '#/components/schemas/Conversation', schemas.dig('ConversationsInfoResponse', 'properties', 'channel', '$ref')
+    assert schemas.dig('User', 'properties', 'profile', 'properties'), 'User.Profile is an inline schema'
+    assert_nil schemas.dig('User', 'required')
+  end
+
+  def test_events_are_marked_with_their_type_and_subtype
+    openapi, = build([], events: %w[ImClose MessageBot])
+
+    assert_equal({ 'IMCloseEvent' => { 'type' => 'im_close' },
+                   'MessageBotEvent' => { 'type' => 'message', 'subtype' => 'bot_message' } },
+                 openapi['x-slack-events'])
+    assert_equal %w[type], openapi.dig('components', 'schemas', 'IMCloseEvent', 'required')
+  end
+
+  def test_block_kit_and_type_overrides
+    openapi, builder = nil
+    capture_io do
+      openapi, builder = build_openapi([Dir.glob(File.join(VENDOR_DIR, 'slack-api-ref/methods/*/files.info.json')).first],
+                                       Set['files.info'], [])
     end
+    file = openapi.dig('components', 'schemas', 'File', 'properties')
+
+    assert_equal 'SlackBlockKit.Block', builder.type_mappings['Block']
+    assert_equal 'integer', file.dig('original_w', 'type')
+    assert_equal 'string', file.dig('original_w', 'x-java-type')
+    assert_match(/declared `String`, but recorded responses send integers/, file.dig('original_w', 'description'))
   end
 
   def test_reads_utf8_sources_under_a_non_utf8_locale
@@ -45,89 +83,6 @@ class GenerateWebapiTest < Minitest::Test
 
       assert status.success?, stderr
       assert_equal 'Checks the API’s availability', stdout.force_encoding(Encoding::UTF_8)
-    end
-  end
-
-  def test_operations_reference_the_schema_name_quicktype_emits
-    Dir.mktmpdir do |directory|
-      FileUtils.mkdir_p(File.join(directory, 'schemas'))
-      api_ref_paths = [File.join(VENDOR_DIR, 'slack-api-ref/methods/api/api.test.json')]
-      sample_paths = [File.join(VENDOR_DIR, 'java-slack-sdk/json-logs/samples/api/api.test.json')]
-
-      capture_io { main(api_ref_paths, sample_paths, directory) }
-      schema = JSON.parse(File.read(File.join(directory, 'openapi.json')))
-
-      reference = schema.dig('paths', 'api.test', 'post', 'responses', '200', 'content', 'application/json', 'schema', '$ref')
-      # quicktype emits APITestResponse, not the ApiTestResponse derived from the method name.
-      assert_equal '#/components/schemas/APITestResponse', reference
-      assert schema.fetch('components').fetch('schemas').key?('APITestResponse')
-    end
-  end
-
-  def test_handwritten_models_replace_inferred_shapes
-    Dir.mktmpdir do |directory|
-      FileUtils.mkdir_p(File.join(directory, 'schemas'))
-      api_ref_paths = %w[calls/calls.add api/api.test].map { File.join(VENDOR_DIR, "slack-api-ref/methods/#{_1}.json") }
-      # chat.postMessage defines an unrelated `Call` (message call blocks) that collides with calls.add.
-      sample_paths = %w[calls.add chat.postMessage api.test].map do
-        File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/api/#{_1}.json")
-      end
-
-      capture_io { main(api_ref_paths, sample_paths, directory) }
-      schemas = JSON.parse(File.read(File.join(directory, 'openapi.json'))).fetch('components').fetch('schemas')
-
-      assert_equal '#/components/schemas/Call', schemas.dig('CallsAddResponse', 'properties', 'call', '$ref')
-      assert_equal '#/components/schemas/APITestArgs', schemas.dig('APITestResponse', 'properties', 'args', '$ref')
-      assert_empty schemas.fetch('Call').fetch('properties')
-      assert_empty schemas.fetch('APITestArgs').fetch('properties')
-      %w[V1 Participant AppIconUrls Args].each { refute schemas.key?(_1), "#{_1} should be removed" }
-    end
-  end
-
-  def test_admin_workflows_search_uses_handwritten_app_workflow
-    Dir.mktmpdir do |directory|
-      FileUtils.mkdir_p(File.join(directory, 'schemas'))
-      api_ref_paths = [File.join(VENDOR_DIR, 'slack-api-ref/methods/admin/admin.workflows.search.json')]
-      # chat.postMessage defines an unrelated `Workflow` (with `trigger`) that collides with the search result.
-      sample_paths = %w[admin.workflows.search chat.postMessage].map do
-        File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/api/#{_1}.json")
-      end
-
-      capture_io { main(api_ref_paths, sample_paths, directory) }
-      schemas = JSON.parse(File.read(File.join(directory, 'openapi.json'))).fetch('components').fetch('schemas')
-
-      assert_equal '#/components/schemas/AppWorkflow',
-                   schemas.dig('AdminWorkflowsSearchResponse', 'properties', 'workflows', 'items', '$ref')
-      assert_empty schemas.fetch('AppWorkflow').fetch('properties')
-      # Nested definitions used only by the search result's Workflow are dropped.
-      %w[InputParameter Step].each { refute schemas.key?(_1), "#{_1} should be removed" }
-    end
-  end
-
-  def test_usergroups_and_collaborator_errors_use_handwritten_models
-    Dir.mktmpdir do |directory|
-      FileUtils.mkdir_p(File.join(directory, 'schemas'))
-      methods = %w[usergroups.list usergroups.users.update admin.workflows.collaborators.add conversations.invite]
-      api_ref_paths = %w[
-        usergroups/usergroups.list
-        usergroups/usergroups.users.update
-        admin/admin.workflows.collaborators.add
-        conversations/conversations.invite
-      ].map { File.join(VENDOR_DIR, "slack-api-ref/methods/#{_1}.json") }
-      # usergroups.users.update has fewer Usergroup fields than usergroups.list, and
-      # conversations.invite defines an unrelated `Error`.
-      sample_paths = methods.map { File.join(VENDOR_DIR, "java-slack-sdk/json-logs/samples/api/#{_1}.json") }
-
-      capture_io { main(api_ref_paths, sample_paths, directory) }
-      schemas = JSON.parse(File.read(File.join(directory, 'openapi.json'))).fetch('components').fetch('schemas')
-
-      assert_empty schemas.fetch('Usergroup').fetch('properties')
-      assert_equal '#/components/schemas/Usergroup', schemas.dig('UsergroupsListResponse', 'properties', 'usergroups', 'items', '$ref')
-      assert_equal '#/components/schemas/WorkflowCollaboratorError',
-                   schemas.dig('AdminWorkflowsCollaboratorsAddResponse', 'properties', 'errors', 'items', '$ref')
-      assert_empty schemas.fetch('WorkflowCollaboratorError').fetch('properties')
-      # conversations.invite keeps its own Error.
-      assert_equal '#/components/schemas/Error', schemas.dig('ConversationsInviteResponse', 'properties', 'errors', 'items', '$ref')
     end
   end
 

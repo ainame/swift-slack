@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'set'
 require 'yaml'
 
 # Explicit per-field exceptions to "types come from the Java declarations" (scripts/java_type_overrides.yml).
@@ -36,6 +37,7 @@ class TypeOverrides
                       evidence: Array(attributes['evidence']))]
     end
     @entries.each_value { |entry| validate_entry_shape(entry) }
+    @applied = Set.new
   end
 
   def entries
@@ -53,14 +55,15 @@ class TypeOverrides
       end
       fail_entry(entry, "#{java_class.name} has no field with JSON key `#{entry.json_key}`") unless field
       next if field.type.to_s == entry.java_type
-  
+
       fail_entry(entry, "java_type is `#{entry.java_type}` but the source declares `#{field.type}`")
     end
   end
-  
+
   # Properties to add to the schema of `java_class`, by JSON key.
   def additions_for(java_class)
     entries.select { |entry| entry.added && entry.fqn == java_class.fqn }.to_h do |entry|
+      @applied << entry.key
       description = "Not declared by java-slack-sdk `#{java_class.nested_name}`, but recorded responses include it."
       [entry.json_key, entry.schema.merge('description' => description)]
     end
@@ -69,6 +72,7 @@ class TypeOverrides
   # The schema for `field` declared in `owner` (JSON key `key`): the override, or `schema` unchanged.
   def apply(schema, owner, field, key)
     entry = @entries["#{owner.fqn}##{key}"] or return schema
+    @applied << entry.key
 
     description = "Type differs from java-slack-sdk: `#{owner.nested_name}.#{field.name}` is declared " \
                   "`#{entry.java_type}`, but recorded responses send #{NOUNS.fetch(entry.type)}."
@@ -79,6 +83,11 @@ class TypeOverrides
       else { 'type' => entry.type }
       end
     replacement.merge('description' => description, 'x-java-type' => schema['type'] || 'untyped')
+  end
+
+  # Keys of entries that no generated schema used, e.g. ones for classes of unsupported methods.
+  def unused_keys
+    @entries.keys - @applied.to_a
   end
 
   private

@@ -1,6 +1,6 @@
 import Foundation
 import OpenAPIRuntime
-import SlackModels
+@testable import SlackApp
 import Testing
 
 struct ContainerTests {

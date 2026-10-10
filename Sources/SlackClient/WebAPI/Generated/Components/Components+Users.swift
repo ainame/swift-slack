@@ -9,714 +9,1824 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Users
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse`.
     public struct UsersConversationsResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/arg`.
-        public var arg: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/channels`.
-        public var channels: [SlackModels.Channel]?
+        /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/arg`.
+        public var arg: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/channels`.
+        public var channels: [Components.Schemas.Conversation]?
         /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/UsersConversationsResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `UsersConversationsResponse`.
         ///
         /// - Parameters:
-        ///   - arg:
-        ///   - channels:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - arg:
+        ///   - channels:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            arg: Swift.String? = nil,
-            channels: [SlackModels.Channel]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            arg: Swift.String? = nil,
+            channels: [Components.Schemas.Conversation]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.arg = arg
-            self.channels = channels
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.arg = arg
+            self.channels = channels
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case arg
-            case channels
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case arg
+            case channels
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersDeletePhotoResponse`.
     public struct UsersDeletePhotoResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsersDeletePhotoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsersDeletePhotoResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersDeletePhotoResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersDeletePhotoResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersDeletePhotoResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsersDeletePhotoResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersDeletePhotoResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `UsersDeletePhotoResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse`.
     public struct UsersDiscoverableContactsLookupResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/is_discoverable`.
-        public var isDiscoverable: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/is_discoverable`.
+        public var isDiscoverable: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/UsersDiscoverableContactsLookupResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `UsersDiscoverableContactsLookupResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - isDiscoverable:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - isDiscoverable:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            isDiscoverable: Swift.Bool? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            isDiscoverable: Swift.Bool? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.isDiscoverable = isDiscoverable
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.isDiscoverable = isDiscoverable
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case isDiscoverable = "is_discoverable"
-            case needed
             case ok
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case isDiscoverable = "is_discoverable"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse`.
     public struct UsersGetPresenceResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/auto_away`.
-        public var autoAway: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/connection_count`.
-        public var connectionCount: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/last_activity`.
-        public var lastActivity: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/manual_away`.
-        public var manualAway: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/online`.
-        public var online: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/presence`.
-        public var presence: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/provided`.
-        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/presence`.
+        public var presence: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/online`.
+        public var online: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/auto_away`.
+        public var autoAway: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/manual_away`.
+        public var manualAway: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/connection_count`.
+        public var connectionCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/UsersGetPresenceResponse/last_activity`.
+        public var lastActivity: Swift.Int?
         /// Creates a new `UsersGetPresenceResponse`.
         ///
         /// - Parameters:
-        ///   - autoAway:
-        ///   - connectionCount:
-        ///   - error:
-        ///   - lastActivity:
-        ///   - manualAway:
-        ///   - needed:
         ///   - ok:
-        ///   - online:
-        ///   - presence:
-        ///   - provided:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - presence:
+        ///   - online:
+        ///   - autoAway:
+        ///   - manualAway:
+        ///   - connectionCount:
+        ///   - lastActivity:
         public init(
-            autoAway: Swift.Bool? = nil,
-            connectionCount: Swift.Int? = nil,
-            error: Swift.String? = nil,
-            lastActivity: Swift.Int? = nil,
-            manualAway: Swift.Bool? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            online: Swift.Bool? = nil,
-            presence: Swift.String? = nil,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            presence: Swift.String? = nil,
+            online: Swift.Bool? = nil,
+            autoAway: Swift.Bool? = nil,
+            manualAway: Swift.Bool? = nil,
+            connectionCount: Swift.Int? = nil,
+            lastActivity: Swift.Int? = nil,
         ) {
-            self.autoAway = autoAway
-            self.connectionCount = connectionCount
-            self.error = error
-            self.lastActivity = lastActivity
-            self.manualAway = manualAway
-            self.needed = needed
             self.ok = ok
-            self.online = online
-            self.presence = presence
-            self.provided = provided
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.presence = presence
+            self.online = online
+            self.autoAway = autoAway
+            self.manualAway = manualAway
+            self.connectionCount = connectionCount
+            self.lastActivity = lastActivity
         }
 
         public enum CodingKeys: String, CodingKey {
-            case autoAway = "auto_away"
-            case connectionCount = "connection_count"
-            case error
-            case lastActivity = "last_activity"
-            case manualAway = "manual_away"
-            case needed
             case ok
-            case online
-            case presence
-            case provided
             case warning
+            case error
+            case needed
+            case provided
+            case presence
+            case online
+            case autoAway = "auto_away"
+            case manualAway = "manual_away"
+            case connectionCount = "connection_count"
+            case lastActivity = "last_activity"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse`.
     public struct UsersIdentityResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/team`.
-        public var team: SlackModels.Team?
         /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/user`.
-        public var user: SlackModels.User?
-        /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/warning`.
-        public var warning: Swift.String?
+        public struct UserPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/user/name`.
+            public var name: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/user/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/user/email`.
+            public var email: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/user/image_24`.
+            public var image24: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/user/image_32`.
+            public var image32: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/user/image_48`.
+            public var image48: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/user/image_72`.
+            public var image72: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/user/image_192`.
+            public var image192: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/user/image_512`.
+            public var image512: Swift.String?
+            /// Creates a new `UserPayload`.
+            ///
+            /// - Parameters:
+            ///   - name:
+            ///   - id:
+            ///   - email:
+            ///   - image24:
+            ///   - image32:
+            ///   - image48:
+            ///   - image72:
+            ///   - image192:
+            ///   - image512:
+            public init(
+                name: Swift.String? = nil,
+                id: Swift.String? = nil,
+                email: Swift.String? = nil,
+                image24: Swift.String? = nil,
+                image32: Swift.String? = nil,
+                image48: Swift.String? = nil,
+                image72: Swift.String? = nil,
+                image192: Swift.String? = nil,
+                image512: Swift.String? = nil,
+            ) {
+                self.name = name
+                self.id = id
+                self.email = email
+                self.image24 = image24
+                self.image32 = image32
+                self.image48 = image48
+                self.image72 = image72
+                self.image192 = image192
+                self.image512 = image512
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case name
+                case id
+                case email
+                case image24 = "image_24"
+                case image32 = "image_32"
+                case image48 = "image_48"
+                case image72 = "image_72"
+                case image192 = "image_192"
+                case image512 = "image_512"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/user`.
+        public var user: Components.Schemas.UsersIdentityResponse.UserPayload?
+        /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/team`.
+        public struct TeamPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/team/name`.
+            public var name: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/team/id`.
+            public var id: Swift.String?
+            /// Creates a new `TeamPayload`.
+            ///
+            /// - Parameters:
+            ///   - name:
+            ///   - id:
+            public init(
+                name: Swift.String? = nil,
+                id: Swift.String? = nil,
+            ) {
+                self.name = name
+                self.id = id
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case name
+                case id
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/UsersIdentityResponse/team`.
+        public var team: Components.Schemas.UsersIdentityResponse.TeamPayload?
         /// Creates a new `UsersIdentityResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - team:
         ///   - user:
-        ///   - warning:
+        ///   - team:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            team: SlackModels.Team? = nil,
-            user: SlackModels.User? = nil,
-            warning: Swift.String? = nil,
+            user: Components.Schemas.UsersIdentityResponse.UserPayload? = nil,
+            team: Components.Schemas.UsersIdentityResponse.TeamPayload? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.team = team
             self.user = user
-            self.warning = warning
+            self.team = team
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case team
             case user
-            case warning
+            case team
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersInfoResponse`.
     public struct UsersInfoResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsersInfoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsersInfoResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersInfoResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersInfoResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersInfoResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsersInfoResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersInfoResponse/user`.
-        public var user: SlackModels.User?
-        /// - Remark: Generated from `#/components/schemas/UsersInfoResponse/warning`.
-        public var warning: Swift.String?
+        public var user: Components.Schemas.User?
         /// Creates a new `UsersInfoResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - user:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            user: SlackModels.User? = nil,
-            warning: Swift.String? = nil,
+            user: Components.Schemas.User? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.user = user
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case user
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersListResponse`.
     public struct UsersListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/UsersListResponse/cache_ts`.
-        public var cacheTs: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/UsersListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersListResponse/members`.
-        public var members: [SlackModels.Member]?
-        /// - Remark: Generated from `#/components/schemas/UsersListResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersListResponse/offset`.
-        public var offset: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersListResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/UsersListResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/UsersListResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersListResponse/arg`.
+        public var arg: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersListResponse/offset`.
+        public var offset: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersListResponse/members`.
+        public var members: [Components.Schemas.User]?
+        /// Type differs from java-slack-sdk: `UsersListResponse.cacheTs` is declared `String`, but recorded responses send integers.
+        ///
+        /// - Remark: Generated from `#/components/schemas/UsersListResponse/cache_ts`.
+        public var cacheTs: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/UsersListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `UsersListResponse`.
         ///
         /// - Parameters:
-        ///   - cacheTs:
-        ///   - error:
-        ///   - members:
-        ///   - needed:
-        ///   - offset:
         ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - arg:
+        ///   - offset:
+        ///   - members:
+        ///   - cacheTs: Type differs from java-slack-sdk: `UsersListResponse.cacheTs` is declared `String`, but recorded responses send integers.
+        ///   - responseMetadata:
         public init(
-            cacheTs: Swift.Int? = nil,
-            error: Swift.String? = nil,
-            members: [SlackModels.Member]? = nil,
-            needed: Swift.String? = nil,
-            offset: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            arg: Swift.String? = nil,
+            offset: Swift.String? = nil,
+            members: [Components.Schemas.User]? = nil,
+            cacheTs: Swift.Int? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.cacheTs = cacheTs
-            self.error = error
-            self.members = members
-            self.needed = needed
-            self.offset = offset
             self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.arg = arg
+            self.offset = offset
+            self.members = members
+            self.cacheTs = cacheTs
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case cacheTs = "cache_ts"
-            case error
-            case members
-            case needed
-            case offset
             case ok
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case arg
+            case offset
+            case members
+            case cacheTs = "cache_ts"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersLookupByEmailResponse`.
     public struct UsersLookupByEmailResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsersLookupByEmailResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsersLookupByEmailResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersLookupByEmailResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersLookupByEmailResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersLookupByEmailResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsersLookupByEmailResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersLookupByEmailResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/UsersLookupByEmailResponse/user`.
-        public var user: SlackModels.User?
-        /// - Remark: Generated from `#/components/schemas/UsersLookupByEmailResponse/warning`.
-        public var warning: Swift.String?
+        public var user: Components.Schemas.User?
         /// Creates a new `UsersLookupByEmailResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
         ///   - user:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            user: SlackModels.User? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
+            user: Components.Schemas.User? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
             self.user = user
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
             case user
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse`.
     public struct UsersProfileGetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile`.
-        public var profile: SlackModels.Profile?
         /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile`.
+        public struct ProfilePayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/guest_channels`.
+            public var guestChannels: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/guest_invited_by`.
+            public var guestInvitedBy: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/guest_expiration_ts`.
+            public var guestExpirationTs: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/avatar_hash`.
+            public var avatarHash: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/status_text`.
+            public var statusText: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/status_text_canonical`.
+            public var statusTextCanonical: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/status_emoji`.
+            public var statusEmoji: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/status_emoji_url`.
+            public var statusEmojiUrl: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/status_expiration`.
+            public var statusExpiration: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/display_name`.
+            public var displayName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/display_name_normalized`.
+            public var displayNameNormalized: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/real_name`.
+            public var realName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/real_name_normalized`.
+            public var realNameNormalized: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/bot_id`.
+            public var botId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/title`.
+            public var title: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/email`.
+            public var email: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/skype`.
+            public var skype: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/phone`.
+            public var phone: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/team`.
+            public var team: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/api_app_id`.
+            public var apiAppId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/always_active`.
+            public var alwaysActive: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/image_original`.
+            public var imageOriginal: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/image_24`.
+            public var image24: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/image_32`.
+            public var image32: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/image_48`.
+            public var image48: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/image_72`.
+            public var image72: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/image_192`.
+            public var image192: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/image_512`.
+            public var image512: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/image_1024`.
+            public var image1024: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/is_custom_image`.
+            public var isCustomImage: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/pronouns`.
+            public var pronouns: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/StatusEmojiDisplayInfoPayload`.
+            public struct StatusEmojiDisplayInfoPayloadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/StatusEmojiDisplayInfoPayload/emoji_name`.
+                public var emojiName: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/StatusEmojiDisplayInfoPayload/display_alias`.
+                public var displayAlias: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/StatusEmojiDisplayInfoPayload/display_url`.
+                public var displayUrl: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/StatusEmojiDisplayInfoPayload/unicode`.
+                public var unicode: Swift.String?
+                /// Creates a new `StatusEmojiDisplayInfoPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - emojiName:
+                ///   - displayAlias:
+                ///   - displayUrl:
+                ///   - unicode:
+                public init(
+                    emojiName: Swift.String? = nil,
+                    displayAlias: Swift.String? = nil,
+                    displayUrl: Swift.String? = nil,
+                    unicode: Swift.String? = nil,
+                ) {
+                    self.emojiName = emojiName
+                    self.displayAlias = displayAlias
+                    self.displayUrl = displayUrl
+                    self.unicode = unicode
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case emojiName = "emoji_name"
+                    case displayAlias = "display_alias"
+                    case displayUrl = "display_url"
+                    case unicode
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/status_emoji_display_info`.
+            public typealias StatusEmojiDisplayInfoPayload = [Components.Schemas.UsersProfileGetResponse.ProfilePayload.StatusEmojiDisplayInfoPayloadPayload]
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/status_emoji_display_info`.
+            public var statusEmojiDisplayInfo: Components.Schemas.UsersProfileGetResponse.ProfilePayload.StatusEmojiDisplayInfoPayload?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/fields`.
+            public struct FieldsPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/fields/additionalProperties`.
+                public struct AdditionalPropertiesPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/fields/additionalProperties/value`.
+                    public var value: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/fields/additionalProperties/alt`.
+                    public var alt: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/fields/additionalProperties/label`.
+                    public var label: Swift.String?
+                    /// Creates a new `AdditionalPropertiesPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - value:
+                    ///   - alt:
+                    ///   - label:
+                    public init(
+                        value: Swift.String? = nil,
+                        alt: Swift.String? = nil,
+                        label: Swift.String? = nil,
+                    ) {
+                        self.value = value
+                        self.alt = alt
+                        self.label = label
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case value
+                        case alt
+                        case label
+                    }
+                }
+
+                /// A container of undocumented properties.
+                public var additionalProperties: [String: Components.Schemas.UsersProfileGetResponse.ProfilePayload.FieldsPayload.AdditionalPropertiesPayload]
+                /// Creates a new `FieldsPayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                public init(additionalProperties: [String: Components.Schemas.UsersProfileGetResponse.ProfilePayload.FieldsPayload.AdditionalPropertiesPayload] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+
+                public init(from decoder: any Swift.Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+
+                public func encode(to encoder: any Swift.Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/fields`.
+            public var fields: Components.Schemas.UsersProfileGetResponse.ProfilePayload.FieldsPayload?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/huddle_state`.
+            public var huddleState: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/huddle_state_expiration_ts`.
+            public var huddleStateExpirationTs: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/start_date`.
+            public var startDate: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/status_clear_on_focus_end`.
+            public var statusClearOnFocusEnd: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/first_name`.
+            public var firstName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile/last_name`.
+            public var lastName: Swift.String?
+            /// Creates a new `ProfilePayload`.
+            ///
+            /// - Parameters:
+            ///   - guestChannels:
+            ///   - guestInvitedBy:
+            ///   - guestExpirationTs:
+            ///   - avatarHash:
+            ///   - statusText:
+            ///   - statusTextCanonical:
+            ///   - statusEmoji:
+            ///   - statusEmojiUrl:
+            ///   - statusExpiration:
+            ///   - displayName:
+            ///   - displayNameNormalized:
+            ///   - realName:
+            ///   - realNameNormalized:
+            ///   - botId:
+            ///   - title:
+            ///   - email:
+            ///   - skype:
+            ///   - phone:
+            ///   - team:
+            ///   - apiAppId:
+            ///   - alwaysActive:
+            ///   - imageOriginal:
+            ///   - image24:
+            ///   - image32:
+            ///   - image48:
+            ///   - image72:
+            ///   - image192:
+            ///   - image512:
+            ///   - image1024:
+            ///   - isCustomImage:
+            ///   - pronouns:
+            ///   - statusEmojiDisplayInfo:
+            ///   - fields:
+            ///   - huddleState:
+            ///   - huddleStateExpirationTs:
+            ///   - startDate:
+            ///   - statusClearOnFocusEnd:
+            ///   - firstName:
+            ///   - lastName:
+            public init(
+                guestChannels: Swift.String? = nil,
+                guestInvitedBy: Swift.String? = nil,
+                guestExpirationTs: Swift.Int? = nil,
+                avatarHash: Swift.String? = nil,
+                statusText: Swift.String? = nil,
+                statusTextCanonical: Swift.String? = nil,
+                statusEmoji: Swift.String? = nil,
+                statusEmojiUrl: Swift.String? = nil,
+                statusExpiration: Swift.Int? = nil,
+                displayName: Swift.String? = nil,
+                displayNameNormalized: Swift.String? = nil,
+                realName: Swift.String? = nil,
+                realNameNormalized: Swift.String? = nil,
+                botId: Swift.String? = nil,
+                title: Swift.String? = nil,
+                email: Swift.String? = nil,
+                skype: Swift.String? = nil,
+                phone: Swift.String? = nil,
+                team: Swift.String? = nil,
+                apiAppId: Swift.String? = nil,
+                alwaysActive: Swift.Bool? = nil,
+                imageOriginal: Swift.String? = nil,
+                image24: Swift.String? = nil,
+                image32: Swift.String? = nil,
+                image48: Swift.String? = nil,
+                image72: Swift.String? = nil,
+                image192: Swift.String? = nil,
+                image512: Swift.String? = nil,
+                image1024: Swift.String? = nil,
+                isCustomImage: Swift.Bool? = nil,
+                pronouns: Swift.String? = nil,
+                statusEmojiDisplayInfo: Components.Schemas.UsersProfileGetResponse.ProfilePayload.StatusEmojiDisplayInfoPayload? = nil,
+                fields: Components.Schemas.UsersProfileGetResponse.ProfilePayload.FieldsPayload? = nil,
+                huddleState: Swift.String? = nil,
+                huddleStateExpirationTs: Swift.Int? = nil,
+                startDate: Swift.String? = nil,
+                statusClearOnFocusEnd: Swift.Bool? = nil,
+                firstName: Swift.String? = nil,
+                lastName: Swift.String? = nil,
+            ) {
+                self.guestChannels = guestChannels
+                self.guestInvitedBy = guestInvitedBy
+                self.guestExpirationTs = guestExpirationTs
+                self.avatarHash = avatarHash
+                self.statusText = statusText
+                self.statusTextCanonical = statusTextCanonical
+                self.statusEmoji = statusEmoji
+                self.statusEmojiUrl = statusEmojiUrl
+                self.statusExpiration = statusExpiration
+                self.displayName = displayName
+                self.displayNameNormalized = displayNameNormalized
+                self.realName = realName
+                self.realNameNormalized = realNameNormalized
+                self.botId = botId
+                self.title = title
+                self.email = email
+                self.skype = skype
+                self.phone = phone
+                self.team = team
+                self.apiAppId = apiAppId
+                self.alwaysActive = alwaysActive
+                self.imageOriginal = imageOriginal
+                self.image24 = image24
+                self.image32 = image32
+                self.image48 = image48
+                self.image72 = image72
+                self.image192 = image192
+                self.image512 = image512
+                self.image1024 = image1024
+                self.isCustomImage = isCustomImage
+                self.pronouns = pronouns
+                self.statusEmojiDisplayInfo = statusEmojiDisplayInfo
+                self.fields = fields
+                self.huddleState = huddleState
+                self.huddleStateExpirationTs = huddleStateExpirationTs
+                self.startDate = startDate
+                self.statusClearOnFocusEnd = statusClearOnFocusEnd
+                self.firstName = firstName
+                self.lastName = lastName
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case guestChannels = "guest_channels"
+                case guestInvitedBy = "guest_invited_by"
+                case guestExpirationTs = "guest_expiration_ts"
+                case avatarHash = "avatar_hash"
+                case statusText = "status_text"
+                case statusTextCanonical = "status_text_canonical"
+                case statusEmoji = "status_emoji"
+                case statusEmojiUrl = "status_emoji_url"
+                case statusExpiration = "status_expiration"
+                case displayName = "display_name"
+                case displayNameNormalized = "display_name_normalized"
+                case realName = "real_name"
+                case realNameNormalized = "real_name_normalized"
+                case botId = "bot_id"
+                case title
+                case email
+                case skype
+                case phone
+                case team
+                case apiAppId = "api_app_id"
+                case alwaysActive = "always_active"
+                case imageOriginal = "image_original"
+                case image24 = "image_24"
+                case image32 = "image_32"
+                case image48 = "image_48"
+                case image72 = "image_72"
+                case image192 = "image_192"
+                case image512 = "image_512"
+                case image1024 = "image_1024"
+                case isCustomImage = "is_custom_image"
+                case pronouns
+                case statusEmojiDisplayInfo = "status_emoji_display_info"
+                case fields
+                case huddleState = "huddle_state"
+                case huddleStateExpirationTs = "huddle_state_expiration_ts"
+                case startDate = "start_date"
+                case statusClearOnFocusEnd = "status_clear_on_focus_end"
+                case firstName = "first_name"
+                case lastName = "last_name"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/UsersProfileGetResponse/profile`.
+        public var profile: Components.Schemas.UsersProfileGetResponse.ProfilePayload?
         /// Creates a new `UsersProfileGetResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - profile:
         ///   - provided:
-        ///   - warning:
+        ///   - profile:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            profile: SlackModels.Profile? = nil,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            profile: Components.Schemas.UsersProfileGetResponse.ProfilePayload? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
-            self.profile = profile
             self.provided = provided
-            self.warning = warning
+            self.profile = profile
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
-            case profile
             case provided
-            case warning
+            case profile
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse`.
     public struct UsersProfileSetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile`.
-        public var profile: SlackModels.Profile?
         /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile`.
+        public struct ProfilePayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/guest_channels`.
+            public var guestChannels: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/guest_invited_by`.
+            public var guestInvitedBy: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/guest_expiration_ts`.
+            public var guestExpirationTs: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/avatar_hash`.
+            public var avatarHash: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/status_text`.
+            public var statusText: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/status_text_canonical`.
+            public var statusTextCanonical: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/status_emoji`.
+            public var statusEmoji: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/status_emoji_url`.
+            public var statusEmojiUrl: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/status_expiration`.
+            public var statusExpiration: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/display_name`.
+            public var displayName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/display_name_normalized`.
+            public var displayNameNormalized: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/real_name`.
+            public var realName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/real_name_normalized`.
+            public var realNameNormalized: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/bot_id`.
+            public var botId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/title`.
+            public var title: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/email`.
+            public var email: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/skype`.
+            public var skype: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/phone`.
+            public var phone: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/team`.
+            public var team: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/api_app_id`.
+            public var apiAppId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/always_active`.
+            public var alwaysActive: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/image_original`.
+            public var imageOriginal: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/image_24`.
+            public var image24: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/image_32`.
+            public var image32: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/image_48`.
+            public var image48: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/image_72`.
+            public var image72: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/image_192`.
+            public var image192: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/image_512`.
+            public var image512: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/image_1024`.
+            public var image1024: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/is_custom_image`.
+            public var isCustomImage: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/pronouns`.
+            public var pronouns: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/StatusEmojiDisplayInfoPayload`.
+            public struct StatusEmojiDisplayInfoPayloadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/StatusEmojiDisplayInfoPayload/emoji_name`.
+                public var emojiName: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/StatusEmojiDisplayInfoPayload/display_alias`.
+                public var displayAlias: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/StatusEmojiDisplayInfoPayload/display_url`.
+                public var displayUrl: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/StatusEmojiDisplayInfoPayload/unicode`.
+                public var unicode: Swift.String?
+                /// Creates a new `StatusEmojiDisplayInfoPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - emojiName:
+                ///   - displayAlias:
+                ///   - displayUrl:
+                ///   - unicode:
+                public init(
+                    emojiName: Swift.String? = nil,
+                    displayAlias: Swift.String? = nil,
+                    displayUrl: Swift.String? = nil,
+                    unicode: Swift.String? = nil,
+                ) {
+                    self.emojiName = emojiName
+                    self.displayAlias = displayAlias
+                    self.displayUrl = displayUrl
+                    self.unicode = unicode
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case emojiName = "emoji_name"
+                    case displayAlias = "display_alias"
+                    case displayUrl = "display_url"
+                    case unicode
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/status_emoji_display_info`.
+            public typealias StatusEmojiDisplayInfoPayload = [Components.Schemas.UsersProfileSetResponse.ProfilePayload.StatusEmojiDisplayInfoPayloadPayload]
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/status_emoji_display_info`.
+            public var statusEmojiDisplayInfo: Components.Schemas.UsersProfileSetResponse.ProfilePayload.StatusEmojiDisplayInfoPayload?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/fields`.
+            public struct FieldsPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/fields/additionalProperties`.
+                public struct AdditionalPropertiesPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/fields/additionalProperties/value`.
+                    public var value: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/fields/additionalProperties/alt`.
+                    public var alt: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/fields/additionalProperties/label`.
+                    public var label: Swift.String?
+                    /// Creates a new `AdditionalPropertiesPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - value:
+                    ///   - alt:
+                    ///   - label:
+                    public init(
+                        value: Swift.String? = nil,
+                        alt: Swift.String? = nil,
+                        label: Swift.String? = nil,
+                    ) {
+                        self.value = value
+                        self.alt = alt
+                        self.label = label
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case value
+                        case alt
+                        case label
+                    }
+                }
+
+                /// A container of undocumented properties.
+                public var additionalProperties: [String: Components.Schemas.UsersProfileSetResponse.ProfilePayload.FieldsPayload.AdditionalPropertiesPayload]
+                /// Creates a new `FieldsPayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                public init(additionalProperties: [String: Components.Schemas.UsersProfileSetResponse.ProfilePayload.FieldsPayload.AdditionalPropertiesPayload] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+
+                public init(from decoder: any Swift.Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+
+                public func encode(to encoder: any Swift.Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/fields`.
+            public var fields: Components.Schemas.UsersProfileSetResponse.ProfilePayload.FieldsPayload?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/huddle_state`.
+            public var huddleState: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/huddle_state_expiration_ts`.
+            public var huddleStateExpirationTs: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/start_date`.
+            public var startDate: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/status_clear_on_focus_end`.
+            public var statusClearOnFocusEnd: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/first_name`.
+            public var firstName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile/last_name`.
+            public var lastName: Swift.String?
+            /// Creates a new `ProfilePayload`.
+            ///
+            /// - Parameters:
+            ///   - guestChannels:
+            ///   - guestInvitedBy:
+            ///   - guestExpirationTs:
+            ///   - avatarHash:
+            ///   - statusText:
+            ///   - statusTextCanonical:
+            ///   - statusEmoji:
+            ///   - statusEmojiUrl:
+            ///   - statusExpiration:
+            ///   - displayName:
+            ///   - displayNameNormalized:
+            ///   - realName:
+            ///   - realNameNormalized:
+            ///   - botId:
+            ///   - title:
+            ///   - email:
+            ///   - skype:
+            ///   - phone:
+            ///   - team:
+            ///   - apiAppId:
+            ///   - alwaysActive:
+            ///   - imageOriginal:
+            ///   - image24:
+            ///   - image32:
+            ///   - image48:
+            ///   - image72:
+            ///   - image192:
+            ///   - image512:
+            ///   - image1024:
+            ///   - isCustomImage:
+            ///   - pronouns:
+            ///   - statusEmojiDisplayInfo:
+            ///   - fields:
+            ///   - huddleState:
+            ///   - huddleStateExpirationTs:
+            ///   - startDate:
+            ///   - statusClearOnFocusEnd:
+            ///   - firstName:
+            ///   - lastName:
+            public init(
+                guestChannels: Swift.String? = nil,
+                guestInvitedBy: Swift.String? = nil,
+                guestExpirationTs: Swift.Int? = nil,
+                avatarHash: Swift.String? = nil,
+                statusText: Swift.String? = nil,
+                statusTextCanonical: Swift.String? = nil,
+                statusEmoji: Swift.String? = nil,
+                statusEmojiUrl: Swift.String? = nil,
+                statusExpiration: Swift.Int? = nil,
+                displayName: Swift.String? = nil,
+                displayNameNormalized: Swift.String? = nil,
+                realName: Swift.String? = nil,
+                realNameNormalized: Swift.String? = nil,
+                botId: Swift.String? = nil,
+                title: Swift.String? = nil,
+                email: Swift.String? = nil,
+                skype: Swift.String? = nil,
+                phone: Swift.String? = nil,
+                team: Swift.String? = nil,
+                apiAppId: Swift.String? = nil,
+                alwaysActive: Swift.Bool? = nil,
+                imageOriginal: Swift.String? = nil,
+                image24: Swift.String? = nil,
+                image32: Swift.String? = nil,
+                image48: Swift.String? = nil,
+                image72: Swift.String? = nil,
+                image192: Swift.String? = nil,
+                image512: Swift.String? = nil,
+                image1024: Swift.String? = nil,
+                isCustomImage: Swift.Bool? = nil,
+                pronouns: Swift.String? = nil,
+                statusEmojiDisplayInfo: Components.Schemas.UsersProfileSetResponse.ProfilePayload.StatusEmojiDisplayInfoPayload? = nil,
+                fields: Components.Schemas.UsersProfileSetResponse.ProfilePayload.FieldsPayload? = nil,
+                huddleState: Swift.String? = nil,
+                huddleStateExpirationTs: Swift.Int? = nil,
+                startDate: Swift.String? = nil,
+                statusClearOnFocusEnd: Swift.Bool? = nil,
+                firstName: Swift.String? = nil,
+                lastName: Swift.String? = nil,
+            ) {
+                self.guestChannels = guestChannels
+                self.guestInvitedBy = guestInvitedBy
+                self.guestExpirationTs = guestExpirationTs
+                self.avatarHash = avatarHash
+                self.statusText = statusText
+                self.statusTextCanonical = statusTextCanonical
+                self.statusEmoji = statusEmoji
+                self.statusEmojiUrl = statusEmojiUrl
+                self.statusExpiration = statusExpiration
+                self.displayName = displayName
+                self.displayNameNormalized = displayNameNormalized
+                self.realName = realName
+                self.realNameNormalized = realNameNormalized
+                self.botId = botId
+                self.title = title
+                self.email = email
+                self.skype = skype
+                self.phone = phone
+                self.team = team
+                self.apiAppId = apiAppId
+                self.alwaysActive = alwaysActive
+                self.imageOriginal = imageOriginal
+                self.image24 = image24
+                self.image32 = image32
+                self.image48 = image48
+                self.image72 = image72
+                self.image192 = image192
+                self.image512 = image512
+                self.image1024 = image1024
+                self.isCustomImage = isCustomImage
+                self.pronouns = pronouns
+                self.statusEmojiDisplayInfo = statusEmojiDisplayInfo
+                self.fields = fields
+                self.huddleState = huddleState
+                self.huddleStateExpirationTs = huddleStateExpirationTs
+                self.startDate = startDate
+                self.statusClearOnFocusEnd = statusClearOnFocusEnd
+                self.firstName = firstName
+                self.lastName = lastName
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case guestChannels = "guest_channels"
+                case guestInvitedBy = "guest_invited_by"
+                case guestExpirationTs = "guest_expiration_ts"
+                case avatarHash = "avatar_hash"
+                case statusText = "status_text"
+                case statusTextCanonical = "status_text_canonical"
+                case statusEmoji = "status_emoji"
+                case statusEmojiUrl = "status_emoji_url"
+                case statusExpiration = "status_expiration"
+                case displayName = "display_name"
+                case displayNameNormalized = "display_name_normalized"
+                case realName = "real_name"
+                case realNameNormalized = "real_name_normalized"
+                case botId = "bot_id"
+                case title
+                case email
+                case skype
+                case phone
+                case team
+                case apiAppId = "api_app_id"
+                case alwaysActive = "always_active"
+                case imageOriginal = "image_original"
+                case image24 = "image_24"
+                case image32 = "image_32"
+                case image48 = "image_48"
+                case image72 = "image_72"
+                case image192 = "image_192"
+                case image512 = "image_512"
+                case image1024 = "image_1024"
+                case isCustomImage = "is_custom_image"
+                case pronouns
+                case statusEmojiDisplayInfo = "status_emoji_display_info"
+                case fields
+                case huddleState = "huddle_state"
+                case huddleStateExpirationTs = "huddle_state_expiration_ts"
+                case startDate = "start_date"
+                case statusClearOnFocusEnd = "status_clear_on_focus_end"
+                case firstName = "first_name"
+                case lastName = "last_name"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/profile`.
+        public var profile: Components.Schemas.UsersProfileSetResponse.ProfilePayload?
         /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/username`.
         public var username: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersProfileSetResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `UsersProfileSetResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - profile:
         ///   - provided:
+        ///   - profile:
         ///   - username:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            profile: SlackModels.Profile? = nil,
             provided: Swift.String? = nil,
+            profile: Components.Schemas.UsersProfileSetResponse.ProfilePayload? = nil,
             username: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
-            self.profile = profile
             self.provided = provided
+            self.profile = profile
             self.username = username
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
-            case profile
             case provided
+            case profile
             case username
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersSetActiveResponse`.
     public struct UsersSetActiveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsersSetActiveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsersSetActiveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersSetActiveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersSetActiveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersSetActiveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsersSetActiveResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersSetActiveResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `UsersSetActiveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse`.
     public struct UsersSetPhotoResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile`.
-        public var profile: SlackModels.Profile?
         /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile`.
+        public struct ProfilePayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/guest_channels`.
+            public var guestChannels: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/guest_invited_by`.
+            public var guestInvitedBy: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/guest_expiration_ts`.
+            public var guestExpirationTs: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/avatar_hash`.
+            public var avatarHash: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/status_text`.
+            public var statusText: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/status_text_canonical`.
+            public var statusTextCanonical: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/status_emoji`.
+            public var statusEmoji: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/status_emoji_url`.
+            public var statusEmojiUrl: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/status_expiration`.
+            public var statusExpiration: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/display_name`.
+            public var displayName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/display_name_normalized`.
+            public var displayNameNormalized: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/real_name`.
+            public var realName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/real_name_normalized`.
+            public var realNameNormalized: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/bot_id`.
+            public var botId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/title`.
+            public var title: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/email`.
+            public var email: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/skype`.
+            public var skype: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/phone`.
+            public var phone: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/team`.
+            public var team: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/api_app_id`.
+            public var apiAppId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/always_active`.
+            public var alwaysActive: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/image_original`.
+            public var imageOriginal: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/image_24`.
+            public var image24: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/image_32`.
+            public var image32: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/image_48`.
+            public var image48: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/image_72`.
+            public var image72: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/image_192`.
+            public var image192: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/image_512`.
+            public var image512: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/image_1024`.
+            public var image1024: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/is_custom_image`.
+            public var isCustomImage: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/pronouns`.
+            public var pronouns: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/StatusEmojiDisplayInfoPayload`.
+            public struct StatusEmojiDisplayInfoPayloadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/StatusEmojiDisplayInfoPayload/emoji_name`.
+                public var emojiName: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/StatusEmojiDisplayInfoPayload/display_alias`.
+                public var displayAlias: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/StatusEmojiDisplayInfoPayload/display_url`.
+                public var displayUrl: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/StatusEmojiDisplayInfoPayload/unicode`.
+                public var unicode: Swift.String?
+                /// Creates a new `StatusEmojiDisplayInfoPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - emojiName:
+                ///   - displayAlias:
+                ///   - displayUrl:
+                ///   - unicode:
+                public init(
+                    emojiName: Swift.String? = nil,
+                    displayAlias: Swift.String? = nil,
+                    displayUrl: Swift.String? = nil,
+                    unicode: Swift.String? = nil,
+                ) {
+                    self.emojiName = emojiName
+                    self.displayAlias = displayAlias
+                    self.displayUrl = displayUrl
+                    self.unicode = unicode
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case emojiName = "emoji_name"
+                    case displayAlias = "display_alias"
+                    case displayUrl = "display_url"
+                    case unicode
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/status_emoji_display_info`.
+            public typealias StatusEmojiDisplayInfoPayload = [Components.Schemas.UsersSetPhotoResponse.ProfilePayload.StatusEmojiDisplayInfoPayloadPayload]
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/status_emoji_display_info`.
+            public var statusEmojiDisplayInfo: Components.Schemas.UsersSetPhotoResponse.ProfilePayload.StatusEmojiDisplayInfoPayload?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/fields`.
+            public struct FieldsPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/fields/additionalProperties`.
+                public struct AdditionalPropertiesPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/fields/additionalProperties/value`.
+                    public var value: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/fields/additionalProperties/alt`.
+                    public var alt: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/fields/additionalProperties/label`.
+                    public var label: Swift.String?
+                    /// Creates a new `AdditionalPropertiesPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - value:
+                    ///   - alt:
+                    ///   - label:
+                    public init(
+                        value: Swift.String? = nil,
+                        alt: Swift.String? = nil,
+                        label: Swift.String? = nil,
+                    ) {
+                        self.value = value
+                        self.alt = alt
+                        self.label = label
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case value
+                        case alt
+                        case label
+                    }
+                }
+
+                /// A container of undocumented properties.
+                public var additionalProperties: [String: Components.Schemas.UsersSetPhotoResponse.ProfilePayload.FieldsPayload.AdditionalPropertiesPayload]
+                /// Creates a new `FieldsPayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                public init(additionalProperties: [String: Components.Schemas.UsersSetPhotoResponse.ProfilePayload.FieldsPayload.AdditionalPropertiesPayload] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+
+                public init(from decoder: any Swift.Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+
+                public func encode(to encoder: any Swift.Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/fields`.
+            public var fields: Components.Schemas.UsersSetPhotoResponse.ProfilePayload.FieldsPayload?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/huddle_state`.
+            public var huddleState: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/huddle_state_expiration_ts`.
+            public var huddleStateExpirationTs: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/start_date`.
+            public var startDate: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/status_clear_on_focus_end`.
+            public var statusClearOnFocusEnd: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/first_name`.
+            public var firstName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile/last_name`.
+            public var lastName: Swift.String?
+            /// Creates a new `ProfilePayload`.
+            ///
+            /// - Parameters:
+            ///   - guestChannels:
+            ///   - guestInvitedBy:
+            ///   - guestExpirationTs:
+            ///   - avatarHash:
+            ///   - statusText:
+            ///   - statusTextCanonical:
+            ///   - statusEmoji:
+            ///   - statusEmojiUrl:
+            ///   - statusExpiration:
+            ///   - displayName:
+            ///   - displayNameNormalized:
+            ///   - realName:
+            ///   - realNameNormalized:
+            ///   - botId:
+            ///   - title:
+            ///   - email:
+            ///   - skype:
+            ///   - phone:
+            ///   - team:
+            ///   - apiAppId:
+            ///   - alwaysActive:
+            ///   - imageOriginal:
+            ///   - image24:
+            ///   - image32:
+            ///   - image48:
+            ///   - image72:
+            ///   - image192:
+            ///   - image512:
+            ///   - image1024:
+            ///   - isCustomImage:
+            ///   - pronouns:
+            ///   - statusEmojiDisplayInfo:
+            ///   - fields:
+            ///   - huddleState:
+            ///   - huddleStateExpirationTs:
+            ///   - startDate:
+            ///   - statusClearOnFocusEnd:
+            ///   - firstName:
+            ///   - lastName:
+            public init(
+                guestChannels: Swift.String? = nil,
+                guestInvitedBy: Swift.String? = nil,
+                guestExpirationTs: Swift.Int? = nil,
+                avatarHash: Swift.String? = nil,
+                statusText: Swift.String? = nil,
+                statusTextCanonical: Swift.String? = nil,
+                statusEmoji: Swift.String? = nil,
+                statusEmojiUrl: Swift.String? = nil,
+                statusExpiration: Swift.Int? = nil,
+                displayName: Swift.String? = nil,
+                displayNameNormalized: Swift.String? = nil,
+                realName: Swift.String? = nil,
+                realNameNormalized: Swift.String? = nil,
+                botId: Swift.String? = nil,
+                title: Swift.String? = nil,
+                email: Swift.String? = nil,
+                skype: Swift.String? = nil,
+                phone: Swift.String? = nil,
+                team: Swift.String? = nil,
+                apiAppId: Swift.String? = nil,
+                alwaysActive: Swift.Bool? = nil,
+                imageOriginal: Swift.String? = nil,
+                image24: Swift.String? = nil,
+                image32: Swift.String? = nil,
+                image48: Swift.String? = nil,
+                image72: Swift.String? = nil,
+                image192: Swift.String? = nil,
+                image512: Swift.String? = nil,
+                image1024: Swift.String? = nil,
+                isCustomImage: Swift.Bool? = nil,
+                pronouns: Swift.String? = nil,
+                statusEmojiDisplayInfo: Components.Schemas.UsersSetPhotoResponse.ProfilePayload.StatusEmojiDisplayInfoPayload? = nil,
+                fields: Components.Schemas.UsersSetPhotoResponse.ProfilePayload.FieldsPayload? = nil,
+                huddleState: Swift.String? = nil,
+                huddleStateExpirationTs: Swift.Int? = nil,
+                startDate: Swift.String? = nil,
+                statusClearOnFocusEnd: Swift.Bool? = nil,
+                firstName: Swift.String? = nil,
+                lastName: Swift.String? = nil,
+            ) {
+                self.guestChannels = guestChannels
+                self.guestInvitedBy = guestInvitedBy
+                self.guestExpirationTs = guestExpirationTs
+                self.avatarHash = avatarHash
+                self.statusText = statusText
+                self.statusTextCanonical = statusTextCanonical
+                self.statusEmoji = statusEmoji
+                self.statusEmojiUrl = statusEmojiUrl
+                self.statusExpiration = statusExpiration
+                self.displayName = displayName
+                self.displayNameNormalized = displayNameNormalized
+                self.realName = realName
+                self.realNameNormalized = realNameNormalized
+                self.botId = botId
+                self.title = title
+                self.email = email
+                self.skype = skype
+                self.phone = phone
+                self.team = team
+                self.apiAppId = apiAppId
+                self.alwaysActive = alwaysActive
+                self.imageOriginal = imageOriginal
+                self.image24 = image24
+                self.image32 = image32
+                self.image48 = image48
+                self.image72 = image72
+                self.image192 = image192
+                self.image512 = image512
+                self.image1024 = image1024
+                self.isCustomImage = isCustomImage
+                self.pronouns = pronouns
+                self.statusEmojiDisplayInfo = statusEmojiDisplayInfo
+                self.fields = fields
+                self.huddleState = huddleState
+                self.huddleStateExpirationTs = huddleStateExpirationTs
+                self.startDate = startDate
+                self.statusClearOnFocusEnd = statusClearOnFocusEnd
+                self.firstName = firstName
+                self.lastName = lastName
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case guestChannels = "guest_channels"
+                case guestInvitedBy = "guest_invited_by"
+                case guestExpirationTs = "guest_expiration_ts"
+                case avatarHash = "avatar_hash"
+                case statusText = "status_text"
+                case statusTextCanonical = "status_text_canonical"
+                case statusEmoji = "status_emoji"
+                case statusEmojiUrl = "status_emoji_url"
+                case statusExpiration = "status_expiration"
+                case displayName = "display_name"
+                case displayNameNormalized = "display_name_normalized"
+                case realName = "real_name"
+                case realNameNormalized = "real_name_normalized"
+                case botId = "bot_id"
+                case title
+                case email
+                case skype
+                case phone
+                case team
+                case apiAppId = "api_app_id"
+                case alwaysActive = "always_active"
+                case imageOriginal = "image_original"
+                case image24 = "image_24"
+                case image32 = "image_32"
+                case image48 = "image_48"
+                case image72 = "image_72"
+                case image192 = "image_192"
+                case image512 = "image_512"
+                case image1024 = "image_1024"
+                case isCustomImage = "is_custom_image"
+                case pronouns
+                case statusEmojiDisplayInfo = "status_emoji_display_info"
+                case fields
+                case huddleState = "huddle_state"
+                case huddleStateExpirationTs = "huddle_state_expiration_ts"
+                case startDate = "start_date"
+                case statusClearOnFocusEnd = "status_clear_on_focus_end"
+                case firstName = "first_name"
+                case lastName = "last_name"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/UsersSetPhotoResponse/profile`.
+        public var profile: Components.Schemas.UsersSetPhotoResponse.ProfilePayload?
         /// Creates a new `UsersSetPhotoResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
-        ///   - profile:
         ///   - provided:
-        ///   - warning:
+        ///   - profile:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            profile: SlackModels.Profile? = nil,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            profile: Components.Schemas.UsersSetPhotoResponse.ProfilePayload? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
-            self.profile = profile
             self.provided = provided
-            self.warning = warning
+            self.profile = profile
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
-            case profile
             case provided
-            case warning
+            case profile
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsersSetPresenceResponse`.
     public struct UsersSetPresenceResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsersSetPresenceResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsersSetPresenceResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersSetPresenceResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsersSetPresenceResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersSetPresenceResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsersSetPresenceResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsersSetPresenceResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `UsersSetPresenceResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 }

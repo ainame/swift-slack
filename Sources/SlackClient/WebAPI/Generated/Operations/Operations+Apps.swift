@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Apps
 extension Operations {
+    /// Generate a temporary Socket Mode WebSocket URL that your app can connect to in order to receive events and interactive payloads over.
+    ///
+    /// - Remark: HTTP `POST /apps.connections.open`.
+    /// - Remark: Generated from `#/paths//apps.connections.open/post(appsConnectionsOpen)`.
     public enum AppsConnectionsOpen {
         public static let id: Swift.String = "appsConnectionsOpen"
         public struct Input: Sendable, Hashable {
@@ -149,6 +153,10 @@ extension Operations {
         }
     }
 
+    /// Get a list of authorizations for the given event context. Each authorization represents an app installation that the event is visible to.
+    ///
+    /// - Remark: HTTP `POST /apps.event.authorizations.list`.
+    /// - Remark: Generated from `#/paths//apps.event.authorizations.list/post(appsEventAuthorizationsList)`.
     public enum AppsEventAuthorizationsList {
         public static let id: Swift.String = "appsEventAuthorizationsList"
         public struct Input: Sendable, Hashable {
@@ -313,6 +321,10 @@ extension Operations {
         }
     }
 
+    /// Create an app from an app manifest.
+    ///
+    /// - Remark: HTTP `POST /apps.manifest.create`.
+    /// - Remark: Generated from `#/paths//apps.manifest.create/post(appsManifestCreate)`.
     public enum AppsManifestCreate {
         public static let id: Swift.String = "appsManifestCreate"
         public struct Input: Sendable, Hashable {
@@ -469,6 +481,10 @@ extension Operations {
         }
     }
 
+    /// Permanently deletes an app created through app manifests. When called with a manager app token, this method can only delete apps that were created by that manager app.
+    ///
+    /// - Remark: HTTP `POST /apps.manifest.delete`.
+    /// - Remark: Generated from `#/paths//apps.manifest.delete/post(appsManifestDelete)`.
     public enum AppsManifestDelete {
         public static let id: Swift.String = "appsManifestDelete"
         public struct Input: Sendable, Hashable {
@@ -615,6 +631,10 @@ extension Operations {
         }
     }
 
+    /// Export an app manifest from an existing app. When called with a manager app token, this method can only export apps that were created by that manager app.
+    ///
+    /// - Remark: HTTP `POST /apps.manifest.export`.
+    /// - Remark: Generated from `#/paths//apps.manifest.export/post(appsManifestExport)`.
     public enum AppsManifestExport {
         public static let id: Swift.String = "appsManifestExport"
         public struct Input: Sendable, Hashable {
@@ -761,6 +781,10 @@ extension Operations {
         }
     }
 
+    /// Update an app from an app manifest. When called with a manager app token, this method can only update apps that were created by that manager app.
+    ///
+    /// - Remark: HTTP `POST /apps.manifest.update`.
+    /// - Remark: Generated from `#/paths//apps.manifest.update/post(appsManifestUpdate)`.
     public enum AppsManifestUpdate {
         public static let id: Swift.String = "appsManifestUpdate"
         public struct Input: Sendable, Hashable {
@@ -919,6 +943,10 @@ extension Operations {
         }
     }
 
+    /// Validate an app manifest
+    ///
+    /// - Remark: HTTP `POST /apps.manifest.validate`.
+    /// - Remark: Generated from `#/paths//apps.manifest.validate/post(appsManifestValidate)`.
     public enum AppsManifestValidate {
         public static let id: Swift.String = "appsManifestValidate"
         public struct Input: Sendable, Hashable {
@@ -1075,6 +1103,10 @@ extension Operations {
         }
     }
 
+    /// Uninstalls your app from a workspace.
+    ///
+    /// - Remark: HTTP `POST /apps.uninstall`.
+    /// - Remark: Generated from `#/paths//apps.uninstall/post(appsUninstall)`.
     public enum AppsUninstall {
         public static let id: Swift.String = "appsUninstall"
         public struct Input: Sendable, Hashable {
@@ -1231,6 +1263,10 @@ extension Operations {
         }
     }
 
+    /// Updates the connection status between a user and an app.
+    ///
+    /// - Remark: HTTP `POST /apps.user.connection.update`.
+    /// - Remark: Generated from `#/paths//apps.user.connection.update/post(appsUserConnectionUpdate)`.
     public enum AppsUserConnectionUpdate {
         public static let id: Swift.String = "appsUserConnectionUpdate"
         public struct Input: Sendable, Hashable {

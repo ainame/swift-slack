@@ -11,6 +11,7 @@ import struct Foundation.Date
 import struct Foundation.URL
 #endif
 import HTTPTypes
+import SlackBlockKit
 
 extension Client {
     /// Save an item for later. Formerly known as adding a star.

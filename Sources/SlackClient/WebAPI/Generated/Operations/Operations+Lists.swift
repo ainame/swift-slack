@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Lists
 extension Operations {
+    /// Revoke access to a List for specified entities.
+    ///
+    /// - Remark: HTTP `POST /slackLists.access.delete`.
+    /// - Remark: Generated from `#/paths//slackLists.access.delete/post(slackListsAccessDelete)`.
     public enum SlackListsAccessDelete {
         public static let id: Swift.String = "slackListsAccessDelete"
         public struct Input: Sendable, Hashable {
@@ -177,6 +181,10 @@ extension Operations {
         }
     }
 
+    /// Set the access level to a List for specified entities.
+    ///
+    /// - Remark: HTTP `POST /slackLists.access.set`.
+    /// - Remark: Generated from `#/paths//slackLists.access.set/post(slackListsAccessSet)`.
     public enum SlackListsAccessSet {
         public static let id: Swift.String = "slackListsAccessSet"
         public struct Input: Sendable, Hashable {
@@ -349,6 +357,10 @@ extension Operations {
         }
     }
 
+    /// Create a List.
+    ///
+    /// - Remark: HTTP `POST /slackLists.create`.
+    /// - Remark: Generated from `#/paths//slackLists.create/post(slackListsCreate)`.
     public enum SlackListsCreate {
         public static let id: Swift.String = "slackListsCreate"
         public struct Input: Sendable, Hashable {
@@ -537,6 +549,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve List download URL from an export job to download List contents.
+    ///
+    /// - Remark: HTTP `POST /slackLists.download.get`.
+    /// - Remark: Generated from `#/paths//slackLists.download.get/post(slackListsDownloadGet)`.
     public enum SlackListsDownloadGet {
         public static let id: Swift.String = "slackListsDownloadGet"
         public struct Input: Sendable, Hashable {
@@ -721,6 +737,10 @@ extension Operations {
         }
     }
 
+    /// Initiate a job to export List contents.
+    ///
+    /// - Remark: HTTP `POST /slackLists.download.start`.
+    /// - Remark: Generated from `#/paths//slackLists.download.start/post(slackListsDownloadStart)`.
     public enum SlackListsDownloadStart {
         public static let id: Swift.String = "slackListsDownloadStart"
         public struct Input: Sendable, Hashable {
@@ -901,6 +921,10 @@ extension Operations {
         }
     }
 
+    /// Add a new item to an existing List.
+    ///
+    /// - Remark: HTTP `POST /slackLists.items.create`.
+    /// - Remark: Generated from `#/paths//slackLists.items.create/post(slackListsItemsCreate)`.
     public enum SlackListsItemsCreate {
         public static let id: Swift.String = "slackListsItemsCreate"
         public struct Input: Sendable, Hashable {
@@ -1073,6 +1097,10 @@ extension Operations {
         }
     }
 
+    /// Deletes an item from an existing List.
+    ///
+    /// - Remark: HTTP `POST /slackLists.items.delete`.
+    /// - Remark: Generated from `#/paths//slackLists.items.delete/post(slackListsItemsDelete)`.
     public enum SlackListsItemsDelete {
         public static let id: Swift.String = "slackListsItemsDelete"
         public struct Input: Sendable, Hashable {
@@ -1229,6 +1257,10 @@ extension Operations {
         }
     }
 
+    /// Deletes multiple items from an existing List.
+    ///
+    /// - Remark: HTTP `POST /slackLists.items.deleteMultiple`.
+    /// - Remark: Generated from `#/paths//slackLists.items.deleteMultiple/post(slackListsItemsDeleteMultiple)`.
     public enum SlackListsItemsDeleteMultiple {
         public static let id: Swift.String = "slackListsItemsDeleteMultiple"
         public struct Input: Sendable, Hashable {
@@ -1385,6 +1417,10 @@ extension Operations {
         }
     }
 
+    /// Get a row from a List.
+    ///
+    /// - Remark: HTTP `POST /slackLists.items.info`.
+    /// - Remark: Generated from `#/paths//slackLists.items.info/post(slackListsItemsInfo)`.
     public enum SlackListsItemsInfo {
         public static let id: Swift.String = "slackListsItemsInfo"
         public struct Input: Sendable, Hashable {
@@ -1549,6 +1585,10 @@ extension Operations {
         }
     }
 
+    /// Get records from a List.
+    ///
+    /// - Remark: HTTP `POST /slackLists.items.list`.
+    /// - Remark: Generated from `#/paths//slackLists.items.list/post(slackListsItemsList)`.
     public enum SlackListsItemsList {
         public static let id: Swift.String = "slackListsItemsList"
         public struct Input: Sendable, Hashable {
@@ -1729,6 +1769,10 @@ extension Operations {
         }
     }
 
+    /// Updates cells in a List.
+    ///
+    /// - Remark: HTTP `POST /slackLists.items.update`.
+    /// - Remark: Generated from `#/paths//slackLists.items.update/post(slackListsItemsUpdate)`.
     public enum SlackListsItemsUpdate {
         public static let id: Swift.String = "slackListsItemsUpdate"
         public struct Input: Sendable, Hashable {
@@ -1885,6 +1929,10 @@ extension Operations {
         }
     }
 
+    /// Update a List.
+    ///
+    /// - Remark: HTTP `POST /slackLists.update`.
+    /// - Remark: Generated from `#/paths//slackLists.update/post(slackListsUpdate)`.
     public enum SlackListsUpdate {
         public static let id: Swift.String = "slackListsUpdate"
         public struct Input: Sendable, Hashable {

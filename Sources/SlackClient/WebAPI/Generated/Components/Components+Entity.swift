@@ -9,60 +9,62 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Entity
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse`.
     public struct EntityPresentDetailsResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/callstack`.
+        public var callstack: Swift.String?
         /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/EntityPresentDetailsResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: OpenAPIRuntime.OpenAPIValueContainer?
         /// Creates a new `EntityPresentDetailsResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - callstack:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            callstack: Swift.String? = nil,
+            responseMetadata: OpenAPIRuntime.OpenAPIValueContainer? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.callstack = callstack
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case callstack
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 }

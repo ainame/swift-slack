@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Assistant
 extension Operations {
+    /// Set the status for an AI assistant thread.
+    ///
+    /// - Remark: HTTP `POST /assistant.threads.setStatus`.
+    /// - Remark: Generated from `#/paths//assistant.threads.setStatus/post(assistantThreadsSetStatus)`.
     public enum AssistantThreadsSetStatus {
         public static let id: Swift.String = "assistantThreadsSetStatus"
         public struct Input: Sendable, Hashable {
@@ -209,6 +213,10 @@ extension Operations {
         }
     }
 
+    /// Set suggested prompts for the given assistant thread
+    ///
+    /// - Remark: HTTP `POST /assistant.threads.setSuggestedPrompts`.
+    /// - Remark: Generated from `#/paths//assistant.threads.setSuggestedPrompts/post(assistantThreadsSetSuggestedPrompts)`.
     public enum AssistantThreadsSetSuggestedPrompts {
         public static let id: Swift.String = "assistantThreadsSetSuggestedPrompts"
         public struct Input: Sendable, Hashable {
@@ -381,6 +389,10 @@ extension Operations {
         }
     }
 
+    /// Set the title for the given assistant thread
+    ///
+    /// - Remark: HTTP `POST /assistant.threads.setTitle`.
+    /// - Remark: Generated from `#/paths//assistant.threads.setTitle/post(assistantThreadsSetTitle)`.
     public enum AssistantThreadsSetTitle {
         public static let id: Swift.String = "assistantThreadsSetTitle"
         public struct Input: Sendable, Hashable {

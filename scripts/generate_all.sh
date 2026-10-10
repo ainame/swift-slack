@@ -1,67 +1,42 @@
 #!/usr/bin/env sh
 
+# Regenerates the Web API client, response models and events:
+#   scripts/generate_webapi.rb  slack-api-ref methods + java-slack-sdk classes -> .tmp/WebAPI/openapi.json
+#   swift-openapi-generator     openapi.json -> .tmp/WebAPI/{Types,Client}.swift
+#   scripts/process_webapi.rb   -> Sources/SlackClient/WebAPI/Generated, Sources/SlackApp/Events/Generated
+
 set -xe
 
-TMP_DIR="./.tmp"
+TMP_DIR="./.tmp/WebAPI"
 DEPS_DIR="./vendor"
 
 ruby -e 'version = RUBY_VERSION.split(".").first(2).map(&:to_i); abort "Ruby 3.0+ is required (active: #{RUBY_VERSION}). Activate the version from .ruby-version." if (version <=> [3, 0]) == -1'
 
-if [ ! -x "./node_modules/.bin/quicktype" ]; then
-    echo "Error: Locked quicktype dependency is not installed. Run 'npm ci' first."
+if [ ! -e "${DEPS_DIR}/java-slack-sdk/.git" ] || [ ! -e "${DEPS_DIR}/slack-api-ref/.git" ] || [ ! -e "${DEPS_DIR}/tree-sitter-java/.git" ]; then
+    echo "Error: Submodules not initialized. Run 'git submodule update --init'."
     exit 1
 fi
 
-# Ensure submodules are initialized and updated
-if [ ! -f ".gitmodules" ]; then
-    echo "Error: .gitmodules file not found. Please run 'make update' first."
-    exit 1
-fi
+make tree-sitter-java
 
-# Check if submodules are initialized (note: .git can be a file or directory)
-if [ ! -e "${DEPS_DIR}/java-slack-sdk/.git" ] || [ ! -e "${DEPS_DIR}/slack-api-ref/.git" ]; then
-    echo "Error: Submodules not initialized. Please run 'make update' first."
-    exit 1
-fi
-
-rm -rf "${TMP_DIR}/WebAPI" \
-    "${TMP_DIR}/Events" \
+rm -rf "${TMP_DIR}" \
     "Sources/SlackClient/WebAPI/Generated" \
-    "Sources/SlackApp/Events/Generated" \
-    "Sources/SlackModels/Generated"
-
-mkdir -p "${TMP_DIR}/WebAPI"
-mkdir -p "${TMP_DIR}/Events"
+    "Sources/SlackApp/Events/Generated"
+mkdir -p "${TMP_DIR}/Swift"
 
 bundle exec ruby scripts/generate_webapi.rb
 
-# Generate types with public and client with internal to avoid potential conflict other symbols named `Client`
+# Types are public; the client is internal to avoid conflicts with other symbols named `Client`.
 swift run --package-path Tools --disable-sandbox swift-openapi-generator generate \
-    --mode types \
-    --access-modifier public \
-    --naming-strategy idiomatic \
-    --output-directory "${TMP_DIR}/WebAPI" \
-    "${TMP_DIR}/WebAPI/openapi.json"
+    --config "${TMP_DIR}/types-config.yaml" \
+    --output-directory "${TMP_DIR}/Swift" \
+    "${TMP_DIR}/openapi.json"
 
 swift run --package-path Tools --disable-sandbox swift-openapi-generator generate \
-    --mode client \
-    --access-modifier internal \
-    --naming-strategy idiomatic \
-    --output-directory "${TMP_DIR}/WebAPI" \
-    "${TMP_DIR}/WebAPI/openapi.json"
+    --config "${TMP_DIR}/client-config.yaml" \
+    --output-directory "${TMP_DIR}/Swift" \
+    "${TMP_DIR}/openapi.json"
 
-bundle exec ruby scripts/process_webapi.rb "${TMP_DIR}/WebAPI" "Sources/SlackClient/WebAPI/Generated"
-
-# Generate events
-bundle exec ruby scripts/generate_events.rb
-
-swift run --package-path Tools --disable-sandbox swift-openapi-generator generate \
-    --mode types \
-    --access-modifier public \
-    --naming-strategy idiomatic \
-    --output-directory "${TMP_DIR}/Events" \
-    "${TMP_DIR}/Events/openapi.json"
-
-bundle exec ruby scripts/process_events.rb "${TMP_DIR}/Events/Types.swift" "Sources/SlackApp/Events/Generated"
+bundle exec ruby scripts/process_webapi.rb "${TMP_DIR}/Swift" "${TMP_DIR}/openapi.json"
 
 make format-generated

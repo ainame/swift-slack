@@ -1,5 +1,5 @@
 import Foundation
-import SlackModels
+import SlackClient
 
 /// https://docs.slack.dev/reference/interaction-payloads/shortcuts-interaction-payload
 public struct GlobalShortcutPayload: InteractivePayloadProtocol, Decodable, Sendable {

@@ -9,57 +9,59 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Reminders
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/RemindersAddResponse`.
     public struct RemindersAddResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/RemindersAddResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/RemindersAddResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersAddResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersAddResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/RemindersAddResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/RemindersAddResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersAddResponse/reminder`.
-        public var reminder: SlackModels.Reminder?
+        public var reminder: Components.Schemas.Reminder?
         /// - Remark: Generated from `#/components/schemas/RemindersAddResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `RemindersAddResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - reminder:
         ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            reminder: SlackModels.Reminder? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
+            reminder: Components.Schemas.Reminder? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.reminder = reminder
             self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case reminder
             case responseMetadata = "response_metadata"
@@ -68,116 +70,134 @@ extension Components.Schemas {
 
     /// - Remark: Generated from `#/components/schemas/RemindersCompleteResponse`.
     public struct RemindersCompleteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/RemindersCompleteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/RemindersCompleteResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersCompleteResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersCompleteResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/RemindersCompleteResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/RemindersCompleteResponse/provided`.
         public var provided: Swift.String?
         /// Creates a new `RemindersCompleteResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/RemindersDeleteResponse`.
     public struct RemindersDeleteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/RemindersDeleteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/RemindersDeleteResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersDeleteResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersDeleteResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/RemindersDeleteResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/RemindersDeleteResponse/provided`.
         public var provided: Swift.String?
         /// Creates a new `RemindersDeleteResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/RemindersInfoResponse`.
     public struct RemindersInfoResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/RemindersInfoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/RemindersInfoResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersInfoResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersInfoResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/RemindersInfoResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/RemindersInfoResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersInfoResponse/reminder`.
-        public var reminder: SlackModels.Reminder?
+        public var reminder: Components.Schemas.Reminder?
         /// Creates a new `RemindersInfoResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - reminder:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            reminder: SlackModels.Reminder? = nil,
+            reminder: Components.Schemas.Reminder? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.reminder = reminder
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case reminder
         }
@@ -185,42 +205,48 @@ extension Components.Schemas {
 
     /// - Remark: Generated from `#/components/schemas/RemindersListResponse`.
     public struct RemindersListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/RemindersListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/RemindersListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/RemindersListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/RemindersListResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/RemindersListResponse/reminders`.
-        public var reminders: [SlackModels.Reminder]?
+        public var reminders: [Components.Schemas.Reminder]?
         /// Creates a new `RemindersListResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - reminders:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            reminders: [SlackModels.Reminder]? = nil,
+            reminders: [Components.Schemas.Reminder]? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.reminders = reminders
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case reminders
         }

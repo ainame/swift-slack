@@ -9,235 +9,227 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackBlockKit)
 import SlackBlockKit
-#endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
 
 #if WebAPI_Views
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/ViewsOpenResponse`.
     public struct ViewsOpenResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ViewsOpenResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ViewsOpenResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ViewsOpenResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ViewsOpenResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ViewsOpenResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ViewsOpenResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ViewsOpenResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/ViewsOpenResponse/view`.
-        public var view: SlackBlockKit.View?
-        /// - Remark: Generated from `#/components/schemas/ViewsOpenResponse/warning`.
-        public var warning: Swift.String?
+        public var view: Components.Schemas.View?
+        /// - Remark: Generated from `#/components/schemas/ViewsOpenResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `ViewsOpenResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - view:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            view: SlackBlockKit.View? = nil,
-            warning: Swift.String? = nil,
+            view: Components.Schemas.View? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.view = view
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case view
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ViewsPublishResponse`.
     public struct ViewsPublishResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ViewsPublishResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ViewsPublishResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ViewsPublishResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ViewsPublishResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ViewsPublishResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ViewsPublishResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ViewsPublishResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/ViewsPublishResponse/view`.
-        public var view: SlackBlockKit.View?
-        /// - Remark: Generated from `#/components/schemas/ViewsPublishResponse/warning`.
-        public var warning: Swift.String?
+        public var view: Components.Schemas.View?
+        /// - Remark: Generated from `#/components/schemas/ViewsPublishResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `ViewsPublishResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - view:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            view: SlackBlockKit.View? = nil,
-            warning: Swift.String? = nil,
+            view: Components.Schemas.View? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.view = view
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case view
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ViewsPushResponse`.
     public struct ViewsPushResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ViewsPushResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ViewsPushResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ViewsPushResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ViewsPushResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ViewsPushResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ViewsPushResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ViewsPushResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/ViewsPushResponse/view`.
-        public var view: SlackBlockKit.View?
-        /// - Remark: Generated from `#/components/schemas/ViewsPushResponse/warning`.
-        public var warning: Swift.String?
+        public var view: Components.Schemas.View?
+        /// - Remark: Generated from `#/components/schemas/ViewsPushResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `ViewsPushResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - view:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            view: SlackBlockKit.View? = nil,
-            warning: Swift.String? = nil,
+            view: Components.Schemas.View? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.view = view
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case view
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/ViewsUpdateResponse`.
     public struct ViewsUpdateResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/ViewsUpdateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/ViewsUpdateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ViewsUpdateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/ViewsUpdateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ViewsUpdateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/ViewsUpdateResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/ViewsUpdateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/ViewsUpdateResponse/view`.
-        public var view: SlackBlockKit.View?
-        /// - Remark: Generated from `#/components/schemas/ViewsUpdateResponse/warning`.
-        public var warning: Swift.String?
+        public var view: Components.Schemas.View?
+        /// - Remark: Generated from `#/components/schemas/ViewsUpdateResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `ViewsUpdateResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - view:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            view: SlackBlockKit.View? = nil,
-            warning: Swift.String? = nil,
+            view: Components.Schemas.View? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.view = view
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case view
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 }

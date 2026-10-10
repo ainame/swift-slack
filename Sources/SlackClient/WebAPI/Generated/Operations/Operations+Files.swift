@@ -9,14 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackBlockKit)
 import SlackBlockKit
-#endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
 
 #if WebAPI_Files
 extension Operations {
+    /// Finishes an upload started with files.getUploadURLExternal
+    ///
+    /// - Remark: HTTP `POST /files.completeUploadExternal`.
+    /// - Remark: Generated from `#/paths//files.completeUploadExternal/post(filesCompleteUploadExternal)`.
     public enum FilesCompleteUploadExternal {
         public static let id: Swift.String = "filesCompleteUploadExternal"
         public struct Input: Sendable, Hashable {
@@ -61,7 +61,7 @@ extension Operations {
                     /// A JSON-based array of structured rich text blocks, presented as a URL-encoded string. If the initial_comment field is provided, the blocks field is ignored.
                     ///
                     /// - Remark: Generated from `#/paths/files.completeUploadExternal/POST/requestBody/json/blocks`.
-                    public var blocks: [SlackBlockKit.Block]?
+                    public var blocks: [Components.Schemas.Block]?
                     /// Set your bot's user name for the file share message. Requires the chat:write.customize scope.
                     ///
                     /// - Remark: Generated from `#/paths/files.completeUploadExternal/POST/requestBody/json/username`.
@@ -93,7 +93,7 @@ extension Operations {
                         threadTs: Swift.String? = nil,
                         channels: Swift.String? = nil,
                         initialComment: Swift.String? = nil,
-                        blocks: [SlackBlockKit.Block]? = nil,
+                        blocks: [Components.Schemas.Block]? = nil,
                         username: Swift.String? = nil,
                         iconUrl: Swift.String? = nil,
                         iconEmoji: Swift.String? = nil,
@@ -231,6 +231,10 @@ extension Operations {
         }
     }
 
+    /// Deletes a file.
+    ///
+    /// - Remark: HTTP `POST /files.delete`.
+    /// - Remark: Generated from `#/paths//files.delete/post(filesDelete)`.
     public enum FilesDelete {
         public static let id: Swift.String = "filesDelete"
         public struct Input: Sendable, Hashable {
@@ -377,6 +381,10 @@ extension Operations {
         }
     }
 
+    /// Gets a URL for an edge external file upload
+    ///
+    /// - Remark: HTTP `POST /files.getUploadURLExternal`.
+    /// - Remark: Generated from `#/paths//files.getUploadURLExternal/post(filesGetUploadURLExternal)`.
     public enum FilesGetUploadURLExternal {
         public static let id: Swift.String = "filesGetUploadURLExternal"
         public struct Input: Sendable, Hashable {
@@ -549,6 +557,10 @@ extension Operations {
         }
     }
 
+    /// Gets information about a file.
+    ///
+    /// - Remark: HTTP `POST /files.info`.
+    /// - Remark: Generated from `#/paths//files.info/post(filesInfo)`.
     public enum FilesInfo {
         public static let id: Swift.String = "filesInfo"
         public struct Input: Sendable, Hashable {
@@ -716,6 +728,10 @@ extension Operations {
         }
     }
 
+    /// List files for a team, in a channel, or from a user with applied filters.
+    ///
+    /// - Remark: HTTP `POST /files.list`.
+    /// - Remark: Generated from `#/paths//files.list/post(filesList)`.
     public enum FilesList {
         public static let id: Swift.String = "filesList"
         public struct Input: Sendable, Hashable {
@@ -913,6 +929,10 @@ extension Operations {
         }
     }
 
+    /// Adds a file from a remote service
+    ///
+    /// - Remark: HTTP `POST /files.remote.add`.
+    /// - Remark: Generated from `#/paths//files.remote.add/post(filesRemoteAdd)`.
     public enum FilesRemoteAdd {
         public static let id: Swift.String = "filesRemoteAdd"
         public struct Input: Sendable, Hashable {
@@ -1101,6 +1121,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve information about a remote file added to Slack
+    ///
+    /// - Remark: HTTP `POST /files.remote.info`.
+    /// - Remark: Generated from `#/paths//files.remote.info/post(filesRemoteInfo)`.
     public enum FilesRemoteInfo {
         public static let id: Swift.String = "filesRemoteInfo"
         public struct Input: Sendable, Hashable {
@@ -1257,6 +1281,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve information about a remote file added to Slack
+    ///
+    /// - Remark: HTTP `POST /files.remote.list`.
+    /// - Remark: Generated from `#/paths//files.remote.list/post(filesRemoteList)`.
     public enum FilesRemoteList {
         public static let id: Swift.String = "filesRemoteList"
         public struct Input: Sendable, Hashable {
@@ -1439,6 +1467,10 @@ extension Operations {
         }
     }
 
+    /// Remove a remote file.
+    ///
+    /// - Remark: HTTP `POST /files.remote.remove`.
+    /// - Remark: Generated from `#/paths//files.remote.remove/post(filesRemoteRemove)`.
     public enum FilesRemoteRemove {
         public static let id: Swift.String = "filesRemoteRemove"
         public struct Input: Sendable, Hashable {
@@ -1595,6 +1627,10 @@ extension Operations {
         }
     }
 
+    /// Share a remote file into a channel.
+    ///
+    /// - Remark: HTTP `POST /files.remote.share`.
+    /// - Remark: Generated from `#/paths//files.remote.share/post(filesRemoteShare)`.
     public enum FilesRemoteShare {
         public static let id: Swift.String = "filesRemoteShare"
         public struct Input: Sendable, Hashable {
@@ -1759,6 +1795,10 @@ extension Operations {
         }
     }
 
+    /// Updates an existing remote file.
+    ///
+    /// - Remark: HTTP `POST /files.remote.update`.
+    /// - Remark: Generated from `#/paths//files.remote.update/post(filesRemoteUpdate)`.
     public enum FilesRemoteUpdate {
         public static let id: Swift.String = "filesRemoteUpdate"
         public struct Input: Sendable, Hashable {
@@ -1955,6 +1995,10 @@ extension Operations {
         }
     }
 
+    /// Revokes public/external sharing access for a file
+    ///
+    /// - Remark: HTTP `POST /files.revokePublicURL`.
+    /// - Remark: Generated from `#/paths//files.revokePublicURL/post(filesRevokePublicURL)`.
     public enum FilesRevokePublicURL {
         public static let id: Swift.String = "filesRevokePublicURL"
         public struct Input: Sendable, Hashable {
@@ -2101,6 +2145,10 @@ extension Operations {
         }
     }
 
+    /// Enables a file for public/external sharing.
+    ///
+    /// - Remark: HTTP `POST /files.sharedPublicURL`.
+    /// - Remark: Generated from `#/paths//files.sharedPublicURL/post(filesSharedPublicURL)`.
     public enum FilesSharedPublicURL {
         public static let id: Swift.String = "filesSharedPublicURL"
         public struct Input: Sendable, Hashable {
@@ -2247,6 +2295,10 @@ extension Operations {
         }
     }
 
+    /// Uploads or creates a file.
+    ///
+    /// - Remark: HTTP `POST /files.upload`.
+    /// - Remark: Generated from `#/paths//files.upload/post(filesUpload)`.
     public enum FilesUpload {
         public static let id: Swift.String = "filesUpload"
         public struct Input: Sendable, Hashable {

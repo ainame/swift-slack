@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Conversations
 extension Operations {
+    /// Accepts an invitation to a Slack Connect channel.
+    ///
+    /// - Remark: HTTP `POST /conversations.acceptSharedInvite`.
+    /// - Remark: Generated from `#/paths//conversations.acceptSharedInvite/post(conversationsAcceptSharedInvite)`.
     public enum ConversationsAcceptSharedInvite {
         public static let id: Swift.String = "conversationsAcceptSharedInvite"
         public struct Input: Sendable, Hashable {
@@ -203,6 +207,10 @@ extension Operations {
         }
     }
 
+    /// Approves an invitation to a Slack Connect channel
+    ///
+    /// - Remark: HTTP `POST /conversations.approveSharedInvite`.
+    /// - Remark: Generated from `#/paths//conversations.approveSharedInvite/post(conversationsApproveSharedInvite)`.
     public enum ConversationsApproveSharedInvite {
         public static let id: Swift.String = "conversationsApproveSharedInvite"
         public struct Input: Sendable, Hashable {
@@ -359,6 +367,10 @@ extension Operations {
         }
     }
 
+    /// Archives a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.archive`.
+    /// - Remark: Generated from `#/paths//conversations.archive/post(conversationsArchive)`.
     public enum ConversationsArchive {
         public static let id: Swift.String = "conversationsArchive"
         public struct Input: Sendable, Hashable {
@@ -505,6 +517,10 @@ extension Operations {
         }
     }
 
+    /// Create a channel canvas for a channel
+    ///
+    /// - Remark: HTTP `POST /conversations.canvases.create`.
+    /// - Remark: Generated from `#/paths//conversations.canvases.create/post(conversationsCanvasesCreate)`.
     public enum ConversationsCanvasesCreate {
         public static let id: Swift.String = "conversationsCanvasesCreate"
         public struct Input: Sendable, Hashable {
@@ -669,6 +685,10 @@ extension Operations {
         }
     }
 
+    /// Closes a direct message or multi-person direct message.
+    ///
+    /// - Remark: HTTP `POST /conversations.close`.
+    /// - Remark: Generated from `#/paths//conversations.close/post(conversationsClose)`.
     public enum ConversationsClose {
         public static let id: Swift.String = "conversationsClose"
         public struct Input: Sendable, Hashable {
@@ -815,6 +835,10 @@ extension Operations {
         }
     }
 
+    /// Initiates a public or private channel-based conversation
+    ///
+    /// - Remark: HTTP `POST /conversations.create`.
+    /// - Remark: Generated from `#/paths//conversations.create/post(conversationsCreate)`.
     public enum ConversationsCreate {
         public static let id: Swift.String = "conversationsCreate"
         public struct Input: Sendable, Hashable {
@@ -979,6 +1003,10 @@ extension Operations {
         }
     }
 
+    /// Declines a Slack Connect channel invite.
+    ///
+    /// - Remark: HTTP `POST /conversations.declineSharedInvite`.
+    /// - Remark: Generated from `#/paths//conversations.declineSharedInvite/post(conversationsDeclineSharedInvite)`.
     public enum ConversationsDeclineSharedInvite {
         public static let id: Swift.String = "conversationsDeclineSharedInvite"
         public struct Input: Sendable, Hashable {
@@ -1137,6 +1165,10 @@ extension Operations {
         }
     }
 
+    /// Upgrade or downgrade Slack Connect channel permissions between 'can post only' and 'can post and invite'.
+    ///
+    /// - Remark: HTTP `POST /conversations.externalInvitePermissions.set`.
+    /// - Remark: Generated from `#/paths//conversations.externalInvitePermissions.set/post(conversationsExternalInvitePermissionsSet)`.
     public enum ConversationsExternalInvitePermissionsSet {
         public static let id: Swift.String = "conversationsExternalInvitePermissionsSet"
         public struct Input: Sendable, Hashable {
@@ -1301,6 +1333,10 @@ extension Operations {
         }
     }
 
+    /// Fetches a conversation's history of messages and events.
+    ///
+    /// - Remark: HTTP `POST /conversations.history`.
+    /// - Remark: Generated from `#/paths//conversations.history/post(conversationsHistory)`.
     public enum ConversationsHistory {
         public static let id: Swift.String = "conversationsHistory"
         public struct Input: Sendable, Hashable {
@@ -1501,6 +1537,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve information about a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.info`.
+    /// - Remark: Generated from `#/paths//conversations.info/post(conversationsInfo)`.
     public enum ConversationsInfo {
         public static let id: Swift.String = "conversationsInfo"
         public struct Input: Sendable, Hashable {
@@ -1665,6 +1705,10 @@ extension Operations {
         }
     }
 
+    /// Invites users to a channel.
+    ///
+    /// - Remark: HTTP `POST /conversations.invite`.
+    /// - Remark: Generated from `#/paths//conversations.invite/post(conversationsInvite)`.
     public enum ConversationsInvite {
         public static let id: Swift.String = "conversationsInvite"
         public struct Input: Sendable, Hashable {
@@ -1829,6 +1873,10 @@ extension Operations {
         }
     }
 
+    /// Sends an invitation to a Slack Connect channel
+    ///
+    /// - Remark: HTTP `POST /conversations.inviteShared`.
+    /// - Remark: Generated from `#/paths//conversations.inviteShared/post(conversationsInviteShared)`.
     public enum ConversationsInviteShared {
         public static let id: Swift.String = "conversationsInviteShared"
         public struct Input: Sendable, Hashable {
@@ -2001,6 +2049,10 @@ extension Operations {
         }
     }
 
+    /// Joins an existing conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.join`.
+    /// - Remark: Generated from `#/paths//conversations.join/post(conversationsJoin)`.
     public enum ConversationsJoin {
         public static let id: Swift.String = "conversationsJoin"
         public struct Input: Sendable, Hashable {
@@ -2147,6 +2199,10 @@ extension Operations {
         }
     }
 
+    /// Removes a user from a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.kick`.
+    /// - Remark: Generated from `#/paths//conversations.kick/post(conversationsKick)`.
     public enum ConversationsKick {
         public static let id: Swift.String = "conversationsKick"
         public struct Input: Sendable, Hashable {
@@ -2303,6 +2359,10 @@ extension Operations {
         }
     }
 
+    /// Leaves a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.leave`.
+    /// - Remark: Generated from `#/paths//conversations.leave/post(conversationsLeave)`.
     public enum ConversationsLeave {
         public static let id: Swift.String = "conversationsLeave"
         public struct Input: Sendable, Hashable {
@@ -2449,6 +2509,10 @@ extension Operations {
         }
     }
 
+    /// Lists all channels in a Slack team.
+    ///
+    /// - Remark: HTTP `POST /conversations.list`.
+    /// - Remark: Generated from `#/paths//conversations.list/post(conversationsList)`.
     public enum ConversationsList {
         public static let id: Swift.String = "conversationsList"
         public struct Input: Sendable, Hashable {
@@ -2632,6 +2696,10 @@ extension Operations {
         }
     }
 
+    /// Lists shared channel invites that have been generated or received but have not been approved by all parties
+    ///
+    /// - Remark: HTTP `POST /conversations.listConnectInvites`.
+    /// - Remark: Generated from `#/paths//conversations.listConnectInvites/post(conversationsListConnectInvites)`.
     public enum ConversationsListConnectInvites {
         public static let id: Swift.String = "conversationsListConnectInvites"
         public struct Input: Sendable, Hashable {
@@ -2788,6 +2856,10 @@ extension Operations {
         }
     }
 
+    /// Sets the read cursor in a channel.
+    ///
+    /// - Remark: HTTP `POST /conversations.mark`.
+    /// - Remark: Generated from `#/paths//conversations.mark/post(conversationsMark)`.
     public enum ConversationsMark {
         public static let id: Swift.String = "conversationsMark"
         public struct Input: Sendable, Hashable {
@@ -2944,6 +3016,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve members of a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.members`.
+    /// - Remark: Generated from `#/paths//conversations.members/post(conversationsMembers)`.
     public enum ConversationsMembers {
         public static let id: Swift.String = "conversationsMembers"
         public struct Input: Sendable, Hashable {
@@ -3110,6 +3186,10 @@ extension Operations {
         }
     }
 
+    /// Opens or resumes a direct message or multi-person direct message.
+    ///
+    /// - Remark: HTTP `POST /conversations.open`.
+    /// - Remark: Generated from `#/paths//conversations.open/post(conversationsOpen)`.
     public enum ConversationsOpen {
         public static let id: Swift.String = "conversationsOpen"
         public struct Input: Sendable, Hashable {
@@ -3284,6 +3364,10 @@ extension Operations {
         }
     }
 
+    /// Renames a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.rename`.
+    /// - Remark: Generated from `#/paths//conversations.rename/post(conversationsRename)`.
     public enum ConversationsRename {
         public static let id: Swift.String = "conversationsRename"
         public struct Input: Sendable, Hashable {
@@ -3440,6 +3524,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve a thread of messages posted to a conversation
+    ///
+    /// - Remark: HTTP `POST /conversations.replies`.
+    /// - Remark: Generated from `#/paths//conversations.replies/post(conversationsReplies)`.
     public enum ConversationsReplies {
         public static let id: Swift.String = "conversationsReplies"
         public struct Input: Sendable, Hashable {
@@ -3648,6 +3736,10 @@ extension Operations {
         }
     }
 
+    /// Approves a request to add an external user to a channel and sends them a Slack Connect invite
+    ///
+    /// - Remark: HTTP `POST /conversations.requestSharedInvite.approve`.
+    /// - Remark: Generated from `#/paths//conversations.requestSharedInvite.approve/post(conversationsRequestSharedInviteApprove)`.
     public enum ConversationsRequestSharedInviteApprove {
         public static let id: Swift.String = "conversationsRequestSharedInviteApprove"
         public struct Input: Sendable, Hashable {
@@ -3824,6 +3916,10 @@ extension Operations {
         }
     }
 
+    /// Denies a request to invite an external user to a channel
+    ///
+    /// - Remark: HTTP `POST /conversations.requestSharedInvite.deny`.
+    /// - Remark: Generated from `#/paths//conversations.requestSharedInvite.deny/post(conversationsRequestSharedInviteDeny)`.
     public enum ConversationsRequestSharedInviteDeny {
         public static let id: Swift.String = "conversationsRequestSharedInviteDeny"
         public struct Input: Sendable, Hashable {
@@ -3980,6 +4076,10 @@ extension Operations {
         }
     }
 
+    /// Lists requests to add external users to channels with ability to filter.
+    ///
+    /// - Remark: HTTP `POST /conversations.requestSharedInvite.list`.
+    /// - Remark: Generated from `#/paths//conversations.requestSharedInvite.list/post(conversationsRequestSharedInviteList)`.
     public enum ConversationsRequestSharedInviteList {
         public static let id: Swift.String = "conversationsRequestSharedInviteList"
         public struct Input: Sendable, Hashable {
@@ -4178,6 +4278,10 @@ extension Operations {
         }
     }
 
+    /// Sets the channel description.
+    ///
+    /// - Remark: HTTP `POST /conversations.setPurpose`.
+    /// - Remark: Generated from `#/paths//conversations.setPurpose/post(conversationsSetPurpose)`.
     public enum ConversationsSetPurpose {
         public static let id: Swift.String = "conversationsSetPurpose"
         public struct Input: Sendable, Hashable {
@@ -4334,6 +4438,10 @@ extension Operations {
         }
     }
 
+    /// Sets the topic for a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.setTopic`.
+    /// - Remark: Generated from `#/paths//conversations.setTopic/post(conversationsSetTopic)`.
     public enum ConversationsSetTopic {
         public static let id: Swift.String = "conversationsSetTopic"
         public struct Input: Sendable, Hashable {
@@ -4490,6 +4598,10 @@ extension Operations {
         }
     }
 
+    /// Reverses conversation archival.
+    ///
+    /// - Remark: HTTP `POST /conversations.unarchive`.
+    /// - Remark: Generated from `#/paths//conversations.unarchive/post(conversationsUnarchive)`.
     public enum ConversationsUnarchive {
         public static let id: Swift.String = "conversationsUnarchive"
         public struct Input: Sendable, Hashable {

@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Reactions
 extension Operations {
+    /// Adds a reaction to an item.
+    ///
+    /// - Remark: HTTP `POST /reactions.add`.
+    /// - Remark: Generated from `#/paths//reactions.add/post(reactionsAdd)`.
     public enum ReactionsAdd {
         public static let id: Swift.String = "reactionsAdd"
         public struct Input: Sendable, Hashable {
@@ -177,6 +181,10 @@ extension Operations {
         }
     }
 
+    /// Gets reactions for an item.
+    ///
+    /// - Remark: HTTP `POST /reactions.get`.
+    /// - Remark: Generated from `#/paths//reactions.get/post(reactionsGet)`.
     public enum ReactionsGet {
         public static let id: Swift.String = "reactionsGet"
         public struct Input: Sendable, Hashable {
@@ -357,6 +365,10 @@ extension Operations {
         }
     }
 
+    /// Lists reactions made by a user.
+    ///
+    /// - Remark: HTTP `POST /reactions.list`.
+    /// - Remark: Generated from `#/paths//reactions.list/post(reactionsList)`.
     public enum ReactionsList {
         public static let id: Swift.String = "reactionsList"
         public struct Input: Sendable, Hashable {
@@ -539,6 +551,10 @@ extension Operations {
         }
     }
 
+    /// Removes a reaction from an item.
+    ///
+    /// - Remark: HTTP `POST /reactions.remove`.
+    /// - Remark: Generated from `#/paths//reactions.remove/post(reactionsRemove)`.
     public enum ReactionsRemove {
         public static let id: Swift.String = "reactionsRemove"
         public struct Input: Sendable, Hashable {

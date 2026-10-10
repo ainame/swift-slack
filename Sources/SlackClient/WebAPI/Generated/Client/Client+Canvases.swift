@@ -11,6 +11,7 @@ import struct Foundation.Date
 import struct Foundation.URL
 #endif
 import HTTPTypes
+import SlackBlockKit
 
 extension Client {
     /// Remove access to a canvas for specified entities

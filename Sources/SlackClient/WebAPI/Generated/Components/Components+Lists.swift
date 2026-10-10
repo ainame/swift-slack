@@ -9,647 +9,655 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Lists
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/SlackListsAccessDeleteResponse`.
     public struct SlackListsAccessDeleteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/SlackListsAccessDeleteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/SlackListsAccessDeleteResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsAccessDeleteResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsAccessDeleteResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsAccessDeleteResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/SlackListsAccessDeleteResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsAccessDeleteResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/SlackListsAccessDeleteResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `SlackListsAccessDeleteResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/SlackListsAccessSetResponse`.
     public struct SlackListsAccessSetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/SlackListsAccessSetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/SlackListsAccessSetResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsAccessSetResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsAccessSetResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsAccessSetResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/SlackListsAccessSetResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsAccessSetResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/SlackListsAccessSetResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `SlackListsAccessSetResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse`.
     public struct SlackListsCreateResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/error`.
         public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/provided`.
+        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/list_id`.
         public var listId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/list_metadata`.
-        public var listMetadata: SlackModels.ListMetadata?
-        /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/warning`.
-        public var warning: Swift.String?
+        public var listMetadata: Components.Schemas.ListMetadata?
+        /// - Remark: Generated from `#/components/schemas/SlackListsCreateResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `SlackListsCreateResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
+        ///   - needed:
+        ///   - provided:
         ///   - listId:
         ///   - listMetadata:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            listId: Swift.String? = nil,
-            listMetadata: SlackModels.ListMetadata? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            listId: Swift.String? = nil,
+            listMetadata: Components.Schemas.ListMetadata? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
+            self.needed = needed
+            self.provided = provided
             self.listId = listId
             self.listMetadata = listMetadata
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
+            case needed
+            case provided
             case listId = "list_id"
             case listMetadata = "list_metadata"
-            case needed
-            case ok
-            case provided
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse`.
     public struct SlackListsDownloadGetResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/download_url`.
-        public var downloadUrl: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/status`.
         public var status: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/download_url`.
+        public var downloadUrl: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadGetResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `SlackListsDownloadGetResponse`.
         ///
         /// - Parameters:
-        ///   - downloadUrl:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - status:
-        ///   - warning:
+        ///   - downloadUrl:
+        ///   - responseMetadata:
         public init(
-            downloadUrl: Swift.String? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             status: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            downloadUrl: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.downloadUrl = downloadUrl
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.status = status
-            self.warning = warning
+            self.downloadUrl = downloadUrl
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case downloadUrl = "download_url"
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case status
-            case warning
+            case downloadUrl = "download_url"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse`.
     public struct SlackListsDownloadStartResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/job_id`.
-        public var jobId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/job_id`.
+        public var jobId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsDownloadStartResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `SlackListsDownloadStartResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - jobId:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - jobId:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            jobId: Swift.String? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            jobId: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.jobId = jobId
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.jobId = jobId
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case jobId = "job_id"
-            case needed
             case ok
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case jobId = "job_id"
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse`.
     public struct SlackListsItemsCreateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/item`.
-        public var item: SlackModels.Item?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/item`.
+        public var item: Components.Schemas.ListRecord?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsCreateResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `SlackListsItemsCreateResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
+        ///   - needed:
+        ///   - provided:
         ///   - item:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            error: Swift.String? = nil,
-            item: SlackModels.Item? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            item: Components.Schemas.ListRecord? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
+            self.needed = needed
+            self.provided = provided
             self.item = item
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
+            case needed
+            case provided
             case item
-            case needed
-            case ok
-            case provided
             case responseMetadata = "response_metadata"
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse`.
-    public struct SlackListsItemsDeleteResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `SlackListsItemsDeleteResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - warning:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteMultipleResponse`.
     public struct SlackListsItemsDeleteMultipleResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteMultipleResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteMultipleResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteMultipleResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteMultipleResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteMultipleResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteMultipleResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteMultipleResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteMultipleResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `SlackListsItemsDeleteMultipleResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse`.
+    public struct SlackListsItemsDeleteResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsDeleteResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
+        /// Creates a new `SlackListsItemsDeleteResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
             case warning
+            case error
+            case needed
+            case provided
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse`.
     public struct SlackListsItemsInfoResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/list`.
-        public var list: SlackModels.List?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/record`.
-        public var record: SlackModels.Record?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/subtasks`.
-        public var subtasks: [SlackModels.Subtask]?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/list`.
+        public var list: Components.Schemas.File?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/record`.
+        public var record: Components.Schemas.ListRecord?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/subtasks`.
+        public var subtasks: [Components.Schemas.ListRecord]?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsInfoResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `SlackListsItemsInfoResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - list:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
-        ///   - record:
-        ///   - responseMetadata:
-        ///   - subtasks:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - list:
+        ///   - record:
+        ///   - subtasks:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            list: SlackModels.List? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            record: SlackModels.Record? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            subtasks: [SlackModels.Subtask]? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            list: Components.Schemas.File? = nil,
+            record: Components.Schemas.ListRecord? = nil,
+            subtasks: [Components.Schemas.ListRecord]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.list = list
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
-            self.record = record
-            self.responseMetadata = responseMetadata
-            self.subtasks = subtasks
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.list = list
+            self.record = record
+            self.subtasks = subtasks
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case list
-            case needed
             case ok
-            case provided
-            case record
-            case responseMetadata = "response_metadata"
-            case subtasks
             case warning
+            case error
+            case needed
+            case provided
+            case list
+            case record
+            case subtasks
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse`.
     public struct SlackListsItemsListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/items`.
-        public var items: [SlackModels.Item]?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/warning`.
         public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/items`.
+        public var items: [Components.Schemas.ListRecord]?
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `SlackListsItemsListResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - items:
-        ///   - needed:
         ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
         ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - items:
+        ///   - responseMetadata:
         public init(
-            error: Swift.String? = nil,
-            items: [SlackModels.Item]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            items: [Components.Schemas.ListRecord]? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.error = error
-            self.items = items
-            self.needed = needed
             self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
             self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.items = items
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case items
-            case needed
             case ok
-            case provided
-            case responseMetadata = "response_metadata"
             case warning
+            case error
+            case needed
+            case provided
+            case items
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/SlackListsItemsUpdateResponse`.
     public struct SlackListsItemsUpdateResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsUpdateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/SlackListsItemsUpdateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsUpdateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsUpdateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsUpdateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsUpdateResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsItemsUpdateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/SlackListsItemsUpdateResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `SlackListsItemsUpdateResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/SlackListsUpdateResponse`.
     public struct SlackListsUpdateResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/SlackListsUpdateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/SlackListsUpdateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsUpdateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsUpdateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/SlackListsUpdateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/SlackListsUpdateResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/SlackListsUpdateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/SlackListsUpdateResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `SlackListsUpdateResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 }

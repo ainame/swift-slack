@@ -11,6 +11,7 @@ import struct Foundation.Date
 import struct Foundation.URL
 #endif
 import HTTPTypes
+import SlackBlockKit
 
 extension Client {
     /// Pins an item to a channel.

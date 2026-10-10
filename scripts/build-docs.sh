@@ -19,7 +19,6 @@ swift package --allow-writing-to-directory "${TMP_DIR}" \
     --product SlackClient \
     --product SlackBlockKit \
     --product SlackBlockKitDSL \
-    --product SlackModels \
     --disable-indexing \
     --transform-for-static-hosting \
     --source-service github \

@@ -204,11 +204,6 @@ com.slack.api.methods.response.admin.users.AdminUsersSessionListResponse.ActiveS
   java_type: String
   reason: Slack sends the session id as a JSON number.
   evidence: [admin.users.session.list]
-com.slack.api.methods.response.channels.ChannelsHistoryResponse#channel_actions_ts:
-  type: integer
-  java_type: String
-  reason: Slack sends channel_actions_ts as a JSON number.
-  evidence: [channels.history]
 com.slack.api.methods.response.conversations.ConversationsHistoryResponse#channel_actions_ts:
   type: integer
   java_type: String
