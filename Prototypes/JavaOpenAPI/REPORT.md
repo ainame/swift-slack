@@ -203,6 +203,28 @@ Downstream swift-slack's SlackBlockKit is hand-written from Slack's Block Kit do
 - **Elements and composition objects in upstream java-slack-sdk but not in SlackBlockKit:** `feedback_buttons`, `icon_button`, `url_text_input`, `workflow_button`, and the `FeedbackButtonObject` composition object.
 - **Context:** in the `chat.postMessage` fixture, 181 paths are dropped on the round trip (52 distinct keys repeated across about 12 Block Kit locations). Most of them are a fixture artifact, not gaps. The recorder merges recorded blocks by array index and injects every Java block class's fields, so the single `actions` block carries the keys of `section`, `image`, `video`, `input`, `file`, `call` and `share_shortcut` blocks. Dropping those keys is correct. Only the items listed above point at real gaps.
 
+## TODO: other open issues
+
+Pipeline integration:
+- **Pipeline integration.** Replace the response side of `make generate` (`Sources/SlackClient/WebAPI/Generated`) with the Java-derived types, for example via swift-openapi-generator `typeOverrides` so `Components.Schemas.<X>Response` names stay. The request side (arguments from upstream slack-api-ref) stays as is.
+- **Hand-written SlackModels that become unnecessary after integration.** `APITestArgs` (now `ApiTestResponse.args`), `TeamProfile` (`TeamProfileGetResponse.profile`, all 17 keys), and `Call` / `CallParticipant` (shared `Call` / `CallParticipant` schemas). Two need work first:
+  - `WorkflowCollaboratorError`: Java's inner class lacks `workflow`.
+  - `AppWorkflow` / `AppIcons`: the hand-written `StepInputValue` mirrors a Gson adapter and would otherwise become untyped. Keep it through `typeOverrides`.
+- **Hand-written SlackModels that stay.** The ones used by Events and SlackApp payloads (`Container`, `DndStatus`, `Link`, `MessageEventMetadata`, `MessageRoot`, `Room`, `Recording`, `PinnedInfo`, `Tokens`, `UserProfile`, `Usergroup`, `WorkflowConfiguration`, `AppStep`, `WorkflowStep*`, `AgentSession`, `CodeChannel`, `RecordChannel`) stay unless Events are migrated as well.
+- **Release strategy** is undecided, for example a new target alongside the existing Web API types. Until Events move too, a Web API `Message`/`User` and an event `Message`/`User` are different types.
+- **Response class names.** Eight response classes don't follow `<Method>Response` (`ApiTestResponse`, `oauth.v2.*`, `openid.connect.*`, `rtm.*`) and need an explicit method-to-class map.
+- **Legacy methods.** The 71 methods that exist only in the new output (legacy `channels.*`, `groups.*`, `im.*`, `mpim.*`, ...) should keep today's `UNSUPPORTED_METHODS` exclusion.
+
+Types:
+- **Gson adapter shapes are untyped:** `Attachment.video_html`, Lists cell `value`, workflow step input values and audit-log details. Add hand-written types through `typeOverrides` where callers need them.
+- **Docs-only mismatches (16)** are ignored by policy. A few deserve a live check before deciding whether the Java type is wrong: `usergroups.list` `user_count` as a string, and the attachment `ts` as a number. Others are clear docs errors (`"is_bot": "string"`, `admin.conversations.getConversationPrefs` example 1 sending strings where Java has `List<String>`).
+- **`Payload` naming.** Propose an opt-in upstream fix to Apple's swift-openapi-generator, for example using the JSON Schema `title` of an inline schema as its type name. Until then, nested types are `<Property>Payload` and array elements `<Property>PayloadPayload`.
+
+Verification and tooling:
+- **Live verification coverage.** Only one workspace and a bot token were used, so messages with files, threads, attachments, Lists and `search.*` (which needs a user token) were not checked live.
+- **Optional generator upgrade.** Apple's swift-openapi-generator 1.14.0 splits types into per-namespace files, which may shorten build times. It conflicts with `scripts/process_webapi.rb`'s own file splitting and import rewriting.
+- **Grammar pin.** `vendor/tree-sitter-java` is pinned and excluded from `make update`. Bump it deliberately when Java syntax used by upstream java-slack-sdk requires it. The generator raises on syntax it cannot parse.
+
 ## How to run
 
 Run from `Prototypes/JavaOpenAPI`. The repository root first needs `bundle install`, `git submodule update --init` and `swift build --package-path ../../Tools`. The tree-sitter grammar is built by `make tree-sitter-java` at the root; `generate.sh` runs it, and `TREE_SITTER_JAVA_LIB=<path>` points at another build. Run the Ruby scripts as `BUNDLE_GEMFILE=../../Gemfile bundle exec ruby <script>`.
