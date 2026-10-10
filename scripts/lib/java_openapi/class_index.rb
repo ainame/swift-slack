@@ -100,10 +100,10 @@ class ClassIndex
     nil
   end
 
-  # Step 2: `import a.b.Foo;` names the class `Foo` exactly.
+  # Step 2: `import a.b.Foo;` names the class `Foo` exactly; `import a.b.Outer.Inner;` names a nested class.
   def single_import(file, name)
     file.imports.each do |import|
-      found = @by_fqn[import] if import.end_with?(".#{name}")
+      found = fully_qualified(import) if import.end_with?(".#{name}")
       return found if found
     end
     nil

@@ -33,6 +33,15 @@ class ClassIndexTest < Minitest::Test
     assert_equal 'b.Thing', index.resolve(index.fully_qualified('a.Foo'), 'Thing').fqn
   end
 
+def test_single_import_of_a_nested_class
+  write_java('a/Foo.java', 'package a; import b.Outer.Inner; public class Foo {}')
+  write_java('a/Inner.java', 'package a; public class Inner {}')
+  write_java('b/Outer.java', 'package b; public class Outer { public static class Inner {} }')
+  index = build_index
+
+  assert_equal 'b.Outer.Inner', index.resolve(index.fully_qualified('a.Foo'), 'Inner').fqn
+end
+
   def test_same_package_beats_wildcard_import
     write_java('a/Foo.java', 'package a; import c.*; public class Foo {}')
     write_java('a/Thing.java', 'package a; public class Thing {}')
