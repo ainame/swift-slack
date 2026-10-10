@@ -1,6 +1,9 @@
+import OpenAPIRuntime
+
 public enum View: Codable, Hashable, Sendable {
     case modal(ModalView)
     case homeTab(HomeTabView)
+    case unknown(type: String, payload: OpenAPIObjectContainer)
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -13,7 +16,7 @@ public enum View: Codable, Hashable, Sendable {
         case "home":
             self = try .homeTab(container.decode(HomeTabView.self))
         default:
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown view type: \(type)")
+            self = try .unknown(type: type, payload: OpenAPIObjectContainer(from: decoder))
         }
     }
 
@@ -25,6 +28,8 @@ public enum View: Codable, Hashable, Sendable {
             try container.encode(view)
         case let .homeTab(view):
             try container.encode(view)
+        case let .unknown(type, payload):
+            try container.encode(OpenAPIObjectContainer.unknown(type: type, payload: payload))
         }
     }
 
@@ -38,6 +43,8 @@ public enum View: Codable, Hashable, Sendable {
             view.callbackId
         case let .homeTab(view):
             view.callbackId
+        case let .unknown(_, payload):
+            payload.string(forKey: "callback_id")
         }
     }
 
@@ -47,6 +54,8 @@ public enum View: Codable, Hashable, Sendable {
             view.privateMetadata
         case let .homeTab(view):
             view.privateMetadata
+        case let .unknown(_, payload):
+            payload.string(forKey: "private_metadata")
         }
     }
 
@@ -56,6 +65,8 @@ public enum View: Codable, Hashable, Sendable {
             view.id
         case let .homeTab(view):
             view.id
+        case let .unknown(_, payload):
+            payload.string(forKey: "id")
         }
     }
 
@@ -65,6 +76,8 @@ public enum View: Codable, Hashable, Sendable {
             view.hash
         case let .homeTab(view):
             view.hash
+        case let .unknown(_, payload):
+            payload.string(forKey: "hash")
         }
     }
 
@@ -74,6 +87,8 @@ public enum View: Codable, Hashable, Sendable {
             view.state
         case let .homeTab(view):
             view.state
+        case let .unknown(_, payload):
+            nil
         }
     }
 }

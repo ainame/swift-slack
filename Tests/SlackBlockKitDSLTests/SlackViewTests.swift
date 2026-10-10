@@ -276,6 +276,8 @@ struct SlackViewTests {
             }
         case .homeTab:
             Issue.record("ModalView.render returns homeTab. This is a bug.")
+        case .unknown:
+            Issue.record("render() returns an unknown view. This is a bug.")
         }
     }
 
@@ -315,6 +317,8 @@ struct SlackViewTests {
             }
         case .modal:
             Issue.record("HomeTabView.render() returns ModalView. This is a bug.")
+        case .unknown:
+            Issue.record("render() returns an unknown view. This is a bug.")
         }
     }
 
@@ -344,6 +348,8 @@ struct SlackViewTests {
             #expect(modalView.blocks.count == 1)
         case .homeTab:
             Issue.record("ModalView.render returns homeTab. This is a bug.")
+        case .unknown:
+            Issue.record("render() returns an unknown view. This is a bug.")
         }
     }
 }
