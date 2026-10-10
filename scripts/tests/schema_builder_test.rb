@@ -296,4 +296,18 @@ class SchemaBuilderTest < Minitest::Test
     assert_match(/Gson adapter marked unsupported/,
                  assert_raises(RuntimeError) { b.add_root('LogsResponse', root(b, 'com.slack.api.audit.response.LogsResponse')) }.message)
   end
+  def test_a_model_class_named_like_a_standard_type_is_not_a_scalar
+    java(MODEL, 'Edit', <<~BODY)
+      {
+        private Number number;
+        private Integer count;
+        public static class Number { private String value; }
+      }
+    BODY
+    b = builder
+    props = b.add_root('Edit', root(b, "#{MODEL}.Edit"))['properties']
+
+    assert_equal({ 'type' => 'object', 'properties' => { 'value' => { 'type' => 'string' } } }, props['number'])
+    assert_equal({ 'type' => 'integer' }, props['count'])
+  end
 end

@@ -179,9 +179,13 @@ def ref(name)
     schema
   end
 
+  # Standard Java types are recognised by simple name only when no parsed class of that name is visible, so a
+  # model class such as EntityMetadata...Edit.Number is not mistaken for java.lang.Number.
   def element_schema(type, context, where, inline_stack)
     name = type.simple_name
-    if COLLECTIONS.include?(name)
+    if @index.resolve(context, type.name)
+      class_schema(type, context, where, inline_stack)
+    elsif COLLECTIONS.include?(name)
       raise "#{where}: raw collection type" if type.args.empty?
 
       { 'type' => 'array', 'items' => type_schema(type.args[0], context, where, inline_stack) }
