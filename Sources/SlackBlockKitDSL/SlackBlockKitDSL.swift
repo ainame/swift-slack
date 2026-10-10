@@ -1791,6 +1791,7 @@ public struct TimePicker: InputElementConvertible, ActionElementConvertible, Sec
     private var confirm: ConfirmationDialog?
     private var focusOnLoad: Bool?
     private var placeholder: Text?
+    private var timezone: String?
 
     public init() {}
 
@@ -1824,6 +1825,13 @@ public struct TimePicker: InputElementConvertible, ActionElementConvertible, Sec
         return copy
     }
 
+    /// Shows an IANA time zone name, such as `America/Chicago`, under the picker.
+    public func timezone(_ timezone: String) -> TimePicker {
+        var copy = self
+        copy.timezone = timezone
+        return copy
+    }
+
     public func focusOnLoad(_ focus: Bool = true) -> TimePicker {
         var copy = self
         copy.focusOnLoad = focus
@@ -1837,6 +1845,7 @@ public struct TimePicker: InputElementConvertible, ActionElementConvertible, Sec
             confirm: confirm?.render(),
             focusOnLoad: focusOnLoad,
             placeholder: placeholder?.render(),
+            timezone: timezone,
         ))
     }
 
@@ -1847,6 +1856,7 @@ public struct TimePicker: InputElementConvertible, ActionElementConvertible, Sec
             confirm: confirm?.render(),
             focusOnLoad: focusOnLoad,
             placeholder: placeholder?.render(),
+            timezone: timezone,
         ))
     }
 
@@ -1857,6 +1867,7 @@ public struct TimePicker: InputElementConvertible, ActionElementConvertible, Sec
             confirm: confirm?.render(),
             focusOnLoad: focusOnLoad,
             placeholder: placeholder?.render(),
+            timezone: timezone,
         ))
     }
 }
