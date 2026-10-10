@@ -50,10 +50,10 @@ module JavaPlaceholders
   # properties, and the number of values removed. `schemas` is components.schemas of the OpenAPI document.
   def strip(value, schema, schemas)
     removed = 0
-    walker = lambda do |val, sch|
-      if sch.key?("$ref")
-        name = sch["$ref"].split("/").last
-        return val if HAND_WRITTEN.include?(name)
+    walk = lambda do |val, sch|
+      if (ref = sch["$ref"])
+        name = File.basename(ref)
+        next val if HAND_WRITTEN.include?(name)
 
         sch = schemas.fetch(name)
       end
@@ -61,21 +61,21 @@ module JavaPlaceholders
       when Hash
         properties = sch.fetch("properties", {})
         additional = sch["additionalProperties"]
-        val.each_with_object({}) do |(k, v), out|
-          prop = properties[k] || (additional.is_a?(Hash) ? additional : nil)
-          if prop && placeholder_at_override?(prop, v)
+        val.each_with_object({}) do |(key, child), kept|
+          prop = properties[key] || (additional if additional.is_a?(Hash))
+          if prop && placeholder_at_override?(prop, child)
             removed += 1
           else
-            out[k] = prop ? walker.call(v, prop) : v
+            kept[key] = prop ? walk.(child, prop) : child
           end
         end
       when Array
-        sch["items"] ? val.map { |v| walker.call(v, sch["items"]) } : val
+        sch["items"] ? val.map { walk.(_1, sch["items"]) } : val
       else
         val
       end
     end
-    [walker.call(value, schema), removed]
+    [walk.(value, schema), removed]
   end
 
   # `strip` for the response payload of `method` ("team.info") in an openapi.json `document`.
@@ -85,7 +85,7 @@ module JavaPlaceholders
     strip(json, schema, document["components"]["schemas"])
   end
 
-  # Samples contain duplicate keys (last wins, as in Python) and may nest deeply.
+  # Samples contain duplicate keys (the last one wins) and may nest deeply.
   LENIENT = { max_nesting: false, allow_duplicate_key: true }.freeze
 
   # Writes the fixture `source` of `method` to `dest` without the placeholders; returns how many were removed.

@@ -11,129 +11,137 @@
 # it is "explained" by the override. The fixture generator's own placeholder at an overridden property
 # ("" / 123 / 12.3 / false, see java_placeholders.rb) is counted separately, not as a mismatch.
 #
+# Output is one line per distinct mismatch:
+#   <method>  <path in the response>  expected <schema type>, got <JSON type> (×<occurrences>)
+#
 # Usage: scan_mismatch.rb
 
 require "json"
 require_relative "java_placeholders"
 
-HERE = File.expand_path(__dir__)
+HERE = __dir__
 VENDOR = File.expand_path("../../vendor", HERE)
 DOCUMENT = JSON.parse(File.read(File.join(HERE, "all/openapi.json"), encoding: "UTF-8"))
-SCHEMAS = DOCUMENT["components"]["schemas"]
-OVERRIDDEN = %w[Block View TextObject RichTextBlock].freeze
-MAX_LINES = 60
-LENIENT = JavaPlaceholders::LENIENT
+SCHEMAS = DOCUMENT.dig("components", "schemas")
+DOCS_LINE_LIMIT = 60
 
-# Python-style type names, so output stays comparable with earlier reports.
-def type_name(value)
+# A value whose JSON type differs from the one the schema asks for.
+Mismatch = Struct.new(:method, :path, :expected, :actual)
+
+# What a scan found: `mismatches` and `explained` count occurrences per Mismatch (`explained`: the value
+# contradicts the Java type but matches its type override); `placeholders` holds the [method, path] pairs
+# where a Java-typed placeholder sits at an overridden property.
+Findings = Struct.new(:payloads, :mismatches, :explained, :placeholders) do
+  def initialize(payloads = 0) = super(payloads, Hash.new(0), Hash.new(0), Set.new)
+end
+
+# The JSON (OpenAPI) type name of a parsed value.
+def json_type(value)
   case value
-  when String then "str"
-  when Integer then "int"
-  when Float then "float"
-  when true, false then "bool"
-  when Hash then "dict"
-  when Array then "list"
+  when String then "string"
+  when Integer then "integer"
+  when Float then "number"
+  when true, false then "boolean"
+  when Hash then "object"
+  when Array then "array"
   end
 end
 
-def matches_type?(value, type) = JavaPlaceholders.matches_type?(value, type)
-
-# What a scan found, each keyed by [method, path, ...]: `mismatches` (value type differs from the schema),
-# `explained` (value contradicts the Java type but matches its type override), `placeholders` (Java-typed value
-# at an overridden property).
-Tally = Struct.new(:mismatches, :explained, :placeholders)
-
-# Records [method, path, schema type, actual type] => count in the tally.
-def check(value, schema, path, method, tally)
-  if schema.key?("$ref")
-    name = schema["$ref"].split("/").last
-    return if OVERRIDDEN.include?(name)
+def check(value, schema, path, method, findings)
+  if (ref = schema["$ref"])
+    name = File.basename(ref)
+    return if JavaPlaceholders::HAND_WRITTEN.include?(name)
 
     schema = SCHEMAS.fetch(name)
   end
   return if value.nil?
 
   java_type = schema["x-java-type"]
-  if java_type && !matches_type?(value, java_type)
-    key = [method, path, java_type, type_name(value)]
-    tally.explained[key] = tally.explained.fetch(key, 0) + 1
+  if java_type && !JavaPlaceholders.matches_type?(value, java_type)
+    findings.explained[Mismatch.new(method, path, java_type, json_type(value))] += 1
   end
 
   type = schema["type"]
-  unless matches_type?(value, type)
+  unless JavaPlaceholders.matches_type?(value, type)
     if JavaPlaceholders.placeholder_at_override?(schema, value)
-      tally.placeholders[[method, path]] = true
-      return
+      findings.placeholders << [method, path]
+    else
+      findings.mismatches[Mismatch.new(method, path, type, json_type(value))] += 1
     end
-    key = [method, path, type, type_name(value)]
-    tally.mismatches[key] = tally.mismatches.fetch(key, 0) + 1
     return
   end
 
-  if type == "object" && value.is_a?(Hash)
+  case [type, value]
+  in ["object", Hash]
     properties = schema.fetch("properties", {})
     additional = schema["additionalProperties"]
-    value.each do |k, v|
-      if properties.key?(k)
-        check(v, properties[k], "#{path}.#{k}", method, tally)
+    value.each do |key, child|
+      if properties.key?(key)
+        check(child, properties[key], "#{path}.#{key}", method, findings)
       elsif additional.is_a?(Hash)
-        check(v, additional, "#{path}.*", method, tally)
+        check(child, additional, "#{path}.*", method, findings)
       end
     end
-  elsif type == "array"
-    value.each { |v| check(v, schema["items"], "#{path}[]", method, tally) }
+  in ["array", Array]
+    value.each { |child| check(child, schema["items"], "#{path}[]", method, findings) }
+  else
+    nil # scalars and untyped values have nothing to descend into
   end
 end
 
-# Python repr() of a string, for the tuple-style output.
-def py_repr(string)
-  quote = string.include?("'") && !string.include?('"') ? '"' : "'"
-  escaped = string.gsub("\\", "\\\\\\\\").gsub("\n", "\\n").gsub("\t", "\\t").gsub("\r", "\\r")
-  escaped = escaped.gsub("'", "\\\\'") if quote == "'"
-  "#{quote}#{escaped}#{quote}"
+def response_schema(method)
+  DOCUMENT.dig("paths", "/#{method}", "post", "responses", "200", "content", "application/json", "schema")
 end
 
-# Prints the mismatches (all of them when `limit` is nil) and returns the sizes of the tally.
-def run(label, payloads, limit: MAX_LINES)
-  tally = Tally.new({}, {}, {})
-  count = 0
-  payloads.each do |method, json|
-    path_item = DOCUMENT["paths"]["/#{method}"] or next
-    schema = path_item["post"]["responses"]["200"]["content"]["application/json"]["schema"]
-    count += 1
-    check(json, schema, "", method, tally)
+# Checks each [method, json] payload against the response schema of its method (methods without one are skipped).
+def scan(payloads)
+  payloads.each_with_object(Findings.new) do |(method, json), findings|
+    next unless (schema = response_schema(method))
+
+    findings.payloads += 1
+    check(json, schema, "", method, findings)
   end
-  puts "== #{label}: #{count} payloads, #{tally.mismatches.size} distinct mismatches"
-  tally.mismatches.sort.first(limit || tally.mismatches.size).each do |key, n|
-    puts "(#{key.map { |k| py_repr(k) }.join(", ")}) #{n}"
-  end
-  tally.to_a.map(&:size)
 end
+
+# Prints the mismatches as an aligned table, at most `limit` rows.
+def report(title, findings, limit: nil)
+  mismatches = findings.mismatches.sort_by { |mismatch, _| mismatch.to_a }
+  puts "== #{title}: #{findings.payloads} payloads, #{mismatches.size} distinct mismatches"
+  rows = mismatches.map do |m, count|
+    [m.method, m.path, "expected #{m.expected}, got #{m.actual}", "(×#{count})"]
+  end
+  widths = rows.transpose.map { |column| column.map(&:length).max }
+  rows.first(limit || rows.size).each do |row|
+    puts "  #{row.zip(widths).map { |cell, width| cell.ljust(width) }.join("  ").rstrip}"
+  end
+  puts "  ... #{rows.size - limit} more" if limit && rows.size > limit
+end
+
+def parse_json(text) = JSON.parse(text, **JavaPlaceholders::LENIENT)
 
 fixtures = Dir.glob(File.join(VENDOR, "java-slack-sdk/json-logs/samples/api/*.json")).filter_map do |file|
-  [File.basename(file, ".json"), JSON.parse(File.read(file, encoding: "UTF-8"), **LENIENT)]
-rescue StandardError
+  [File.basename(file, ".json"), parse_json(File.read(file, encoding: "UTF-8"))]
+rescue JSON::ParserError
   nil
 end
-unexplained, explained, placeholders = run("java fixtures (unexplained mismatches)", fixtures, limit: nil)
+fixture_findings = scan(fixtures)
+report("java fixtures (unexplained mismatches)", fixture_findings)
 
-# Only successful examples of each api-ref method file count; a malformed file stops that file's scan.
-examples = []
-Dir.glob(File.join(VENDOR, "slack-api-ref/methods/*/*.json")).each do |file|
+# Only successful (`ok: true`) examples count; a malformed file is skipped.
+examples = Dir.glob(File.join(VENDOR, "slack-api-ref/methods/*/*.json")).flat_map do |file|
   method = File.basename(file, ".json")
-  begin
-    JSON.parse(File.read(file, encoding: "UTF-8"), **LENIENT)["response"]["examples"].each do |e|
-      json = JSON.parse(e, **LENIENT)
-      raise TypeError, "not an object" unless json.is_a?(Hash)
-
-      examples << [method, json] if json["ok"] == true
-    end
-  rescue StandardError
-    next
+  parse_json(File.read(file, encoding: "UTF-8")).dig("response", "examples").filter_map do |example|
+    json = parse_json(example)
+    [method, json] if json.is_a?(Hash) && json["ok"] == true
   end
+rescue JSON::ParserError, NoMethodError, TypeError
+  []
 end
-docs_info, = run("api-ref examples (information only)", examples)
+docs_findings = scan(examples)
+report("api-ref examples (information only)", docs_findings, limit: DOCS_LINE_LIMIT)
 
-puts "== summary: #{explained} fixture mismatches explained by type_overrides.yml " \
-     "(plus #{placeholders} Java-typed placeholder values at overridden fields), #{unexplained} unexplained, #{docs_info} docs-example mismatches (information only)"
+unexplained = fixture_findings.mismatches.size
+puts "== summary: #{fixture_findings.explained.size} fixture mismatches explained by type_overrides.yml " \
+     "(plus #{fixture_findings.placeholders.size} Java-typed placeholder values at overridden fields), " \
+     "#{unexplained} unexplained, #{docs_findings.mismatches.size} docs-example mismatches (information only)"
 exit 1 if unexplained.positive?

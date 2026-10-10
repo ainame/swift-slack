@@ -17,20 +17,20 @@ require "fileutils"
 require "open3"
 require_relative "java_placeholders"
 
-HERE = File.expand_path(__dir__)
+HERE = __dir__
 ROOT = File.expand_path("../..", HERE)
 FIXTURES = File.join(ROOT, "vendor/java-slack-sdk/json-logs/samples/api")
 ALL = File.join(HERE, "all")
 PKG = File.join(ALL, "pkg")
 OUT = File.join(ALL, "out/fixtures")
-RAW = ARGV.delete("--raw")
+RAW = ARGV.include?("--raw")
 
-def sh(*cmd, **opts)
-  system(*cmd, **opts) or abort "failed: #{cmd.join(" ")}"
+def sh(*command, **options)
+  system(*command, **options) or abort "failed: #{command.join(" ")}"
 end
 
 # Every fixture is a method; the ones without a Response class (oauth.*, rtm.*, ...) are skipped by gen_openapi.rb.
-methods = Dir.children(FIXTURES).grep(/\.json\z/).map { |f| f.delete_suffix(".json") }.sort
+methods = Dir.glob("*.json", base: FIXTURES).map { File.basename(_1, ".json") }.sort
 
 sh({ "SLACKBLOCKKIT_DIR" => File.join(ROOT, "Sources/SlackBlockKit") }, "bundle", "exec", "ruby", File.join(HERE, "gen_openapi.rb"),
    File.join(ROOT, "vendor/java-slack-sdk"), File.join(ALL, "openapi.json"), File.join(ALL, "cfg.yaml"), *methods, out: File::NULL)
@@ -97,21 +97,26 @@ FileUtils.rm_rf(OUT)
 FileUtils.mkdir_p(OUT)
 stripped = 0
 document["paths"].each_key do |path|
-  method = path[1..]
+  method = path.delete_prefix("/")
   source = File.join(FIXTURES, "#{method}.json")
+  destination = File.join(OUT, "#{method}.json")
   if RAW
-    FileUtils.cp(source, File.join(OUT, "#{method}.json"))
+    FileUtils.cp(source, destination)
   else
-    stripped += JavaPlaceholders.write_stripped_fixture(source, File.join(OUT, "#{method}.json"), method, document)
+    stripped += JavaPlaceholders.write_stripped_fixture(source, destination, method, document)
   end
 end
 
 output, = Open3.capture2(File.join(PKG, ".build/debug/DecodeAll"), OUT)
-rows = output.lines.map { |line| line.chomp.split("\t") }
-failures = rows.select { |r| r[1] == "FAIL" }
+Result = Struct.new(:method, :status, :kind, :path, :detail) do
+  def failed? = status == "FAIL"
+end
+results = output.each_line(chomp: true).map { |line| Result.new(*line.split("\t")) }
+failures, successes = results.partition(&:failed?)
 puts "placeholders removed: #{RAW ? "none (--raw)" : stripped}"
-puts "decoded #{rows.size - failures.size}/#{rows.size} fixtures"
-failures.group_by { |r| r[2..3] }.sort_by { |key, group| [-group.size, key] }.each do |(kind, path), group|
-  puts "#{group.size}x #{kind} #{path}  (#{group.map(&:first).first(3).join(", ")}#{", ..." if group.size > 3})"
-  puts "     #{group.first[4]}" if group.first[4]
+puts "decoded #{successes.size}/#{results.size} fixtures"
+failures.group_by { [_1.kind, _1.path] }.sort_by { |cause, group| [-group.size, cause] }.each do |(kind, path), group|
+  names = group.first(3).map(&:method).join(", ")
+  puts "#{group.size}x #{kind} #{path}  (#{names}#{", ..." if group.size > 3})"
+  puts "     #{group.first.detail}" if group.first.detail
 end

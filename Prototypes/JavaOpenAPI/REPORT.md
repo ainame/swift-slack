@@ -13,7 +13,7 @@ LIVE_RESPONSES=/path/to/responses BUNDLE_GEMFILE=../../Gemfile bundle exec ruby 
 swift build
 for k in live fixtures docs; do .build/debug/DecodeCheck inputs/$k reports/new-$k.json; done
 (cd OldHarness && swift build && for k in live fixtures docs1 docs2; do .build/debug/Harness ../inputs/$([ $k = live ] && echo live || echo old-$k) ../reports/old-$k.json; done)
-BUNDLE_GEMFILE=../../Gemfile bundle exec ruby scan_mismatch.rb   # static JSON-vs-schema check against all/openapi.json
+BUNDLE_GEMFILE=../../Gemfile bundle exec ruby scan_mismatch.rb   # static JSON-vs-schema check against all/openapi.json: one line per mismatch, e.g. `search.all  .files.matches[].score  expected integer, got string  (×1)`
 BUNDLE_GEMFILE=../../Gemfile bundle exec ruby decode_all.rb      # all 334 fixtures: regenerate all/, build all/pkg, decode, group failures (--raw: without placeholder stripping)
 ```
 `gen_openapi.rb` walks the tree-sitter syntax tree of each model/response class (fields, `@SerializedName`, types, nesting, imports) instead of tokenizing Java by hand; it raises with file:line on syntax errors or Java constructs it does not model.
