@@ -632,3 +632,9 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.User.ProfilePayload.FieldsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.User.ProfilePayload.FieldsPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}

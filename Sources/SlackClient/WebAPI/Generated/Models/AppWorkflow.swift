@@ -388,3 +388,21 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.AppWorkflow.InputParametersPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.AppWorkflow.InputParametersPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.AppWorkflow.OutputParametersPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.AppWorkflow.OutputParametersPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.AppWorkflow.StepsPayloadPayload.InputsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.AppWorkflow.StepsPayloadPayload.InputsPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}

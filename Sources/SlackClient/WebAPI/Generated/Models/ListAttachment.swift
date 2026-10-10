@@ -533,3 +533,15 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.ListAttachment.SharesPayload.PublicPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.ListAttachment.SharesPayload.PublicPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.ListAttachment.SharesPayload.PrivatePayload {
+    public subscript(key: Swift.String) -> Components.Schemas.ListAttachment.SharesPayload.PrivatePayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}

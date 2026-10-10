@@ -1749,4 +1749,10 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.TeamBillableInfoResponse.BillableInfoPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.BillableInfo? {
+        additionalProperties[key]
+    }
+}
 #endif

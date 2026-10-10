@@ -763,3 +763,21 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.AppManifest.FunctionsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.AppManifest.FunctionsPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.AppManifest.FunctionsPayload.AdditionalPropertiesPayload.InputParametersPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.AppManifest.FunctionsPayload.AdditionalPropertiesPayload.InputParametersPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.AppManifest.FunctionsPayload.AdditionalPropertiesPayload.OutputParametersPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.AppManifest.FunctionsPayload.AdditionalPropertiesPayload.OutputParametersPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}

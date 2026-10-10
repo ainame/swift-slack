@@ -1830,4 +1830,22 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.UsersProfileGetResponse.ProfilePayload.FieldsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.UsersProfileGetResponse.ProfilePayload.FieldsPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.UsersProfileSetResponse.ProfilePayload.FieldsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.UsersProfileSetResponse.ProfilePayload.FieldsPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.UsersSetPhotoResponse.ProfilePayload.FieldsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.UsersSetPhotoResponse.ProfilePayload.FieldsPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
 #endif

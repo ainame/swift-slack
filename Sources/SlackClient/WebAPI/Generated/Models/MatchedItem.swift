@@ -1656,3 +1656,21 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.MatchedItem.HeadersPayload {
+    public subscript(key: Swift.String) -> Swift.String? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.MatchedItem.SharesPayload.PublicPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.MatchedItem.SharesPayload.PublicPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.MatchedItem.SharesPayload.PrivatePayload {
+    public subscript(key: Swift.String) -> Components.Schemas.MatchedItem.SharesPayload.PrivatePayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}

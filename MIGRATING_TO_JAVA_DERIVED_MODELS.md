@@ -111,16 +111,12 @@ let step = workflow.steps?.first                    // AppWorkflow.StepsPayloadP
 
 ## Dictionaries
 
-A JSON object with arbitrary keys becomes a struct whose values are in `additionalProperties`:
+A JSON object with arbitrary keys becomes a struct that wraps the dictionary in `additionalProperties`. Lookups by key read as before; other dictionary operations go through `additionalProperties`:
 
 ```swift
-// Before
 let field = user.profile?.fields?["Xf123"]?.value
 let input = workflow.steps?.first?.inputs?["message"]
-
-// After
-let field = user.profile?.fields?.additionalProperties["Xf123"]?.value
-let input = workflow.steps?.first?.inputs?.additionalProperties["message"]
+let keys = user.profile?.fields?.additionalProperties.keys
 ```
 
 ## Changed properties

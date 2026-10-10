@@ -112,3 +112,33 @@ class APIGroupsTest < Minitest::Test
     end
   end
 end
+
+class DictionarySubscriptsTest < Minitest::Test
+  SCHEMA = <<~SWIFT.lines.map { |line| "        #{line}" } # declared at 8 spaces, as in Types.swift
+            /// - Remark: Generated from `#/components/schemas/User`.
+            public struct User: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/User/fields`.
+                public struct FieldsPayload: Codable, Hashable, Sendable {
+                    public struct AdditionalPropertiesPayload: Codable, Hashable, Sendable {
+                        public var value: Swift.String?
+                    }
+                    public var additionalProperties: [String: Components.Schemas.User.FieldsPayload.AdditionalPropertiesPayload]
+                }
+                public var fields: Components.Schemas.User.FieldsPayload?
+                public struct OtherPayload: Codable, Hashable, Sendable {
+                    public var name: Swift.String?
+                    public var additionalProperties: [String: Swift.String]
+                }
+            }
+  SWIFT
+
+  def test_only_pure_dictionary_wrappers_get_a_subscript
+    schema = SwiftDeclarations::Declaration.new('User', SCHEMA)
+    processor = WebAPIProcessor.allocate
+    source = processor.send(:dictionary_subscripts, schema)
+
+    assert_includes source, 'extension Components.Schemas.User.FieldsPayload {'
+    assert_includes source, 'public subscript(key: Swift.String) -> Components.Schemas.User.FieldsPayload.AdditionalPropertiesPayload? {'
+    refute_includes source, 'OtherPayload'
+  end
+end

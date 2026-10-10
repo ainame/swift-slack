@@ -82,3 +82,9 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.WorkflowStepExecution.InputsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.WorkflowStepInput? {
+        additionalProperties[key]
+    }
+}

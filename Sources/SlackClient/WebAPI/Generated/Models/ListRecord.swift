@@ -456,3 +456,15 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.ListRecord.ViewPositionsPayload {
+    public subscript(key: Swift.String) -> Swift.String? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.ListRecord.SavedFieldsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.ListRecord.SavedFieldsPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}

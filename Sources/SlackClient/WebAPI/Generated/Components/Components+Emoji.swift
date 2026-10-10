@@ -128,4 +128,10 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.EmojiListResponse.EmojiPayload {
+    public subscript(key: Swift.String) -> Swift.String? {
+        additionalProperties[key]
+    }
+}
 #endif

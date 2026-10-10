@@ -417,3 +417,9 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.Room.ParticipantsEventsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.Room.ParticipantsEventsPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}

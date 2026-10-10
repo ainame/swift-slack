@@ -2447,4 +2447,11 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload.ProfilePayload.FieldsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.ConversationsRequestSharedInviteListResponse.InviteRequestsPayloadPayload.InvitingUserPayload.ProfilePayload.FieldsPayload
+        .AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
 #endif

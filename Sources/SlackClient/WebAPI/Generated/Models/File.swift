@@ -1731,3 +1731,21 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.File.SharesPayload.PublicPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.File.SharesPayload.PublicPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.File.SharesPayload.PrivatePayload {
+    public subscript(key: Swift.String) -> Components.Schemas.File.SharesPayload.PrivatePayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.File.PinnedInfoPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.File.PinnedInfoPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}

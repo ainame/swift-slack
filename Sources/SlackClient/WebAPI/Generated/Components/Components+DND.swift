@@ -370,4 +370,10 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.DndTeamInfoResponse.UsersPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.DndTeamInfoResponse.UsersPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
 #endif

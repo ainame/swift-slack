@@ -101,4 +101,10 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.MigrationExchangeResponse.UserIdMapPayload {
+    public subscript(key: Swift.String) -> Swift.String? {
+        additionalProperties[key]
+    }
+}
 #endif

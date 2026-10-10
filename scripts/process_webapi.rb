@@ -226,7 +226,8 @@ class WebAPIProcessor
     responses.group_by { |schema| APIGroups.group_for(schema.name) }.sort.each do |group, schemas|
       @client.write("Components/Components+#{APIGroups.display_name(group)}.swift",
                     "#{@header}\n#if #{APIGroups.trait(group)}\nextension Components.Schemas {\n" \
-                    "#{schemas.map(&:text).join}}\n#endif\n")
+                    "#{schemas.map(&:text).join}}\n#{schemas.map { |schema| dictionary_subscripts(schema) }.join}" \
+                    "#endif\n")
     end
   end
 
@@ -234,7 +235,7 @@ class WebAPIProcessor
   def write_models(models)
     models.each do |schema|
       @client.write("Models/#{schema.name}.swift",
-                    "#{@header}\nextension Components.Schemas {\n#{schema.text}}\n#{accessors(schema)}")
+                    "#{@header}\nextension Components.Schemas {\n#{schema.text}}\n#{accessors(schema)}#{dictionary_subscripts(schema)}")
     end
     names = models.map(&:name).sort
     check_typealias_names(names)
@@ -255,6 +256,35 @@ class WebAPIProcessor
       "    public var #{name}: #{type}? {\n        if case let .#{case_name}(value) = self { value } else { nil }\n    }\n"
     end
     "\nextension Components.Schemas.#{schema.name} {\n#{properties.join("\n")}}\n"
+  end
+
+  # `subscript(key:)` for every generated struct that only wraps a typed `additionalProperties` dictionary (a
+  # Java `Map<String, T>`), so `profile.fields?["Xf1"]` reads like a dictionary lookup. Returns Swift source.
+  def dictionary_subscripts(schema)
+    dictionary_wrappers(schema, "Components.Schemas.#{schema.name}", 8).map do |type_name, value_type|
+      "\nextension #{type_name} {\n" \
+        "    public subscript(key: Swift.String) -> #{value_type}? {\n" \
+        "        additionalProperties[key]\n" \
+        "    }\n}\n"
+    end.join
+  end
+
+  # [[qualified type name, value type]] of the dictionary wrappers among `declaration` (declared at `indent`)
+  # and the types nested in it.
+  def dictionary_wrappers(declaration, type_name, indent)
+    _, members = SwiftDeclarations.split(SwiftDeclarations.body(declaration), indent: indent + 4)
+    properties = members.select { |member| member.text.match?(/^ {#{indent + 4}}public var /) }
+    wrappers = []
+    if properties.map(&:name) == ['additionalProperties'] &&
+       (value_type = properties.first.text[/public var additionalProperties: \[(?:Swift\.)?String: (.+)\]$/, 1])
+      wrappers << [type_name, value_type]
+    end
+    members.each do |member|
+      next unless member.text.match?(/^ {#{indent + 4}}(?:@frozen )?public (?:struct|enum) /)
+
+      wrappers.concat(dictionary_wrappers(member, "#{type_name}.#{member.name}", indent + 4))
+    end
+    wrappers
   end
 
   # Fails when a top-level typealias would clash with a standard type or another module's public type.
@@ -287,7 +317,7 @@ class WebAPIProcessor
         public typealias #{schema.name} = Components.Schemas.#{schema.name}
 
         extension Components.Schemas.#{schema.name}: SlackEvent {}
-        #endif
+        #{dictionary_subscripts(schema)}#endif
       SWIFT
     end
     @events.write('Event.swift', EventEnum.new(@openapi.fetch('x-slack-events')).source)

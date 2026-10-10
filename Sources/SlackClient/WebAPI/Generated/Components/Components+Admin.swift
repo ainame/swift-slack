@@ -6135,4 +6135,28 @@ extension Components.Schemas {
         }
     }
 }
+
+extension Components.Schemas.AdminConversationsInviteResponse.FailedUserIdsPayload {
+    public subscript(key: Swift.String) -> Swift.String? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.AdminEmojiListResponse.EmojiPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.Emoji? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.AdminFunctionsPermissionsLookupResponse.PermissionsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.AppFunctionPermissions? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.AdminWorkflowsPermissionsLookupResponse.PermissionsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.AppWorkflowPermissions? {
+        additionalProperties[key]
+    }
+}
 #endif
