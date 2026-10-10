@@ -10,6 +10,12 @@ public struct ConversationFilterObject: Codable, Hashable, Sendable {
         self.excludeExternalSharedChannels = excludeExternalSharedChannels
         self.excludeBotUsers = excludeBotUsers
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case include
+        case excludeExternalSharedChannels = "exclude_external_shared_channels"
+        case excludeBotUsers = "exclude_bot_users"
+    }
 }
 
 public enum ConversationType: String, Codable, Hashable, Sendable {
