@@ -35,7 +35,8 @@ update:
 		git submodule add https://github.com/slack-ruby/slack-api-ref.git vendor/slack-api-ref || true; \
 	fi
 	@git submodule init
-	@git submodule update --remote --merge
+	@# vendor/tree-sitter-java is deliberately excluded: it stays pinned to the grammar commit recorded in the repo.
+	@git submodule update --remote --merge -- vendor/java-slack-sdk vendor/slack-api-ref
 	@echo "Submodules updated to latest main/master branch"
 
 doc:
@@ -43,3 +44,12 @@ doc:
 
 doc-preview: doc
 	python3 -m http.server 8080 -d docs
+
+# Grammar shared library used by Prototypes/JavaOpenAPI (via the ruby_tree_sitter gem).
+TREE_SITTER_JAVA_LIB = .tmp/tree-sitter-java/libtree-sitter-java.$(if $(filter Darwin,$(shell uname -s)),dylib,so)
+
+tree-sitter-java: $(TREE_SITTER_JAVA_LIB)
+
+$(TREE_SITTER_JAVA_LIB): vendor/tree-sitter-java/src/parser.c
+	mkdir -p $(dir $@)
+	cc -shared -fPIC -O2 -I vendor/tree-sitter-java/src vendor/tree-sitter-java/src/parser.c -o $@
