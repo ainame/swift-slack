@@ -66,6 +66,14 @@ jobs:
       - name: Run tests
         run: swift test
 
+      # Generated code must match what the committed scripts and vendor snapshots produce; otherwise the
+      # fixture checks below would test a different document than the committed Swift.
+      - name: Check generated code is up to date
+        run: |
+          make generate
+          changes=$(git status --porcelain -- Sources Tests Package.swift)
+          if [ -n "$changes" ]; then echo "$changes"; exit 1; fi
+
       - name: Decode upstream fixtures
         run: make check-fixtures
 
