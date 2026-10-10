@@ -1,0 +1,256 @@
+# Type overrides for upstream java-slack-sdk fields whose declared Java type contradicts recorded Slack responses.
+#
+# Policy:
+#   1. Everything is generated from the Java declarations (scripts/lib/java_openapi.rb).
+#   2. The only exceptions are fields where values recorded in the upstream java-slack-sdk fixtures
+#      (vendor/java-slack-sdk/json-logs/samples/{api,events}/*.json) contradict the Java declaration, typically
+#      because Gson coerces (a JSON number into a Java String, ...) while Swift's JSONDecoder does not.
+#      scripts/scan_fixture_mismatches.rb finds them mechanically and fails while a mismatch has no entry here.
+#   3. Mismatches seen only in the upstream slack-api-ref docs examples are ignored: Java's type stays.
+#
+# Key:       <Java FQN of the declaring class>#<JSON key>   (nested classes: Outer.Inner)
+# type:      integer | number | string | boolean | untyped | schema   (emitted instead of the Java type)
+# schema:    for `type: schema`, the OpenAPI schema to emit; it may refer to scripts/handwritten_schemas.yml
+# java_type: the Java declaration, for the generated doc comment and checked against the source
+# reason:    why the Java type is wrong
+# evidence:  fixtures (json-logs/samples/api/<method>.json) recording the contradicting values
+# added:     true for a field the Java class does not declare (with `type: schema` and no java_type)
+# Generation fails if a key names a class or field that no longer exists, or java_type no longer matches.
+
+# ---- File image sizes (messages and uploads)
+com.slack.api.model.File#original_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history, files.completeUploadExternal]
+com.slack.api.model.File#original_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history, files.completeUploadExternal]
+com.slack.api.model.File#thumb_360_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history, files.completeUploadExternal]
+com.slack.api.model.File#thumb_360_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history, files.completeUploadExternal]
+com.slack.api.model.File#thumb_480_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history, files.completeUploadExternal]
+com.slack.api.model.File#thumb_480_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history, files.completeUploadExternal]
+com.slack.api.model.File#thumb_720_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history]
+com.slack.api.model.File#thumb_720_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history]
+com.slack.api.model.File#thumb_800_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history]
+com.slack.api.model.File#thumb_800_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history]
+com.slack.api.model.File#thumb_960_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history]
+com.slack.api.model.File#thumb_960_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history]
+com.slack.api.model.File#thumb_1024_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history]
+com.slack.api.model.File#thumb_1024_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [channels.history]
+
+# ---- MatchedItem (search.files / search.all file matches) image sizes
+com.slack.api.model.MatchedItem#original_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#original_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_360_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_360_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_480_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_480_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_720_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_720_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_800_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_800_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_960_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_960_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_1024_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_1024_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_pdf_w:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#thumb_pdf_h:
+  type: integer
+  java_type: String
+  reason: Slack sends the pixel size as a JSON number; Gson coerces it into the String.
+  evidence: [search.all, search.files]
+
+# ---- MatchedItem (search) other fields
+com.slack.api.model.MatchedItem#created:
+  type: integer
+  java_type: String
+  reason: Slack sends the file creation time as a JSON number.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#timestamp:
+  type: integer
+  java_type: String
+  reason: Slack sends the file timestamp as a JSON number.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#score:
+  type: integer
+  java_type: String
+  reason: Slack sends the search score as a JSON number.
+  evidence: [search.all, search.messages]
+com.slack.api.model.MatchedItem#permalink_public:
+  type: string
+  java_type: boolean
+  reason: Slack sends a URL string; Gson would turn it into false.
+  evidence: [search.all, search.files]
+com.slack.api.model.MatchedItem#url_private_download:
+  type: string
+  java_type: boolean
+  reason: Slack sends a URL string; Gson would turn it into false.
+  evidence: [search.all, search.files]
+
+# ---- Other response and model fields
+com.slack.api.methods.response.admin.users.AdminUsersSessionListResponse.ActiveSession#session_id:
+  type: integer
+  java_type: String
+  reason: Slack sends the session id as a JSON number.
+  evidence: [admin.users.session.list]
+com.slack.api.methods.response.channels.ChannelsHistoryResponse#channel_actions_ts:
+  type: integer
+  java_type: String
+  reason: Slack sends channel_actions_ts as a JSON number.
+  evidence: [channels.history]
+com.slack.api.methods.response.conversations.ConversationsHistoryResponse#channel_actions_ts:
+  type: integer
+  java_type: String
+  reason: Slack sends channel_actions_ts as a JSON number.
+  evidence: [conversations.history]
+com.slack.api.methods.response.users.UsersListResponse#cache_ts:
+  type: integer
+  java_type: String
+  reason: Slack sends cache_ts as a JSON number.
+  evidence: [users.list]
+com.slack.api.model.IntegrationLog#service_id:
+  type: integer
+  java_type: String
+  reason: Slack sends service_id as a JSON number.
+  evidence: [team.integrationLogs]
+com.slack.api.model.IntegrationLog#date:
+  type: string
+  java_type: Integer
+  reason: Slack sends the date as a string of digits.
+  evidence: [team.integrationLogs]
+com.slack.api.model.list.ListRecord.Field#value:
+  type: schema
+  schema:
+    $ref: '#/components/schemas/ListRecordFieldValue'
+  java_type: String
+  reason: Recorded values are a boolean (and the fixture generator adds a string placeholder); the type varies by column.
+  evidence: [slackLists.items.info, slackLists.items.list]
+com.slack.api.methods.response.admin.workflows.AdminWorkflowsCollaboratorsAddResponse#errors:
+  type: schema
+  schema:
+    type: array
+    items:
+      $ref: '#/components/schemas/WorkflowCollaboratorError'
+  java_type: List<Error>
+  reason: Recorded errors also carry `workflow`, which the Java inner class does not declare.
+  evidence: [admin.workflows.collaborators.add]
+com.slack.api.methods.response.admin.workflows.AdminWorkflowsCollaboratorsRemoveResponse#errors:
+  type: schema
+  schema:
+    type: array
+    items:
+      $ref: '#/components/schemas/WorkflowCollaboratorError'
+  added: true
+  reason: Recorded responses carry per-user `errors` as admin.workflows.collaborators.add does.
+  evidence: [admin.workflows.collaborators.remove]
