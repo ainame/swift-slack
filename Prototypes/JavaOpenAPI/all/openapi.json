@@ -8637,7 +8637,9 @@
                   "type": "string"
                 },
                 "session_id": {
-                  "type": "string"
+                  "type": "integer",
+                  "description": "Type differs from java-slack-sdk: `AdminUsersSessionListResponse.ActiveSession.sessionId` is declared `String`, but recorded responses send integers.",
+                  "x-java-type": "string"
                 },
                 "team_id": {
                   "type": "string"
@@ -11654,15 +11656,8 @@
             "type": "string"
           },
           "video_html": {
-            "type": "object",
-            "properties": {
-              "html": {
-                "type": "string"
-              },
-              "source": {
-                "type": "string"
-              }
-            }
+            "description": "Type differs from java-slack-sdk: `Attachment.videoHtml` is declared `VideoHtml`, but recorded responses send values of another type.",
+            "x-java-type": "object"
           },
           "video_html_width": {
             "type": "number"
@@ -11767,7 +11762,8 @@
                           "type": "string"
                         },
                         "value": {
-                          "type": "string"
+                          "description": "Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another type.",
+                          "x-java-type": "string"
                         },
                         "text": {
                           "type": "string"
@@ -13132,7 +13128,9 @@
             "type": "boolean"
           },
           "channel_actions_ts": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `ChannelsHistoryResponse.channelActionsTs` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "channel_actions_count": {
             "type": "integer"
@@ -15023,7 +15021,9 @@
             "type": "integer"
           },
           "channel_actions_ts": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `ConversationsHistoryResponse.channelActionsTs` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "channel_actions_count": {
             "type": "integer"
@@ -16518,10 +16518,14 @@
             "type": "string"
           },
           "thumb_360_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb360Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_360_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb360Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_480": {
             "type": "string"
@@ -16530,10 +16534,14 @@
             "type": "string"
           },
           "thumb_480_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb480Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_480_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb480Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_720": {
             "type": "string"
@@ -16542,10 +16550,14 @@
             "type": "string"
           },
           "thumb_720_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb720Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_720_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb720Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_800": {
             "type": "string"
@@ -16554,10 +16566,14 @@
             "type": "string"
           },
           "thumb_800_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb800Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_800_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb800Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_960": {
             "type": "string"
@@ -16566,10 +16582,14 @@
             "type": "string"
           },
           "thumb_960_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb960Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_960_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb960Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_1024": {
             "type": "string"
@@ -16578,10 +16598,14 @@
             "type": "string"
           },
           "thumb_1024_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb1024Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_1024_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb1024Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_video": {
             "type": "string"
@@ -16608,10 +16632,14 @@
             "type": "integer"
           },
           "original_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.originalWidth` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "original_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.originalHeight` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "deanimate": {
             "type": "string"
@@ -18654,7 +18682,9 @@
             "type": "string"
           },
           "service_id": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `IntegrationLog.serviceId` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "service_type": {
             "type": "string"
@@ -18669,7 +18699,9 @@
             "type": "string"
           },
           "date": {
-            "type": "integer"
+            "type": "string",
+            "description": "Type differs from java-slack-sdk: `IntegrationLog.date` is declared `Integer`, but recorded responses send strings.",
+            "x-java-type": "integer"
           },
           "change_type": {
             "type": "string"
@@ -19595,7 +19627,8 @@
                   "type": "string"
                 },
                 "value": {
-                  "type": "string"
+                  "description": "Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another type.",
+                  "x-java-type": "string"
                 },
                 "text": {
                   "type": "string"
@@ -20139,10 +20172,14 @@
             "type": "string"
           },
           "timestamp": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.timestamp` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "created": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.created` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "is_intro": {
             "type": "boolean"
@@ -20163,13 +20200,17 @@
             "type": "string"
           },
           "url_private_download": {
-            "type": "boolean"
+            "type": "string",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.urlPrivateDownload` is declared `boolean`, but recorded responses send strings.",
+            "x-java-type": "boolean"
           },
           "url_static_preview": {
             "type": "string"
           },
           "permalink_public": {
-            "type": "boolean"
+            "type": "string",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.permalinkPublic` is declared `boolean`, but recorded responses send strings.",
+            "x-java-type": "boolean"
           },
           "edit_link": {
             "type": "string"
@@ -20576,10 +20617,14 @@
             "type": "string"
           },
           "thumb_360_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb360Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_360_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb360Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_480": {
             "type": "string"
@@ -20588,10 +20633,14 @@
             "type": "string"
           },
           "thumb_480_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb480Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_480_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb480Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_720": {
             "type": "string"
@@ -20600,10 +20649,14 @@
             "type": "string"
           },
           "thumb_720_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb720Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_720_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb720Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_800": {
             "type": "string"
@@ -20612,10 +20665,14 @@
             "type": "string"
           },
           "thumb_800_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb800Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_800_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb800Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_960": {
             "type": "string"
@@ -20624,10 +20681,14 @@
             "type": "string"
           },
           "thumb_960_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb960Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_960_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb960Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_1024": {
             "type": "string"
@@ -20636,10 +20697,14 @@
             "type": "string"
           },
           "thumb_1024_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb1024Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_1024_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumb1024Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_tiny": {
             "type": "string"
@@ -20654,22 +20719,32 @@
             "type": "string"
           },
           "thumb_pdf_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumbPdfWidth` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_pdf_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.thumbPdfHeight` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "image_exif_rotation": {
             "type": "integer"
           },
           "original_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.originalWidth` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "original_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.originalHeight` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "score": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `MatchedItem.score` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "top_file": {
             "type": "boolean"
@@ -25203,7 +25278,9 @@
             }
           },
           "cache_ts": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `UsersListResponse.cacheTs` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "response_metadata": {
             "$ref": "#/components/schemas/ResponseMetadata"

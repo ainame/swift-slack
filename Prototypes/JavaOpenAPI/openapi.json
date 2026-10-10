@@ -408,15 +408,8 @@
             "type": "string"
           },
           "video_html": {
-            "type": "object",
-            "properties": {
-              "html": {
-                "type": "string"
-              },
-              "source": {
-                "type": "string"
-              }
-            }
+            "description": "Type differs from java-slack-sdk: `Attachment.videoHtml` is declared `VideoHtml`, but recorded responses send values of another type.",
+            "x-java-type": "object"
           },
           "video_html_width": {
             "type": "number"
@@ -521,7 +514,8 @@
                           "type": "string"
                         },
                         "value": {
-                          "type": "string"
+                          "description": "Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another type.",
+                          "x-java-type": "string"
                         },
                         "text": {
                           "type": "string"
@@ -1628,10 +1622,14 @@
             "type": "string"
           },
           "thumb_360_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb360Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_360_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb360Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_480": {
             "type": "string"
@@ -1640,10 +1638,14 @@
             "type": "string"
           },
           "thumb_480_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb480Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_480_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb480Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_720": {
             "type": "string"
@@ -1652,10 +1654,14 @@
             "type": "string"
           },
           "thumb_720_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb720Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_720_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb720Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_800": {
             "type": "string"
@@ -1664,10 +1670,14 @@
             "type": "string"
           },
           "thumb_800_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb800Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_800_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb800Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_960": {
             "type": "string"
@@ -1676,10 +1686,14 @@
             "type": "string"
           },
           "thumb_960_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb960Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_960_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb960Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_1024": {
             "type": "string"
@@ -1688,10 +1702,14 @@
             "type": "string"
           },
           "thumb_1024_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb1024Width` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_1024_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.thumb1024Height` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "thumb_video": {
             "type": "string"
@@ -1718,10 +1736,14 @@
             "type": "integer"
           },
           "original_w": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.originalWidth` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "original_h": {
-            "type": "string"
+            "type": "integer",
+            "description": "Type differs from java-slack-sdk: `File.originalHeight` is declared `String`, but recorded responses send integers.",
+            "x-java-type": "string"
           },
           "deanimate": {
             "type": "string"
@@ -3027,7 +3049,8 @@
                   "type": "string"
                 },
                 "value": {
-                  "type": "string"
+                  "description": "Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another type.",
+                  "x-java-type": "string"
                 },
                 "text": {
                   "type": "string"

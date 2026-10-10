@@ -22,6 +22,8 @@
 #   * Gson TypeAdapter types that swift-slack hand-writes (Block, View, TextObject, ...) are emitted
 #     as empty component schemas and mapped to SlackBlockKit types through `typeOverrides`.
 #   * Enums become strings; unknown/untyped Java types become `{}` and are listed in gen-report.json.
+#   * The one exception to "types come from Java" is type_overrides.yml: fields whose Java type is contradicted
+#     by recorded fixtures (see that file). They get the override type plus a `description` saying so.
 #
 # The Java sources are read with a tree-sitter syntax tree (see "Java parsing" below), so the
 # script only has to say which tree nodes it cares about.
@@ -29,6 +31,7 @@
 require "json"
 require "fileutils"
 require "set"
+require "yaml"
 require "tree_sitter"
 
 sdk_dir, out_path, out_config_path, *methods = ARGV
@@ -420,6 +423,47 @@ def select_nested(klass, names)
   names.reduce(klass) { |current, name| current&.inner&.[](name) }
 end
 
+# ---------------------------------------------------------------- type overrides
+
+# type_overrides.yml: "<class FQN>#<json key>" => { type:, java_type:, reason:, evidence: }.
+TYPE_OVERRIDES = YAML.safe_load_file(File.join(__dir__, "type_overrides.yml")).freeze
+OVERRIDE_TYPES = %w[integer number string boolean untyped].freeze
+OVERRIDE_NOUNS = { "integer" => "integers", "number" => "numbers", "string" => "strings",
+                   "boolean" => "booleans", "untyped" => "values of another type" }.freeze
+
+# Source text of a declared type, e.g. `Map<String,List<User>>[]`.
+def java_type_text(type)
+  "#{type.name}#{"<#{type.args.map { |a| java_type_text(a) }.join(",")}>" unless type.args.empty?}#{"[]" * type.dims}"
+end
+
+# Fails (file-level error) when an override names a class or field that is gone, or whose declared type changed.
+def validate_type_overrides
+  TYPE_OVERRIDES.each do |key, override|
+    fqn, json_key = key.split("#", 2)
+    cls = fully_qualified_class(fqn.split(".")) or raise "type_overrides.yml: #{key}: class #{fqn} no longer exists"
+    found = cls.fields.find { |field| (field.serialized_name || snake(field.name)) == json_key } or
+      raise "type_overrides.yml: #{key}: #{cls.name} has no field with JSON key `#{json_key}`"
+    unless OVERRIDE_TYPES.include?(override["type"])
+      raise "type_overrides.yml: #{key}: type must be one of #{OVERRIDE_TYPES.join(", ")}"
+    end
+    unless java_type_text(found.type) == override["java_type"].to_s.delete(" ")
+      raise "type_overrides.yml: #{key}: java_type is `#{override["java_type"]}` but the source declares `#{java_type_text(found.type)}`"
+    end
+  end
+end
+
+# Replaces the Java-derived `schema` of field `key` declared in `owner` when type_overrides.yml says so.
+# `x-java-type` keeps the Java type for scan_mismatch.rb; `description` becomes a Swift doc comment.
+def apply_type_override(schema, owner, field, key)
+  override = TYPE_OVERRIDES["#{owner.fqn}##{key}"] or return schema
+
+  declared = owner.fqn.delete_prefix("#{owner.file.package}.")
+  description = "Type differs from java-slack-sdk: `#{declared}.#{field.name}` is declared `#{override["java_type"]}`, " \
+                "but recorded responses send #{OVERRIDE_NOUNS.fetch(override["type"])}."
+  replacement = override["type"] == "untyped" ? {} : { "type" => override["type"] }
+  replacement.merge("description" => description, "x-java-type" => schema["type"] || "untyped")
+end
+
 # ---------------------------------------------------------------- fields
 
 # Gson's default FieldNamingPolicy for this SDK: lowerCamel => lower_snake.
@@ -554,7 +598,8 @@ def object_schema(cls, inline_stack, where, required: nil, inline: false)
   properties = {}
   all_fields(cls).each do |key, (field, owner)|
     stack = inline ? inline_stack : inline_stack + [cls]
-    properties[key] = type_schema(field.type, owner, "#{cls.fqn}.#{field.name}", stack)
+    schema = type_schema(field.type, owner, "#{cls.fqn}.#{field.name}", stack)
+    properties[key] = apply_type_override(schema, owner, field, key)
   end
   schema = { "type" => "object", "properties" => properties }
   schema["required"] = required if required && !required.empty?
@@ -572,6 +617,8 @@ def operation_id(method)
   first, *rest = method.split(".")
   first + rest.map { |p| p[0].upcase + p[1..] }.join
 end
+
+validate_type_overrides
 
 paths = {}
 methods.each do |method|

@@ -831,31 +831,10 @@ public enum Components {
                     yield &self.storage.value.videoUrl
                 }
             }
+            /// Type differs from java-slack-sdk: `Attachment.videoHtml` is declared `VideoHtml`, but recorded responses send values of another type.
+            ///
             /// - Remark: Generated from `#/components/schemas/Attachment/video_html`.
-            public struct VideoHtmlPayload: Codable, Hashable, Sendable {
-                /// - Remark: Generated from `#/components/schemas/Attachment/video_html/html`.
-                public var html: Swift.String?
-                /// - Remark: Generated from `#/components/schemas/Attachment/video_html/source`.
-                public var source: Swift.String?
-                /// Creates a new `VideoHtmlPayload`.
-                ///
-                /// - Parameters:
-                ///   - html:
-                ///   - source:
-                public init(
-                    html: Swift.String? = nil,
-                    source: Swift.String? = nil
-                ) {
-                    self.html = html
-                    self.source = source
-                }
-                public enum CodingKeys: String, CodingKey {
-                    case html
-                    case source
-                }
-            }
-            /// - Remark: Generated from `#/components/schemas/Attachment/video_html`.
-            public var videoHtml: Components.Schemas.Attachment.VideoHtmlPayload? {
+            public var videoHtml: OpenAPIRuntime.OpenAPIValueContainer? {
                 get  {
                     self.storage.value.videoHtml
                 }
@@ -1070,8 +1049,10 @@ public enum Components {
                         public var key: Swift.String?
                         /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/column_id`.
                         public var columnId: Swift.String?
+                        /// Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another type.
+                        ///
                         /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/value`.
-                        public var value: Swift.String?
+                        public var value: OpenAPIRuntime.OpenAPIValueContainer?
                         /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/text`.
                         public var text: Swift.String?
                         /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/rich_text`.
@@ -1172,7 +1153,7 @@ public enum Components {
                         /// - Parameters:
                         ///   - key:
                         ///   - columnId:
-                        ///   - value:
+                        ///   - value: Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another type.
                         ///   - text:
                         ///   - richText:
                         ///   - message:
@@ -1192,7 +1173,7 @@ public enum Components {
                         public init(
                             key: Swift.String? = nil,
                             columnId: Swift.String? = nil,
-                            value: Swift.String? = nil,
+                            value: OpenAPIRuntime.OpenAPIValueContainer? = nil,
                             text: Swift.String? = nil,
                             richText: [Components.Schemas.RichTextBlock]? = nil,
                             message: Components.Schemas.Message? = nil,
@@ -1541,7 +1522,7 @@ public enum Components {
             ///   - thumbWidth:
             ///   - thumbHeight:
             ///   - videoUrl:
-            ///   - videoHtml:
+            ///   - videoHtml: Type differs from java-slack-sdk: `Attachment.videoHtml` is declared `VideoHtml`, but recorded responses send values of another type.
             ///   - videoHtmlWidth:
             ///   - videoHtmlHeight:
             ///   - footer:
@@ -1611,7 +1592,7 @@ public enum Components {
                 thumbWidth: Swift.Int? = nil,
                 thumbHeight: Swift.Int? = nil,
                 videoUrl: Swift.String? = nil,
-                videoHtml: Components.Schemas.Attachment.VideoHtmlPayload? = nil,
+                videoHtml: OpenAPIRuntime.OpenAPIValueContainer? = nil,
                 videoHtmlWidth: Swift.Double? = nil,
                 videoHtmlHeight: Swift.Double? = nil,
                 footer: Swift.String? = nil,
@@ -1874,31 +1855,10 @@ public enum Components {
                 var thumbHeight: Swift.Int?
                 /// - Remark: Generated from `#/components/schemas/Attachment/video_url`.
                 var videoUrl: Swift.String?
+                /// Type differs from java-slack-sdk: `Attachment.videoHtml` is declared `VideoHtml`, but recorded responses send values of another type.
+                ///
                 /// - Remark: Generated from `#/components/schemas/Attachment/video_html`.
-                struct VideoHtmlPayload: Codable, Hashable, Sendable {
-                    /// - Remark: Generated from `#/components/schemas/Attachment/video_html/html`.
-                    public var html: Swift.String?
-                    /// - Remark: Generated from `#/components/schemas/Attachment/video_html/source`.
-                    public var source: Swift.String?
-                    /// Creates a new `VideoHtmlPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - html:
-                    ///   - source:
-                    public init(
-                        html: Swift.String? = nil,
-                        source: Swift.String? = nil
-                    ) {
-                        self.html = html
-                        self.source = source
-                    }
-                    public enum CodingKeys: String, CodingKey {
-                        case html
-                        case source
-                    }
-                }
-                /// - Remark: Generated from `#/components/schemas/Attachment/video_html`.
-                var videoHtml: Components.Schemas.Attachment.VideoHtmlPayload?
+                var videoHtml: OpenAPIRuntime.OpenAPIValueContainer?
                 /// - Remark: Generated from `#/components/schemas/Attachment/video_html_width`.
                 var videoHtmlWidth: Swift.Double?
                 /// - Remark: Generated from `#/components/schemas/Attachment/video_html_height`.
@@ -2015,8 +1975,10 @@ public enum Components {
                             public var key: Swift.String?
                             /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/column_id`.
                             public var columnId: Swift.String?
+                            /// Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another type.
+                            ///
                             /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/value`.
-                            public var value: Swift.String?
+                            public var value: OpenAPIRuntime.OpenAPIValueContainer?
                             /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/text`.
                             public var text: Swift.String?
                             /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/rich_text`.
@@ -2117,7 +2079,7 @@ public enum Components {
                             /// - Parameters:
                             ///   - key:
                             ///   - columnId:
-                            ///   - value:
+                            ///   - value: Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another type.
                             ///   - text:
                             ///   - richText:
                             ///   - message:
@@ -2137,7 +2099,7 @@ public enum Components {
                             public init(
                                 key: Swift.String? = nil,
                                 columnId: Swift.String? = nil,
-                                value: Swift.String? = nil,
+                                value: OpenAPIRuntime.OpenAPIValueContainer? = nil,
                                 text: Swift.String? = nil,
                                 richText: [Components.Schemas.RichTextBlock]? = nil,
                                 message: Components.Schemas.Message? = nil,
@@ -2386,7 +2348,7 @@ public enum Components {
                     thumbWidth: Swift.Int? = nil,
                     thumbHeight: Swift.Int? = nil,
                     videoUrl: Swift.String? = nil,
-                    videoHtml: Components.Schemas.Attachment.VideoHtmlPayload? = nil,
+                    videoHtml: OpenAPIRuntime.OpenAPIValueContainer? = nil,
                     videoHtmlWidth: Swift.Double? = nil,
                     videoHtmlHeight: Swift.Double? = nil,
                     footer: Swift.String? = nil,
@@ -4029,50 +3991,74 @@ public enum Components {
             public var thumb360: Swift.String?
             /// - Remark: Generated from `#/components/schemas/File/thumb_360_gif`.
             public var thumb360Gif: Swift.String?
+            /// Type differs from java-slack-sdk: `File.thumb360Width` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_360_w`.
-            public var thumb360W: Swift.String?
+            public var thumb360W: Swift.Int?
+            /// Type differs from java-slack-sdk: `File.thumb360Height` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_360_h`.
-            public var thumb360H: Swift.String?
+            public var thumb360H: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/File/thumb_480`.
             public var thumb480: Swift.String?
             /// - Remark: Generated from `#/components/schemas/File/thumb_480_gif`.
             public var thumb480Gif: Swift.String?
+            /// Type differs from java-slack-sdk: `File.thumb480Width` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_480_w`.
-            public var thumb480W: Swift.String?
+            public var thumb480W: Swift.Int?
+            /// Type differs from java-slack-sdk: `File.thumb480Height` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_480_h`.
-            public var thumb480H: Swift.String?
+            public var thumb480H: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/File/thumb_720`.
             public var thumb720: Swift.String?
             /// - Remark: Generated from `#/components/schemas/File/thumb_720_gif`.
             public var thumb720Gif: Swift.String?
+            /// Type differs from java-slack-sdk: `File.thumb720Width` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_720_w`.
-            public var thumb720W: Swift.String?
+            public var thumb720W: Swift.Int?
+            /// Type differs from java-slack-sdk: `File.thumb720Height` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_720_h`.
-            public var thumb720H: Swift.String?
+            public var thumb720H: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/File/thumb_800`.
             public var thumb800: Swift.String?
             /// - Remark: Generated from `#/components/schemas/File/thumb_800_gif`.
             public var thumb800Gif: Swift.String?
+            /// Type differs from java-slack-sdk: `File.thumb800Width` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_800_w`.
-            public var thumb800W: Swift.String?
+            public var thumb800W: Swift.Int?
+            /// Type differs from java-slack-sdk: `File.thumb800Height` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_800_h`.
-            public var thumb800H: Swift.String?
+            public var thumb800H: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/File/thumb_960`.
             public var thumb960: Swift.String?
             /// - Remark: Generated from `#/components/schemas/File/thumb_960_gif`.
             public var thumb960Gif: Swift.String?
+            /// Type differs from java-slack-sdk: `File.thumb960Width` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_960_w`.
-            public var thumb960W: Swift.String?
+            public var thumb960W: Swift.Int?
+            /// Type differs from java-slack-sdk: `File.thumb960Height` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_960_h`.
-            public var thumb960H: Swift.String?
+            public var thumb960H: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/File/thumb_1024`.
             public var thumb1024: Swift.String?
             /// - Remark: Generated from `#/components/schemas/File/thumb_1024_gif`.
             public var thumb1024Gif: Swift.String?
+            /// Type differs from java-slack-sdk: `File.thumb1024Width` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_1024_w`.
-            public var thumb1024W: Swift.String?
+            public var thumb1024W: Swift.Int?
+            /// Type differs from java-slack-sdk: `File.thumb1024Height` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/thumb_1024_h`.
-            public var thumb1024H: Swift.String?
+            public var thumb1024H: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/File/thumb_video`.
             public var thumbVideo: Swift.String?
             /// - Remark: Generated from `#/components/schemas/File/thumb_gif`.
@@ -4089,10 +4075,14 @@ public enum Components {
             public var convertedPdf: Swift.String?
             /// - Remark: Generated from `#/components/schemas/File/image_exif_rotation`.
             public var imageExifRotation: Swift.Int?
+            /// Type differs from java-slack-sdk: `File.originalWidth` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/original_w`.
-            public var originalW: Swift.String?
+            public var originalW: Swift.Int?
+            /// Type differs from java-slack-sdk: `File.originalHeight` is declared `String`, but recorded responses send integers.
+            ///
             /// - Remark: Generated from `#/components/schemas/File/original_h`.
-            public var originalH: Swift.String?
+            public var originalH: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/File/deanimate`.
             public var deanimate: Swift.String?
             /// - Remark: Generated from `#/components/schemas/File/deanimate_gif`.
@@ -4882,28 +4872,28 @@ public enum Components {
             ///   - thumb160H:
             ///   - thumb360:
             ///   - thumb360Gif:
-            ///   - thumb360W:
-            ///   - thumb360H:
+            ///   - thumb360W: Type differs from java-slack-sdk: `File.thumb360Width` is declared `String`, but recorded responses send integers.
+            ///   - thumb360H: Type differs from java-slack-sdk: `File.thumb360Height` is declared `String`, but recorded responses send integers.
             ///   - thumb480:
             ///   - thumb480Gif:
-            ///   - thumb480W:
-            ///   - thumb480H:
+            ///   - thumb480W: Type differs from java-slack-sdk: `File.thumb480Width` is declared `String`, but recorded responses send integers.
+            ///   - thumb480H: Type differs from java-slack-sdk: `File.thumb480Height` is declared `String`, but recorded responses send integers.
             ///   - thumb720:
             ///   - thumb720Gif:
-            ///   - thumb720W:
-            ///   - thumb720H:
+            ///   - thumb720W: Type differs from java-slack-sdk: `File.thumb720Width` is declared `String`, but recorded responses send integers.
+            ///   - thumb720H: Type differs from java-slack-sdk: `File.thumb720Height` is declared `String`, but recorded responses send integers.
             ///   - thumb800:
             ///   - thumb800Gif:
-            ///   - thumb800W:
-            ///   - thumb800H:
+            ///   - thumb800W: Type differs from java-slack-sdk: `File.thumb800Width` is declared `String`, but recorded responses send integers.
+            ///   - thumb800H: Type differs from java-slack-sdk: `File.thumb800Height` is declared `String`, but recorded responses send integers.
             ///   - thumb960:
             ///   - thumb960Gif:
-            ///   - thumb960W:
-            ///   - thumb960H:
+            ///   - thumb960W: Type differs from java-slack-sdk: `File.thumb960Width` is declared `String`, but recorded responses send integers.
+            ///   - thumb960H: Type differs from java-slack-sdk: `File.thumb960Height` is declared `String`, but recorded responses send integers.
             ///   - thumb1024:
             ///   - thumb1024Gif:
-            ///   - thumb1024W:
-            ///   - thumb1024H:
+            ///   - thumb1024W: Type differs from java-slack-sdk: `File.thumb1024Width` is declared `String`, but recorded responses send integers.
+            ///   - thumb1024H: Type differs from java-slack-sdk: `File.thumb1024Height` is declared `String`, but recorded responses send integers.
             ///   - thumbVideo:
             ///   - thumbGif:
             ///   - thumbPdf:
@@ -4912,8 +4902,8 @@ public enum Components {
             ///   - thumbTiny:
             ///   - convertedPdf:
             ///   - imageExifRotation:
-            ///   - originalW:
-            ///   - originalH:
+            ///   - originalW: Type differs from java-slack-sdk: `File.originalWidth` is declared `String`, but recorded responses send integers.
+            ///   - originalH: Type differs from java-slack-sdk: `File.originalHeight` is declared `String`, but recorded responses send integers.
             ///   - deanimate:
             ///   - deanimateGif:
             ///   - pjpeg:
@@ -5052,28 +5042,28 @@ public enum Components {
                 thumb160H: Swift.String? = nil,
                 thumb360: Swift.String? = nil,
                 thumb360Gif: Swift.String? = nil,
-                thumb360W: Swift.String? = nil,
-                thumb360H: Swift.String? = nil,
+                thumb360W: Swift.Int? = nil,
+                thumb360H: Swift.Int? = nil,
                 thumb480: Swift.String? = nil,
                 thumb480Gif: Swift.String? = nil,
-                thumb480W: Swift.String? = nil,
-                thumb480H: Swift.String? = nil,
+                thumb480W: Swift.Int? = nil,
+                thumb480H: Swift.Int? = nil,
                 thumb720: Swift.String? = nil,
                 thumb720Gif: Swift.String? = nil,
-                thumb720W: Swift.String? = nil,
-                thumb720H: Swift.String? = nil,
+                thumb720W: Swift.Int? = nil,
+                thumb720H: Swift.Int? = nil,
                 thumb800: Swift.String? = nil,
                 thumb800Gif: Swift.String? = nil,
-                thumb800W: Swift.String? = nil,
-                thumb800H: Swift.String? = nil,
+                thumb800W: Swift.Int? = nil,
+                thumb800H: Swift.Int? = nil,
                 thumb960: Swift.String? = nil,
                 thumb960Gif: Swift.String? = nil,
-                thumb960W: Swift.String? = nil,
-                thumb960H: Swift.String? = nil,
+                thumb960W: Swift.Int? = nil,
+                thumb960H: Swift.Int? = nil,
                 thumb1024: Swift.String? = nil,
                 thumb1024Gif: Swift.String? = nil,
-                thumb1024W: Swift.String? = nil,
-                thumb1024H: Swift.String? = nil,
+                thumb1024W: Swift.Int? = nil,
+                thumb1024H: Swift.Int? = nil,
                 thumbVideo: Swift.String? = nil,
                 thumbGif: Swift.String? = nil,
                 thumbPdf: Swift.String? = nil,
@@ -5082,8 +5072,8 @@ public enum Components {
                 thumbTiny: Swift.String? = nil,
                 convertedPdf: Swift.String? = nil,
                 imageExifRotation: Swift.Int? = nil,
-                originalW: Swift.String? = nil,
-                originalH: Swift.String? = nil,
+                originalW: Swift.Int? = nil,
+                originalH: Swift.Int? = nil,
                 deanimate: Swift.String? = nil,
                 deanimateGif: Swift.String? = nil,
                 pjpeg: Swift.String? = nil,
@@ -7089,8 +7079,10 @@ public enum Components {
                 public var key: Swift.String?
                 /// - Remark: Generated from `#/components/schemas/ListRecord/FieldsPayload/column_id`.
                 public var columnId: Swift.String?
+                /// Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another type.
+                ///
                 /// - Remark: Generated from `#/components/schemas/ListRecord/FieldsPayload/value`.
-                public var value: Swift.String?
+                public var value: OpenAPIRuntime.OpenAPIValueContainer?
                 /// - Remark: Generated from `#/components/schemas/ListRecord/FieldsPayload/text`.
                 public var text: Swift.String?
                 /// - Remark: Generated from `#/components/schemas/ListRecord/FieldsPayload/rich_text`.
@@ -7191,7 +7183,7 @@ public enum Components {
                 /// - Parameters:
                 ///   - key:
                 ///   - columnId:
-                ///   - value:
+                ///   - value: Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another type.
                 ///   - text:
                 ///   - richText:
                 ///   - message:
@@ -7211,7 +7203,7 @@ public enum Components {
                 public init(
                     key: Swift.String? = nil,
                     columnId: Swift.String? = nil,
-                    value: Swift.String? = nil,
+                    value: OpenAPIRuntime.OpenAPIValueContainer? = nil,
                     text: Swift.String? = nil,
                     richText: [Components.Schemas.RichTextBlock]? = nil,
                     message: Components.Schemas.Message? = nil,

@@ -1,6 +1,6 @@
 # Java-derived OpenAPI prototype
 
-Files: gen_openapi.rb, generate.sh, openapi.json, openapi-generator-config.yaml, gen-report.json,
+Files: gen_openapi.rb, type_overrides.yml, generate.sh, openapi.json, openapi-generator-config.yaml, gen-report.json,
 Sources/JavaProtoTypes/Types.swift (generated, swift-openapi-generator 1.11.0), Sources/DecodeCheck/main.swift,
 reports/{new,old}-{live,fixtures,docs*}.json, scan_mismatch.rb, prepare_inputs.rb, all/ (all 334 methods: openapi.json, generated Types.swift, compiled OK in all/pkg).
 
@@ -17,6 +17,9 @@ BUNDLE_GEMFILE=../../Gemfile bundle exec ruby scan_mismatch.rb   # static JSON-v
 ```
 `gen_openapi.rb` walks the tree-sitter syntax tree of each model/response class (fields, `@SerializedName`, types, nesting, imports) instead of tokenizing Java by hand; it raises with file:line on syntax errors or Java constructs it does not model.
 (Run the Ruby scripts as `BUNDLE_GEMFILE=../../Gemfile bundle exec ruby <script>`; `generate.sh` sets this itself.)
+
+## Type overrides (Gson coercion)
+Types come from the Java declarations, with one exception: java-slack-sdk relies on Gson coercing JSON numbers into `String` fields (and so on), which Swift's `JSONDecoder` does not do. Where values recorded in the upstream fixtures (`json-logs/samples/api/*.json`) contradict the Java type, the field is listed in `type_overrides.yml` (one explicit entry per Java field: type, Java declaration, reason, fixture evidence). `gen_openapi.rb` emits the override type plus a `description` (a `///` doc comment in the generated Swift: "Type differs from java-slack-sdk: ...") and fails if an entry names a class or field that no longer exists or whose declared type changed. `scan_mismatch.rb` exits non-zero on any fixture mismatch without an entry; mismatches seen only in the slack-api-ref docs examples are printed for information and keep Java's type. Note the fixture generator also writes Java-typed placeholders (`""`, `123`) into the same fields, so strict decoding of those fixtures fails at overridden fields; real responses carry the recorded type.
 
 ## Decode (new = Java-derived; old = swift-slack today). dropped = payload paths lost in decode->encode (leaf-most)
 | method | live new/old | fixture new/old | docs new/old |

@@ -5,6 +5,12 @@
 # and lists every place where a JSON value's type differs from the schema.
 # Hand-written SlackBlockKit schemas (Block, View, ...) are not descended into.
 #
+# Policy (see type_overrides.yml): a java-fixtures mismatch must be covered by a type override, otherwise this
+# script prints it and exits non-zero. Mismatches seen only in the api-ref docs examples are information only.
+# An overridden property carries `x-java-type` (the type the Java source declares): a value that contradicts
+# it is "explained" by the override. A value of the Java type at an overridden property is the fixture
+# generator's own placeholder ("" / 123 / false) and is counted separately, not as a mismatch.
+#
 # Usage: scan_mismatch.rb
 
 require "json"
@@ -42,20 +48,35 @@ def matches_type?(value, type)
   end
 end
 
-# Records [method, path, schema type, actual type] => count in `mismatches`.
-def check(value, schema, path, method, mismatches)
+# What a scan found, each keyed by [method, path, ...]: `mismatches` (value type differs from the schema),
+# `explained` (value contradicts the Java type but matches its type override), `placeholders` (Java-typed value
+# at an overridden property).
+Tally = Struct.new(:mismatches, :explained, :placeholders)
+
+# Records [method, path, schema type, actual type] => count in the tally.
+def check(value, schema, path, method, tally)
   if schema.key?("$ref")
     name = schema["$ref"].split("/").last
     return if OVERRIDDEN.include?(name)
 
     schema = SCHEMAS.fetch(name)
   end
-  return if value.nil? || schema.empty?
+  return if value.nil?
+
+  java_type = schema["x-java-type"]
+  if java_type && !matches_type?(value, java_type)
+    key = [method, path, java_type, type_name(value)]
+    tally.explained[key] = tally.explained.fetch(key, 0) + 1
+  end
 
   type = schema["type"]
   unless matches_type?(value, type)
+    if java_type && matches_type?(value, java_type)
+      tally.placeholders[[method, path]] = true
+      return
+    end
     key = [method, path, type, type_name(value)]
-    mismatches[key] = mismatches.fetch(key, 0) + 1
+    tally.mismatches[key] = tally.mismatches.fetch(key, 0) + 1
     return
   end
 
@@ -64,13 +85,13 @@ def check(value, schema, path, method, mismatches)
     additional = schema["additionalProperties"]
     value.each do |k, v|
       if properties.key?(k)
-        check(v, properties[k], "#{path}.#{k}", method, mismatches)
+        check(v, properties[k], "#{path}.#{k}", method, tally)
       elsif additional.is_a?(Hash)
-        check(v, additional, "#{path}.*", method, mismatches)
+        check(v, additional, "#{path}.*", method, tally)
       end
     end
   elsif type == "array"
-    value.each { |v| check(v, schema["items"], "#{path}[]", method, mismatches) }
+    value.each { |v| check(v, schema["items"], "#{path}[]", method, tally) }
   end
 end
 
@@ -82,19 +103,21 @@ def py_repr(string)
   "#{quote}#{escaped}#{quote}"
 end
 
-def run(label, payloads)
-  mismatches = {}
+# Prints the mismatches (all of them when `limit` is nil) and returns the sizes of the tally.
+def run(label, payloads, limit: MAX_LINES)
+  tally = Tally.new({}, {}, {})
   count = 0
   payloads.each do |method, json|
     path_item = DOCUMENT["paths"]["/#{method}"] or next
     schema = path_item["post"]["responses"]["200"]["content"]["application/json"]["schema"]
     count += 1
-    check(json, schema, "", method, mismatches)
+    check(json, schema, "", method, tally)
   end
-  puts "== #{label}: #{count} payloads, #{mismatches.size} distinct mismatches"
-  mismatches.sort.first(MAX_LINES).each do |key, n|
+  puts "== #{label}: #{count} payloads, #{tally.mismatches.size} distinct mismatches"
+  tally.mismatches.sort.first(limit || tally.mismatches.size).each do |key, n|
     puts "(#{key.map { |k| py_repr(k) }.join(", ")}) #{n}"
   end
+  tally.to_a.map(&:size)
 end
 
 fixtures = Dir.glob(File.join(VENDOR, "java-slack-sdk/json-logs/samples/api/*.json")).filter_map do |file|
@@ -102,7 +125,7 @@ fixtures = Dir.glob(File.join(VENDOR, "java-slack-sdk/json-logs/samples/api/*.js
 rescue StandardError
   nil
 end
-run("java fixtures", fixtures)
+unexplained, explained, placeholders = run("java fixtures (unexplained mismatches)", fixtures, limit: nil)
 
 # Only successful examples of each api-ref method file count; a malformed file stops that file's scan.
 examples = []
@@ -119,4 +142,8 @@ Dir.glob(File.join(VENDOR, "slack-api-ref/methods/*/*.json")).each do |file|
     next
   end
 end
-run("api-ref examples", examples)
+docs_info, = run("api-ref examples (information only)", examples)
+
+puts "== summary: #{explained} fixture mismatches explained by type_overrides.yml " \
+     "(plus #{placeholders} Java-typed placeholder values at overridden fields), #{unexplained} unexplained, #{docs_info} docs-example mismatches (information only)"
+exit 1 if unexplained.positive?
