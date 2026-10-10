@@ -8,12 +8,13 @@
 # Policy (see type_overrides.yml): a java-fixtures mismatch must be covered by a type override, otherwise this
 # script prints it and exits non-zero. Mismatches seen only in the api-ref docs examples are information only.
 # An overridden property carries `x-java-type` (the type the Java source declares): a value that contradicts
-# it is "explained" by the override. A value of the Java type at an overridden property is the fixture
-# generator's own placeholder ("" / 123 / false) and is counted separately, not as a mismatch.
+# it is "explained" by the override. The fixture generator's own placeholder at an overridden property
+# ("" / 123 / 12.3 / false, see java_placeholders.rb) is counted separately, not as a mismatch.
 #
 # Usage: scan_mismatch.rb
 
 require "json"
+require_relative "java_placeholders"
 
 HERE = File.expand_path(__dir__)
 VENDOR = File.expand_path("../../vendor", HERE)
@@ -21,8 +22,7 @@ DOCUMENT = JSON.parse(File.read(File.join(HERE, "all/openapi.json"), encoding: "
 SCHEMAS = DOCUMENT["components"]["schemas"]
 OVERRIDDEN = %w[Block View TextObject RichTextBlock].freeze
 MAX_LINES = 60
-# Samples contain duplicate keys (last wins, as in Python) and may nest deeply.
-LENIENT = { max_nesting: false, allow_duplicate_key: true }.freeze
+LENIENT = JavaPlaceholders::LENIENT
 
 # Python-style type names, so output stays comparable with earlier reports.
 def type_name(value)
@@ -36,17 +36,7 @@ def type_name(value)
   end
 end
 
-def matches_type?(value, type)
-  case type
-  when "string" then value.is_a?(String)
-  when "integer" then value.is_a?(Integer) || (value.is_a?(Float) && value == value.to_i)
-  when "number" then value.is_a?(Numeric)
-  when "boolean" then value == true || value == false
-  when "object" then value.is_a?(Hash)
-  when "array" then value.is_a?(Array)
-  else true
-  end
-end
+def matches_type?(value, type) = JavaPlaceholders.matches_type?(value, type)
 
 # What a scan found, each keyed by [method, path, ...]: `mismatches` (value type differs from the schema),
 # `explained` (value contradicts the Java type but matches its type override), `placeholders` (Java-typed value
@@ -71,7 +61,7 @@ def check(value, schema, path, method, tally)
 
   type = schema["type"]
   unless matches_type?(value, type)
-    if java_type && matches_type?(value, java_type)
+    if JavaPlaceholders.placeholder_at_override?(schema, value)
       tally.placeholders[[method, path]] = true
       return
     end
