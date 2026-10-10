@@ -235,7 +235,11 @@ struct BlockActionsPayloadTests {
         #expect(actions[0]._type == "plain_text_input")
         #expect(actions[0].value == "Hello")
         #expect(actions[1].richTextValue?.elements.count == 1)
-        #expect(actions[2].richTextValue == nil)
+        // Unmodeled rich text elements are preserved as .unknown rather than dropping the value.
+        guard case .unknown("rich_text_future_element", _)? = actions[2].richTextValue?.elements.first else {
+            Issue.record("Expected an unknown rich text element")
+            return
+        }
         #expect(actions[3]._type == "future_element")
         #expect(actions[3].actionId == "future")
     }

@@ -1,4 +1,5 @@
 import Foundation
+import OpenAPIRuntime
 
 /// Enum for all possible block types that can be used in views
 public enum Block: Codable, Hashable, Sendable {
@@ -15,6 +16,7 @@ public enum Block: Codable, Hashable, Sendable {
     case section(SectionBlock)
     case taskCard(TaskCardBlock)
     case video(VideoBlock)
+    case unknown(type: String, payload: OpenAPIObjectContainer)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -49,7 +51,7 @@ public enum Block: Codable, Hashable, Sendable {
         case "video":
             self = try .video(container.decode(VideoBlock.self))
         default:
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown block type: \(type)")
+            self = try .unknown(type: type, payload: OpenAPIObjectContainer(from: decoder))
         }
     }
 
@@ -83,6 +85,8 @@ public enum Block: Codable, Hashable, Sendable {
             try container.encode(block)
         case let .video(block):
             try container.encode(block)
+        case let .unknown(type, payload):
+            try container.encode(OpenAPIObjectContainer.unknown(type: type, payload: payload))
         }
     }
 

@@ -1,4 +1,5 @@
 import Foundation
+import OpenAPIRuntime
 
 public struct ActionsBlock: Codable, Hashable, Sendable {
     public let type: String
@@ -37,6 +38,7 @@ public enum ActionElementType: Codable, Hashable, Sendable {
     case conversationsSelect(ConversationsSelectElement)
     case channelsSelect(ChannelsSelectElement)
     case timePicker(TimePickerElement)
+    case unknown(type: String, payload: OpenAPIObjectContainer)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -81,7 +83,7 @@ public enum ActionElementType: Codable, Hashable, Sendable {
         case "timepicker":
             self = try .timePicker(container.decode(TimePickerElement.self))
         default:
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown action element type: \(type)")
+            self = try .unknown(type: type, payload: OpenAPIObjectContainer(from: decoder))
         }
     }
 
@@ -125,6 +127,8 @@ public enum ActionElementType: Codable, Hashable, Sendable {
             try container.encode(element)
         case let .timePicker(element):
             try container.encode(element)
+        case let .unknown(type, payload):
+            try container.encode(OpenAPIObjectContainer.unknown(type: type, payload: payload))
         }
     }
 

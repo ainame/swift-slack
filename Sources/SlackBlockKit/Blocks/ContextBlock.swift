@@ -1,4 +1,5 @@
 import Foundation
+import OpenAPIRuntime
 
 public struct ContextBlock: Codable, Hashable, Sendable {
     public let type: String
@@ -21,6 +22,7 @@ public struct ContextBlock: Codable, Hashable, Sendable {
 public enum ContextElementType: Codable, Hashable, Sendable {
     case text(TextObject)
     case image(ImageElement)
+    case unknown(type: String, payload: OpenAPIObjectContainer)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -33,7 +35,7 @@ public enum ContextElementType: Codable, Hashable, Sendable {
         case "image":
             self = try .image(container.decode(ImageElement.self))
         default:
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown context element type: \(type)")
+            self = try .unknown(type: type, payload: OpenAPIObjectContainer(from: decoder))
         }
     }
 
@@ -45,6 +47,8 @@ public enum ContextElementType: Codable, Hashable, Sendable {
             try container.encode(element)
         case let .image(element):
             try container.encode(element)
+        case let .unknown(type, payload):
+            try container.encode(OpenAPIObjectContainer.unknown(type: type, payload: payload))
         }
     }
 

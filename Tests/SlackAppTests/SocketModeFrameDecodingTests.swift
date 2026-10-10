@@ -8,7 +8,7 @@ struct SocketModeFrameDecodingTests {
     private let logger = Logger(label: "test")
 
     @Test func `undecodable Events API envelope is acknowledged and skipped`() async {
-        // A message event whose blocks include a block type swift-slack does not model.
+        // A message event whose blocks include a malformed block (unknown block types decode as .unknown).
         let json = """
         {
           "envelope_id": "env-1",
@@ -26,7 +26,7 @@ struct SocketModeFrameDecodingTests {
               "user": "U123",
               "text": "hello",
               "ts": "1.2",
-              "blocks": [{ "type": "unmodeled_block", "block_id": "b1" }]
+              "blocks": [{ "type": "section", "block_id": "b1", "text": "not a text object" }]
             }
           }
         }
@@ -42,7 +42,7 @@ struct SocketModeFrameDecodingTests {
     }
 
     @Test(arguments: [
-        // A view submission whose view includes a block type swift-slack does not model.
+        // A view submission whose view includes a malformed block (unknown block types decode as .unknown).
         """
         {
           "envelope_id": "env-1",
@@ -56,7 +56,7 @@ struct SocketModeFrameDecodingTests {
               "id": "V123",
               "type": "modal",
               "title": { "type": "plain_text", "text": "Preferences" },
-              "blocks": [{ "type": "unmodeled_block" }]
+              "blocks": [{ "type": "section", "text": "not a text object" }]
             }
           }
         }
