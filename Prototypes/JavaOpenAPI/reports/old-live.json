@@ -1,0 +1,37 @@
+{
+  "chat.postMessage" : {
+    "decoded" : true,
+    "dropped" : [
+      "message.app_id",
+      "message.bot_profile.user_id"
+    ]
+  },
+  "conversations.list" : {
+    "decoded" : true,
+    "dropped" : [
+      "channels[].is_member",
+      "channels[].num_members",
+      "channels[].parent_conversation",
+      "response_metadata.next_cursor"
+    ]
+  },
+  "team.info" : {
+    "decoded" : true,
+    "dropped" : [
+      "team.avatar_base_url",
+      "team.domain",
+      "team.email_domain",
+      "team.icon",
+      "team.is_sfdc_auto_slack",
+      "team.is_verified",
+      "team.lob_sales_home_enabled",
+      "team.url"
+    ]
+  },
+  "users.info" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  }
+}

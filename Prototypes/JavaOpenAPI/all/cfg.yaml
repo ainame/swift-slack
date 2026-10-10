@@ -1,0 +1,12 @@
+generate:
+  - types
+accessModifier: public
+namingStrategy: idiomatic
+additionalImports:
+  - SlackBlockKit
+typeOverrides:
+  schemas:
+    Block: SlackBlockKit.Block
+    RichTextBlock: SlackBlockKit.RichTextBlock
+    TextObject: SlackBlockKit.TextObject
+    View: SlackBlockKit.View

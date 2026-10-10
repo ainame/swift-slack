@@ -1,0 +1,34 @@
+{
+  "_null_synthetic_conversations.list" : {
+    "decoded" : true,
+    "reencoded" : "{\"ok\":true,\"channels\":[{\"id\":\"C1\"}]}"
+  },
+  "_null_synthetic_team.info" : {
+    "decoded" : true,
+    "name_is_nil" : true
+  },
+  "chat.postMessage" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  },
+  "conversations.list" : {
+    "decoded" : true,
+    "dropped" : [
+      "channels[].parent_conversation"
+    ]
+  },
+  "team.info" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  },
+  "users.info" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  }
+}

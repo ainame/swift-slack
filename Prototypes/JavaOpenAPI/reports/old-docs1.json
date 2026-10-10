@@ -1,0 +1,39 @@
+{
+  "admin.conversations.getConversationPrefs" : {
+    "decoded" : true,
+    "dropped" : [
+      "prefs.can_thread",
+      "prefs.who_can_post"
+    ]
+  },
+  "chat.postMessage" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  },
+  "conversations.list" : {
+    "decoded" : true,
+    "dropped" : [
+      "channels[].is_member",
+      "channels[].num_members",
+      "response_metadata.next_cursor"
+    ]
+  },
+  "team.info" : {
+    "decoded" : true,
+    "dropped" : [
+      "team.domain",
+      "team.email_domain",
+      "team.enterprise_id",
+      "team.enterprise_name",
+      "team.icon"
+    ]
+  },
+  "users.info" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  }
+}

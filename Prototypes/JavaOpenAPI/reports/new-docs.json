@@ -1,0 +1,55 @@
+{
+  "_null_synthetic_conversations.list" : {
+    "decoded" : true,
+    "reencoded" : "{\"channels\":[{\"id\":\"C1\"}],\"ok\":true}"
+  },
+  "_null_synthetic_team.info" : {
+    "decoded" : true,
+    "name_is_nil" : true
+  },
+  "admin.conversations.getConversationPrefs.1" : {
+    "decoded" : false,
+    "error" : {
+      "detail" : "Expected to decode Array<Any> but found a string instead.",
+      "expected" : "Array<Any>",
+      "kind" : "typeMismatch",
+      "path" : "prefs.who_can_post.type"
+    }
+  },
+  "admin.conversations.getConversationPrefs.2" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  },
+  "chat.postMessage.1" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  },
+  "conversations.list.1" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  },
+  "conversations.list.2" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  },
+  "team.info.1" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  },
+  "users.info.1" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  }
+}

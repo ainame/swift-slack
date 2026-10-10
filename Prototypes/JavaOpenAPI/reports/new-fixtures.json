@@ -1,0 +1,42 @@
+{
+  "_null_synthetic_conversations.list" : {
+    "decoded" : true,
+    "reencoded" : "{\"ok\":true,\"channels\":[{\"id\":\"C1\"}]}"
+  },
+  "_null_synthetic_team.info" : {
+    "decoded" : true,
+    "name_is_nil" : true
+  },
+  "admin.conversations.getConversationPrefs" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  },
+  "chat.postMessage" : {
+    "decoded" : false,
+    "error" : {
+      "detail" : "Invalid URL string.",
+      "kind" : "dataCorrupted",
+      "path" : "message.blocks.[0].elements.[0].url"
+    }
+  },
+  "conversations.list" : {
+    "decoded" : true,
+    "dropped" : [
+      "callstack"
+    ]
+  },
+  "team.info" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  },
+  "users.info" : {
+    "decoded" : true,
+    "dropped" : [
+
+    ]
+  }
+}
