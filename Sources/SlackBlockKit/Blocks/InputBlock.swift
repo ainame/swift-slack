@@ -59,6 +59,7 @@ public enum InputElementType: Codable, Hashable, Sendable {
     case conversationsSelect(ConversationsSelectElement)
     case channelsSelect(ChannelsSelectElement)
     case timePicker(TimePickerElement)
+    case urlInput(URLInputElement)
     case unknown(type: String, payload: OpenAPIObjectContainer)
 
     public init(from decoder: Decoder) throws {
@@ -107,6 +108,8 @@ public enum InputElementType: Codable, Hashable, Sendable {
             self = try .channelsSelect(container.decode(ChannelsSelectElement.self))
         case "timepicker":
             self = try .timePicker(container.decode(TimePickerElement.self))
+        case "url_text_input":
+            self = try .urlInput(container.decode(URLInputElement.self))
         default:
             self = try .unknown(type: type, payload: OpenAPIObjectContainer(from: decoder))
         }
@@ -155,6 +158,8 @@ public enum InputElementType: Codable, Hashable, Sendable {
         case let .channelsSelect(element):
             try container.encode(element)
         case let .timePicker(element):
+            try container.encode(element)
+        case let .urlInput(element):
             try container.encode(element)
         case let .unknown(type, payload):
             try container.encode(OpenAPIObjectContainer.unknown(type: type, payload: payload))
