@@ -163,4 +163,20 @@ class FixturePlaceholdersTest < Minitest::Test
     deep = ('[' * 200) + (']' * 200)
     assert_kind_of Array, FixturePlaceholders.parse(deep)
   end
+  def test_one_of_picks_the_alternative_that_fits_array_elements
+    document = { 'components' => { 'schemas' => {
+      'Block' => {},
+      'Value' => { 'oneOf' => [
+        { 'type' => 'array', 'items' => { 'type' => 'string' } },
+        { 'type' => 'array', 'items' => { '$ref' => '#/components/schemas/Block' } },
+      ] },
+    } } }
+    preprocessor = FixturePlaceholders::Preprocessor.new(document)
+    blocks = [{ 'type' => 'image', 'image_url' => '', 'alt_text' => 'x' }]
+
+    fixed = preprocessor.call(blocks, { '$ref' => '#/components/schemas/Value' })
+
+    assert_equal 'https://example.com', fixed.first['image_url']
+    assert_equal %w[a b], preprocessor.call(%w[a b], { '$ref' => '#/components/schemas/Value' })
+  end
 end

@@ -114,10 +114,35 @@ module FixturePlaceholders
 
     # The first `oneOf` alternative whose JSON type fits `value`, or an untyped schema.
     def alternative_for(value, alternatives)
-      alternatives.find do |alternative|
-        resolved = alternative['$ref'] ? @schemas.fetch(alternative['$ref'].delete_prefix('#/components/schemas/')) : alternative
-        FixturePlaceholders.matches_type?(value, resolved['type'] || 'object')
-      end || {}
+      alternatives.find { |alternative| fits?(value, alternative) } || {}
+    end
+
+    # Does `value` match `schema`, looking into array elements and declared properties? This keeps an array of
+    # blocks from picking an array-of-strings alternative listed before it.
+    def fits?(value, schema)
+      return true if schema.empty? # untyped
+      return value.is_a?(Hash) || value.is_a?(Array) if resolve(schema).empty? # a SlackBlockKit type
+
+      schema = resolve(schema)
+      return schema['oneOf'].any? { |alternative| fits?(value, alternative) } if schema['oneOf']
+      return true if value.nil?
+      return false unless FixturePlaceholders.matches_type?(value, schema['type'] || 'object')
+
+      case value
+      when Array then schema['items'].nil? || value.all? { |element| fits?(element, schema['items']) }
+      when Hash
+        properties = schema.fetch('properties', {})
+        value.all? do |key, child|
+          property = properties[key]
+          property.nil? || fits?(child, property) || FixturePlaceholders.placeholder_at_override?(property, child)
+        end
+      else true
+      end
+    end
+
+    def resolve(schema)
+      name = schema['$ref']&.delete_prefix('#/components/schemas/') or return schema
+      @schemas.fetch(name)
     end
 
     # Replaces the recorder's placeholders inside a SlackBlockKit subtree.
