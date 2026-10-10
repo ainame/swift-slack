@@ -4,6 +4,7 @@ import OpenAPIRuntime
 /// Enum for all possible block types that can be used in views
 public enum Block: Codable, Hashable, Sendable {
     case actions(ActionsBlock)
+    case alert(AlertBlock)
     case container(ContainerBlock)
     case context(ContextBlock)
     case divider(DividerBlock)
@@ -26,6 +27,8 @@ public enum Block: Codable, Hashable, Sendable {
         switch type {
         case "actions":
             self = try .actions(container.decode(ActionsBlock.self))
+        case "alert":
+            self = try .alert(container.decode(AlertBlock.self))
         case "container":
             self = try .container(container.decode(ContainerBlock.self))
         case "context":
@@ -60,6 +63,8 @@ public enum Block: Codable, Hashable, Sendable {
 
         switch self {
         case let .actions(block):
+            try container.encode(block)
+        case let .alert(block):
             try container.encode(block)
         case let .container(block):
             try container.encode(block)
