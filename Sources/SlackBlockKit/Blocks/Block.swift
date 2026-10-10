@@ -7,6 +7,7 @@ public enum Block: Codable, Hashable, Sendable {
     case alert(AlertBlock)
     case container(ContainerBlock)
     case context(ContextBlock)
+    case contextActions(ContextActionsBlock)
     case divider(DividerBlock)
     case file(FileBlock)
     case header(HeaderBlock)
@@ -33,6 +34,8 @@ public enum Block: Codable, Hashable, Sendable {
             self = try .container(container.decode(ContainerBlock.self))
         case "context":
             self = try .context(container.decode(ContextBlock.self))
+        case "context_actions":
+            self = try .contextActions(container.decode(ContextActionsBlock.self))
         case "divider":
             self = try .divider(container.decode(DividerBlock.self))
         case "file":
@@ -69,6 +72,8 @@ public enum Block: Codable, Hashable, Sendable {
         case let .container(block):
             try container.encode(block)
         case let .context(block):
+            try container.encode(block)
+        case let .contextActions(block):
             try container.encode(block)
         case let .divider(block):
             try container.encode(block)
