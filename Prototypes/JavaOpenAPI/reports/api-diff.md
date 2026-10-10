@@ -309,15 +309,15 @@ renamed 1, added 8, removed 2
 - removed: channels; groups
 - added: warning; response_metadata; who_can_post; can_thread; membership_limit; can_huddle; enable_at_channel; enable_at_here
 
-  ## Limitations
+## Limitations
 
-  - Static text analysis of Swift declarations, not a type-checker. Types it cannot resolve in the generated or hand-written sources are compared by the name as written.
-  - Each (old type, new type) pair is compared once however many responses reach it, so counts are unique property comparisons, not occurrences along every JSON path. The example path is the first one found, breadth-first.
-  - Hand-written SlackModels types carry no Remark comments: the JSON key is the `CodingKeys` entry when present, else the Swift property name.
-  - oneOf unions, string enums and typealiases are leaves; they are compared by name only. Block Kit types (SlackBlockKit) are leaves on both sides.
-  - `additionalProperties` is a single pseudo key `*`.
-  - A renamed model type is still walked, so its own differences appear under the pair; the rename is counted on the referencing property.
-  - Descendants of a removed or added property are not counted separately.
-  - A map is a `[String: T]` in some hand-written old types but a struct with `additionalProperties` in swift-openapi-generator output; this shows up as a container change.
-- Only the 263 `<Method>Response` types present in both are walked. Responses only in new (legacy `channels.*`, `groups.*`, `im.*`, `mpim.*`, other methods old main does not generate) and only in old (`oauth.v2.*`, `openid.connect.*`, `api.test`, which the Java classes name differently) are listed but not compared.
+- Static text analysis of Swift declarations, not a type-checker. Types it cannot resolve in the generated or hand-written sources are compared by the name as written.
+- Each (old type, new type) pair is compared once however many responses reach it, so counts are unique property comparisons, not occurrences along every JSON path. The example path is the first one found, breadth-first.
+- Hand-written SlackModels types carry no Remark comments: the JSON key is the `CodingKeys` entry when present, else the Swift property name.
+- oneOf unions, string enums and typealiases are leaves; they are compared by name only. Block Kit types (SlackBlockKit) are leaves on both sides.
+- `additionalProperties` is a single pseudo key `*`.
+- A renamed model type is still walked, so its own differences appear under the pair; the rename is counted on the referencing property.
+- Descendants of a removed or added property are not counted separately.
+- A map is a `[String: T]` in some hand-written old types but a struct with `additionalProperties` in swift-openapi-generator output; this shows up as a container change.
+- Only the `<Method>Response` types present in both are walked. Responses only in new (legacy `channels.*`, `groups.*`, `im.*`, `mpim.*`, other methods old main does not generate) and only in old (`oauth.v2.*`, `openid.connect.*`, `api.test`, which the Java classes name differently) are listed but not compared.
 - Compares declared types only. Whether the old types decode a payload the new types reject (or the reverse) is covered by the decode checks in REPORT.md.

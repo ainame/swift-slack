@@ -412,8 +412,8 @@ out << <<~LIMITS
   - A renamed model type is still walked, so its own differences appear under the pair; the rename is counted on the referencing property.
   - Descendants of a removed or added property are not counted separately.
   - A map is a `[String: T]` in some hand-written old types but a struct with `additionalProperties` in swift-openapi-generator output; this shows up as a container change.
-- Only the 263 `<Method>Response` types present in both are walked. Responses only in new (legacy `channels.*`, `groups.*`, `im.*`, `mpim.*`, other methods old main does not generate) and only in old (`oauth.v2.*`, `openid.connect.*`, `api.test`, which the Java classes name differently) are listed but not compared.
-- Compares declared types only. Whether the old types decode a payload the new types reject (or the reverse) is covered by the decode checks in REPORT.md.
+  - Only the `<Method>Response` types present in both are walked. Responses only in new (legacy `channels.*`, `groups.*`, `im.*`, `mpim.*`, other methods old main does not generate) and only in old (`oauth.v2.*`, `openid.connect.*`, `api.test`, which the Java classes name differently) are listed but not compared.
+  - Compares declared types only. Whether the old types decode a payload the new types reject (or the reverse) is covered by the decode checks in REPORT.md.
 LIMITS
 
 out_path = File.join(__dir__, "reports/api-diff.md")
