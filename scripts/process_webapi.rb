@@ -39,6 +39,9 @@ module APIGroups
   PREFIX_ALIASES = { 'slacklists' => 'lists' }.freeze
   # Trait and file names spell some groups differently from `capitalize`.
   DISPLAY_NAMES = { 'dnd' => 'DND', 'oauth' => 'OAuth', 'openid' => 'OpenID', 'rtm' => 'RTM' }.freeze
+  # Method name prefixes whose second segment is a version or protocol rather than a namespace, so their
+  # methods stay in their group's file: `oauth.v2.access` goes to OAuth, not OAuthV2.
+  UNNAMESPACED_PREFIXES = %w[oauth.v2 openid.connect].to_set.freeze
 
   module_function
 
@@ -186,7 +189,9 @@ class WebAPIProcessor
       segments = path.delete_prefix('/').split('.')
       operation_id = item.dig('post', 'operationId')
       file = APIGroups.display_name(APIGroups.group_for(operation_id))
-      file += segments[1][0].upcase + segments[1][1..] if segments.size > 2
+      if segments.size > 2 && !APIGroups::UNNAMESPACED_PREFIXES.include?(segments.first(2).join('.'))
+        file += segments[1][0].upcase + segments[1][1..]
+      end
       names[operation_id.downcase] = file
       names[response_type(item).downcase] = file
     end
