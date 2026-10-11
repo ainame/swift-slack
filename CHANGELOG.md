@@ -21,7 +21,7 @@ This is the first beta of 2027.1.0, a major release that is worth upgrading to. 
 
 * **Decoding you can rely on.** Every generated response and event type decodes java-slack-sdk's recorded payloads (268 responses and 91 events), and CI checks it on every change. The decoding failures of 2026.x, such as `bots.info`, Slack Lists rows and `File` image sizes, are fixed.
 * **Complete models.** Types declare every field java-slack-sdk knows, adding 469 properties across the Web API responses, including `ResponseMetadata.nextCursor` for cursor pagination.
-* **Sturdier Block Kit.** A block or element that swift-slack does not model yet decodes as `.unknown` instead of failing the whole response or event, and new blocks such as cards, carousels and alerts are supported.
+* **New Block Kit blocks and elements.** Cards, carousels, alerts, context actions, workflow buttons and URL inputs are now supported.
 
 **What you need to change**
 
