@@ -8,6 +8,8 @@ import SlackStreaming
 actor AgentResponder {
     struct Turn: Sendable {
         let session: SessionKey
+        /// The `ts` of the message being answered. It equals `session.threadTs` for a thread's first message.
+        let messageTs: String
         let prompt: String
         let userId: String
         let teamId: String
@@ -18,10 +20,36 @@ actor AgentResponder {
     /// The task producing chunks for each session's running turn. Cancelling it stops the turn.
     private var producers: [SessionKey: Task<Void, Never>] = [:]
     private var titledSessions: Set<SessionKey> = []
+    /// Sessions this process has answered in, whose backend already holds the conversation.
+    private var engagedSessions: Set<SessionKey> = []
+    private var identity: BotIdentity?
 
     init(backend: any AgentBackend, logger: Logger) {
         self.backend = backend
         self.logger = logger
+    }
+
+    func setIdentity(_ identity: BotIdentity) {
+        self.identity = identity
+    }
+
+    /// Whether to answer a channel thread reply that does not mention the bot: only in threads the agent
+    /// already takes part in. After a restart, the thread itself shows whether the bot has replied there.
+    func shouldAnswerThreadReply(text: String, in session: SessionKey, client: any APIProtocol) async -> Bool {
+        // A reply that mentions the bot also arrives as app_mention, which answers it.
+        if identity?.isMentioned(in: text) == true {
+            return false
+        }
+        if engagedSessions.contains(session) {
+            return true
+        }
+        guard let identity else { return false }
+        do {
+            return try await ThreadHistory.messages(in: session, client: client).contains(where: identity.isAuthor)
+        } catch {
+            logger.warning("Failed to read the thread", metadata: ["session": "\(session)", "error": "\(error)"])
+            return false
+        }
     }
 
     func handle(_ turn: Turn, client: any APIProtocol) async {
@@ -32,12 +60,14 @@ actor AgentResponder {
         }
 
         await setProcessing(turn, client: client)
+        let prompt = await prompt(for: turn, client: client)
+        engagedSessions.insert(session)
 
         // The agent's events go into an AsyncStream that ChatStream sends to Slack. The producer task is
         // separate so the stop button can cancel the agent while the message is still stopped properly.
         let (chunks, continuation) = AsyncStream.makeStream(of: StreamChunk.self)
         producers[session] = Task {
-            await self.produce(turn, into: continuation)
+            await self.produce(turn, prompt: prompt, into: continuation)
         }
         defer { producers[session] = nil }
 
@@ -72,10 +102,30 @@ actor AgentResponder {
         titledSessions.insert(session)
     }
 
-    private nonisolated func produce(_ turn: Turn, into continuation: AsyncStream<StreamChunk>.Continuation) async {
+    /// The backend keeps a session's conversation, but not one it has not seen: a mention in the middle of
+    /// a thread, or a thread from before a restart. Then the prompt starts with the thread so far.
+    private func prompt(for turn: Turn, client: any APIProtocol) async -> String {
+        guard !engagedSessions.contains(turn.session), turn.messageTs != turn.session.threadTs else {
+            return turn.prompt
+        }
+        do {
+            let messages = try await ThreadHistory.messages(in: turn.session, client: client)
+            let transcript = ThreadHistory.transcript(of: messages, before: turn.messageTs, identity: identity)
+            return (transcript ?? "") + turn.prompt
+        } catch {
+            logger.warning("Failed to read the thread", metadata: ["session": "\(turn.session)", "error": "\(error)"])
+            return turn.prompt
+        }
+    }
+
+    private nonisolated func produce(
+        _ turn: Turn,
+        prompt: String,
+        into continuation: AsyncStream<StreamChunk>.Continuation,
+    ) async {
         defer { continuation.finish() }
         do {
-            for try await event in backend.respond(to: turn.prompt, in: turn.session) {
+            for try await event in backend.respond(to: prompt, in: turn.session) {
                 switch event {
                 case let .task(task):
                     continuation.yield(.taskUpdate(task))

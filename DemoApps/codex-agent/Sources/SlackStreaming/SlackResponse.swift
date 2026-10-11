@@ -13,6 +13,11 @@ public struct SlackAPIError: Error, CustomStringConvertible {
     public let method: String
     public let code: String
 
+    public init(method: String, code: String) {
+        self.method = method
+        self.code = code
+    }
+
     public var description: String {
         "\(method) failed: \(code)"
     }

@@ -19,6 +19,7 @@ let package = Package(
                 "HummingbirdHTTPAdapter",
                 "WebAPI_Agents",
                 "WebAPI_Assistant",
+                "WebAPI_Auth",
                 "WebAPI_Chat",
                 "WebAPI_Conversations",
             ],
