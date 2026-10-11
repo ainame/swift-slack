@@ -9,8 +9,35 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+## [2027.1.0-beta.1] - 2026-10-11
+
+This is the first beta of 2027.1.0. Web API response and event models are now generated from the model classes of java-slack-sdk, Slack's Java SDK, instead of being inferred from recorded JSON samples, and the `SlackModels` module is removed. Requests, method names, response and event type names, and `Event` cases are unchanged. To try it, depend on `from: "2027.1.0-beta.1"`; SwiftPM does not resolve a beta from a `2026.x` requirement.
+
+> [!WARNING]
+> **This release is breaking for apps that spell out model types.** Read [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) before upgrading. A bot that calls the Web API, reads responses through property chains and handles events usually needs only the import change.
+
+### Added
+
+* Added Block Kit types `AlertBlock`, `CardBlock`, `CarouselBlock`, `ContextActionsBlock`, `FeedbackButtonsElement`, `IconButtonElement`, `URLInputElement`, `WorkflowButtonElement` and `FeedbackButtonObject`, with matching enum cases, plus `MultiStaticSelectElement.optionGroups` and `TimePickerElement.timezone` - #230
+
+### Changed
+
+* **BREAKING**: Web API response and event types are now generated from upstream java-slack-sdk model classes. They declare every field java-slack-sdk knows, adding 469 top-level properties across the 268 responses, and every property is optional except `ok` on responses and `_type` on events. Objects that java-slack-sdk declares inside a response or event class are now nested `<Property>Payload` types instead of shared models, inferred names map to java-slack-sdk's types (for example `Channel` is now `Conversation`, and `FileElement` and `ItemFile` are now `File`), and memberwise initializer arguments follow java-slack-sdk's field order - #230
+* **BREAKING**: `Block`, `View` and the Block Kit element enums gained `.unknown(type:payload:)` and cases for the new blocks and elements, so exhaustive `switch` statements need new cases or `default`. `MultiStaticSelectElement.options` is now optional - #230
+
+### Removed
+
+* **BREAKING**: Removed the `SlackModels` module. Shared models such as `User`, `Message`, `File` and `Conversation` are now `Components.Schemas` types in `SlackClient` with top-level aliases of the same name. Drop the `SlackModels` product and replace `import SlackModels` with `import SlackClient`, or `import SlackKit` in apps - #230
+
+### Fixed
+
+* Fixed response decoding failures and dropped fields found by auditing the previous generated types (#177), such as the missing `ResponseMetadata.nextCursor` for cursor pagination, `File` image sizes typed as `String` instead of `Int`, and Slack Lists rows decoded as the stars and pins item - #230
+* A block or element type that SlackBlockKit does not model now decodes as `.unknown` instead of failing the whole response or event - #230
+* `ConversationFilterObject`, `TriggerObject` and `DispatchActionConfigurationObject` now encode and decode Slack's snake_case keys; Slack ignored the keys of filters that apps built before - #230
+
 ### Maintenance
 
+* Web API and event schemas are generated from java-slack-sdk's Java sources, parsed with tree-sitter, and a method or event is generated only when java-slack-sdk has a recorded fixture for it. `make check-fixtures` decodes every fixture with the generated types and runs in CI. Node.js and quicktype are no longer needed; run `bundle install` before `make generate` - #230
 * Added a `Gemfile` that pins json 2.19.1 or later for the generator scripts, which now run through `bundle exec`, because Ruby 4.0.7's bundled json 2.18.0 has generator GC bugs that intermittently failed script tests on Linux. Run `bundle install` before generating - #172
 * Fixed `make generate` and `make test-scripts` failing with `Encoding::InvalidByteSequenceError` in shells without a UTF-8 locale; the generator scripts now read sources as UTF-8 - #176
 
