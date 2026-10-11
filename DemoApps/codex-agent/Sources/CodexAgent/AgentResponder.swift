@@ -16,17 +16,21 @@ actor AgentResponder {
     }
 
     private let backend: any AgentBackend
+    private let questions: PendingQuestions
     private let logger: Logger
     /// The task producing chunks for each session's running turn, which returns the blocks for the end
     /// of the reply. Cancelling it stops the turn.
     private var producers: [SessionKey: Task<[Block], Never>] = [:]
     private var titledSessions: Set<SessionKey> = []
+    /// Sessions the person renamed, whose title the agent leaves alone.
+    private var userTitledSessions: Set<SessionKey> = []
     /// Sessions this process has answered in, whose backend already holds the conversation.
     private var engagedSessions: Set<SessionKey> = []
     private var identity: BotIdentity?
 
-    init(backend: any AgentBackend, logger: Logger) {
+    init(backend: any AgentBackend, questions: PendingQuestions, logger: Logger) {
         self.backend = backend
+        self.questions = questions
         self.logger = logger
     }
 
@@ -65,10 +69,18 @@ actor AgentResponder {
         // It is registered before the first `await`: the actor takes other calls while this one waits,
         // and a second message in the same thread must find the session busy.
         let (chunks, continuation) = AsyncStream.makeStream(of: StreamChunk.self)
+        let tools = SlackAgentTools(
+            client: client,
+            session: session,
+            userId: turn.userId,
+            identity: identity,
+            questions: questions,
+            isTitledByUser: { [weak self] in await self?.isTitledByUser(session) ?? true },
+        )
         let producer = Task {
             await self.setProcessing(turn, client: client)
             let prompt = await self.prompt(for: turn, client: client)
-            return await self.produce(turn, prompt: prompt, into: continuation)
+            return await self.produce(turn, prompt: prompt, tools: tools, into: continuation)
         }
         producers[session] = producer
         defer {
@@ -93,6 +105,7 @@ actor AgentResponder {
             // The stop button ends the streaming message on Slack's side, so stopping it can fail here.
             // Leave `processing` anyway, or the session keeps spinning for an hour.
             logger.info("Could not finish the stream", metadata: ["session": "\(session)", "error": "\(error)"])
+            await questions.cancel(session)
             producer.cancel()
             await setActive(session, client: client)
         }
@@ -102,6 +115,8 @@ actor AgentResponder {
     func stop(_ session: SessionKey) async {
         guard let producer = producers[session] else { return }
         logger.info("Stopping turn", metadata: ["session": "\(session)"])
+        // A question waiting for a click holds Codex's message loop, so end it before interrupting.
+        await questions.cancel(session)
         // Cancelling the producer ends its iteration of the backend's stream, which stops the turn.
         producer.cancel()
     }
@@ -109,6 +124,11 @@ actor AgentResponder {
     func titleChanged(_ session: SessionKey) {
         // The person named the session; stop proposing titles for it.
         titledSessions.insert(session)
+        userTitledSessions.insert(session)
+    }
+
+    private func isTitledByUser(_ session: SessionKey) -> Bool {
+        userTitledSessions.contains(session)
     }
 
     /// The backend keeps a session's conversation, but not one it has not seen: a mention in the middle of
@@ -131,12 +151,13 @@ actor AgentResponder {
     private nonisolated func produce(
         _ turn: Turn,
         prompt: String,
+        tools: any AgentTools,
         into continuation: AsyncStream<StreamChunk>.Continuation,
     ) async -> [Block] {
         var cards: [SlackUI.Card] = []
         defer { continuation.finish() }
         do {
-            for try await event in backend.respond(to: prompt, in: turn.session) {
+            for try await event in backend.respond(to: prompt, in: turn.session, tools: tools) {
                 switch event {
                 case let .task(task):
                     continuation.yield(.taskUpdate(task))

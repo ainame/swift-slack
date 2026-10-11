@@ -23,46 +23,6 @@ struct SlackUIArgumentsTests {
     }
 }
 
-struct CardsToolTests {
-    @Test
-    func `accepts valid cards and rejects invalid ones with a message for the agent`() async {
-        let valid = await CardsTool.handle(call(["cards": [["title": "A"]]]))
-        #expect(valid.success)
-
-        let invalid = await CardsTool.handle(call(["cards": []]))
-        #expect(!invalid.success)
-        #expect(invalid.contentItems == [.inputText(.init(text: "Give at least one card a title or a body.", type: .inputText))])
-    }
-
-    @Test
-    func `rejects unknown tools`() async {
-        #expect(await !CardsTool.handle(call([:], tool: "rm_rf")).success)
-    }
-
-    @Test
-    func `reads cards only from successful show_cards calls`() {
-        let arguments: JSONValue = ["cards": [["title": "A"]]]
-        #expect(CardsTool.cards(from: item(arguments, success: true)) == SlackUI(cards: [.init(title: "A")]))
-        #expect(CardsTool.cards(from: item(arguments, success: false)) == nil)
-        #expect(CardsTool.cards(from: item(arguments, success: true, tool: "other")) == nil)
-    }
-
-    private func call(_ arguments: JSONValue, tool: String = SlackUI.toolName) -> DynamicToolCallParams {
-        DynamicToolCallParams(arguments: arguments, callId: "call-1", threadId: "thread", tool: tool, turnId: "turn")
-    }
-
-    private func item(_ arguments: JSONValue, success: Bool, tool: String = SlackUI.toolName) -> DynamicToolCallThreadItem {
-        DynamicToolCallThreadItem(
-            arguments: arguments,
-            id: "call-1",
-            status: success ? .completed : .failed,
-            success: success,
-            tool: tool,
-            type: .dynamicToolCall,
-        )
-    }
-}
-
 struct SlackUIBlocksTests {
     @Test
     func `builds one card for one item and a carousel for several`() {

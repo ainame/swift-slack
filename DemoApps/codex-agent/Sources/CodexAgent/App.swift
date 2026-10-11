@@ -53,7 +53,8 @@ struct CodexAgentApp {
         let isAllowed: @Sendable (String) -> Bool = { user in
             environment.allowedUserIds.isEmpty || environment.allowedUserIds.contains(user)
         }
-        let responder = AgentResponder(backend: backend, logger: logger)
+        let questions = PendingQuestions()
+        let responder = AgentResponder(backend: backend, questions: questions, logger: logger)
         let router = Router()
 
         // In the Agent messaging experience, app_home_opened with tab "messages" replaces
@@ -129,6 +130,29 @@ struct CodexAgentApp {
         }
 
         Feedback.register(on: router, logger: logger)
+
+        // Answers to the agent's ask_user tool. Only the person asked can answer.
+        router.onAction(SlackAgentTools.choiceActionId) { context, payload in
+            try await context.ack()
+            guard let action = payload.blockActions.first(where: { $0.actionId == SlackAgentTools.choiceActionId }),
+                  let parts = action.value?.split(separator: "|"), parts.count == 2, let index = Int(parts[1]),
+                  let user = payload.user.id, let channel = payload.container.channelId else {
+                return
+            }
+            let notice: String? = switch await questions.answer(id: String(parts[0]), index: index, userId: user) {
+            case .accepted: nil
+            case let .notAsked(asked): "Only <@\(asked)> can answer this question."
+            case .expired: "This question is no longer waiting for an answer."
+            }
+            if let notice {
+                _ = try await context.client.chatPostEphemeral(body: .json(.init(
+                    channel: channel,
+                    text: notice,
+                    threadTs: payload.message?.threadTs ?? payload.container.messageTs,
+                    user: user,
+                ))).ok.body.json.checked("chat.postEphemeral")
+            }
+        }
 
         // Buttons on the cards from the agent's show_cards tool.
         router.onAction(SlackUI.openActionId) { context, _ in

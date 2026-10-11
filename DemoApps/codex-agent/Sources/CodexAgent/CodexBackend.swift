@@ -29,14 +29,24 @@ actor CodexBackend: AgentBackend {
         self.logger = logger
     }
 
-    nonisolated func respond(to prompt: String, in session: SessionKey) -> AsyncThrowingStream<AgentEvent, any Error> {
+    nonisolated func respond(
+        to prompt: String,
+        in session: SessionKey,
+        tools: any AgentTools,
+    ) -> AsyncThrowingStream<AgentEvent, any Error> {
         AsyncThrowingStream { continuation in
             let control = TurnControl()
             // The turn runs in its own task so that stopping it can interrupt Codex and still read the turn
             // to its end. Otherwise its remaining notifications would reach the session's next turn.
             Task {
                 do {
-                    try await self.run(prompt: prompt, in: session, control: control, continuation: continuation)
+                    try await self.run(
+                        prompt: prompt,
+                        in: session,
+                        tools: tools,
+                        control: control,
+                        continuation: continuation,
+                    )
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)
@@ -53,6 +63,7 @@ actor CodexBackend: AgentBackend {
     private func run(
         prompt: String,
         in key: SessionKey,
+        tools: any AgentTools,
         control: TurnControl,
         continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
     ) async throws {
@@ -60,7 +71,7 @@ actor CodexBackend: AgentBackend {
         let session = sessions[key] ?? CodexSession(settings: settings, threadID: threadIDs[key], logger: logger)
         sessions[key] = session
         defer { scheduleIdleClose(key, session: session) }
-        try await session.run(prompt: prompt, control: control, continuation: continuation)
+        try await session.run(prompt: prompt, tools: tools, control: control, continuation: continuation)
     }
 
     private func scheduleIdleClose(_ key: SessionKey, session: CodexSession) {
@@ -118,6 +129,7 @@ private final class TurnControl: Sendable {
 
 private actor CodexSession {
     private let settings: CodexBackend.Settings
+    private let toolRouter = ToolRouter()
     private let logger: Logger
     private var codex: Codex?
     private var thread: CodexThread?
@@ -134,13 +146,14 @@ private actor CodexSession {
 
     func run(
         prompt: String,
+        tools: any AgentTools,
         control: TurnControl,
         continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
     ) async throws {
         let previous = lastTurn
         let turn = Task {
             _ = await previous?.result
-            try await self.execute(prompt: prompt, control: control, continuation: continuation)
+            try await self.execute(prompt: prompt, tools: tools, control: control, continuation: continuation)
         }
         lastTurn = turn
         try await turn.value
@@ -156,11 +169,16 @@ private actor CodexSession {
 
     private func execute(
         prompt: String,
+        tools: any AgentTools,
         control: TurnControl,
         continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
     ) async throws {
         isRunning = true
-        defer { isRunning = false }
+        toolRouter.tools = tools
+        defer {
+            isRunning = false
+            toolRouter.tools = nil
+        }
         let thread = try await prepareThread()
         guard !control.isCancelled else { return }
 
@@ -170,7 +188,7 @@ private actor CodexSession {
         // Read to turn/completed even after a stop; yielding to a terminated stream does nothing.
         var translator = NotificationTranslator(turnID: handle.id)
         for try await notification in try await handle.stream() {
-            for event in translator.events(for: notification) {
+            for event in translator.events(turnID: notification.turnID, payload: notification.payload) {
                 continuation.yield(event)
             }
         }
@@ -196,7 +214,7 @@ private actor CodexSession {
                 codexPathOverride: settings.codexPath,
                 environment: Self.childEnvironment(),
                 clientName: "swift-slack-codex-agent",
-                dynamicToolCallHandler: CardsTool.handle,
+                dynamicToolCallHandler: { [toolRouter] call in await toolRouter.handle(call) },
             ),
             logger: logger,
         )
@@ -211,6 +229,11 @@ private actor CodexSession {
             When a few items deserve to stand out, such as files, links, or options to explore next, call \
             the `\(SlackUI.toolName)` tool. The cards appear under your answer, so mention them briefly \
             instead of repeating them.
+
+            To ask the person to choose, call `\(AgentToolset.askUser)` and use their answer. Never ask in \
+            text and wait: the person cannot reply until your turn ends. Call `\(AgentToolset.readSlack)` when \
+            they refer to earlier messages, and `\(AgentToolset.setTitle)` once the topic of the \
+            conversation is clear.
             """,
             model: settings.model,
             sandboxPreset: .readOnly,
@@ -220,7 +243,7 @@ private actor CodexSession {
             // A resumed thread keeps the tools it started with and rejects new definitions.
             thread = try await codex.resumeThread(id: threadID, options: options)
         } else {
-            options.dynamicTools = [CardsTool.spec]
+            options.dynamicTools = AgentToolset.specs
             thread = try await codex.startThread(options: options)
         }
         self.thread = thread
@@ -245,28 +268,33 @@ struct NotificationTranslator {
     /// The turn's error, kept until the turn completes so the caller still reads it to the end.
     private(set) var failure: Failure?
     private var lastMessageItemID: String?
+    /// Messages that streamed deltas. Codex sometimes sends a message only as a completed item.
+    private var streamedMessageIDs: Set<String> = []
 
     init(turnID: String) {
         self.turnID = turnID
     }
 
-    mutating func events(for notification: CodexNotification) -> [AgentEvent] {
-        guard notification.turnID == nil || notification.turnID == turnID else {
+    /// Maps one notification. `turnID` is the notification's turn, or `nil` for one that belongs to none.
+    mutating func events(turnID notificationTurnID: String?, payload: CodexNotificationPayload) -> [AgentEvent] {
+        guard notificationTurnID == nil || notificationTurnID == turnID else {
             return []
         }
 
-        switch notification.payload {
+        switch payload {
         case let .agentMessageDelta(payload):
-            // Separate the messages Codex writes between tool calls into paragraphs.
-            let separator = lastMessageItemID.map { $0 == payload.itemId ? "" : "\n\n" } ?? ""
-            lastMessageItemID = payload.itemId
-            return [.text(separator + payload.delta)]
-        case let .itemStarted(payload):
-            return task(for: payload.item).map { [.task($0)] } ?? []
+            streamedMessageIDs.insert(payload.itemId)
+            return [text(payload.delta, inMessage: payload.itemId)]
         case let .itemCompleted(payload):
-            if case let .dynamicToolCall(call) = payload.item {
-                return CardsTool.cards(from: call).map { [.cards($0)] } ?? []
+            if case let .agentMessage(message) = payload.item, !streamedMessageIDs.contains(message.id) {
+                return message.text.isEmpty ? [] : [text(message.text, inMessage: message.id)]
             }
+            var events = task(for: payload.item).map { [AgentEvent.task($0)] } ?? []
+            if case let .dynamicToolCall(call) = payload.item, let cards = AgentToolset.cards(from: call) {
+                events.append(.cards(cards))
+            }
+            return events
+        case let .itemStarted(payload):
             return task(for: payload.item).map { [.task($0)] } ?? []
         case let .turnCompleted(payload) where payload.turn.status == .failed:
             failure = failure ?? .turnFailed(payload.turn.error?.message ?? "Codex turn failed")
@@ -277,6 +305,13 @@ struct NotificationTranslator {
         default:
             return []
         }
+    }
+
+    /// Separates the messages Codex writes between tool calls into paragraphs.
+    private mutating func text(_ text: String, inMessage itemID: String) -> AgentEvent {
+        let separator = lastMessageItemID.map { $0 == itemID ? "" : "\n\n" } ?? ""
+        lastMessageItemID = itemID
+        return .text(separator + text)
     }
 
     private func task(for item: ThreadItem) -> TaskUpdate? {
@@ -302,6 +337,8 @@ struct NotificationTranslator {
                 status: status(change.status),
                 details: change.changes.map(\.path).joined(separator: "\n"),
             )
+        case let .dynamicToolCall(call):
+            TaskUpdate(id: call.id, title: AgentToolset.title(for: call.tool), status: status(call))
         case let .mcpToolCall(call):
             TaskUpdate(id: call.id, title: "Call \(call.server)/\(call.tool)", status: status(call.status))
         case let .reasoning(reasoning):
@@ -334,6 +371,14 @@ struct NotificationTranslator {
         }
     }
 
+    private func status(_ call: DynamicToolCallThreadItem) -> TaskUpdate.Status {
+        switch call.status {
+        case .inProgress: .inProgress
+        case .completed where call.success != false: .complete
+        default: .error
+        }
+    }
+
     private func status(_ status: McpToolCallStatus) -> TaskUpdate.Status {
         switch status {
         case .inProgress: .inProgress
@@ -343,16 +388,43 @@ struct NotificationTranslator {
     }
 }
 
-/// The `show_cards` tool registered with Codex, which carries ``SlackUI`` cards from the agent to the app.
-enum CardsTool {
-    static let spec = DynamicToolSpec.function(.init(
-        description: """
-        Show cards under your answer in Slack, one per item worth highlighting. Each card may link to an \
-        https URL and offer a follow-up question the person can ask with one click.
-        """,
-        inputSchema: [
-            "type": "object",
-            "properties": [
+/// Routes Codex's tool calls to the running turn's ``AgentTools``. Codex calls the handler registered when
+/// the app-server starts, and a session runs one turn at a time, so the current turn's tools are set here.
+private final class ToolRouter: Sendable {
+    private let current = Mutex<(any AgentTools)?>(nil)
+
+    var tools: (any AgentTools)? {
+        get { current.withLock { $0 } }
+        set { current.withLock { $0 = newValue } }
+    }
+
+    func handle(_ call: DynamicToolCallParams) async -> DynamicToolCallResponse {
+        guard let tools else {
+            return AgentToolset.reply("No turn is running.", success: false)
+        }
+        return await AgentToolset.handle(call, tools: tools)
+    }
+}
+
+/// The tools registered with Codex. `show_cards` carries ``SlackUI`` cards; the others act through
+/// ``AgentTools``.
+///
+/// swift-codex runs a handler while it reads the app-server's messages, so a handler that waits, as
+/// `ask_user` does for a click, holds every other message until it returns. Stopping a turn resolves the
+/// question first so the interrupt can go through.
+enum AgentToolset {
+    static let setTitle = "set_title"
+    static let readSlack = "read_slack"
+    static let askUser = "ask_user"
+
+    static let specs: [DynamicToolSpec] = [
+        function(
+            SlackUI.toolName,
+            """
+            Show cards under your answer in Slack, one per item worth highlighting. Each card may link to an \
+            https URL and offer a follow-up question the person can ask with one click.
+            """,
+            properties: [
                 "cards": [
                     "type": "array",
                     "minItems": 1,
@@ -370,27 +442,116 @@ enum CardsTool {
                     ],
                 ],
             ],
-            "required": ["cards"],
-            "additionalProperties": false,
-        ],
-        name: SlackUI.toolName,
-        type: .function,
-    ))
+            required: ["cards"],
+        ),
+        function(
+            setTitle,
+            "Rename this Slack conversation to a short title that says what it is about, once the topic is clear.",
+            properties: ["title": ["type": "string", "minLength": 1, "maxLength": 200]],
+            required: ["title"],
+        ),
+        function(
+            readSlack,
+            """
+            Read recent messages from this Slack conversation: the current thread, or the channel it is in. \
+            Use it when the person refers to something said earlier.
+            """,
+            properties: [
+                "scope": ["type": "string", "enum": ["thread", "channel"]],
+                "limit": ["type": "integer", "minimum": 1, "maximum": 50],
+            ],
+            required: ["scope"],
+        ),
+        function(
+            askUser,
+            """
+            Ask the person to choose between a few options and wait for their answer. Use it before acting on \
+            a choice that is theirs to make, such as which approach to take.
+            """,
+            properties: [
+                "question": ["type": "string", "minLength": 1, "maxLength": 500],
+                "options": [
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 5,
+                    "items": ["type": "string", "minLength": 1, "maxLength": 75],
+                ],
+            ],
+            required: ["question", "options"],
+        ),
+    ]
 
-    /// Answers a tool call. It only checks the arguments: the cards are read from the completed tool call item,
-    /// and handlers must not wait on another request to the same app server.
-    @Sendable
-    static func handle(_ call: DynamicToolCallParams) async -> DynamicToolCallResponse {
-        guard call.tool == SlackUI.toolName, call.namespace == nil else {
+    static func title(for tool: String) -> String {
+        switch tool {
+        case SlackUI.toolName: "Prepare cards"
+        case setTitle: "Rename the conversation"
+        case readSlack: "Read the conversation"
+        case askUser: "Ask you a question"
+        default: "Use \(tool)"
+        }
+    }
+
+    /// Answers a tool call. `show_cards` only checks its arguments: the cards are read from the completed
+    /// tool call item.
+    static func handle(_ call: DynamicToolCallParams, tools: any AgentTools) async -> DynamicToolCallResponse {
+        guard call.namespace == nil else {
             return reply("There is no tool named \(call.tool).", success: false)
         }
         do {
-            _ = try SlackUI(arguments: JSONEncoder().encode(call.arguments))
-            return reply("The cards will appear under your answer.", success: true)
+            let arguments = try JSONEncoder().encode(call.arguments)
+            switch call.tool {
+            case SlackUI.toolName:
+                _ = try SlackUI(arguments: arguments)
+                return reply("The cards will appear under your answer.", success: true)
+            case setTitle:
+                let title = try decode(SetTitleArguments.self, from: arguments).title
+                guard !title.isEmpty else {
+                    return reply("Pass a non-empty title.", success: false)
+                }
+                try await tools.setTitle(title)
+                return reply("Renamed the conversation.", success: true)
+            case readSlack:
+                let read = try decode(ReadSlackArguments.self, from: arguments)
+                let limit = min(max(read.limit ?? 20, 1), 50)
+                return try await reply(tools.readSlack(read.scope, limit: limit), success: true)
+            case askUser:
+                let ask = try decode(AskUserArguments.self, from: arguments)
+                guard !ask.question.isEmpty, (2 ... 5).contains(ask.options.count) else {
+                    return reply("Pass a question and two to five options.", success: false)
+                }
+                let choice = try await tools.askUser(ask.question, options: ask.options)
+                return reply("The person chose: \(choice)", success: true)
+            default:
+                return reply("There is no tool named \(call.tool).", success: false)
+            }
         } catch let error as SlackUI.InvalidArguments {
             return reply(error.message, success: false)
+        } catch let error as AgentToolError {
+            return reply(error.description, success: false)
         } catch {
-            return reply("The arguments could not be read.", success: false)
+            return reply("The tool failed: \(error)", success: false)
+        }
+    }
+
+    private struct SetTitleArguments: Decodable {
+        var title: String
+    }
+
+    private struct ReadSlackArguments: Decodable {
+        var scope: SlackReadScope
+        var limit: Int?
+    }
+
+    private struct AskUserArguments: Decodable {
+        var question: String
+        var options: [String]
+    }
+
+    private static func decode<T: Decodable>(_: T.Type, from arguments: Data) throws -> T {
+        do {
+            return try JSONDecoder().decode(T.self, from: arguments)
+        } catch {
+            throw AgentToolError(description: "The arguments do not match the tool's schema.")
         }
     }
 
@@ -403,7 +564,26 @@ enum CardsTool {
         return try? SlackUI(arguments: arguments)
     }
 
-    private static func reply(_ text: String, success: Bool) -> DynamicToolCallResponse {
+    static func reply(_ text: String, success: Bool) -> DynamicToolCallResponse {
         DynamicToolCallResponse(contentItems: [.inputText(.init(text: text, type: .inputText))], success: success)
+    }
+
+    private static func function(
+        _ name: String,
+        _ description: String,
+        properties: JSONObject,
+        required: [String],
+    ) -> DynamicToolSpec {
+        .function(.init(
+            description: description,
+            inputSchema: [
+                "type": "object",
+                "properties": .object(properties),
+                "required": .array(required.map(JSONValue.string)),
+                "additionalProperties": false,
+            ],
+            name: name,
+            type: .function,
+        ))
     }
 }
