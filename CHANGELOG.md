@@ -24,6 +24,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * Updated SwiftFormat to 0.63.1 - #242
 * Sped up `make generate` from about 125 to about 28 seconds by splitting generated Web API files by API namespace, such as `Operations+AdminConversations.swift`, so SwiftFormat no longer spends most of the run on one 16,000-line file - #242
 * Events that java-slack-sdk models but has not recorded can now be generated from the payload their upstream unit test deserializes, copied into `scripts/event_fixtures/` and listed in `scripts/event_fixtures.yml`. Generation fails when a copy drifts from its unit test and once upstream records the event - #245
+* Added the `DemoApps/codex-agent` demo, a Slack agent that answers with Codex through swift-codex and streams its replies. Its `SlackStreaming` target sends an `AsyncStream` of chunks through `chat.startStream`, `chat.appendStream` and `chat.stopStream`, as a starting point for a streaming API in the library - #248
 
 ## [2027.1.0-beta.1] - 2026-10-11
 
