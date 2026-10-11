@@ -19,7 +19,8 @@ import SlackKit
 /// ``send(_:blocks:sessionStatus:)`` starts the message with the first chunks, sends whatever arrived during
 /// each request with the next `chat.appendStream` call, waits at least `minimumInterval` between calls, and
 /// sends the chunks left when the stream finishes with `chat.stopStream`. Cancelling the task that calls
-/// `send` ends the input like finishing it, so the message is still stopped.
+/// `send` ends the input like finishing it, so the message is still stopped. If a call fails partway, the
+/// message is stopped before `send` throws, so it does not stay streaming.
 public struct ChatStream: Sendable {
     private let transport: any ChatStreamTransport
     private let minimumInterval: Duration
@@ -69,20 +70,47 @@ public struct ChatStream: Sendable {
 
     private func deliver(from buffer: ChunkBuffer, blocks: [Block]?, sessionStatus: String?) async throws -> String {
         var ts: String?
-        while true {
-            let batch = await buffer.next()
-            if batch.isFinal {
-                var chunks = batch.chunks
-                let messageTs: String
-                if let ts {
-                    messageTs = ts
-                } else {
-                    // A stream needs content to start; stop it with the blocks alone if there is nothing else.
-                    messageTs = try await transport.start(chunks: chunks.isEmpty ? [.markdownText(" ")] : chunks)
-                    chunks = []
+        let remaining: [StreamChunk]
+        do {
+            remaining = try await stream(from: buffer, ts: &ts)
+        } catch {
+            // Stop the message so it does not stay streaming, then report the failure.
+            if let ts {
+                try? await Self.uncancellable { [transport] in
+                    try await transport.stop(ts: ts, chunks: [], blocks: blocks, sessionStatus: sessionStatus)
                 }
-                try await transport.stop(ts: messageTs, chunks: chunks, blocks: blocks, sessionStatus: sessionStatus)
-                return messageTs
+            }
+            throw error
+        }
+
+        // The final calls run even when the caller was cancelled, because cancelling must still stop the
+        // message, and a real HTTP transport abandons requests made from a cancelled task.
+        return try await Self.uncancellable { [transport, ts] in
+            var chunks = remaining
+            let messageTs: String
+            if let ts {
+                messageTs = ts
+            } else {
+                // A stream needs content to start; stop it with the blocks alone if there is nothing else.
+                messageTs = try await transport.start(chunks: chunks.isEmpty ? [.markdownText(" ")] : chunks)
+                chunks = []
+            }
+            try await transport.stop(ts: messageTs, chunks: chunks, blocks: blocks, sessionStatus: sessionStatus)
+            return messageTs
+        }
+    }
+
+    /// Starts and appends to the message until the input finishes, and returns the chunks left for the stop.
+    private func stream(from buffer: ChunkBuffer, ts: inout String?) async throws -> [StreamChunk] {
+        while true {
+            var batch = await buffer.next()
+            if Task.isCancelled, !batch.isFinal {
+                // Cancelling ends the input: everything left goes out with the final call.
+                await buffer.finish()
+                batch = await .init(chunks: batch.chunks + buffer.next().chunks, isFinal: true)
+            }
+            if batch.isFinal {
+                return batch.chunks
             }
 
             if let ts {
@@ -90,8 +118,15 @@ public struct ChatStream: Sendable {
             } else {
                 ts = try await transport.start(chunks: batch.chunks)
             }
-            // A cancelled sleep returns early; the input then finishes and the final batch stops the message.
+            // A cancelled sleep returns early, and the next batch is the final one.
             try? await Task.sleep(for: minimumInterval)
         }
+    }
+
+    /// Runs `operation` in a new task, which does not inherit the caller's cancellation.
+    private static func uncancellable<T: Sendable>(
+        _ operation: @escaping @Sendable () async throws -> T,
+    ) async throws -> T {
+        try await Task { try await operation() }.value
     }
 }
