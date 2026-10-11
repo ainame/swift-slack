@@ -36,7 +36,10 @@ record the same previous pins.
 - `agent_session_stopped` and `agent_session_title_changed` have java-slack-sdk
   event classes and unit-test payloads but no recorded event fixture under
   `json-logs/samples/events`. Since #245 they are generated from copies of those
-  unit-test payloads (`scripts/event_fixtures.yml`).
+  unit-test payloads (`scripts/event_fixtures.yml`). The Slack event reference and
+  slack-go also list an optional `enterprise_id` on `agent_session_title_changed`
+  for org-level installs; java-slack-sdk does not declare it and no recorded payload
+  carries it, so swift-slack drops it until upstream adds it.
 - The java-slack-sdk delta changes only release-note configuration, the maintainers
   guide and documentation links; nothing feeds generation. No Block Kit class,
   event class or handwritten Bolt runtime behavior changed.
