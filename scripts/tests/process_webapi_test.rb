@@ -181,7 +181,8 @@ end
 class FileNameTest < Minitest::Test
   def processor
     processor = WebAPIProcessor.allocate
-    paths = %w[admin.analytics.getFile admin.users.session.reset chat.postMessage files.remote.add].to_h do |method|
+    methods = %w[admin.analytics.getFile admin.users.session.reset chat.postMessage files.remote.add oauth.v2.access openid.connect.token]
+    paths = methods.to_h do |method|
       operation_id = method.gsub(/\.(\w)/) { Regexp.last_match(1).upcase }
       response = "#{operation_id[0].upcase}#{operation_id[1..]}Response"
       ["/#{method}", { 'post' => { 'operationId' => operation_id, 'responses' => { '200' => { 'content' => {
@@ -201,6 +202,11 @@ class FileNameTest < Minitest::Test
   def test_methods_directly_in_a_group_use_the_group_file
     assert_equal 'Chat', processor.send(:file_name, 'ChatPostMessage')
     assert_equal 'Chat', processor.send(:file_name, 'ChatPostMessageResponse')
+  end
+
+  def test_version_and_protocol_segments_are_not_namespaces
+    assert_equal 'OAuth', processor.send(:file_name, 'oauthV2Access')
+    assert_equal 'OpenID', processor.send(:file_name, 'OpenidConnectTokenResponse')
   end
 
   def test_unknown_name_raises
