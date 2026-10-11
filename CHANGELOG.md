@@ -15,7 +15,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Maintenance
 
-* Updated swift-openapi-generator to 1.14.0. `scripts/process_webapi.rb` now reads the types it splits into one file per namespace - #241
+* Updated swift-openapi-generator to 1.14.0. `scripts/process_webapi.rb` now reads the types that the generator splits into one file per Swift namespace (`Components`, `Operations`) - #241
 * Updated SwiftFormat to 0.63.1 - #242
 * Sped up `make generate` from about 125 to about 28 seconds by splitting generated Web API files by API namespace, such as `Operations+AdminConversations.swift`, so SwiftFormat no longer spends most of the run on one 16,000-line file - #242
 
