@@ -17,7 +17,7 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
 > [!TIP]
-> **Try the 2027.1.0 beta, especially if you're starting a new app.** In [2027.1.0-beta.1](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.1), Web API responses and events are generated from the model classes of [Slack's Java SDK](https://github.com/slackapi/java-slack-sdk). Every generated response and event type decodes the Java SDK's recorded payloads (268 responses and 91 events), models declare every field the Java SDK knows, and the decoding failures of 2026.x are fixed.
+> **Try the 2027.1.0 beta, especially if you're starting a new app.** In [2027.1.0-beta.1](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.1), Web API responses and events are generated from the model classes of [Slack's Java SDK](https://github.com/slackapi/java-slack-sdk). Every generated response and event type decodes the Java SDK's recorded payloads (268 responses and 91 events), and models declare every field the Java SDK knows. The new generator pipeline resolves the decoding failures and dropped fields found by auditing the 2026.x types ([#177](https://github.com/ainame/swift-slack/issues/177)), such as missing pagination cursors and Slack Lists rows that failed to decode.
 >
 > Because swift-slack uses calendar versioning, the final release is `2027.1.0`, published in January 2027. Until then, depend on the beta, which SwiftPM does not pick up from a `2026.x` requirement:
 >
