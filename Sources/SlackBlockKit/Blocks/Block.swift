@@ -1,10 +1,15 @@
 import Foundation
+import OpenAPIRuntime
 
 /// Enum for all possible block types that can be used in views
 public enum Block: Codable, Hashable, Sendable {
     case actions(ActionsBlock)
+    case alert(AlertBlock)
+    case card(CardBlock)
+    case carousel(CarouselBlock)
     case container(ContainerBlock)
     case context(ContextBlock)
+    case contextActions(ContextActionsBlock)
     case divider(DividerBlock)
     case file(FileBlock)
     case header(HeaderBlock)
@@ -15,6 +20,7 @@ public enum Block: Codable, Hashable, Sendable {
     case section(SectionBlock)
     case taskCard(TaskCardBlock)
     case video(VideoBlock)
+    case unknown(type: String, payload: OpenAPIObjectContainer)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -24,10 +30,18 @@ public enum Block: Codable, Hashable, Sendable {
         switch type {
         case "actions":
             self = try .actions(container.decode(ActionsBlock.self))
+        case "alert":
+            self = try .alert(container.decode(AlertBlock.self))
+        case "card":
+            self = try .card(container.decode(CardBlock.self))
+        case "carousel":
+            self = try .carousel(container.decode(CarouselBlock.self))
         case "container":
             self = try .container(container.decode(ContainerBlock.self))
         case "context":
             self = try .context(container.decode(ContextBlock.self))
+        case "context_actions":
+            self = try .contextActions(container.decode(ContextActionsBlock.self))
         case "divider":
             self = try .divider(container.decode(DividerBlock.self))
         case "file":
@@ -49,7 +63,7 @@ public enum Block: Codable, Hashable, Sendable {
         case "video":
             self = try .video(container.decode(VideoBlock.self))
         default:
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown block type: \(type)")
+            self = try .unknown(type: type, payload: OpenAPIObjectContainer(from: decoder))
         }
     }
 
@@ -59,9 +73,17 @@ public enum Block: Codable, Hashable, Sendable {
         switch self {
         case let .actions(block):
             try container.encode(block)
+        case let .alert(block):
+            try container.encode(block)
+        case let .card(block):
+            try container.encode(block)
+        case let .carousel(block):
+            try container.encode(block)
         case let .container(block):
             try container.encode(block)
         case let .context(block):
+            try container.encode(block)
+        case let .contextActions(block):
             try container.encode(block)
         case let .divider(block):
             try container.encode(block)
@@ -83,6 +105,8 @@ public enum Block: Codable, Hashable, Sendable {
             try container.encode(block)
         case let .video(block):
             try container.encode(block)
+        case let .unknown(type, payload):
+            try container.encode(OpenAPIObjectContainer.unknown(type: type, payload: payload))
         }
     }
 

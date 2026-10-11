@@ -1,0 +1,179 @@
+# Codex Agent for Slack
+
+A Slack [agent](https://docs.slack.dev/ai/agents) built with swift-slack. It answers direct messages and mentions with [Codex](https://github.com/openai/codex), through [swift-codex](https://github.com/ainame/swift-codex), and streams each reply into its thread as Codex works.
+
+Each thread is one conversation. Reply in the thread to continue it: in DMs and in channel threads the agent has joined, replies need no mention.
+
+It follows the agent response loop from [Developing an agent](https://docs.slack.dev/ai/developing-agents):
+
+- **Suggested prompts**: when someone opens the Messages tab (`app_home_opened` with `tab: "messages"`), it sets prompts with `assistant.threads.setSuggestedPrompts`.
+- **Threads**: replies in a channel thread the agent has answered in reach it through `message.channels` and `message.groups`. Replies that mention it are left to `app_mention`. After a restart, `conversations.replies` shows whether the bot has posted in the thread. When the agent joins a thread it has not seen, such as on a mention partway through a discussion or after a restart, the prompt starts with the thread so far.
+- **Sessions**: each thread is an agent session. It calls `agents.sessions.setStatus` with `processing` and a title taken from the first message, and `chat.stopStream` returns the session to `active`.
+- **Streaming**: commands, web searches, file edits, and tool calls appear as task cards (`task_update` chunks in `timeline` mode). The answer streams as `markdown_text` chunks through `chat.startStream`, `chat.appendStream`, and `chat.stopStream`.
+- **Stop button**: subscribing to `agent_session_stopped` makes Slack show a stop button while the session is processing. Slack stops the streaming message itself. The agent interrupts the Codex turn and returns the session to `active`. Slack may then reject the closing `chat.stopStream`, so a stopped reply can end without the feedback buttons.
+- **Renaming**: after `agent_session_title_changed`, it stops proposing titles for that session.
+- **Tools**: Codex can rename the session, read the conversation, and ask the person to choose, through tools that act in Slack. See below.
+- **Cards**: Codex can call a `show_cards` tool, and the answer ends with cards or a carousel with Open and "Ask about this" buttons. See below.
+- **Feedback**: every reply ends with `feedback_buttons` in a `context_actions` block, and a click gets an ephemeral reply.
+
+## Cards from the agent's answer
+
+The agent never writes Block Kit. The codex backend registers a `show_cards` tool with Codex, using swift-codex's experimental client-defined tools (`ThreadOptions.dynamicTools`). Each card has an optional title, subtitle, body, `https` link, and follow-up question, and Codex calls the tool when a few items deserve to stand out:
+
+```json
+{"cards": [{"title": "Agent sessions", "body": "How Slack shows the stop button.", "url": "https://docs.slack.dev/ai/agent-sessions", "ask": "How does the stop button work?"}]}
+```
+
+- `AgentToolset.handle` only checks the arguments of `show_cards`. Invalid ones get `success: false` with a message, so Codex can retry. The handler must not wait on another request to the same app server.
+- The cards are read from the completed `dynamicToolCall` item and stream nothing. When the answer is done, `SlackUI` turns them into a `card`, or a `carousel` for two to ten cards, within the card block's limits (150 characters for titles and subtitles, 200 for bodies).
+- The app decides the buttons: Open for an `https` link, and "Ask about this", which posts the question in the thread and answers it. The model cannot add other actions or links.
+- When the answer finishes, the producer yields the cards as a `StreamingMessage.Part.blocks` chunk. Feedback buttons are passed separately to `streamMessage` as the closing message's `blocks`.
+- Tools are registered when a Codex thread starts. A thread resumed after an idle close keeps them.
+
+The mock backend sends two cards the same way, so `AGENT_BACKEND=mock` shows them without Codex.
+
+## Tools that act in Slack
+
+Besides `show_cards`, the codex backend registers three tools. Each turn gets a `SlackAgentTools` scoped to its session and the person it answers, and the mock backend calls the same tools, so `AGENT_BACKEND=mock` shows them too.
+
+| Tool | What it does |
+| --- | --- |
+| `set_title` | Renames the session with `agents.sessions.rename`. It refuses once the person has renamed the session (`agent_session_title_changed`). |
+| `read_slack` | Returns up to 50 recent messages from the current thread or its channel, with `conversations.replies` or `conversations.history`. It cannot read other conversations. |
+| `ask_user` | Posts the question with a button per option, sets the session to `suspended`, and returns the option the person picks. Only that person can answer; the question expires after 10 minutes. |
+
+Tool calls appear as task cards, and failures go back to Codex as messages it can act on. swift-codex runs a tool handler while it reads the app-server's messages, so a waiting `ask_user` holds every other message, including the reply to an interrupt. The stop button therefore ends the question before it interrupts the turn.
+
+## Streaming with AsyncSequence
+
+The library's `client.streamMessage` takes any `AsyncSequence` of `StreamingMessage.Part`. The demo uses an `AsyncStream` and a demo-local `TurnProducer` stop control. Production runs in a structured child scope, so the stop button can cancel it independently while Slack delivery drains and finishes the message:
+
+```swift
+let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
+let producer = TurnProducer()
+// Register producer before awaiting; the stop handler calls producer.stop().
+try await withThrowingTaskGroup(of: Void.self) { group in
+    group.addTask {
+        await producer.run {
+            defer { continuation.finish() }
+            for await text in agent.tokens(for: prompt) {
+                continuation.yield(.markdown(text))
+            }
+            if Task.isCancelled {
+                continuation.yield(.markdown("\n\n_Stopped._"))
+            }
+        }
+    }
+    defer { group.cancelAll() }
+
+    try await client.streamMessage(
+        parts,
+        channel: channel,
+        threadTs: threadTs,
+        recipient: .init(userId: userId, teamId: teamId),
+        blocks: feedbackBlocks,
+    )
+}
+```
+
+- `TurnProducer.run` races production against a stop signal and cancels the remaining child. The enclosing group waits for producer cleanup before the demo clears the busy session, including when delivery fails.
+- Parts include `.markdown`, `.task`, `.plan(title:)`, and `.blocks`. Blocks are streamed in order with other parts; the `blocks:` argument adds blocks at the bottom of the finished message.
+- `streamMessage` collects parts while requests are in flight, merges adjacent markdown up to 12,000 characters and blocks up to 50, and spaces calls by `minimumInterval` (1 second by default).
+- Finishing the input sends remaining parts and closing blocks with `chat.stopStream`. Cancelling the producer lets it yield a stopped notice and finish the input normally. Cancelling the task calling `streamMessage` also closes the message, using a task that does not inherit cancellation.
+- If the input throws, buffered parts and closing blocks are sent before the error is rethrown. If a Slack call fails, the message is stopped without additional chunks or blocks before rethrowing. HTTP 429 responses are retried after `Retry-After`, up to three attempts.
+- The library's streaming tests use fake transports and HTTP responses. The API requires the `WebAPI_Chat` trait, enabled by this demo.
+
+## Setup
+
+### 1. Create the Slack app
+
+Agent features require a paid plan or a [Developer Program](https://api.slack.com/developer-program) sandbox. Create an app [from this manifest](https://api.slack.com/apps):
+
+```yaml
+display_information:
+  name: Codex Agent
+features:
+  agent_view:
+    agent_description: Ask Codex about the code in its workspace.
+  app_home:
+    home_tab_enabled: false
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
+  bot_user:
+    display_name: Codex Agent
+    always_online: true
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read
+      - assistant:write
+      - channels:history
+      - chat:write
+      - groups:history
+      - im:history
+      - im:read
+      - im:write
+settings:
+  event_subscriptions:
+    bot_events:
+      - agent_session_stopped
+      - agent_session_title_changed
+      - app_home_opened
+      - app_mention
+      - message.channels
+      - message.groups
+      - message.im
+  interactivity:
+    is_enabled: true
+  org_deploy_enabled: false
+  socket_mode_enabled: true
+```
+
+Install the app, create an app-level token with the `connections:write` scope, and copy the bot token (`xoxb-...`) and the app-level token (`xapp-...`).
+
+### 2. Install Codex
+
+```bash
+brew install --cask codex
+codex login
+```
+
+The agent runs Codex with a read-only sandbox and never asks for approval. Set `CODEX_WORKSPACE` to a repository to ask about it; otherwise Codex works in an empty temporary directory and answers general questions. Each Slack session runs its own `codex app-server` process, because swift-codex allows one active turn per process. A session idle for 10 minutes closes its process, and its next message resumes the Codex thread in a new one. A stopped turn is interrupted and read to its end before the session's next turn starts.
+
+### 3. Decide who can use it
+
+> [!WARNING]
+> The read-only sandbox stops Codex from writing files, not from reading them. Codex can read anything your user account can, such as `~/.ssh` or another project's `.env`, and whatever it reads can end up in a Slack reply. Run the agent only for people you trust with that access.
+
+The demo limits that exposure:
+
+- `ALLOWED_USER_IDS` optionally lists the Slack user IDs the agent answers, comma-separated, and other people get an ephemeral notice. Without it the agent answers everyone and logs a warning at startup; set it when other people share the workspace.
+- Codex never starts in the app's own directory, where `.env` holds the Slack tokens. The app refuses a `CODEX_WORKSPACE` that contains that directory or has a `.env` file, and uses an empty directory when it is not set.
+- Codex starts with only the variables it needs (`PATH`, `HOME`, locale, and `CODEX_HOME`), so exported Slack tokens do not reach it.
+
+Messages from anyone in a thread the agent joins can still go into its prompt as context, so treat what they write as untrusted input.
+
+### 4. Configure and run
+
+```bash
+cd DemoApps/codex-agent
+cp .env.example .env   # then fill in the tokens
+swift run codex-agent
+```
+
+To try the Slack side without Codex, set `AGENT_BACKEND=mock` to replay a scripted turn.
+
+To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_SECRET`, point the manifest's request URLs at the server, and run `swift run --traits HummingbirdHTTPAdapter codex-agent`.
+
+## Layout
+
+- `Sources/CodexAgent/SlackResponse.swift`: the demo's `checked(_:)` helper for non-streaming Web API responses with `"ok": false`; streaming uses the library's `StreamingMessage.Error`
+- `Sources/CodexAgent/App.swift`: configuration and event routing
+- `Sources/CodexAgent/AgentResponder.swift`: the response loop for one message, and the stop button
+- `Sources/CodexAgent/CodexBackend.swift`: one Codex thread per session, with notifications mapped to tasks and text
+- `Sources/CodexAgent/MockBackend.swift`: a scripted backend for trying the app without Codex
+- `Sources/CodexAgent/Feedback.swift`: the feedback buttons and their action handler
+- `Sources/CodexAgent/SlackUI.swift`: the card vocabulary and its conversion to Block Kit
+- `Sources/CodexAgent/SlackAgentTools.swift`: the tools' Slack side, and the questions waiting for a click; `AgentToolset` in `CodexBackend.swift` registers the tools with Codex
+
+Run the tests with `swift test`.

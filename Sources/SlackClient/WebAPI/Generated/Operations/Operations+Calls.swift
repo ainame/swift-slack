@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Calls
 extension Operations {
+    /// Registers a new Call.
+    ///
+    /// - Remark: HTTP `POST /calls.add`.
+    /// - Remark: Generated from `#/paths//calls.add/post(callsAdd)`.
     public enum CallsAdd {
         public static let id: Swift.String = "callsAdd"
         public struct Input: Sendable, Hashable {
@@ -219,6 +223,10 @@ extension Operations {
         }
     }
 
+    /// Ends a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.end`.
+    /// - Remark: Generated from `#/paths//calls.end/post(callsEnd)`.
     public enum CallsEnd {
         public static let id: Swift.String = "callsEnd"
         public struct Input: Sendable, Hashable {
@@ -375,6 +383,10 @@ extension Operations {
         }
     }
 
+    /// Returns information about a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.info`.
+    /// - Remark: Generated from `#/paths//calls.info/post(callsInfo)`.
     public enum CallsInfo {
         public static let id: Swift.String = "callsInfo"
         public struct Input: Sendable, Hashable {
@@ -521,318 +533,10 @@ extension Operations {
         }
     }
 
-    public enum CallsParticipantsAdd {
-        public static let id: Swift.String = "callsParticipantsAdd"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/calls.participants.add/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.CallsParticipantsAdd.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.CallsParticipantsAdd.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.CallsParticipantsAdd.Input.Headers
-            /// - Remark: Generated from `#/paths/calls.participants.add/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/calls.participants.add/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// id returned by the calls.add method.
-                    ///
-                    /// - Remark: Generated from `#/paths/calls.participants.add/POST/requestBody/json/id`.
-                    public var id: Swift.String
-                    /// The list of users to add as participants in the Call. Read more on how to specify users here.
-                    ///
-                    /// - Remark: Generated from `#/paths/calls.participants.add/POST/requestBody/json/users`.
-                    public var users: OpenAPIRuntime.OpenAPIArrayContainer
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - id: id returned by the calls.add method.
-                    ///   - users: The list of users to add as participants in the Call. Read more on how to specify users here.
-                    public init(
-                        id: Swift.String,
-                        users: OpenAPIRuntime.OpenAPIArrayContainer,
-                    ) {
-                        self.id = id
-                        self.users = users
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case id
-                        case users
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/calls.participants.add/POST/requestBody/content/application\/json`.
-                case json(Operations.CallsParticipantsAdd.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.CallsParticipantsAdd.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.CallsParticipantsAdd.Input.Headers = .init(),
-                body: Operations.CallsParticipantsAdd.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/calls.participants.add/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/calls.participants.add/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.CallsParticipantsAddResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.CallsParticipantsAddResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.CallsParticipantsAdd.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.CallsParticipantsAdd.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//calls.participants.add/post(callsParticipantsAdd)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.CallsParticipantsAdd.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.CallsParticipantsAdd.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum CallsParticipantsRemove {
-        public static let id: Swift.String = "callsParticipantsRemove"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/calls.participants.remove/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.CallsParticipantsRemove.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.CallsParticipantsRemove.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.CallsParticipantsRemove.Input.Headers
-            /// - Remark: Generated from `#/paths/calls.participants.remove/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/calls.participants.remove/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// id returned by the calls.add method.
-                    ///
-                    /// - Remark: Generated from `#/paths/calls.participants.remove/POST/requestBody/json/id`.
-                    public var id: Swift.String
-                    /// The list of users to remove as participants in the Call. Read more on how to specify users here.
-                    ///
-                    /// - Remark: Generated from `#/paths/calls.participants.remove/POST/requestBody/json/users`.
-                    public var users: OpenAPIRuntime.OpenAPIArrayContainer
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - id: id returned by the calls.add method.
-                    ///   - users: The list of users to remove as participants in the Call. Read more on how to specify users here.
-                    public init(
-                        id: Swift.String,
-                        users: OpenAPIRuntime.OpenAPIArrayContainer,
-                    ) {
-                        self.id = id
-                        self.users = users
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case id
-                        case users
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/calls.participants.remove/POST/requestBody/content/application\/json`.
-                case json(Operations.CallsParticipantsRemove.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.CallsParticipantsRemove.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.CallsParticipantsRemove.Input.Headers = .init(),
-                body: Operations.CallsParticipantsRemove.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/calls.participants.remove/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/calls.participants.remove/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.CallsParticipantsRemoveResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.CallsParticipantsRemoveResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.CallsParticipantsRemove.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.CallsParticipantsRemove.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//calls.participants.remove/post(callsParticipantsRemove)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.CallsParticipantsRemove.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.CallsParticipantsRemove.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
+    /// Updates information about a Call.
+    ///
+    /// - Remark: HTTP `POST /calls.update`.
+    /// - Remark: Generated from `#/paths//calls.update/post(callsUpdate)`.
     public enum CallsUpdate {
         public static let id: Swift.String = "callsUpdate"
         public struct Input: Sendable, Hashable {

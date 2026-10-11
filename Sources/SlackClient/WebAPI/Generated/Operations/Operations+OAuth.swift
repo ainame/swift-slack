@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_OAuth
 extension Operations {
+    /// Exchanges a temporary OAuth verifier code for an access token.
+    ///
+    /// - Remark: HTTP `POST /oauth.v2.access`.
+    /// - Remark: Generated from `#/paths//oauth.v2.access/post(oauthV2Access)`.
     public enum OauthV2Access {
         public static let id: Swift.String = "oauthV2Access"
         public struct Input: Sendable, Hashable {
@@ -221,6 +225,10 @@ extension Operations {
         }
     }
 
+    /// Exchanges a legacy access token for a new expiring access token and refresh token
+    ///
+    /// - Remark: HTTP `POST /oauth.v2.exchange`.
+    /// - Remark: Generated from `#/paths//oauth.v2.exchange/post(oauthV2Exchange)`.
     public enum OauthV2Exchange {
         public static let id: Swift.String = "oauthV2Exchange"
         public struct Input: Sendable, Hashable {

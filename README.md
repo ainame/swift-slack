@@ -28,13 +28,15 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 > The beta is a breaking release. Existing apps should read [Migrating to Java-derived models](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.1/MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [release notes](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.1) before upgrading. The quickstart below works with both versions.
 
 > [!IMPORTANT]
-> **Upgrading from 2026.9.x or earlier?** Releases 2026.10.0 through 2026.10.2 include changes that may need code updates.
+> **2027.1.0 is a major upgrade, and worth it.** Web API responses and events are now generated from the model classes of [Slack's Java SDK](https://github.com/slackapi/java-slack-sdk), the most widely tested description of Slack's payloads, instead of being inferred from single recorded samples.
 >
-> * **Use `router.onAction(_:blockId:)` instead of the deprecated `router.onBlockAction(_:)`.** `onBlockAction` was implemented incorrectly: it matched the view's `callback_id` instead of the element's `action_id`, so it couldn't handle buttons or other elements in messages. `onAction` matches by `action_id`, like Bolt's `app.action(...)`, and works in messages, modals, and App Home. Read selected values from `payload.blockActions` instead of `payload.actions`. Both `onBlockAction` and `payload.actions` will be removed in a 2027 release ([#156](https://github.com/ainame/swift-slack/issues/156)). To see which ID to match, read [Choosing Between action_id and callback_id](https://ainame.github.io/swift-slack/documentation/slackapp/interactionidentifiers).
-> * **2026.10.0 removed 17 Web API operations that 2026.9.x generated incorrectly.** Their response types were mostly empty, often with only an `ok` field, so they returned little useful data. They'll come back once they can be generated properly.
-> * 2026.10.2 has a few small breaking changes, such as the new `InteractivePayload.blockSuggestion` case and `onView` becoming a fallback for `onViewSubmission` and `onViewClosed`.
+> * **Decoding you can rely on.** Every generated response and event type decodes the Java SDK's recorded payloads (268 responses and 91 events), and CI checks it on every change. The decoding failures of 2026.x, such as `bots.info`, Slack Lists rows and `File` image sizes, are fixed.
+> * **Complete models.** Types declare every field the Java SDK knows, adding 469 properties across the Web API responses, including `nextCursor` for cursor pagination and fields such as user profile emails and `Conversation` membership.
+> * **New Block Kit blocks and elements.** Cards, carousels, alerts, context actions, workflow buttons and URL inputs are now supported.
 >
-> See the [CHANGELOG](CHANGELOG.md) for details and migration steps.
+> **Available now as `2027.1.0-beta.2`.** This beta adds agent conversation APIs and session events, plus an `AsyncSequence` message streaming API. APIs may still change before the January 2027 release.
+>
+> It is a breaking release, so SwiftPM does not move a `from: "2026.x.y"` requirement to it; change it to `from: "2027.1.0-beta.2"`. Most bots only replace `import SlackModels` with `import SlackClient` or `import SlackKit`. See [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) for renamed and nested types, and the [CHANGELOG](CHANGELOG.md) for the APIs deprecated in 2026.10 that are now removed (`onBlockAction`, `payload.actions` and `ack(responseAction: .clear, view:)`).
 
 ```swift
 import SlackKit
@@ -117,7 +119,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/ainame/swift-slack.git",
-            from: "2026.10.2"
+            from: "2027.1.0-beta.2"
         )
     ],
     targets: [
@@ -266,7 +268,7 @@ The default package traits include the Web API, events, and Socket Mode. For sma
 ```swift
 .package(
     url: "https://github.com/ainame/swift-slack.git",
-    from: "2026.10.2",
+    from: "2027.1.0-beta.2",
     traits: ["SocketMode", "Events", "WebAPI_Chat", "WebAPI_Views"]
 )
 ```
@@ -279,17 +281,18 @@ Events API handlers are acknowledged automatically. Slash commands, block action
 - [Package traits](Sources/SlackClient/SlackClient.docc/Traits.md): choose the APIs and integrations your app needs.
 - [API documentation](https://ainame.github.io/swift-slack/documentation): explore the package's modules and types.
 - [Migration guide](Sources/SlackApp/SlackApp.docc/MigrationGuide.md): upgrade from 0.5.x to `SlackApp`.
+- [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md): upgrade apps that used `SlackModels` or spell out Web API and event model types.
 
 ## Contributing
 
 Issues and pull requests are welcome. If a Web API method or event is missing or decodes incorrectly, [open an issue](https://github.com/ainame/swift-slack/issues) with the payload you received.
 
-To work on the SDK itself, use the Swift and Ruby versions in [`.swift-version`](.swift-version) and [`.ruby-version`](.ruby-version), plus Node.js 20+. The development toolchain currently uses Swift 6.4; the package manifest's minimum is Swift 6.2.
+To work on the SDK itself, use the Swift and Ruby versions in [`.swift-version`](.swift-version) and [`.ruby-version`](.ruby-version), plus a C compiler for the tree-sitter Java grammar. The development toolchain currently uses Swift 6.4; the package manifest's minimum is Swift 6.2.
 
 ```bash
 git clone --recursive https://github.com/ainame/swift-slack.git
 cd swift-slack
-npm ci
+bundle install
 make generate
 swift test
 ```
@@ -309,7 +312,7 @@ Test the skill manually before enabling the schedule. GitHub Actions continues t
 test PRs; the Schema Update workflow is a manual fallback and should not run while
 an agent sync is running or awaiting review.
 
-Web API request parameters come from [slack-ruby/slack-api-ref](https://github.com/slack-ruby/slack-api-ref). Response and event models are inferred from [Slack's Java SDK samples](https://github.com/slackapi/java-slack-sdk), using quicktype and swift-openapi-generator. Many properties are optional because of schema inference; coverage depends on the available upstream samples.
+Web API request parameters come from [slack-ruby/slack-api-ref](https://github.com/slack-ruby/slack-api-ref). Response and event models are translated from the model classes of [Slack's Java SDK](https://github.com/slackapi/java-slack-sdk) and generated with swift-openapi-generator. Properties other than `ok` on responses and `_type` on events are optional, because Slack omits fields depending on the method, the object, and the workspace. Every generated method and event is checked against the Java SDK's recorded payloads (`make check-fixtures`).
 
 ## License
 

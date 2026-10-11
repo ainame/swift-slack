@@ -4,7 +4,6 @@ import Logging
 import OpenAPIRuntime
 import SlackBlockKit
 import SlackClient
-import SlackModels
 
 public struct Respond: Sendable {
     private let transport: any ClientTransport

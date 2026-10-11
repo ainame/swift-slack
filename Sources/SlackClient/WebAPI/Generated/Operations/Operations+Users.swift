@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Users
 extension Operations {
+    /// List conversations the calling user is a member of.
+    ///
+    /// - Remark: HTTP `POST /users.conversations`.
+    /// - Remark: Generated from `#/paths//users.conversations/post(usersConversations)`.
     public enum UsersConversations {
         public static let id: Swift.String = "usersConversations"
         public struct Input: Sendable, Hashable {
@@ -213,6 +217,10 @@ extension Operations {
         }
     }
 
+    /// Delete the user profile photo
+    ///
+    /// - Remark: HTTP `POST /users.deletePhoto`.
+    /// - Remark: Generated from `#/paths//users.deletePhoto/post(usersDeletePhoto)`.
     public enum UsersDeletePhoto {
         public static let id: Swift.String = "usersDeletePhoto"
         public struct Input: Sendable, Hashable {
@@ -349,152 +357,10 @@ extension Operations {
         }
     }
 
-    public enum UsersDiscoverableContactsLookup {
-        public static let id: Swift.String = "usersDiscoverableContactsLookup"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/users.discoverableContacts.lookup/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.UsersDiscoverableContactsLookup.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.UsersDiscoverableContactsLookup.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.UsersDiscoverableContactsLookup.Input.Headers
-            /// - Remark: Generated from `#/paths/users.discoverableContacts.lookup/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/users.discoverableContacts.lookup/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    ///
-                    ///
-                    /// - Remark: Generated from `#/paths/users.discoverableContacts.lookup/POST/requestBody/json/email`.
-                    public var email: Swift.String
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - email:
-                    public init(email: Swift.String) {
-                        self.email = email
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case email
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/users.discoverableContacts.lookup/POST/requestBody/content/application\/json`.
-                case json(Operations.UsersDiscoverableContactsLookup.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.UsersDiscoverableContactsLookup.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.UsersDiscoverableContactsLookup.Input.Headers = .init(),
-                body: Operations.UsersDiscoverableContactsLookup.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/users.discoverableContacts.lookup/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/users.discoverableContacts.lookup/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.UsersDiscoverableContactsLookupResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.UsersDiscoverableContactsLookupResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.UsersDiscoverableContactsLookup.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.UsersDiscoverableContactsLookup.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//users.discoverableContacts.lookup/post(usersDiscoverableContactsLookup)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.UsersDiscoverableContactsLookup.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.UsersDiscoverableContactsLookup.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
+    /// Gets user presence information.
+    ///
+    /// - Remark: HTTP `POST /users.getPresence`.
+    /// - Remark: Generated from `#/paths//users.getPresence/post(usersGetPresence)`.
     public enum UsersGetPresence {
         public static let id: Swift.String = "usersGetPresence"
         public struct Input: Sendable, Hashable {
@@ -641,6 +507,10 @@ extension Operations {
         }
     }
 
+    /// Get a user's identity.
+    ///
+    /// - Remark: HTTP `POST /users.identity`.
+    /// - Remark: Generated from `#/paths//users.identity/post(usersIdentity)`.
     public enum UsersIdentity {
         public static let id: Swift.String = "usersIdentity"
         public struct Input: Sendable, Hashable {
@@ -777,6 +647,10 @@ extension Operations {
         }
     }
 
+    /// Gets information about a user.
+    ///
+    /// - Remark: HTTP `POST /users.info`.
+    /// - Remark: Generated from `#/paths//users.info/post(usersInfo)`.
     public enum UsersInfo {
         public static let id: Swift.String = "usersInfo"
         public struct Input: Sendable, Hashable {
@@ -933,6 +807,10 @@ extension Operations {
         }
     }
 
+    /// Lists all users in a Slack team.
+    ///
+    /// - Remark: HTTP `POST /users.list`.
+    /// - Remark: Generated from `#/paths//users.list/post(usersList)`.
     public enum UsersList {
         public static let id: Swift.String = "usersList"
         public struct Input: Sendable, Hashable {
@@ -1109,6 +987,10 @@ extension Operations {
         }
     }
 
+    /// Find a user with an email address.
+    ///
+    /// - Remark: HTTP `POST /users.lookupByEmail`.
+    /// - Remark: Generated from `#/paths//users.lookupByEmail/post(usersLookupByEmail)`.
     public enum UsersLookupByEmail {
         public static let id: Swift.String = "usersLookupByEmail"
         public struct Input: Sendable, Hashable {
@@ -1255,334 +1137,10 @@ extension Operations {
         }
     }
 
-    public enum UsersProfileGet {
-        public static let id: Swift.String = "usersProfileGet"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/users.profile.get/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.UsersProfileGet.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.UsersProfileGet.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.UsersProfileGet.Input.Headers
-            /// - Remark: Generated from `#/paths/users.profile.get/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/users.profile.get/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Include labels for each ID in custom profile fields. Using this parameter will heavily rate-limit your requests and is not recommended.
-                    ///
-                    /// - Remark: Generated from `#/paths/users.profile.get/POST/requestBody/json/include_labels`.
-                    public var includeLabels: Swift.Bool?
-                    /// User to retrieve profile info for.
-                    ///
-                    /// - Remark: Generated from `#/paths/users.profile.get/POST/requestBody/json/user`.
-                    public var user: Swift.String?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - includeLabels: Include labels for each ID in custom profile fields. Using this parameter will heavily rate-limit your requests and is not recommended.
-                    ///   - user: User to retrieve profile info for.
-                    public init(
-                        includeLabels: Swift.Bool? = nil,
-                        user: Swift.String? = nil,
-                    ) {
-                        self.includeLabels = includeLabels
-                        self.user = user
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case includeLabels = "include_labels"
-                        case user
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/users.profile.get/POST/requestBody/content/application\/json`.
-                case json(Operations.UsersProfileGet.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.UsersProfileGet.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.UsersProfileGet.Input.Headers = .init(),
-                body: Operations.UsersProfileGet.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/users.profile.get/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/users.profile.get/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.UsersProfileGetResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.UsersProfileGetResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.UsersProfileGet.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.UsersProfileGet.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//users.profile.get/post(usersProfileGet)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.UsersProfileGet.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.UsersProfileGet.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum UsersProfileSet {
-        public static let id: Swift.String = "usersProfileSet"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/users.profile.set/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.UsersProfileSet.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.UsersProfileSet.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.UsersProfileSet.Input.Headers
-            /// - Remark: Generated from `#/paths/users.profile.set/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/users.profile.set/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Name of a single key to set. Usable only if profile is not passed.
-                    ///
-                    /// - Remark: Generated from `#/paths/users.profile.set/POST/requestBody/json/name`.
-                    public var name: Swift.String?
-                    /// Collection of key:value pairs presented as a URL-encoded JSON hash. At most 50 fields may be set. Each field name is limited to 255 characters.
-                    ///
-                    /// - Remark: Generated from `#/paths/users.profile.set/POST/requestBody/json/profile`.
-                    public var profile: OpenAPIRuntime.OpenAPIObjectContainer?
-                    /// ID of user to change. This argument may only be specified by admins on paid teams.
-                    ///
-                    /// - Remark: Generated from `#/paths/users.profile.set/POST/requestBody/json/user`.
-                    public var user: Swift.String?
-                    /// Value to set a single key to. Usable only if profile is not passed.
-                    ///
-                    /// - Remark: Generated from `#/paths/users.profile.set/POST/requestBody/json/value`.
-                    public var value: Swift.String?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - name: Name of a single key to set. Usable only if profile is not passed.
-                    ///   - profile: Collection of key:value pairs presented as a URL-encoded JSON hash. At most 50 fields may be set. Each field name is limited to 255 characters.
-                    ///   - user: ID of user to change. This argument may only be specified by admins on paid teams.
-                    ///   - value: Value to set a single key to. Usable only if profile is not passed.
-                    public init(
-                        name: Swift.String? = nil,
-                        profile: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
-                        user: Swift.String? = nil,
-                        value: Swift.String? = nil,
-                    ) {
-                        self.name = name
-                        self.profile = profile
-                        self.user = user
-                        self.value = value
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case name
-                        case profile
-                        case user
-                        case value
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/users.profile.set/POST/requestBody/content/application\/json`.
-                case json(Operations.UsersProfileSet.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.UsersProfileSet.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.UsersProfileSet.Input.Headers = .init(),
-                body: Operations.UsersProfileSet.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/users.profile.set/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/users.profile.set/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.UsersProfileSetResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.UsersProfileSetResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.UsersProfileSet.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.UsersProfileSet.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//users.profile.set/post(usersProfileSet)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.UsersProfileSet.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.UsersProfileSet.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
+    /// Marked a user as active. Deprecated and non-functional.
+    ///
+    /// - Remark: HTTP `POST /users.setActive`.
+    /// - Remark: Generated from `#/paths//users.setActive/post(usersSetActive)`.
     public enum UsersSetActive {
         public static let id: Swift.String = "usersSetActive"
         public struct Input: Sendable, Hashable {
@@ -1719,6 +1277,10 @@ extension Operations {
         }
     }
 
+    /// Set the user profile photo
+    ///
+    /// - Remark: HTTP `POST /users.setPhoto`.
+    /// - Remark: Generated from `#/paths//users.setPhoto/post(usersSetPhoto)`.
     public enum UsersSetPhoto {
         public static let id: Swift.String = "usersSetPhoto"
         public struct Input: Sendable, Hashable {
@@ -1883,6 +1445,10 @@ extension Operations {
         }
     }
 
+    /// Manually sets user presence.
+    ///
+    /// - Remark: HTTP `POST /users.setPresence`.
+    /// - Remark: Generated from `#/paths//users.setPresence/post(usersSetPresence)`.
     public enum UsersSetPresence {
         public static let id: Swift.String = "usersSetPresence"
         public struct Input: Sendable, Hashable {

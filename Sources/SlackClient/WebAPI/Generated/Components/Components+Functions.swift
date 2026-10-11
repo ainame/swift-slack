@@ -9,80 +9,92 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Functions
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/FunctionsCompleteErrorResponse`.
     public struct FunctionsCompleteErrorResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/FunctionsCompleteErrorResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/FunctionsCompleteErrorResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FunctionsCompleteErrorResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FunctionsCompleteErrorResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FunctionsCompleteErrorResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/FunctionsCompleteErrorResponse/provided`.
         public var provided: Swift.String?
         /// Creates a new `FunctionsCompleteErrorResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/FunctionsCompleteSuccessResponse`.
     public struct FunctionsCompleteSuccessResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/FunctionsCompleteSuccessResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/FunctionsCompleteSuccessResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FunctionsCompleteSuccessResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FunctionsCompleteSuccessResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/FunctionsCompleteSuccessResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/FunctionsCompleteSuccessResponse/provided`.
         public var provided: Swift.String?
         /// Creates a new `FunctionsCompleteSuccessResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
         }
     }

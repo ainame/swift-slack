@@ -3,77 +3,61 @@
 The submodule gitlinks are the generation inputs. Review coverage applies to the
 selected delta, not complete historical parity or live Slack service behavior.
 
-## Review on 2026-10-03
+## Review on 2026-10-11
 
-Sync PR: #149.
+Sync PR: #243.
 
 | Source | Previous commit | Reviewed snapshot |
 | --- | --- | --- |
-| [java-slack-sdk](https://github.com/slackapi/java-slack-sdk) | `dbe498ce0a2f0ed068b4bd7028ce31d22c91998d` | `43fad0e0943e53991d9298d08588915116a7a0aa` |
-| [slack-api-ref](https://github.com/slack-ruby/slack-api-ref) | `4f0934e301e9a9a15883ea54fbf8a22efb8e8fc9` | `0ae4e986fbdb824fd4af8ca175ca45142377c8c3` |
+| [java-slack-sdk](https://github.com/slackapi/java-slack-sdk) | `43fad0e0943e53991d9298d08588915116a7a0aa` | `9894c9331565ec8484fa07e4b292bf719a67fcba` |
+| [slack-api-ref](https://github.com/slack-ruby/slack-api-ref) | `0ae4e986fbdb824fd4af8ca175ca45142377c8c3` | `0fcbcec7c842b5b3880fa7c0d7fb3d66fe1de711` |
 
 Both branch snapshots were fetched live and are descendants of the previous pins.
-The sync is based on freshly fetched `origin/main`, rather than Java release tags.
+The sync is based on the `release-2027-01` branch rather than `origin/main`; both
+record the same previous pins.
 
 ### Implemented
 
-- Preserve `record_channel`, `code_channel`, and `agent_session` from the updated
-  `conversations.info` response. Merge the union of conversation `Properties` fields
-  across fixtures, also recovering `at_here_restricted`, `at_channel_restricted`, and
-  `channel_workflows`. The visitor only wires observed nested handwritten models;
-  it does not inject fields into other fixtures. Overlapping field definitions retain
-  the existing last-definition policy; unrelated schema names are not unioned.
-- Use handwritten `RecordChannel`, `CodeChannel` (with `ContextBarItem`), and
-  `AgentSession` (with `OriginLink`), matching the new Java `ConversationProperties`
-  fields with explicit coding keys. Stable nested types avoid inferred name collisions.
-- Retain the existing public `Properties` type and its fields; new properties are
-  optional. The fixture's new `channel.is_open` field is already supported by `Channel`.
-- Cover meaningful fixture values, complete new property objects on re-encoding,
-  older payloads without these fields, and schema merging across real fixtures.
-- Discover handwritten model names from source filenames instead of a maintained
-  registry. Generation and standalone extraction share one implementation; generated
-  files are excluded from discovery, and `View`/`Block` remain owned by SlackBlockKit.
-- Share schema aliases between extraction and Web API reference/import rewriting,
-  with coverage for a handwritten `TabData` referenced as `Components.Schemas.Data`.
-- Verify that workflow permission dictionaries preserve dynamic `Wf...` keys and
-  all existing Java fixture access fields without requiring a model change.
+- Generate the nine `agents.conversations.*` methods (`archive`, `create`,
+  `getCanvas`, `listViews`, `removeView`, `setCanvasContent`, `setCommands`,
+  `setProperties`, `setView`). slack-api-ref now defines their arguments, which
+  closes the gap recorded on 2026-10-03; java-slack-sdk already had their response
+  fixtures and response classes. They join the existing `WebAPI_Agents` trait.
+- Response types match the Java response classes field by field, including the
+  nested `Comment`/`Reply` (`getCanvas`) and `View` (`listViews`) classes. Every
+  fixture key is declared, so no `added` override is needed.
 
 ### Reviewed exclusions and coverage gaps
 
-- Nine `agents.conversations.*` response fixtures and their Java request/response
-  implementations were inspected. Neither reference tree contains matching request
-  definitions, so this sync does not invent their arguments or expose partial methods.
-- Six new `admin.usergroups.*` methods and `canvases.getContent` have reference
-  definitions but no Java response fixtures. They remain excluded under fixture policy.
-- `user_guest_status_changed` adds only event metadata (name, description, scopes),
-  with no payload schema or Java event fixture/model. No payload shape is inferred.
-- Existing-method changes in the legacy `methods` tree are error descriptions,
-  punctuation, and a `slackLists.items.update` example; no request shape changes.
-- The `docs.slack.dev` tree adds documentation-only response constraints for
-  `admin.workflows.permissions.lookup`, `connector_resource` for function permissions,
-  agent-title length limits, and canvas access limits up to 20 IDs. Current generic
-  payloads/strings/arrays accept these; this generator uses legacy method definitions
-  and Java response fixtures, not documentation response schemas. These documentation
-  changes do not add runtime validation or alter generated response types here.
-  Removed single-ID limits for Slack Lists access are already accepted by arrays.
-- Other documentation changes cover error messages, punctuation, the method/event index, and the `auth.teams.list` rate tier (2 to 3).
-  This client does not embed a method-specific rate-tier table.
-- Java build dependencies, CI, release machinery, and version metadata have no Swift
-  runtime counterpart. No Block Kit class or handwritten Bolt runtime behavior changed.
+- Arguments come from slack-api-ref. It declares `title` and `status` for
+  `setProperties` and `label` for `setView`, which java-slack-sdk's request
+  builders do not send yet. `commands`, `code_channel`, `agent_resource` and `csp`
+  are untyped JSON containers, as for other object arguments.
+- `agent_session_stopped` and `agent_session_title_changed` have java-slack-sdk
+  event classes and unit-test payloads but no recorded event fixture under
+  `json-logs/samples/events`. Since #245 they are generated from copies of those
+  unit-test payloads (`scripts/event_fixtures.yml`). For org-level installs, the Slack
+  event reference documents an optional `enterprise_id` in the
+  `agent_session_title_changed` event itself, while java-slack-sdk models it only on
+  the `event_callback` envelope (`AgentSessionTitleChangedPayload`). swift-slack follows
+  the Java event class; which placement Slack sends is unverified.
+- The java-slack-sdk delta changes only release-note configuration, the maintainers
+  guide and documentation links; nothing feeds generation. No Block Kit class,
+  event class or handwritten Bolt runtime behavior changed.
+- The fixture policy still excludes methods without Java response fixtures, such as
+  the `admin.usergroups.*` methods recorded on 2026-10-03.
 
-The unsupported methods/event above are explicit coverage gaps pending upstream
-inputs; they are not claims of full API parity. No exhaustive-switch cases change.
+Coverage applies to the reviewed delta; it is not a claim of full API parity.
+This sync changes no exhaustive-switch cases; #245 later adds two `Event` cases.
 
 ### Verification
 
-Fresh `npm ci`, full `make generate`, formatting, `make test-scripts` (26 tests /
-94 assertions plus 8 processing tests / 29 assertions), and `swift test` (91 tests
-in 16 suites) passed using the recorded Swift and Ruby versions. A second full
-generation pass matched all 353 generated/manifest hashes. Visitor tests also passed
-outside the repository root. The generated changes are confined to `Properties`
-and the newly retained `ChannelWorkflow`; no operations or Events changed.
-`git diff --check` passed. Existing binary-property generator warnings are unchanged.
-Live Slack integration was not run.
+`bundle install`, full `make generate`, `make check-fixtures` (0 unexplained
+java-slack-sdk mismatches; every generated response and event decodes its fixture)
+and `swift test` passed using the recorded Swift and Ruby versions. A second full
+generation pass matched all 532 generated and handwritten Swift file hashes.
+Scripts are unchanged, so `make test-scripts` was not rerun. `git diff --check`
+passed. Live Slack integration was not run.
 
 ## Maintaining this record
 

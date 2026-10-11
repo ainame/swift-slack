@@ -177,36 +177,6 @@ struct AppRouterTests {
         #expect(await tracker.value == "broad")
     }
 
-    @Test
-    @available(*, deprecated)
-    func `deprecated onBlockAction matches the view callback id`() async throws {
-        let tracker = ValueTracker()
-        let router = Router()
-        router.onInteractive { _, _ in await tracker.set("broad") }
-        router.onBlockAction("modal") { _, _ in await tracker.set("callback") }
-
-        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: "modal"))
-        #expect(await tracker.value == "callback")
-
-        try await dispatch(router, makeBlockActionEnvelope(actionId: "modal", viewCallbackId: nil))
-        #expect(await tracker.value == "broad")
-    }
-
-    @Test
-    @available(*, deprecated)
-    func `onAction takes precedence over deprecated onBlockAction`() async throws {
-        let tracker = ValueTracker()
-        let router = Router()
-        router.onBlockAction("modal") { _, _ in await tracker.set("callback") }
-        router.onAction("button-id") { _, _ in await tracker.set("action") }
-
-        try await dispatch(router, makeBlockActionEnvelope(actionId: "button-id", viewCallbackId: "modal"))
-        #expect(await tracker.value == "action")
-
-        try await dispatch(router, makeBlockActionEnvelope(actionId: "other-id", viewCallbackId: "modal"))
-        #expect(await tracker.value == "callback")
-    }
-
     @Test func `interactive dispatch uses last broad handler`() async throws {
         actor Tracker {
             private(set) var value: String?
@@ -259,9 +229,13 @@ struct AppRouterTests {
         let registerView = {
             router.onView("modal") { _, payload in await tracker.set("view:\(payload._type)") }
         }
-        if viewFirst { registerView() }
+        if viewFirst {
+            registerView()
+        }
         router.onViewSubmission("modal") { _, _ in await tracker.set("submission") }
-        if !viewFirst { registerView() }
+        if !viewFirst {
+            registerView()
+        }
 
         #expect(try await dispatch(router, makeViewSubmissionEnvelope(callbackId: "modal")))
         #expect(await tracker.value == "submission")

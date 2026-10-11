@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Functions
 extension Operations {
+    /// Signal that a function failed to complete
+    ///
+    /// - Remark: HTTP `POST /functions.completeError`.
+    /// - Remark: Generated from `#/paths//functions.completeError/post(functionsCompleteError)`.
     public enum FunctionsCompleteError {
         public static let id: Swift.String = "functionsCompleteError"
         public struct Input: Sendable, Hashable {
@@ -169,6 +173,10 @@ extension Operations {
         }
     }
 
+    /// Signal the successful completion of a function
+    ///
+    /// - Remark: HTTP `POST /functions.completeSuccess`.
+    /// - Remark: Generated from `#/paths//functions.completeSuccess/post(functionsCompleteSuccess)`.
     public enum FunctionsCompleteSuccess {
         public static let id: Swift.String = "functionsCompleteSuccess"
         public struct Input: Sendable, Hashable {
