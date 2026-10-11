@@ -1,4 +1,5 @@
 @testable import CodexAgent
+import SlackKit
 import Testing
 
 struct PendingQuestionsTests {
@@ -54,5 +55,23 @@ struct PendingQuestionsTests {
             await Task.yield()
         }
         Issue.record("the question was never registered")
+    }
+}
+
+struct QuestionBlocksTests {
+    @Test
+    func `gives every option button its own action_id`() {
+        let blocks = SlackAgentTools.questionBlocks(id: "q", question: "Which?", options: ["A", "B", "C"], userId: "U1")
+        guard case let .actions(actions)? = blocks.last else {
+            Issue.record("expected an actions block")
+            return
+        }
+        let buttons = actions.elements.compactMap { element -> ButtonElement? in
+            guard case let .button(button) = element else { return nil }
+            return button
+        }
+        #expect(buttons.map(\.actionId) == ["ask_user_choice_0", "ask_user_choice_1", "ask_user_choice_2"])
+        #expect(Set(buttons.compactMap(\.actionId)).count == buttons.count)
+        #expect(buttons.allSatisfy { $0.value == "q" })
     }
 }
