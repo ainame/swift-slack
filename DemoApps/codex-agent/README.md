@@ -10,7 +10,7 @@ It follows the agent response loop from [Developing an agent](https://docs.slack
 - **Threads**: replies in a channel thread the agent has answered in reach it through `message.channels` and `message.groups`. Replies that mention it are left to `app_mention`. After a restart, `conversations.replies` shows whether the bot has posted in the thread. When the agent joins a thread it has not seen, such as on a mention partway through a discussion or after a restart, the prompt starts with the thread so far.
 - **Sessions**: each thread is an agent session. It calls `agents.sessions.setStatus` with `processing` and a title taken from the first message, and `chat.stopStream` returns the session to `active`.
 - **Streaming**: commands, web searches, file edits, and tool calls appear as task cards (`task_update` chunks in `timeline` mode). The answer streams as `markdown_text` chunks through `chat.startStream`, `chat.appendStream`, and `chat.stopStream`.
-- **Stop button**: subscribing to `agent_session_stopped` makes Slack show a stop button while the session is processing. Pressing it interrupts the Codex turn and closes the message with "_Stopped._".
+- **Stop button**: subscribing to `agent_session_stopped` makes Slack show a stop button while the session is processing. Slack stops the streaming message itself. The agent interrupts the Codex turn and returns the session to `active`. Slack may then reject the closing `chat.stopStream`, so a stopped reply can end without the feedback buttons.
 - **Renaming**: after `agent_session_title_changed`, it stops proposing titles for that session.
 - **Feedback**: every reply ends with `feedback_buttons` in a `context_actions` block, and a click gets an ephemeral reply.
 
@@ -39,7 +39,8 @@ try await ChatStream(transport: transport).send(chunks, blocks: feedbackBlocks)
 
 - `StreamChunk` encodes the `markdown_text`, `task_update`, and `plan_update` chunks. swift-slack types `chunks` as an untyped array because slack-api-ref declares it without an item schema.
 - `ChatStream.send` starts the message with the first chunks. It collects whatever arrives while a request is in flight, merges adjacent markdown, and sends the result with the next `chat.appendStream` call, at most once per `minimumInterval` (1 second by default; the method is Tier 4). Once the stream finishes, the remaining chunks and the blocks go out with `chat.stopStream`.
-- Cancelling the task that calls `send` stops the message too. To stop on request, cancel the producer instead, as `AgentResponder` does for the stop button. The producer then finishes the stream, and `send` closes the message normally.
+- Cancelling the task that calls `send` stops the message too: no more appends go out, and the closing call runs in a task that does not inherit the cancellation, which an HTTP transport would otherwise abandon. To stop on request, cancel the producer instead, as `AgentResponder` does for the stop button. The producer then finishes the stream, and `send` closes the message normally.
+- If `chat.appendStream` fails partway, `send` stops the message before throwing, so the message does not stay streaming. `SlackChatStreamTransport` retries calls that Slack rate limits (HTTP 429) after their `Retry-After` delay.
 - `ChatStreamTransport` separates the three Web API calls from the timing logic, so the tests run against a fake transport.
 
 ## Setup
@@ -97,7 +98,7 @@ brew install --cask codex
 codex login
 ```
 
-The agent runs Codex with a read-only sandbox and never asks for approval, in the directory set by `CODEX_WORKSPACE`, which defaults to the current directory. Each Slack session runs its own `codex app-server` process until the app exits.
+The agent runs Codex with a read-only sandbox and never asks for approval, in the directory set by `CODEX_WORKSPACE`, which defaults to the current directory. Each Slack session runs its own `codex app-server` process, because swift-codex allows one active turn per process. A session idle for 10 minutes closes its process, and its next message resumes the Codex thread in a new one. A stopped turn is interrupted and read to its end before the session's next turn starts.
 
 ### 3. Configure and run
 
