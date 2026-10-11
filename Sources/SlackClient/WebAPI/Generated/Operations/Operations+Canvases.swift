@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Canvases
 extension Operations {
+    /// Remove access to a canvas for specified entities
+    ///
+    /// - Remark: HTTP `POST /canvases.access.delete`.
+    /// - Remark: Generated from `#/paths//canvases.access.delete/post(canvasesAccessDelete)`.
     public enum CanvasesAccessDelete {
         public static let id: Swift.String = "canvasesAccessDelete"
         public struct Input: Sendable, Hashable {
@@ -177,6 +181,10 @@ extension Operations {
         }
     }
 
+    /// Sets the access level to a canvas for specified entities
+    ///
+    /// - Remark: HTTP `POST /canvases.access.set`.
+    /// - Remark: Generated from `#/paths//canvases.access.set/post(canvasesAccessSet)`.
     public enum CanvasesAccessSet {
         public static let id: Swift.String = "canvasesAccessSet"
         public struct Input: Sendable, Hashable {
@@ -349,6 +357,10 @@ extension Operations {
         }
     }
 
+    /// Create canvas for a user
+    ///
+    /// - Remark: HTTP `POST /canvases.create`.
+    /// - Remark: Generated from `#/paths//canvases.create/post(canvasesCreate)`.
     public enum CanvasesCreate {
         public static let id: Swift.String = "canvasesCreate"
         public struct Input: Sendable, Hashable {
@@ -513,6 +525,10 @@ extension Operations {
         }
     }
 
+    /// Deletes a canvas
+    ///
+    /// - Remark: HTTP `POST /canvases.delete`.
+    /// - Remark: Generated from `#/paths//canvases.delete/post(canvasesDelete)`.
     public enum CanvasesDelete {
         public static let id: Swift.String = "canvasesDelete"
         public struct Input: Sendable, Hashable {
@@ -659,6 +675,10 @@ extension Operations {
         }
     }
 
+    /// Update an existing canvas
+    ///
+    /// - Remark: HTTP `POST /canvases.edit`.
+    /// - Remark: Generated from `#/paths//canvases.edit/post(canvasesEdit)`.
     public enum CanvasesEdit {
         public static let id: Swift.String = "canvasesEdit"
         public struct Input: Sendable, Hashable {
@@ -815,6 +835,10 @@ extension Operations {
         }
     }
 
+    /// Find sections matching the provided criteria
+    ///
+    /// - Remark: HTTP `POST /canvases.sections.lookup`.
+    /// - Remark: Generated from `#/paths//canvases.sections.lookup/post(canvasesSectionsLookup)`.
     public enum CanvasesSectionsLookup {
         public static let id: Swift.String = "canvasesSectionsLookup"
         public struct Input: Sendable, Hashable {

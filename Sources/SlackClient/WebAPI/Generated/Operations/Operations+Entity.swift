@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Entity
 extension Operations {
+    /// Provide custom flexpane behavior for Work Objects. Apps call this endpoint to send per-user flexpane metadata to the client.
+    ///
+    /// - Remark: HTTP `POST /entity.presentDetails`.
+    /// - Remark: Generated from `#/paths//entity.presentDetails/post(entityPresentDetails)`.
     public enum EntityPresentDetails {
         public static let id: Swift.String = "entityPresentDetails"
         public struct Input: Sendable, Hashable {

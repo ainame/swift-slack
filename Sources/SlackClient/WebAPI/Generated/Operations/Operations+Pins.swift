@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Pins
 extension Operations {
+    /// Pins an item to a channel.
+    ///
+    /// - Remark: HTTP `POST /pins.add`.
+    /// - Remark: Generated from `#/paths//pins.add/post(pinsAdd)`.
     public enum PinsAdd {
         public static let id: Swift.String = "pinsAdd"
         public struct Input: Sendable, Hashable {
@@ -169,6 +173,10 @@ extension Operations {
         }
     }
 
+    /// Lists items pinned to a channel.
+    ///
+    /// - Remark: HTTP `POST /pins.list`.
+    /// - Remark: Generated from `#/paths//pins.list/post(pinsList)`.
     public enum PinsList {
         public static let id: Swift.String = "pinsList"
         public struct Input: Sendable, Hashable {
@@ -315,6 +323,10 @@ extension Operations {
         }
     }
 
+    /// Un-pins an item from a channel.
+    ///
+    /// - Remark: HTTP `POST /pins.remove`.
+    /// - Remark: Generated from `#/paths//pins.remove/post(pinsRemove)`.
     public enum PinsRemove {
         public static let id: Swift.String = "pinsRemove"
         public struct Input: Sendable, Hashable {

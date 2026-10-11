@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Migration
 extension Operations {
+    /// For Enterprise organization workspaces, map local user IDs to global user IDs
+    ///
+    /// - Remark: HTTP `POST /migration.exchange`.
+    /// - Remark: Generated from `#/paths//migration.exchange/post(migrationExchange)`.
     public enum MigrationExchange {
         public static let id: Swift.String = "migrationExchange"
         public struct Input: Sendable, Hashable {

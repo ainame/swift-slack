@@ -9,311 +9,337 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Calls
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/CallsAddResponse`.
     public struct CallsAddResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/CallsAddResponse/call`.
-        public var call: SlackModels.Call?
+        /// - Remark: Generated from `#/components/schemas/CallsAddResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/CallsAddResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsAddResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsAddResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/CallsAddResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/CallsAddResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/CallsAddResponse/call`.
+        public var call: Components.Schemas.Call?
         /// - Remark: Generated from `#/components/schemas/CallsAddResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/CallsAddResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `CallsAddResponse`.
         ///
         /// - Parameters:
-        ///   - call:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
+        ///   - call:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
-            call: SlackModels.Call? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            call: Components.Schemas.Call? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.call = call
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
+            self.call = call
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
-            case call
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
+            case call
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/CallsEndResponse`.
     public struct CallsEndResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/CallsEndResponse/call`.
-        public var call: SlackModels.Call?
+        /// - Remark: Generated from `#/components/schemas/CallsEndResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/CallsEndResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsEndResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsEndResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/CallsEndResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/CallsEndResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/CallsEndResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/CallsEndResponse/call`.
+        public var call: Components.Schemas.Call?
+        /// - Remark: Generated from `#/components/schemas/CallsEndResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `CallsEndResponse`.
         ///
         /// - Parameters:
-        ///   - call:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - call:
+        ///   - responseMetadata:
         public init(
-            call: SlackModels.Call? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            call: Components.Schemas.Call? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.call = call
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.call = call
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case call
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case call
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/CallsInfoResponse`.
     public struct CallsInfoResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/CallsInfoResponse/call`.
-        public var call: SlackModels.Call?
+        /// - Remark: Generated from `#/components/schemas/CallsInfoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/CallsInfoResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsInfoResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsInfoResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/CallsInfoResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/CallsInfoResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/CallsInfoResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/CallsInfoResponse/call`.
+        public var call: Components.Schemas.Call?
+        /// - Remark: Generated from `#/components/schemas/CallsInfoResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `CallsInfoResponse`.
         ///
         /// - Parameters:
-        ///   - call:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - call:
+        ///   - responseMetadata:
         public init(
-            call: SlackModels.Call? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            call: Components.Schemas.Call? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.call = call
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.call = call
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case call
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case call
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/CallsParticipantsAddResponse`.
     public struct CallsParticipantsAddResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/CallsParticipantsAddResponse/call`.
-        public var call: SlackModels.Call?
+        /// - Remark: Generated from `#/components/schemas/CallsParticipantsAddResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/CallsParticipantsAddResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsParticipantsAddResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsParticipantsAddResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/CallsParticipantsAddResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/CallsParticipantsAddResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/CallsParticipantsAddResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/CallsParticipantsAddResponse/call`.
+        public var call: Components.Schemas.Call?
+        /// - Remark: Generated from `#/components/schemas/CallsParticipantsAddResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `CallsParticipantsAddResponse`.
         ///
         /// - Parameters:
-        ///   - call:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - call:
+        ///   - responseMetadata:
         public init(
-            call: SlackModels.Call? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            call: Components.Schemas.Call? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.call = call
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.call = call
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case call
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case call
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/CallsParticipantsRemoveResponse`.
     public struct CallsParticipantsRemoveResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/CallsParticipantsRemoveResponse/call`.
-        public var call: SlackModels.Call?
+        /// - Remark: Generated from `#/components/schemas/CallsParticipantsRemoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/CallsParticipantsRemoveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsParticipantsRemoveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsParticipantsRemoveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/CallsParticipantsRemoveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/CallsParticipantsRemoveResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/CallsParticipantsRemoveResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/CallsParticipantsRemoveResponse/call`.
+        public var call: Components.Schemas.Call?
+        /// - Remark: Generated from `#/components/schemas/CallsParticipantsRemoveResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `CallsParticipantsRemoveResponse`.
         ///
         /// - Parameters:
-        ///   - call:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - call:
+        ///   - responseMetadata:
         public init(
-            call: SlackModels.Call? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            call: Components.Schemas.Call? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.call = call
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.call = call
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case call
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case call
+            case responseMetadata = "response_metadata"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/CallsUpdateResponse`.
     public struct CallsUpdateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/CallsUpdateResponse/call`.
-        public var call: SlackModels.Call?
+        /// - Remark: Generated from `#/components/schemas/CallsUpdateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/CallsUpdateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsUpdateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/CallsUpdateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/CallsUpdateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/CallsUpdateResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/CallsUpdateResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/CallsUpdateResponse/call`.
+        public var call: Components.Schemas.Call?
+        /// - Remark: Generated from `#/components/schemas/CallsUpdateResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `CallsUpdateResponse`.
         ///
         /// - Parameters:
-        ///   - call:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - call:
+        ///   - responseMetadata:
         public init(
-            call: SlackModels.Call? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            call: Components.Schemas.Call? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
-            self.call = call
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.call = call
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case call
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case call
+            case responseMetadata = "response_metadata"
         }
     }
 }

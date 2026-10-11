@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_DND
 extension Operations {
+    /// Ends the current user's Do Not Disturb session immediately.
+    ///
+    /// - Remark: HTTP `POST /dnd.endDnd`.
+    /// - Remark: Generated from `#/paths//dnd.endDnd/post(dndEndDnd)`.
     public enum DndEndDnd {
         public static let id: Swift.String = "dndEndDnd"
         public struct Input: Sendable, Hashable {
@@ -149,6 +153,10 @@ extension Operations {
         }
     }
 
+    /// Ends the current user's snooze mode immediately.
+    ///
+    /// - Remark: HTTP `POST /dnd.endSnooze`.
+    /// - Remark: Generated from `#/paths//dnd.endSnooze/post(dndEndSnooze)`.
     public enum DndEndSnooze {
         public static let id: Swift.String = "dndEndSnooze"
         public struct Input: Sendable, Hashable {
@@ -285,6 +293,10 @@ extension Operations {
         }
     }
 
+    /// Retrieves a user's current Do Not Disturb status.
+    ///
+    /// - Remark: HTTP `POST /dnd.info`.
+    /// - Remark: Generated from `#/paths//dnd.info/post(dndInfo)`.
     public enum DndInfo {
         public static let id: Swift.String = "dndInfo"
         public struct Input: Sendable, Hashable {
@@ -442,6 +454,10 @@ extension Operations {
         }
     }
 
+    /// Turns on Do Not Disturb mode for the current user, or changes its duration.
+    ///
+    /// - Remark: HTTP `POST /dnd.setSnooze`.
+    /// - Remark: Generated from `#/paths//dnd.setSnooze/post(dndSetSnooze)`.
     public enum DndSetSnooze {
         public static let id: Swift.String = "dndSetSnooze"
         public struct Input: Sendable, Hashable {
@@ -588,6 +604,10 @@ extension Operations {
         }
     }
 
+    /// Retrieves the Do Not Disturb status for up to 50 users on a team.
+    ///
+    /// - Remark: HTTP `POST /dnd.teamInfo`.
+    /// - Remark: Generated from `#/paths//dnd.teamInfo/post(dndTeamInfo)`.
     public enum DndTeamInfo {
         public static let id: Swift.String = "dndTeamInfo"
         public struct Input: Sendable, Hashable {

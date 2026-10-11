@@ -9,360 +9,356 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Usergroups
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/UsergroupsCreateResponse`.
     public struct UsergroupsCreateResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsergroupsCreateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsergroupsCreateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsCreateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsCreateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsCreateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsergroupsCreateResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsCreateResponse/usergroup`.
-        public var usergroup: SlackModels.Usergroup?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsCreateResponse/warning`.
-        public var warning: Swift.String?
+        public var usergroup: Components.Schemas.Usergroup?
         /// Creates a new `UsergroupsCreateResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - usergroup:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            usergroup: SlackModels.Usergroup? = nil,
-            warning: Swift.String? = nil,
+            usergroup: Components.Schemas.Usergroup? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.usergroup = usergroup
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case usergroup
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsergroupsDisableResponse`.
     public struct UsergroupsDisableResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsergroupsDisableResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsergroupsDisableResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsDisableResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsDisableResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsDisableResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsergroupsDisableResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsDisableResponse/usergroup`.
-        public var usergroup: SlackModels.Usergroup?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsDisableResponse/warning`.
-        public var warning: Swift.String?
+        public var usergroup: Components.Schemas.Usergroup?
         /// Creates a new `UsergroupsDisableResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - usergroup:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            usergroup: SlackModels.Usergroup? = nil,
-            warning: Swift.String? = nil,
+            usergroup: Components.Schemas.Usergroup? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.usergroup = usergroup
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case usergroup
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsergroupsEnableResponse`.
     public struct UsergroupsEnableResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsergroupsEnableResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsergroupsEnableResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsEnableResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsEnableResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsEnableResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsergroupsEnableResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsEnableResponse/usergroup`.
-        public var usergroup: SlackModels.Usergroup?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsEnableResponse/warning`.
-        public var warning: Swift.String?
+        public var usergroup: Components.Schemas.Usergroup?
         /// Creates a new `UsergroupsEnableResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - usergroup:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            usergroup: SlackModels.Usergroup? = nil,
-            warning: Swift.String? = nil,
+            usergroup: Components.Schemas.Usergroup? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.usergroup = usergroup
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case usergroup
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsergroupsListResponse`.
     public struct UsergroupsListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsergroupsListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsergroupsListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsergroupsListResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsListResponse/usergroups`.
-        public var usergroups: [SlackModels.Usergroup]?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsListResponse/warning`.
-        public var warning: Swift.String?
+        public var usergroups: [Components.Schemas.Usergroup]?
         /// Creates a new `UsergroupsListResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - usergroups:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            usergroups: [SlackModels.Usergroup]? = nil,
-            warning: Swift.String? = nil,
+            usergroups: [Components.Schemas.Usergroup]? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.usergroups = usergroups
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case usergroups
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsergroupsUpdateResponse`.
     public struct UsergroupsUpdateResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsergroupsUpdateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsergroupsUpdateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsUpdateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsUpdateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsUpdateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsergroupsUpdateResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsUpdateResponse/usergroup`.
-        public var usergroup: SlackModels.Usergroup?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsUpdateResponse/warning`.
-        public var warning: Swift.String?
+        public var usergroup: Components.Schemas.Usergroup?
         /// Creates a new `UsergroupsUpdateResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - usergroup:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            usergroup: SlackModels.Usergroup? = nil,
-            warning: Swift.String? = nil,
+            usergroup: Components.Schemas.Usergroup? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.usergroup = usergroup
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case usergroup
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsergroupsUsersListResponse`.
     public struct UsergroupsUsersListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsergroupsUsersListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsergroupsUsersListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsUsersListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsUsersListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsUsersListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsergroupsUsersListResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsUsersListResponse/users`.
         public var users: [Swift.String]?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsUsersListResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `UsergroupsUsersListResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - users:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
             users: [Swift.String]? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.users = users
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case users
-            case warning
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/UsergroupsUsersUpdateResponse`.
     public struct UsergroupsUsersUpdateResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/UsergroupsUsersUpdateResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/UsergroupsUsersUpdateResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsUsersUpdateResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/UsergroupsUsersUpdateResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsUsersUpdateResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/UsergroupsUsersUpdateResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsUsersUpdateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
         /// - Remark: Generated from `#/components/schemas/UsergroupsUsersUpdateResponse/usergroup`.
-        public var usergroup: SlackModels.Usergroup?
-        /// - Remark: Generated from `#/components/schemas/UsergroupsUsersUpdateResponse/warning`.
-        public var warning: Swift.String?
+        public var usergroup: Components.Schemas.Usergroup?
+        /// - Remark: Generated from `#/components/schemas/UsergroupsUsersUpdateResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `UsergroupsUsersUpdateResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - responseMetadata:
         ///   - usergroup:
-        ///   - warning:
+        ///   - responseMetadata:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            usergroup: SlackModels.Usergroup? = nil,
-            warning: Swift.String? = nil,
+            usergroup: Components.Schemas.Usergroup? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.responseMetadata = responseMetadata
             self.usergroup = usergroup
-            self.warning = warning
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case responseMetadata = "response_metadata"
             case usergroup
-            case warning
+            case responseMetadata = "response_metadata"
         }
     }
 }

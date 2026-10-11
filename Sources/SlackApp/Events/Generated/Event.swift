@@ -191,6 +191,49 @@ public enum Event: Decodable, Hashable, Sendable {
             self = try .memberJoinedChannel(MemberJoinedChannelEvent(from: decoder))
         case "member_left_channel":
             self = try .memberLeftChannel(MemberLeftChannelEvent(from: decoder))
+        case "message":
+            let subtype = try decoder.container(keyedBy: SubtypeCodingKeys.self)
+                .decodeIfPresent(String.self, forKey: .subtype)
+            switch subtype {
+            case "bot_message":
+                self = try .messageBot(MessageBotEvent(from: decoder))
+            case "channel_archive":
+                self = try .messageChannelArchive(MessageChannelArchiveEvent(from: decoder))
+            case "channel_join":
+                self = try .messageChannelJoin(MessageChannelJoinEvent(from: decoder))
+            case "channel_leave":
+                self = try .messageChannelLeave(MessageChannelLeaveEvent(from: decoder))
+            case "channel_name":
+                self = try .messageChannelName(MessageChannelNameEvent(from: decoder))
+            case "channel_posting_permissions":
+                self = try .messageChannelPostingPermissions(MessageChannelPostingPermissionsEvent(from: decoder))
+            case "channel_purpose":
+                self = try .messageChannelPurpose(MessageChannelPurposeEvent(from: decoder))
+            case "channel_topic":
+                self = try .messageChannelTopic(MessageChannelTopicEvent(from: decoder))
+            case "channel_unarchive":
+                self = try .messageChannelUnarchive(MessageChannelUnarchiveEvent(from: decoder))
+            case "ekm_access_denied":
+                self = try .messageEkmAccessDenied(MessageEkmAccessDeniedEvent(from: decoder))
+            case "file_share":
+                self = try .messageFileShare(MessageFileShareEvent(from: decoder))
+            case "group_topic":
+                self = try .messageGroupTopic(MessageGroupTopicEvent(from: decoder))
+            case "me_message":
+                self = try .messageMe(MessageMeEvent(from: decoder))
+            case "message_changed":
+                self = try .messageChanged(MessageChangedEvent(from: decoder))
+            case "message_deleted":
+                self = try .messageDeleted(MessageDeletedEvent(from: decoder))
+            case "message_replied":
+                self = try .messageReplied(MessageRepliedEvent(from: decoder))
+            case "thread_broadcast":
+                self = try .messageThreadBroadcast(MessageThreadBroadcastEvent(from: decoder))
+            case nil:
+                self = try .message(MessageEvent(from: decoder))
+            case let .some(unknownSubtype):
+                self = .unsupported("message - \(unknownSubtype)")
+            }
         case "pin_added":
             self = try .pinAdded(PinAddedEvent(from: decoder))
         case "pin_removed":
@@ -247,53 +290,6 @@ public enum Event: Decodable, Hashable, Sendable {
             self = try .workflowStepExecute(WorkflowStepExecuteEvent(from: decoder))
         case "workflow_unpublished":
             self = try .workflowUnpublished(WorkflowUnpublishedEvent(from: decoder))
-        case "message":
-            // Message events require checking the subtype field
-            let subtypeContainer = try decoder.container(keyedBy: MessageSubtypeCodingKeys.self)
-            let subtype = try subtypeContainer.decodeIfPresent(String.self, forKey: .subtype)
-
-            switch subtype {
-            case "bot_message":
-                self = try .messageBot(MessageBotEvent(from: decoder))
-            case "message_changed":
-                self = try .messageChanged(MessageChangedEvent(from: decoder))
-            case "channel_archive":
-                self = try .messageChannelArchive(MessageChannelArchiveEvent(from: decoder))
-            case "channel_join":
-                self = try .messageChannelJoin(MessageChannelJoinEvent(from: decoder))
-            case "channel_leave":
-                self = try .messageChannelLeave(MessageChannelLeaveEvent(from: decoder))
-            case "channel_name":
-                self = try .messageChannelName(MessageChannelNameEvent(from: decoder))
-            case "channel_posting_permissions":
-                self = try .messageChannelPostingPermissions(MessageChannelPostingPermissionsEvent(from: decoder))
-            case "channel_purpose":
-                self = try .messageChannelPurpose(MessageChannelPurposeEvent(from: decoder))
-            case "channel_topic":
-                self = try .messageChannelTopic(MessageChannelTopicEvent(from: decoder))
-            case "channel_unarchive":
-                self = try .messageChannelUnarchive(MessageChannelUnarchiveEvent(from: decoder))
-            case "message_deleted":
-                self = try .messageDeleted(MessageDeletedEvent(from: decoder))
-            case "ekm_access_denied":
-                self = try .messageEkmAccessDenied(MessageEkmAccessDeniedEvent(from: decoder))
-            case "file_share":
-                self = try .messageFileShare(MessageFileShareEvent(from: decoder))
-            case "group_topic":
-                self = try .messageGroupTopic(MessageGroupTopicEvent(from: decoder))
-            case "me_message":
-                self = try .messageMe(MessageMeEvent(from: decoder))
-            case "message_replied":
-                self = try .messageReplied(MessageRepliedEvent(from: decoder))
-            case "thread_broadcast":
-                self = try .messageThreadBroadcast(MessageThreadBroadcastEvent(from: decoder))
-            case nil:
-                // No subtype - regular message
-                self = try .message(MessageEvent(from: decoder))
-            case let .some(unknownSubtype):
-                // Unknown subtype - mark as unsupported
-                self = .unsupported("message - \(unknownSubtype)")
-            }
         default:
             self = .unsupported(type)
         }
@@ -493,7 +489,7 @@ public enum Event: Decodable, Hashable, Sendable {
         case type
     }
 
-    private enum MessageSubtypeCodingKeys: String, CodingKey {
+    private enum SubtypeCodingKeys: String, CodingKey {
         case subtype
     }
 }
