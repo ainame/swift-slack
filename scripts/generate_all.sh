@@ -12,7 +12,7 @@ DEPS_DIR="./vendor"
 
 ruby -e 'version = RUBY_VERSION.split(".").first(2).map(&:to_i); abort "Ruby 3.0+ is required (active: #{RUBY_VERSION}). Activate the version from .ruby-version." if (version <=> [3, 0]) == -1'
 
-if [ ! -e "${DEPS_DIR}/java-slack-sdk/.git" ] || [ ! -e "${DEPS_DIR}/slack-api-ref/.git" ] || [ ! -e "${DEPS_DIR}/tree-sitter-java/.git" ]; then
+if [ ! -e "${DEPS_DIR}/java-slack-sdk/.git" ] || [ ! -e "${DEPS_DIR}/slack-api-ref/.git" ]; then
     echo "Error: Submodules not initialized. Run 'git submodule update --init'."
     exit 1
 fi
