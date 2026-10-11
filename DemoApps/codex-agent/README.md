@@ -98,7 +98,7 @@ brew install --cask codex
 codex login
 ```
 
-The agent runs Codex with a read-only sandbox and never asks for approval, in the directory set by `CODEX_WORKSPACE`. Each Slack session runs its own `codex app-server` process, because swift-codex allows one active turn per process. A session idle for 10 minutes closes its process, and its next message resumes the Codex thread in a new one. A stopped turn is interrupted and read to its end before the session's next turn starts.
+The agent runs Codex with a read-only sandbox and never asks for approval. Set `CODEX_WORKSPACE` to a repository to ask about it; otherwise Codex works in an empty temporary directory and answers general questions. Each Slack session runs its own `codex app-server` process, because swift-codex allows one active turn per process. A session idle for 10 minutes closes its process, and its next message resumes the Codex thread in a new one. A stopped turn is interrupted and read to its end before the session's next turn starts.
 
 ### 3. Decide who can use it
 
@@ -108,7 +108,7 @@ The agent runs Codex with a read-only sandbox and never asks for approval, in th
 The demo limits that exposure:
 
 - `ALLOWED_USER_IDS` optionally lists the Slack user IDs the agent answers, comma-separated, and other people get an ephemeral notice. Without it the agent answers everyone and logs a warning at startup; set it when other people share the workspace.
-- `CODEX_WORKSPACE` must be set, and the app refuses a workspace that contains its own directory, where `.env` holds the Slack tokens, or that has a `.env` file.
+- Codex never starts in the app's own directory, where `.env` holds the Slack tokens. The app refuses a `CODEX_WORKSPACE` that contains that directory or has a `.env` file, and uses an empty directory when it is not set.
 - Codex starts with only the variables it needs (`PATH`, `HOME`, locale, and `CODEX_HOME`), so exported Slack tokens do not reach it.
 
 Messages from anyone in a thread the agent joins can still go into its prompt as context, so treat what they write as untrusted input.
@@ -117,7 +117,7 @@ Messages from anyone in a thread the agent joins can still go into its prompt as
 
 ```bash
 cd DemoApps/codex-agent
-cp .env.example .env   # then fill in the tokens and CODEX_WORKSPACE
+cp .env.example .env   # then fill in the tokens
 swift run codex-agent
 ```
 
