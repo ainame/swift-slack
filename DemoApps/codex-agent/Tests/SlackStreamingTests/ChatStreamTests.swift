@@ -97,11 +97,59 @@ struct ChatStreamTests {
         #expect(calls.last?.chunks == [])
     }
 
+    @Test
+    func `asks for the final blocks after the input finishes`() async throws {
+        let transport = FakeTransport()
+        let (chunks, continuation) = AsyncStream.makeStream(of: StreamChunk.self)
+        let finished = Finished()
+        let producer = Task {
+            continuation.yield(.markdownText("answer"))
+            await finished.set()
+            continuation.finish()
+        }
+
+        try await ChatStream(transport: transport, minimumInterval: .zero).send(chunks) {
+            await producer.value
+            return await finished.value ? blocks : nil
+        }
+
+        #expect(await transport.calls.last?.blocks == blocks)
+    }
+
+    @Test
+    func `stops without asking for the final blocks when an append fails`() async {
+        let transport = FakeTransport(failing: "append")
+        let (chunks, continuation) = AsyncStream.makeStream(of: StreamChunk.self)
+        let sending = Task {
+            try await ChatStream(transport: transport, minimumInterval: .zero).send(chunks) {
+                Issue.record("final blocks requested after a failure")
+                return nil
+            }
+        }
+        continuation.yield(.markdownText("first"))
+        await transport.waitForCalls(1)
+        continuation.yield(.markdownText("second"))
+
+        await #expect(throws: SlackAPIError.self) {
+            try await sending.value
+        }
+        continuation.finish()
+        #expect(await transport.calls.last == .init(method: "stop", chunks: []))
+    }
+
     private func text(_ calls: [FakeTransport.Call]) -> String {
         calls.flatMap(\.chunks).map { chunk in
             guard case let .markdownText(text) = chunk else { return "" }
             return text
         }.joined()
+    }
+}
+
+private actor Finished {
+    private(set) var value = false
+
+    func set() {
+        value = true
     }
 }
 
