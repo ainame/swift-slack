@@ -2,11 +2,15 @@ import SlackStreaming
 
 /// Replays a scripted turn so the Slack side can be tried without the Codex CLI.
 struct MockBackend: AgentBackend {
-    func respond(to prompt: String, in _: SessionKey) -> AsyncThrowingStream<AgentEvent, any Error> {
+    func respond(
+        to prompt: String,
+        in _: SessionKey,
+        tools: any AgentTools,
+    ) -> AsyncThrowingStream<AgentEvent, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
                 do {
-                    try await play(prompt: prompt, continuation: continuation)
+                    try await play(prompt: prompt, tools: tools, continuation: continuation)
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)
@@ -16,16 +20,21 @@ struct MockBackend: AgentBackend {
         }
     }
 
-    private func play(prompt: String, continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation) async throws {
-        let steps = [
-            ("read", "Read the request"),
-            ("search", "Look for relevant context"),
-            ("compose", "Compose the answer"),
-        ]
-        for (id, title) in steps {
-            continuation.yield(.task(TaskUpdate(id: id, title: title, status: .inProgress)))
-            try await Task.sleep(for: .seconds(1))
-            continuation.yield(.task(TaskUpdate(id: id, title: title, status: .complete)))
+    private func play(
+        prompt: String,
+        tools: any AgentTools,
+        continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
+    ) async throws {
+        // The same tools the codex backend offers Codex, shown as tasks.
+        let messages = try await step("read", "Read the conversation", continuation) {
+            try await tools.readSlack(.thread, limit: 10)
+        }
+        let choice = try await step("ask", "Ask you a question", continuation) {
+            try await tools.askUser("Which part of the agent should I describe?", options: ["Streaming", "Sessions"])
+        }
+        _ = try await step("title", "Rename the conversation", continuation) {
+            try await tools.setTitle("Mock: \(choice ?? prompt)")
+            return ""
         }
 
         let answer = """
@@ -33,7 +42,8 @@ struct MockBackend: AgentBackend {
 
         > \(prompt)
 
-        Set `AGENT_BACKEND=codex` to answer with Codex instead.
+        I read \(messages?.split(separator: "\n\n").count ?? 0) messages in this thread\
+        \(choice.map { ", and you chose *\($0)*" } ?? ""). Set `AGENT_BACKEND=codex` to answer with Codex instead.
         """
         for word in answer.split(separator: " ", omittingEmptySubsequences: false) {
             continuation.yield(.text(word + " "))
@@ -55,5 +65,24 @@ struct MockBackend: AgentBackend {
                 ask: "How does the stop button work?",
             ),
         ])))
+    }
+
+    /// Runs one tool call as a task. A tool error, such as a refused rename, marks the task as failed and
+    /// lets the turn go on, as Codex would after a failed tool call.
+    private func step(
+        _ id: String,
+        _ title: String,
+        _ continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
+        _ operation: () async throws -> String,
+    ) async throws -> String? {
+        continuation.yield(.task(TaskUpdate(id: id, title: title, status: .inProgress)))
+        do {
+            let result = try await operation()
+            continuation.yield(.task(TaskUpdate(id: id, title: title, status: .complete)))
+            return result
+        } catch let error as AgentToolError {
+            continuation.yield(.task(TaskUpdate(id: id, title: title, status: .error, output: error.description)))
+            return nil
+        }
     }
 }

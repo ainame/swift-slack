@@ -12,6 +12,7 @@ It follows the agent response loop from [Developing an agent](https://docs.slack
 - **Streaming**: commands, web searches, file edits, and tool calls appear as task cards (`task_update` chunks in `timeline` mode). The answer streams as `markdown_text` chunks through `chat.startStream`, `chat.appendStream`, and `chat.stopStream`.
 - **Stop button**: subscribing to `agent_session_stopped` makes Slack show a stop button while the session is processing. Slack stops the streaming message itself. The agent interrupts the Codex turn and returns the session to `active`. Slack may then reject the closing `chat.stopStream`, so a stopped reply can end without the feedback buttons.
 - **Renaming**: after `agent_session_title_changed`, it stops proposing titles for that session.
+- **Tools**: Codex can rename the session, read the conversation, and ask the person to choose, through tools that act in Slack. See below.
 - **Cards**: Codex can call a `show_cards` tool, and the answer ends with cards or a carousel with Open and "Ask about this" buttons. See below.
 - **Feedback**: every reply ends with `feedback_buttons` in a `context_actions` block, and a click gets an ephemeral reply.
 
@@ -23,13 +24,25 @@ The agent never writes Block Kit. The codex backend registers a `show_cards` too
 {"cards": [{"title": "Agent sessions", "body": "How Slack shows the stop button.", "url": "https://docs.slack.dev/ai/agent-sessions", "ask": "How does the stop button work?"}]}
 ```
 
-- `CardsTool.handle` only checks the arguments. Invalid ones get `success: false` with a message, so Codex can retry. The handler must not wait on another request to the same app server.
+- `AgentToolset.handle` only checks the arguments of `show_cards`. Invalid ones get `success: false` with a message, so Codex can retry. The handler must not wait on another request to the same app server.
 - The cards are read from the completed `dynamicToolCall` item and stream nothing. When the answer is done, `SlackUI` turns them into a `card`, or a `carousel` for two to ten cards, within the card block's limits (150 characters for titles and subtitles, 200 for bodies).
 - The app decides the buttons: Open for an `https` link, and "Ask about this", which posts the question in the thread and answers it. The model cannot add other actions or links.
 - The cards go out with `chat.stopStream`, because Slack takes blocks only when a stream stops. `ChatStream.send(_:sessionStatus:finalBlocks:)` asks for them once the input finishes.
 - Tools are registered when a Codex thread starts. A thread resumed after an idle close keeps them.
 
 The mock backend sends two cards the same way, so `AGENT_BACKEND=mock` shows them without Codex.
+
+## Tools that act in Slack
+
+Besides `show_cards`, the codex backend registers three tools. Each turn gets a `SlackAgentTools` scoped to its session and the person it answers, and the mock backend calls the same tools, so `AGENT_BACKEND=mock` shows them too.
+
+| Tool | What it does |
+| --- | --- |
+| `set_title` | Renames the session with `agents.sessions.rename`. It refuses once the person has renamed the session (`agent_session_title_changed`). |
+| `read_slack` | Returns up to 50 recent messages from the current thread or its channel, with `conversations.replies` or `conversations.history`. It cannot read other conversations. |
+| `ask_user` | Posts the question with a button per option, sets the session to `suspended`, and returns the option the person picks. Only that person can answer; the question expires after 10 minutes. |
+
+Tool calls appear as task cards, and failures go back to Codex as messages it can act on. swift-codex runs a tool handler while it reads the app-server's messages, so a waiting `ask_user` holds every other message, including the reply to an interrupt. The stop button therefore ends the question before it interrupts the turn.
 
 ## Streaming with AsyncStream
 
@@ -150,6 +163,7 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 - `Sources/CodexAgent/CodexBackend.swift`: one Codex thread per session, with notifications mapped to tasks and text
 - `Sources/CodexAgent/MockBackend.swift`: a scripted backend for trying the app without Codex
 - `Sources/CodexAgent/Feedback.swift`: the feedback buttons and their action handler
-- `Sources/CodexAgent/SlackUI.swift`: the card vocabulary and its conversion to Block Kit; `CardsTool` in `CodexBackend.swift` registers it with Codex
+- `Sources/CodexAgent/SlackUI.swift`: the card vocabulary and its conversion to Block Kit
+- `Sources/CodexAgent/SlackAgentTools.swift`: the tools' Slack side, and the questions waiting for a click; `AgentToolset` in `CodexBackend.swift` registers the tools with Codex
 
 Run the tests with `swift test`.
