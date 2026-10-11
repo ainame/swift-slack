@@ -303,26 +303,50 @@ extension Components.Schemas {
 
 extension Components.Schemas.AppWorkflowStepInputValue {
     public var stringValue: Swift.String? {
-        if case let .case1(value) = self { value } else { nil }
+        if case let .case1(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 
     public var numberValue: Swift.Double? {
-        if case let .case2(value) = self { value } else { nil }
+        if case let .case2(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 
     public var boolValue: Swift.Bool? {
-        if case let .case3(value) = self { value } else { nil }
+        if case let .case3(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 
     public var stringValues: [Swift.String]? {
-        if case let .case4(value) = self { value } else { nil }
+        if case let .case4(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 
     public var interactiveBlocks: [Components.Schemas.Block]? {
-        if case let .case5(value) = self { value } else { nil }
+        if case let .case5(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 
     public var form: Components.Schemas.AppWorkflowStepInputValue.Case6Payload? {
-        if case let .case6(value) = self { value } else { nil }
+        if case let .case6(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 }

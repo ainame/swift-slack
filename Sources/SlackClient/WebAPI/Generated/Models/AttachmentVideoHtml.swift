@@ -71,10 +71,18 @@ extension Components.Schemas {
 
 extension Components.Schemas.AttachmentVideoHtml {
     public var html: Swift.String? {
-        if case let .case1(value) = self { value } else { nil }
+        if case let .case1(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 
     public var video: Components.Schemas.AttachmentVideoHtml.Case2Payload? {
-        if case let .case2(value) = self { value } else { nil }
+        if case let .case2(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 }

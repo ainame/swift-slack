@@ -64,14 +64,26 @@ extension Components.Schemas {
 
 extension Components.Schemas.ListRecordFieldValue {
     public var stringValue: Swift.String? {
-        if case let .case1(value) = self { value } else { nil }
+        if case let .case1(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 
     public var numberValue: Swift.Double? {
-        if case let .case2(value) = self { value } else { nil }
+        if case let .case2(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 
     public var boolValue: Swift.Bool? {
-        if case let .case3(value) = self { value } else { nil }
+        if case let .case3(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 }

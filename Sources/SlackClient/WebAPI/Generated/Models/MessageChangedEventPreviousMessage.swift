@@ -278,6 +278,10 @@ extension Components.Schemas {
 
 extension Components.Schemas.MessageChangedEventPreviousMessage {
     public var message: Components.Schemas.MessageChangedEventPreviousMessage.Case1Payload? {
-        if case let .case1(value) = self { value } else { nil }
+        if case let .case1(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 }

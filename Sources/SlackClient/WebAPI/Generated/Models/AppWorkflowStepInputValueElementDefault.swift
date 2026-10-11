@@ -54,10 +54,18 @@ extension Components.Schemas {
 
 extension Components.Schemas.AppWorkflowStepInputValueElementDefault {
     public var stringValue: Swift.String? {
-        if case let .case1(value) = self { value } else { nil }
+        if case let .case1(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 
     public var stringValues: [Swift.String]? {
-        if case let .case2(value) = self { value } else { nil }
+        if case let .case2(value) = self {
+            value
+        } else {
+            nil
+        }
     }
 }

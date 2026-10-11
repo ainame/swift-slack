@@ -8,8 +8,8 @@ private let fixturesDirectory = ProcessInfo.processInfo.environment["SLACK_FIXTU
 @Suite(.enabled(if: fixturesDirectory != nil, "Run scripts/check_fixtures.rb to decode the upstream fixtures"))
 struct FixtureDecodingTests {
     /// Each fixture is named after the event type it must decode to, e.g. MessageChangedEvent.json.
-    @Test func everyGeneratedEventDecodesItsUpstreamFixture() throws {
-        let directory = URL(fileURLWithPath: try #require(fixturesDirectory)).appendingPathComponent("events")
+    @Test func `every generated event decodes its upstream fixture`() throws {
+        let directory = try URL(fileURLWithPath: #require(fixturesDirectory)).appendingPathComponent("events")
         let names = try FileManager.default.contentsOfDirectory(atPath: directory.path)
             .filter { $0.hasSuffix(".json") }
             .map { String($0.dropLast(".json".count)) }

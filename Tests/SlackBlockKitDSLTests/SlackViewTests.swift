@@ -357,17 +357,23 @@ struct SlackViewTests {
 /// Helper extensions for cleaner assertions
 extension Block {
     var isHeader: Bool {
-        if case .header = self { return true }
+        if case .header = self {
+            return true
+        }
         return false
     }
 
     var isSection: Bool {
-        if case .section = self { return true }
+        if case .section = self {
+            return true
+        }
         return false
     }
 
     var isDivider: Bool {
-        if case .divider = self { return true }
+        if case .divider = self {
+            return true
+        }
         return false
     }
 }
