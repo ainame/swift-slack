@@ -146,6 +146,7 @@ actor PartBuffer {
     private var waiter: CheckedContinuation<Void, Never>?
 
     /// Adds `part`, or returns `false` once the sender has closed the buffer and takes no more parts.
+    @discardableResult
     func append(_ part: StreamingMessage.Part) -> Bool {
         guard !isClosed else { return false }
         switch part {
