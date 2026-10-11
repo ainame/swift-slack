@@ -33,17 +33,18 @@ record the same previous pins.
   `setProperties` and `label` for `setView`, which java-slack-sdk's request
   builders do not send yet. `commands`, `code_channel`, `agent_resource` and `csp`
   are untyped JSON containers, as for other object arguments.
-- `agent_session_stopped` and `agent_session_title_changed` remain ungenerated:
-  java-slack-sdk has their event classes and unit-test payloads but no recorded
-  event fixture under `json-logs/samples/events`.
+- `agent_session_stopped` and `agent_session_title_changed` have java-slack-sdk
+  event classes and unit-test payloads but no recorded event fixture under
+  `json-logs/samples/events`. Since #245 they are generated from copies of those
+  unit-test payloads (`scripts/event_fixtures.yml`).
 - The java-slack-sdk delta changes only release-note configuration, the maintainers
   guide and documentation links; nothing feeds generation. No Block Kit class,
   event class or handwritten Bolt runtime behavior changed.
 - The fixture policy still excludes methods without Java response fixtures, such as
   the `admin.usergroups.*` methods recorded on 2026-10-03.
 
-The unsupported events above are explicit coverage gaps pending upstream inputs;
-they are not claims of full API parity. No exhaustive-switch cases change.
+Coverage applies to the reviewed delta; it is not a claim of full API parity.
+This sync changes no exhaustive-switch cases; #245 later adds two `Event` cases.
 
 ### Verification
 
