@@ -49,10 +49,10 @@ struct CodexAgentApp {
             try await setSuggestedPrompts(channel: channel, client: context.client)
         }
 
-        // Direct messages to the agent, from the Messages tab or the split view.
+        // Direct messages to the agent, from the Messages tab or the split view, and replies in channel
+        // threads the agent takes part in, so a conversation continues without mentioning it each time.
         router.onEvent(MessageEvent.self) { context, envelope, event in
-            guard event.channelType == "im",
-                  event.botId == nil,
+            guard event.botId == nil,
                   let user = event.user,
                   let channel = event.channel,
                   let ts = event.ts,
@@ -61,11 +61,18 @@ struct CodexAgentApp {
             }
             let turn = AgentResponder.Turn(
                 session: SessionKey(channel: channel, threadTs: event.threadTs ?? ts),
+                messageTs: ts,
                 prompt: text,
                 userId: user,
                 teamId: envelope.teamId,
             )
-            startTurn(turn, responder: responder, client: context.client)
+            if event.channelType == "im" {
+                startTurn(turn, responder: responder, client: context.client)
+            } else if event.threadTs != nil {
+                startTurn(turn, responder: responder, client: context.client) {
+                    await responder.shouldAnswerThreadReply(text: text, in: turn.session, client: context.client)
+                }
+            }
         }
 
         // Mentions in channels; the reply goes into the mention's thread.
@@ -80,6 +87,7 @@ struct CodexAgentApp {
             guard !prompt.isEmpty else { return }
             let turn = AgentResponder.Turn(
                 session: SessionKey(channel: channel, threadTs: event.threadTs ?? ts),
+                messageTs: ts,
                 prompt: prompt,
                 userId: user,
                 teamId: envelope.teamId,
@@ -107,13 +115,25 @@ struct CodexAgentApp {
             mode: runtimeMode(from: environment),
         )
         logger.info("Codex agent is running", metadata: ["backend": "\(environment.backend)"])
-        try await app.run()
+        try await app.run { slack in
+            let response = try await slack.client.authTest().ok.body.json.checked("auth.test")
+            guard let userId = response.userId else {
+                throw SlackAPIError(method: "auth.test", code: "missing_user_id")
+            }
+            await responder.setIdentity(BotIdentity(userId: userId, botId: response.botId))
+        }
     }
 
     /// Runs the turn outside the event handler: in HTTP mode, swift-slack answers the event request only
     /// after the handler returns, and Slack retries events that take longer than three seconds.
-    private static func startTurn(_ turn: AgentResponder.Turn, responder: AgentResponder, client: any APIProtocol) {
+    private static func startTurn(
+        _ turn: AgentResponder.Turn,
+        responder: AgentResponder,
+        client: any APIProtocol,
+        if shouldStart: @escaping @Sendable () async -> Bool = { true },
+    ) {
         Task {
+            guard await shouldStart() else { return }
             await responder.handle(turn, client: client)
         }
     }

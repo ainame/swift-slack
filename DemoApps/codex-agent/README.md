@@ -2,9 +2,12 @@
 
 A Slack [agent](https://docs.slack.dev/ai/agents) built with swift-slack. It answers direct messages and mentions with [Codex](https://github.com/openai/codex), through [swift-codex](https://github.com/ainame/swift-codex), and streams each reply into its thread as Codex works.
 
+Each thread is one conversation. Reply in the thread to continue it: in DMs and in channel threads the agent has joined, replies need no mention.
+
 It follows the agent response loop from [Developing an agent](https://docs.slack.dev/ai/developing-agents):
 
 - **Suggested prompts**: when someone opens the Messages tab (`app_home_opened` with `tab: "messages"`), it sets prompts with `assistant.threads.setSuggestedPrompts`.
+- **Threads**: replies in a channel thread the agent has answered in reach it through `message.channels` and `message.groups`. Replies that mention it are left to `app_mention`. After a restart, `conversations.replies` shows whether the bot has posted in the thread. When the agent joins a thread it has not seen, such as on a mention partway through a discussion or after a restart, the prompt starts with the thread so far.
 - **Sessions**: each thread is an agent session. It calls `agents.sessions.setStatus` with `processing` and a title taken from the first message, and `chat.stopStream` returns the session to `active`.
 - **Streaming**: commands, web searches, file edits, and tool calls appear as task cards (`task_update` chunks in `timeline` mode). The answer streams as `markdown_text` chunks through `chat.startStream`, `chat.appendStream`, and `chat.stopStream`.
 - **Stop button**: subscribing to `agent_session_stopped` makes Slack show a stop button while the session is processing. Pressing it interrupts the Codex turn and closes the message with "_Stopped._".
@@ -63,7 +66,9 @@ oauth_config:
     bot:
       - app_mentions:read
       - assistant:write
+      - channels:history
       - chat:write
+      - groups:history
       - im:history
       - im:read
       - im:write
@@ -74,6 +79,8 @@ settings:
       - agent_session_title_changed
       - app_home_opened
       - app_mention
+      - message.channels
+      - message.groups
       - message.im
   interactivity:
     is_enabled: true
