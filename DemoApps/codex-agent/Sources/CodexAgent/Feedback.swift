@@ -1,6 +1,5 @@
 import Logging
 import SlackKit
-import SlackStreaming
 
 /// Thumbs up and down buttons under every reply, as the Slack agent docs recommend.
 enum Feedback {

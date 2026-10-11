@@ -1,7 +1,7 @@
 import Codex
 import Foundation
 import Logging
-import SlackStreaming
+import SlackKit
 import Synchronization
 
 /// Runs each Slack agent session as a Codex thread, through the `codex app-server` that swift-codex launches.

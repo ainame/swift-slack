@@ -1,6 +1,5 @@
 import Logging
 import SlackKit
-import SlackStreaming
 
 /// Runs the agent response loop from the Slack docs for one user message:
 /// set the session to `processing`, stream tasks and text, then stop the stream with feedback buttons,
@@ -18,9 +17,8 @@ actor AgentResponder {
     private let backend: any AgentBackend
     private let questions: PendingQuestions
     private let logger: Logger
-    /// The task producing chunks for each session's running turn, which returns the blocks for the end
-    /// of the reply. Cancelling it stops the turn.
-    private var producers: [SessionKey: Task<[Block], Never>] = [:]
+    /// The task producing parts for each session's running turn. Cancelling it stops the turn.
+    private var producers: [SessionKey: Task<Void, Never>] = [:]
     private var titledSessions: Set<SessionKey> = []
     /// Sessions the person renamed, whose title the agent leaves alone.
     private var userTitledSessions: Set<SessionKey> = []
@@ -64,11 +62,11 @@ actor AgentResponder {
             return
         }
 
-        // The agent's events go into an AsyncStream that ChatStream sends to Slack. The producer task is
+        // The agent's events go into an AsyncStream that streamMessage sends to Slack. The producer task is
         // separate so the stop button can cancel the agent while the message is still stopped properly.
         // It is registered before the first `await`: the actor takes other calls while this one waits,
         // and a second message in the same thread must find the session busy.
-        let (chunks, continuation) = AsyncStream.makeStream(of: StreamChunk.self)
+        let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
         let tools = SlackAgentTools(
             client: client,
             session: session,
@@ -80,7 +78,7 @@ actor AgentResponder {
         let producer = Task {
             await self.setProcessing(turn, client: client)
             let prompt = await self.prompt(for: turn, client: client)
-            return await self.produce(turn, prompt: prompt, tools: tools, into: continuation)
+            await self.produce(turn, prompt: prompt, tools: tools, into: continuation)
         }
         producers[session] = producer
         defer {
@@ -89,18 +87,14 @@ actor AgentResponder {
             }
         }
 
-        let transport = SlackChatStreamTransport(
-            client: client,
-            channel: session.channel,
-            threadTs: session.threadTs,
-            recipientUserId: turn.userId,
-            recipientTeamId: turn.teamId,
-        )
         do {
-            // Cards come from the end of the answer, so the blocks are known only once the producer is done.
-            try await ChatStream(transport: transport).send(chunks) {
-                await producer.value + Feedback.blocks()
-            }
+            _ = try await client.streamMessage(
+                parts,
+                channel: session.channel,
+                threadTs: session.threadTs,
+                recipient: .init(userId: turn.userId, teamId: turn.teamId),
+                blocks: Feedback.blocks(),
+            )
         } catch {
             // The stop button ends the streaming message on Slack's side, so stopping it can fail here.
             // Leave `processing` anyway, or the session keeps spinning for an hour.
@@ -147,36 +141,40 @@ actor AgentResponder {
         }
     }
 
-    /// Streams the backend's events as chunks and returns the blocks for the cards the agent asked for.
+    /// Streams the backend's events and finishes with the cards the agent asked for.
     private nonisolated func produce(
         _ turn: Turn,
         prompt: String,
         tools: any AgentTools,
-        into continuation: AsyncStream<StreamChunk>.Continuation,
-    ) async -> [Block] {
+        into continuation: AsyncStream<StreamingMessage.Part>.Continuation,
+    ) async {
         var cards: [SlackUI.Card] = []
-        defer { continuation.finish() }
+        defer {
+            if !Task.isCancelled, !cards.isEmpty {
+                continuation.yield(.blocks(SlackUI(cards: cards).blocks()))
+            }
+            continuation.finish()
+        }
         do {
             for try await event in backend.respond(to: prompt, in: turn.session, tools: tools) {
                 switch event {
                 case let .task(task):
-                    continuation.yield(.taskUpdate(task))
+                    continuation.yield(.task(task))
                 case let .text(text):
-                    continuation.yield(.markdownText(text))
+                    continuation.yield(.markdown(text))
                 case let .cards(ui):
                     cards += ui.cards
                 }
             }
-            // Iterating a stream from a cancelled task ends it without an error.
-            if Task.isCancelled {
-                continuation.yield(.markdownText("\n\n_Stopped._"))
-                return []
-            }
-            return SlackUI(cards: cards).blocks()
         } catch {
-            logger.error("Agent turn failed", metadata: ["session": "\(turn.session)", "error": "\(error)"])
-            continuation.yield(.markdownText("\n\n:warning: Something went wrong: \(error)"))
-            return []
+            if !Task.isCancelled {
+                logger.error("Agent turn failed", metadata: ["session": "\(turn.session)", "error": "\(error)"])
+                continuation.yield(.markdown("\n\n:warning: Something went wrong: \(error)"))
+            }
+        }
+        // Cancellation can end iteration normally or throw from the backend.
+        if Task.isCancelled {
+            continuation.yield(.markdown("\n\n_Stopped._"))
         }
     }
 

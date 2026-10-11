@@ -1,7 +1,6 @@
 import Foundation
 import Logging
 import SlackKit
-import SlackStreaming
 
 /// ``AgentTools`` for one turn, acting in the turn's session for the person it answers.
 struct SlackAgentTools: AgentTools {
