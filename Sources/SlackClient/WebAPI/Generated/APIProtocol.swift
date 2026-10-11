@@ -532,6 +532,51 @@ public protocol APIProtocol: Sendable {
     func adminWorkflowsUnpublish(_ input: Operations.AdminWorkflowsUnpublish.Input) async throws -> Operations.AdminWorkflowsUnpublish.Output
     #endif
     #if WebAPI_Agents
+    /// Archive a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.archive`.
+    /// - Remark: Generated from `#/paths//agents.conversations.archive/post(agentsConversationsArchive)`.
+    func agentsConversationsArchive(_ input: Operations.AgentsConversationsArchive.Input) async throws -> Operations.AgentsConversationsArchive.Output
+    /// Create a dedicated code channel for an agent session.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.create`.
+    /// - Remark: Generated from `#/paths//agents.conversations.create/post(agentsConversationsCreate)`.
+    func agentsConversationsCreate(_ input: Operations.AgentsConversationsCreate.Input) async throws -> Operations.AgentsConversationsCreate.Output
+    /// Fetch a canvas attached to a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.getCanvas`.
+    /// - Remark: Generated from `#/paths//agents.conversations.getCanvas/post(agentsConversationsGetCanvas)`.
+    func agentsConversationsGetCanvas(_ input: Operations.AgentsConversationsGetCanvas.Input) async throws -> Operations.AgentsConversationsGetCanvas.Output
+    /// List the views currently attached to a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.listViews`.
+    /// - Remark: Generated from `#/paths//agents.conversations.listViews/post(agentsConversationsListViews)`.
+    func agentsConversationsListViews(_ input: Operations.AgentsConversationsListViews.Input) async throws -> Operations.AgentsConversationsListViews.Output
+    /// Remove a view from a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.removeView`.
+    /// - Remark: Generated from `#/paths//agents.conversations.removeView/post(agentsConversationsRemoveView)`.
+    func agentsConversationsRemoveView(_ input: Operations.AgentsConversationsRemoveView.Input) async throws -> Operations.AgentsConversationsRemoveView.Output
+    /// Replace the full markdown content of a plan canvas attached to a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.setCanvasContent`.
+    /// - Remark: Generated from `#/paths//agents.conversations.setCanvasContent/post(agentsConversationsSetCanvasContent)`.
+    func agentsConversationsSetCanvasContent(_ input: Operations.AgentsConversationsSetCanvasContent.Input) async throws -> Operations.AgentsConversationsSetCanvasContent.Output
+    /// Register the set of agent-defined slash commands for the calling agent in a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.setCommands`.
+    /// - Remark: Generated from `#/paths//agents.conversations.setCommands/post(agentsConversationsSetCommands)`.
+    func agentsConversationsSetCommands(_ input: Operations.AgentsConversationsSetCommands.Input) async throws -> Operations.AgentsConversationsSetCommands.Output
+    /// Set properties on a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.setProperties`.
+    /// - Remark: Generated from `#/paths//agents.conversations.setProperties/post(agentsConversationsSetProperties)`.
+    func agentsConversationsSetProperties(_ input: Operations.AgentsConversationsSetProperties.Input) async throws -> Operations.AgentsConversationsSetProperties.Output
+    /// Create or update a view in a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.setView`.
+    /// - Remark: Generated from `#/paths//agents.conversations.setView/post(agentsConversationsSetView)`.
+    func agentsConversationsSetView(_ input: Operations.AgentsConversationsSetView.Input) async throws -> Operations.AgentsConversationsSetView.Output
     /// Rename an agent session.
     ///
     /// - Remark: HTTP `POST /agents.sessions.rename`.
@@ -2764,6 +2809,123 @@ extension APIProtocol {
     }
     #endif
     #if WebAPI_Agents
+    /// Archive a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.archive`.
+    /// - Remark: Generated from `#/paths//agents.conversations.archive/post(agentsConversationsArchive)`.
+    public func agentsConversationsArchive(
+        headers: Operations.AgentsConversationsArchive.Input.Headers = .init(),
+        body: Operations.AgentsConversationsArchive.Input.Body
+    ) async throws -> Operations.AgentsConversationsArchive.Output {
+        try await agentsConversationsArchive(Operations.AgentsConversationsArchive.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Create a dedicated code channel for an agent session.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.create`.
+    /// - Remark: Generated from `#/paths//agents.conversations.create/post(agentsConversationsCreate)`.
+    public func agentsConversationsCreate(
+        headers: Operations.AgentsConversationsCreate.Input.Headers = .init(),
+        body: Operations.AgentsConversationsCreate.Input.Body
+    ) async throws -> Operations.AgentsConversationsCreate.Output {
+        try await agentsConversationsCreate(Operations.AgentsConversationsCreate.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Fetch a canvas attached to a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.getCanvas`.
+    /// - Remark: Generated from `#/paths//agents.conversations.getCanvas/post(agentsConversationsGetCanvas)`.
+    public func agentsConversationsGetCanvas(
+        headers: Operations.AgentsConversationsGetCanvas.Input.Headers = .init(),
+        body: Operations.AgentsConversationsGetCanvas.Input.Body
+    ) async throws -> Operations.AgentsConversationsGetCanvas.Output {
+        try await agentsConversationsGetCanvas(Operations.AgentsConversationsGetCanvas.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// List the views currently attached to a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.listViews`.
+    /// - Remark: Generated from `#/paths//agents.conversations.listViews/post(agentsConversationsListViews)`.
+    public func agentsConversationsListViews(
+        headers: Operations.AgentsConversationsListViews.Input.Headers = .init(),
+        body: Operations.AgentsConversationsListViews.Input.Body
+    ) async throws -> Operations.AgentsConversationsListViews.Output {
+        try await agentsConversationsListViews(Operations.AgentsConversationsListViews.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Remove a view from a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.removeView`.
+    /// - Remark: Generated from `#/paths//agents.conversations.removeView/post(agentsConversationsRemoveView)`.
+    public func agentsConversationsRemoveView(
+        headers: Operations.AgentsConversationsRemoveView.Input.Headers = .init(),
+        body: Operations.AgentsConversationsRemoveView.Input.Body
+    ) async throws -> Operations.AgentsConversationsRemoveView.Output {
+        try await agentsConversationsRemoveView(Operations.AgentsConversationsRemoveView.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Replace the full markdown content of a plan canvas attached to a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.setCanvasContent`.
+    /// - Remark: Generated from `#/paths//agents.conversations.setCanvasContent/post(agentsConversationsSetCanvasContent)`.
+    public func agentsConversationsSetCanvasContent(
+        headers: Operations.AgentsConversationsSetCanvasContent.Input.Headers = .init(),
+        body: Operations.AgentsConversationsSetCanvasContent.Input.Body
+    ) async throws -> Operations.AgentsConversationsSetCanvasContent.Output {
+        try await agentsConversationsSetCanvasContent(Operations.AgentsConversationsSetCanvasContent.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Register the set of agent-defined slash commands for the calling agent in a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.setCommands`.
+    /// - Remark: Generated from `#/paths//agents.conversations.setCommands/post(agentsConversationsSetCommands)`.
+    public func agentsConversationsSetCommands(
+        headers: Operations.AgentsConversationsSetCommands.Input.Headers = .init(),
+        body: Operations.AgentsConversationsSetCommands.Input.Body
+    ) async throws -> Operations.AgentsConversationsSetCommands.Output {
+        try await agentsConversationsSetCommands(Operations.AgentsConversationsSetCommands.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Set properties on a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.setProperties`.
+    /// - Remark: Generated from `#/paths//agents.conversations.setProperties/post(agentsConversationsSetProperties)`.
+    public func agentsConversationsSetProperties(
+        headers: Operations.AgentsConversationsSetProperties.Input.Headers = .init(),
+        body: Operations.AgentsConversationsSetProperties.Input.Body
+    ) async throws -> Operations.AgentsConversationsSetProperties.Output {
+        try await agentsConversationsSetProperties(Operations.AgentsConversationsSetProperties.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Create or update a view in a code channel.
+    ///
+    /// - Remark: HTTP `POST /agents.conversations.setView`.
+    /// - Remark: Generated from `#/paths//agents.conversations.setView/post(agentsConversationsSetView)`.
+    public func agentsConversationsSetView(
+        headers: Operations.AgentsConversationsSetView.Input.Headers = .init(),
+        body: Operations.AgentsConversationsSetView.Input.Body
+    ) async throws -> Operations.AgentsConversationsSetView.Output {
+        try await agentsConversationsSetView(Operations.AgentsConversationsSetView.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Rename an agent session.
     ///
     /// - Remark: HTTP `POST /agents.sessions.rename`.

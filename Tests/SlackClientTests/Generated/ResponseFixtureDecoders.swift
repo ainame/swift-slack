@@ -103,6 +103,15 @@ let responseFixtureDecoders: [String: @Sendable (Data) throws -> Any] = {
     decoders["admin.workflows.unpublish"] = { try JSONDecoder().decode(Components.Schemas.AdminWorkflowsUnpublishResponse.self, from: $0) }
     #endif
     #if WebAPI_Agents
+    decoders["agents.conversations.archive"] = { try JSONDecoder().decode(Components.Schemas.AgentsConversationsArchiveResponse.self, from: $0) }
+    decoders["agents.conversations.create"] = { try JSONDecoder().decode(Components.Schemas.AgentsConversationsCreateResponse.self, from: $0) }
+    decoders["agents.conversations.getCanvas"] = { try JSONDecoder().decode(Components.Schemas.AgentsConversationsGetCanvasResponse.self, from: $0) }
+    decoders["agents.conversations.listViews"] = { try JSONDecoder().decode(Components.Schemas.AgentsConversationsListViewsResponse.self, from: $0) }
+    decoders["agents.conversations.removeView"] = { try JSONDecoder().decode(Components.Schemas.AgentsConversationsRemoveViewResponse.self, from: $0) }
+    decoders["agents.conversations.setCanvasContent"] = { try JSONDecoder().decode(Components.Schemas.AgentsConversationsSetCanvasContentResponse.self, from: $0) }
+    decoders["agents.conversations.setCommands"] = { try JSONDecoder().decode(Components.Schemas.AgentsConversationsSetCommandsResponse.self, from: $0) }
+    decoders["agents.conversations.setProperties"] = { try JSONDecoder().decode(Components.Schemas.AgentsConversationsSetPropertiesResponse.self, from: $0) }
+    decoders["agents.conversations.setView"] = { try JSONDecoder().decode(Components.Schemas.AgentsConversationsSetViewResponse.self, from: $0) }
     decoders["agents.sessions.rename"] = { try JSONDecoder().decode(Components.Schemas.AgentsSessionsRenameResponse.self, from: $0) }
     decoders["agents.sessions.setStatus"] = { try JSONDecoder().decode(Components.Schemas.AgentsSessionsSetStatusResponse.self, from: $0) }
     #endif
