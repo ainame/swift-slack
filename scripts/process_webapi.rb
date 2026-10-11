@@ -388,6 +388,11 @@ class WebAPIProcessor
 end
 
 # The `Event` enum that decodes any generated event by its `type` (and, for messages, `subtype`).
+#
+# Its members avoid a `switch` with one payload-binding arm per event where they can: in debug builds
+# every arm gets its own stack slots, so such a `switch` needs a frame of hundreds of kilobytes, which
+# overflows the 512 KB stack of a Swift concurrency thread. Decoding goes through per-event closures,
+# and `==` and `hash(into:)` go through `payload`.
 class EventEnum
   # `events`: schema name => { "type" => ..., "subtype" => ... } (openapi.json `x-slack-events`).
   def initialize(events)
@@ -408,12 +413,36 @@ class EventEnum
               let container = try decoder.container(keyedBy: CodingKeys.self)
               let type = try container.decode(String.self, forKey: .type)
 
-              switch type {
-      #{type_cases.join("\n")}
-              default:
+              // Each event decodes in its own closure. A `switch` with an arm per event would give this
+              // initializer a stack frame that overflows a Swift concurrency thread in debug builds.
+              if let decoders = Self.subtypeDecoders[type] {
+                  let subtype = try decoder.container(keyedBy: SubtypeCodingKeys.self)
+                      .decodeIfPresent(String.self, forKey: .subtype)
+                  if let decode = decoders[subtype] {
+                      self = try decode(decoder)
+                  } else if let subtype {
+                      self = .unsupported("\\(type) - \\(subtype)")
+                  } else {
+                      self = .unsupported(type)
+                  }
+              } else if let decode = Self.decoders[type] {
+                  self = try decode(decoder)
+              } else {
                   self = .unsupported(type)
               }
           }
+
+          private typealias Decode = @Sendable (any Decoder) throws -> Event
+
+          /// Decoders for event types without subtypes, keyed by `type`.
+          private static let decoders: [String: Decode] = [
+      #{plain_decoders.join("\n")}
+          ]
+
+          /// Decoders for event types with subtypes, keyed by `type` and then `subtype` (`nil` for none).
+          private static let subtypeDecoders: [String: [String?: Decode]] = [
+      #{subtype_decoders.join("\n")}
+          ]
 
           /// Returns the contained event as a SlackEvent
           public var payload: (any SlackEvent)? {
@@ -421,6 +450,28 @@ class EventEnum
       #{@events.keys.map { |name| "        case .#{case_name(name)}(let event):\n            return event" }.join("\n")}
               case .unsupported:
                   return nil
+              }
+          }
+
+          // `==` and `hash(into:)` compare `payload`, whose type identifies the case, instead of being
+          // synthesized as a `switch` over every case.
+          public static func == (lhs: Event, rhs: Event) -> Bool {
+              switch (lhs.payload, rhs.payload) {
+              case let (lhsPayload?, rhsPayload?):
+                  return AnyHashable(lhsPayload) == AnyHashable(rhsPayload)
+              case (nil, nil):
+                  guard case let .unsupported(lhsType) = lhs, case let .unsupported(rhsType) = rhs else { return false }
+                  return lhsType == rhsType
+              default:
+                  return false
+              }
+          }
+
+          public func hash(into hasher: inout Hasher) {
+              if let payload {
+                  hasher.combine(AnyHashable(payload))
+              } else if case let .unsupported(type) = self {
+                  hasher.combine(type)
               }
           }
 
@@ -444,40 +495,34 @@ class EventEnum
     words.first.downcase + words.drop(1).join
   end
 
-  # One `case "<type>":` per event type; a type with subtypes switches on `subtype` as well.
-  def type_cases
-    @events.group_by { |_, event| event['type'] }.sort.map do |type, events|
-      plain = events.reject { |_, event| event['subtype'] }
-      with_subtype = events.select { |_, event| event['subtype'] }
-      raise "several events have type #{type} and no subtype" if plain.size > 1
-
-      if with_subtype.empty?
-        "        case \"#{type}\":\n            self = try .#{case_name(plain[0][0])}(#{plain[0][0]}(from: decoder))"
-      else
-        subtype_switch(type, plain.first&.first, with_subtype)
-      end
+  # `type` => events with that type, raising when several events share a type without a subtype.
+  def events_by_type
+    @events_by_type ||= @events.group_by { |_, event| event['type'] }.sort.to_h.each do |type, events|
+      raise "several events have type #{type} and no subtype" if events.count { |_, event| !event['subtype'] } > 1
     end
   end
 
-  # `case "message":` switching on `subtype`; an event without a subtype handles `subtype == nil`.
-  def subtype_switch(type, plain_name, with_subtype)
-    cases = with_subtype.sort_by { |_, event| event['subtype'] }.map do |name, event|
-      "    case \"#{event['subtype']}\":\n        self = try .#{case_name(name)}(#{name}(from: decoder))"
+  def decoder(name)
+    "{ try .#{case_name(name)}(#{name}(from: $0)) }"
+  end
+
+  # One `"<type>": <decoder>,` entry per event type without subtypes.
+  def plain_decoders
+    events_by_type.reject { |_, events| events.any? { |_, event| event['subtype'] } }.map do |type, events|
+      "        \"#{type}\": #{decoder(events[0][0])},"
     end
-    nil_case = plain_name ? "self = try .#{case_name(plain_name)}(#{plain_name}(from: decoder))" : 'self = .unsupported(type)'
-    lines = [
-      "case \"#{type}\":",
-      '    let subtype = try decoder.container(keyedBy: SubtypeCodingKeys.self)',
-      '        .decodeIfPresent(String.self, forKey: .subtype)',
-      '    switch subtype {',
-      *cases,
-      '    case nil:',
-      "        #{nil_case}",
-      '    case let .some(unknownSubtype):',
-      "        self = .unsupported(\"#{type} - \\(unknownSubtype)\")",
-      '    }',
-    ]
-    lines.map { |line| "        #{line}" }.join("\n")
+  end
+
+  # One `"<type>": [<subtype>: <decoder>, ...],` entry per event type with subtypes; an event without
+  # a subtype is keyed by `nil`.
+  def subtype_decoders
+    events_by_type.select { |_, events| events.any? { |_, event| event['subtype'] } }.map do |type, events|
+      entries = events.sort_by { |_, event| event['subtype'] || '' }.map do |name, event|
+        key = event['subtype'] ? "\"#{event['subtype']}\"" : 'nil'
+        "            #{key}: #{decoder(name)},"
+      end
+      ["        \"#{type}\": [", *entries, '        ],'].join("\n")
+    end
   end
 end
 

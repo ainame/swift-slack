@@ -28,17 +28,31 @@ class EventEnumTest < Minitest::Test
     assert_includes source, 'case channelIdChanged(ChannelIDChangedEvent)'
   end
 
-  def test_plain_type_case
-    assert_includes source, "        case \"im_close\":\n            self = try .imClose(IMCloseEvent(from: decoder))"
+  def test_plain_type_decoder
+    assert_includes source, "\"im_close\": { try .imClose(IMCloseEvent(from: $0)) },"
   end
 
-  def test_message_type_switches_on_subtype
-    assert_includes source, 'case "message":'
-    assert_includes source, 'switch subtype {'
-    assert_includes source, 'case "bot_message":'
-    assert_includes source, 'self = try .messageBot(MessageBotEvent(from: decoder))'
-    assert_includes source, "case nil:\n                self = try .message(MessageEvent(from: decoder))"
-    assert_includes source, 'self = .unsupported("message - \(unknownSubtype)")'
+  def test_message_type_decoders_are_keyed_by_subtype
+    assert_includes source, <<~SWIFT.lines.map { |line| "    #{line}" }.join
+      private static let subtypeDecoders: [String: [String?: Decode]] = [
+          "message": [
+              nil: { try .message(MessageEvent(from: $0)) },
+              "bot_message": { try .messageBot(MessageBotEvent(from: $0)) },
+          ],
+      ]
+    SWIFT
+    refute_includes source, '"message": {'
+  end
+
+  def test_decoding_does_not_switch_over_every_event
+    refute_match(/switch type/, source)
+    refute_match(/^\s*case "/, source)
+  end
+
+  def test_equality_and_hashing_go_through_payload
+    assert_includes source, 'public static func == (lhs: Event, rhs: Event) -> Bool {'
+    assert_includes source, 'return AnyHashable(lhsPayload) == AnyHashable(rhsPayload)'
+    assert_includes source, 'hasher.combine(AnyHashable(payload))'
   end
 
   def test_payload_switch_covers_every_case
@@ -48,10 +62,11 @@ class EventEnumTest < Minitest::Test
     end
   end
 
-  def test_subtype_only_events_fall_back_to_unsupported_for_missing_subtype
+  def test_subtype_only_events_have_no_nil_subtype_decoder
     source = EventEnum.new({ 'MessageBotEvent' => { 'type' => 'message', 'subtype' => 'bot_message' } }).source
 
-    assert_includes source, "case nil:\n                self = .unsupported(type)"
+    refute_includes source, 'nil: {'
+    assert_includes source, 'self = .unsupported(type)'
   end
 
   def test_several_plain_events_with_same_type_raise
