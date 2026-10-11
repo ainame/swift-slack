@@ -9,6 +9,12 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+### Removed
+
+* **BREAKING**: Removed `Router.onBlockAction(_:handler:)`, which matched the containing view's `callback_id` instead of the element's `action_id`. Use `onAction(_:blockId:handler:)` for each element, or `onInteractive(_:)` and check `payload.callbackId` for a whole view - #232
+* **BREAKING**: Removed `BlockActionsPayload.actions`, which decoded the interacted elements as Block Kit element definitions without their selected values. Use `BlockActionsPayload.blockActions` - #232
+* **BREAKING**: Removed the misspelled `BlockActionsPaylaod` typealias and `Router.onGlboalShortcut(_:handler:)`. Use `BlockActionsPayload` and `onGlobalShortcut(_:handler:)` - #232
+
 ### Maintenance
 
 * Added a `Gemfile` that pins json 2.19.1 or later for the generator scripts, which now run through `bundle exec`, because Ruby 4.0.7's bundled json 2.18.0 has generator GC bugs that intermittently failed script tests on Linux. Run `bundle install` before generating - #172
