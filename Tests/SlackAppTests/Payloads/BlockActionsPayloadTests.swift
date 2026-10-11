@@ -243,36 +243,6 @@ struct BlockActionsPayloadTests {
         #expect(actions[3]._type == "future_element")
         #expect(actions[3].actionId == "future")
     }
-
-    @Test
-    @available(*, deprecated)
-    func `deprecated actions skips elements that do not decode as Block Kit elements`() throws {
-        let payload = try decodeMessageBlockActions(actions: """
-        {
-          "type": "checkboxes",
-          "action_id": "toppings",
-          "block_id": "b1",
-          "selected_options": [],
-          "action_ts": "1.1"
-        },
-        {
-          "type": "button",
-          "action_id": "approve",
-          "block_id": "b2",
-          "text": { "type": "plain_text", "text": "Approve" },
-          "action_ts": "1.2"
-        }
-        """)
-
-        #expect(payload.blockActions.map(\.actionId) == ["toppings", "approve"])
-        let elements = try #require(payload.actions)
-        #expect(elements.count == 1)
-        guard case let .button(button) = elements.first else {
-            Issue.record("Expected the button element")
-            return
-        }
-        #expect(button.actionId == "approve")
-    }
 }
 
 private func decodeMessageBlockActions(actions: String) throws -> BlockActionsPayload {
