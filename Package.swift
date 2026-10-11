@@ -62,7 +62,6 @@ let package = Package(
         .library(name: "SlackKit", targets: ["SlackKit"]),
         .library(name: "SlackBlockKit", targets: ["SlackBlockKit"]),
         .library(name: "SlackBlockKitDSL", targets: ["SlackBlockKitDSL"]),
-        .library(name: "SlackModels", targets: ["SlackModels"]),
     ],
     traits: Set(traits),
     dependencies: [
@@ -91,7 +90,6 @@ let package = Package(
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "Logging", package: "swift-log"),
                 .target(name: "SlackBlockKit"),
-                .target(name: "SlackModels"),
             ],
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency"),
@@ -100,14 +98,13 @@ let package = Package(
         ),
         .testTarget(
             name: "SlackClientTests",
-            dependencies: ["SlackClient", "SlackModels"],
+            dependencies: ["SlackClient"],
         ),
         .target(
             name: "SlackApp",
             dependencies: [
                 .target(name: "SlackClient"),
                 .target(name: "SlackBlockKit"),
-                .target(name: "SlackModels"),
                 .product(name: "OpenAPIAsyncHTTPClient", package: "swift-openapi-async-http-client"),
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "Logging", package: "swift-log"),
@@ -145,15 +142,7 @@ let package = Package(
                 "SlackApp",
                 "SlackClient",
                 "SlackBlockKit",
-                "SlackModels",
                 .product(name: "NIOCore", package: "swift-nio"),
-            ],
-        ),
-        .target(
-            name: "SlackModels",
-            dependencies: [
-                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
-                .target(name: "SlackBlockKit"),
             ],
         ),
         .target(
