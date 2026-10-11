@@ -11,12 +11,25 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [2027.1.0-beta.1] - 2026-10-11
 
-This is the first beta of 2027.1.0, a major release that is worth upgrading to. Web API responses and events are now generated from the model classes of java-slack-sdk, Slack's Java SDK, instead of being inferred from single recorded JSON samples. Every generated response and event type decodes java-slack-sdk's recorded payloads (268 responses and 91 events), and CI checks it on every change. Models now declare every field java-slack-sdk knows, and the decoding failures of 2026.x are fixed. The `SlackModels` module and the APIs deprecated in 2026.10 are removed. Requests, method names, response and event type names, and `Event` cases are unchanged.
+This is the first beta of 2027.1.0, a major release that is worth upgrading to. Web API responses and events are now generated from the model classes of java-slack-sdk, Slack's Java SDK, instead of being inferred from single recorded JSON samples.
 
-To try it, depend on `from: "2027.1.0-beta.1"`; SwiftPM does not resolve a beta or a 2027 release from a `2026.x` requirement.
+### Summary
 
-> [!WARNING]
-> **This is a breaking release.** Read [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) before upgrading. Most bots that call the Web API, read responses through property chains and handle events need only replace `import SlackModels` with `import SlackClient` or `import SlackKit`. Apps still using `onBlockAction`, `payload.actions` or `ack(responseAction: .clear, view:)` must move to the replacements listed under Removed.
+**Why upgrade**
+
+* **Decoding you can rely on.** Every generated response and event type decodes java-slack-sdk's recorded payloads (268 responses and 91 events), and CI checks it on every change. The decoding failures of 2026.x, such as `bots.info`, Slack Lists rows and `File` image sizes, are fixed.
+* **Complete models.** Types declare every field java-slack-sdk knows, adding 469 properties across the Web API responses, including `ResponseMetadata.nextCursor` for cursor pagination.
+* **Sturdier Block Kit.** A block or element that swift-slack does not model yet decodes as `.unknown` instead of failing the whole response or event, and new blocks such as cards, carousels and alerts are supported.
+
+**What you need to change**
+
+* **Dependency:** require `from: "2027.1.0-beta.1"`. SwiftPM does not resolve a beta or a 2027 release from a `2026.x` requirement.
+* **Imports:** remove the `SlackModels` product and replace `import SlackModels` with `import SlackClient`, or `import SlackKit` in apps. For most bots that call the Web API, read responses through property chains and handle events, this is the only change.
+* **Model types spelled out in your code:** some shared models were renamed, and objects declared inside a response or event are now nested types. See [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md).
+* **Removed APIs:** use `onAction(_:blockId:handler:)` instead of `onBlockAction(_:handler:)`, `payload.blockActions` instead of `payload.actions`, and `ack(responseAction: .clear)` instead of `ack(responseAction: .clear, view:)`.
+* **Exhaustive `switch` statements** over `Block`, `View` or the Block Kit element enums need `.unknown` and the new cases, or `default`.
+
+**What stays the same:** requests, method names, response and event type names, `Event` cases, and typed handlers such as `router.onEvent(AppMentionEvent.self)`.
 
 ### Added
 
