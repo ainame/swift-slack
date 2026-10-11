@@ -16,16 +16,21 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
-> [!IMPORTANT]
-> **2027.1.0 is a major upgrade, and worth it.** Web API responses and events are now generated from the model classes of [Slack's Java SDK](https://github.com/slackapi/java-slack-sdk), the most widely tested description of Slack's payloads, instead of being inferred from single recorded samples.
+> [!TIP]
+> **Try [2027.1.0-beta.2](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.2), especially if you're starting a new app.** The two betas bring these improvements over 2026.x:
 >
-> * **Decoding you can rely on.** Every generated response and event type decodes the Java SDK's recorded payloads (268 responses and 91 events), and CI checks it on every change. The decoding failures of 2026.x, such as `bots.info`, Slack Lists rows and `File` image sizes, are fixed.
-> * **Complete models.** Types declare every field the Java SDK knows, adding 469 properties across the Web API responses, including `nextCursor` for cursor pagination and fields such as user profile emails and `Conversation` membership.
-> * **New Block Kit blocks and elements.** Cards, carousels, alerts, context actions, workflow buttons and URL inputs are now supported.
+> * **More reliable, complete models.** Web API responses and events are generated from upstream [java-slack-sdk](https://github.com/slackapi/java-slack-sdk) model classes. The pipeline checks decoding against its recorded payloads and resolves failures and dropped fields found in the [2026.x audit (#177)](https://github.com/ainame/swift-slack/issues/177), including missing pagination cursors and Slack Lists rows that failed to decode.
+> * **New Block Kit blocks and elements.** Cards, carousels, alerts, context actions, workflow buttons and URL inputs are supported.
+> * **Agent APIs and events.** Nine `agents.conversations.*` methods manage agent conversation views, canvases, commands and properties. Handlers can receive session stop and title-change events and inspect event installation metadata and retry information.
+> * **Message streaming.** `streamMessage` sends an `AsyncSequence` of markdown, task updates, plans and ordered Block Kit chunks into a thread, with batching, rate-limit retries and closing blocks. The [Codex agent demo](DemoApps/codex-agent) combines streaming with tools for cards, session titles, Slack context and questions with buttons.
 >
-> **Available now as `2027.1.0-beta.2`.** This beta adds agent conversation APIs and session events, plus an `AsyncSequence` message streaming API. APIs may still change before the January 2027 release.
+> Because swift-slack uses calendar versioning, the final release is planned as `2027.1.0` in January 2027. APIs may still change before then. Depend on the beta, which SwiftPM does not pick up from a `2026.x` requirement:
 >
-> It is a breaking release, so SwiftPM does not move a `from: "2026.x.y"` requirement to it; change it to `from: "2027.1.0-beta.2"`. Most bots only replace `import SlackModels` with `import SlackClient` or `import SlackKit`. See [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) for renamed and nested types, and the [CHANGELOG](CHANGELOG.md) for the APIs deprecated in 2026.10 that are now removed (`onBlockAction`, `payload.actions` and `ack(responseAction: .clear, view:)`).
+> ```swift
+> .package(url: "https://github.com/ainame/swift-slack.git", from: "2027.1.0-beta.2")
+> ```
+>
+> The beta is a breaking release. Most bots only replace `import SlackModels` with `import SlackClient` or `import SlackKit`. Existing apps should read [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [changelog for both betas](CHANGELOG.md) for renamed and nested types and removed APIs (`onBlockAction`, `payload.actions` and `ack(responseAction: .clear, view:)`). From beta.1, exhaustive `switch` statements over `Event` need `.agentSessionStopped` and `.agentSessionTitleChanged`, or `default`.
 
 ```swift
 import SlackKit
