@@ -59,17 +59,22 @@ actor AgentResponder {
             return
         }
 
-        await setProcessing(turn, client: client)
-        let prompt = await prompt(for: turn, client: client)
-        engagedSessions.insert(session)
-
         // The agent's events go into an AsyncStream that ChatStream sends to Slack. The producer task is
         // separate so the stop button can cancel the agent while the message is still stopped properly.
+        // It is registered before the first `await`: the actor takes other calls while this one waits,
+        // and a second message in the same thread must find the session busy.
         let (chunks, continuation) = AsyncStream.makeStream(of: StreamChunk.self)
-        producers[session] = Task {
+        let producer = Task {
+            await self.setProcessing(turn, client: client)
+            let prompt = await self.prompt(for: turn, client: client)
             await self.produce(turn, prompt: prompt, into: continuation)
         }
-        defer { producers[session] = nil }
+        producers[session] = producer
+        defer {
+            if producers[session] == producer {
+                producers[session] = nil
+            }
+        }
 
         let transport = SlackChatStreamTransport(
             client: client,
@@ -84,7 +89,7 @@ actor AgentResponder {
             // The stop button ends the streaming message on Slack's side, so stopping it can fail here.
             // Leave `processing` anyway, or the session keeps spinning for an hour.
             logger.info("Could not finish the stream", metadata: ["session": "\(session)", "error": "\(error)"])
-            producers[session]?.cancel()
+            producer.cancel()
             await setActive(session, client: client)
         }
     }
@@ -93,7 +98,7 @@ actor AgentResponder {
     func stop(_ session: SessionKey) async {
         guard let producer = producers[session] else { return }
         logger.info("Stopping turn", metadata: ["session": "\(session)"])
-        await backend.interrupt(session)
+        // Cancelling the producer ends its iteration of the backend's stream, which stops the turn.
         producer.cancel()
     }
 
@@ -105,7 +110,7 @@ actor AgentResponder {
     /// The backend keeps a session's conversation, but not one it has not seen: a mention in the middle of
     /// a thread, or a thread from before a restart. Then the prompt starts with the thread so far.
     private func prompt(for turn: Turn, client: any APIProtocol) async -> String {
-        guard !engagedSessions.contains(turn.session), turn.messageTs != turn.session.threadTs else {
+        guard engagedSessions.insert(turn.session).inserted, turn.messageTs != turn.session.threadTs else {
             return turn.prompt
         }
         do {

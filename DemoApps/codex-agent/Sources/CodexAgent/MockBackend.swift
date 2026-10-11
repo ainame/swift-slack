@@ -16,9 +16,6 @@ struct MockBackend: AgentBackend {
         }
     }
 
-    /// Stopping cancels the stream's task, which ends the scripted turn at its next pause.
-    func interrupt(_: SessionKey) async {}
-
     private func play(prompt: String, continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation) async throws {
         let steps = [
             ("read", "Read the request"),

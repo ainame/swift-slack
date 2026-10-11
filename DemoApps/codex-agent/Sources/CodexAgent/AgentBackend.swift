@@ -20,8 +20,7 @@ enum AgentEvent: Sendable, Equatable {
 /// Produces the agent's side of a turn. The Slack layer turns the events into streamed messages.
 protocol AgentBackend: Sendable {
     /// Runs one turn for `prompt`, continuing the conversation already held for `session`.
+    ///
+    /// Cancelling the task that iterates the stream stops the turn.
     func respond(to prompt: String, in session: SessionKey) -> AsyncThrowingStream<AgentEvent, any Error>
-
-    /// Stops the turn running for `session`, if any. The stream from ``respond(to:in:)`` then finishes.
-    func interrupt(_ session: SessionKey) async
 }

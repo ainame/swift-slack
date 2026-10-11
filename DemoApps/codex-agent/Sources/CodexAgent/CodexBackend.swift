@@ -1,21 +1,27 @@
 import Codex
 import Logging
 import SlackStreaming
+import Synchronization
 
 /// Runs each Slack agent session as a Codex thread, through the `codex app-server` that swift-codex launches.
 ///
 /// swift-codex allows one active turn per `Codex` instance, so every session gets its own instance and
-/// app-server process. Sessions stay open until the app exits.
+/// app-server process. A session idle for `idleTimeout` closes its process and keeps the thread ID, so the
+/// next message resumes the conversation in a new process.
 actor CodexBackend: AgentBackend {
     struct Settings: Sendable {
         var codexPath: String?
         var model: String?
         var workspace: String
+        var idleTimeout: Duration = .seconds(600)
     }
 
     private let settings: Settings
     private let logger: Logger
     private var sessions: [SessionKey: CodexSession] = [:]
+    /// Threads of closed sessions, resumed when the session continues.
+    private var threadIDs: [SessionKey: String] = [:]
+    private var idleTimers: [SessionKey: Task<Void, Never>] = [:]
 
     init(settings: Settings, logger: Logger) {
         self.settings = settings
@@ -24,30 +30,88 @@ actor CodexBackend: AgentBackend {
 
     nonisolated func respond(to prompt: String, in session: SessionKey) -> AsyncThrowingStream<AgentEvent, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task {
+            let control = TurnControl()
+            // The turn runs in its own task so that stopping it can interrupt Codex and still read the turn
+            // to its end. Otherwise its remaining notifications would reach the session's next turn.
+            Task {
                 do {
-                    let codexSession = await self.session(for: session)
-                    try await codexSession.run(prompt: prompt, continuation: continuation)
+                    try await self.run(prompt: prompt, in: session, control: control, continuation: continuation)
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)
                 }
             }
-            continuation.onTermination = { _ in task.cancel() }
+            continuation.onTermination = { termination in
+                if case .cancelled = termination {
+                    control.cancel()
+                }
+            }
         }
     }
 
-    func interrupt(_ session: SessionKey) async {
-        await sessions[session]?.interrupt()
-    }
-
-    private func session(for key: SessionKey) -> CodexSession {
-        if let session = sessions[key] {
-            return session
-        }
-        let session = CodexSession(settings: settings, logger: logger)
+    private func run(
+        prompt: String,
+        in key: SessionKey,
+        control: TurnControl,
+        continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
+    ) async throws {
+        idleTimers.removeValue(forKey: key)?.cancel()
+        let session = sessions[key] ?? CodexSession(settings: settings, threadID: threadIDs[key], logger: logger)
         sessions[key] = session
-        return session
+        defer { scheduleIdleClose(key, session: session) }
+        try await session.run(prompt: prompt, control: control, continuation: continuation)
+    }
+
+    private func scheduleIdleClose(_ key: SessionKey, session: CodexSession) {
+        idleTimers[key]?.cancel()
+        idleTimers[key] = Task {
+            try? await Task.sleep(for: settings.idleTimeout)
+            guard !Task.isCancelled else { return }
+            await self.close(key, session: session)
+        }
+    }
+
+    private func close(_ key: SessionKey, session: CodexSession) async {
+        guard sessions[key] === session, await !session.isRunning else { return }
+        sessions[key] = nil
+        idleTimers[key] = nil
+        threadIDs[key] = await session.close()
+        logger.info("Closed idle Codex session", metadata: ["session": "\(key)"])
+    }
+}
+
+/// Connects a stopped Slack turn to the Codex turn it started, whichever happens first.
+private final class TurnControl: Sendable {
+    private struct State {
+        var isCancelled = false
+        var handle: CodexTurnHandle?
+    }
+
+    private let state = Mutex(State())
+
+    var isCancelled: Bool {
+        state.withLock(\.isCancelled)
+    }
+
+    func cancel() {
+        let handle = state.withLock { state in
+            state.isCancelled = true
+            return state.handle
+        }
+        if let handle {
+            Task { _ = try? await handle.interrupt() }
+        }
+    }
+
+    /// Records the started turn and interrupts it if the Slack turn was already stopped.
+    func attach(_ handle: CodexTurnHandle) {
+        let isCancelled = state.withLock { state in
+            state.handle = handle
+            return state.isCancelled
+        }
+        if isCancelled {
+            Task { _ = try? await handle.interrupt() }
+        }
     }
 }
 
@@ -56,33 +120,61 @@ private actor CodexSession {
     private let logger: Logger
     private var codex: Codex?
     private var thread: CodexThread?
-    private var activeTurn: CodexTurnHandle?
+    private var threadID: String?
+    /// The previous turn. Turns run one at a time, including the rest of an interrupted one.
+    private var lastTurn: Task<Void, any Error>?
+    private(set) var isRunning = false
 
-    init(settings: CodexBackend.Settings, logger: Logger) {
+    init(settings: CodexBackend.Settings, threadID: String?, logger: Logger) {
         self.settings = settings
+        self.threadID = threadID
         self.logger = logger
     }
 
-    func run(prompt: String, continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation) async throws {
-        let thread = try await prepareThread()
-        let handle = try await thread.turn(prompt, options: TurnOptions(summary: .concise))
-        activeTurn = handle
-        defer { activeTurn = nil }
+    func run(
+        prompt: String,
+        control: TurnControl,
+        continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
+    ) async throws {
+        let previous = lastTurn
+        let turn = Task {
+            _ = await previous?.result
+            try await self.execute(prompt: prompt, control: control, continuation: continuation)
+        }
+        lastTurn = turn
+        try await turn.value
+    }
 
+    /// Closes the app-server process and returns the thread ID to resume later.
+    func close() async -> String? {
+        await codex?.close()
+        codex = nil
+        thread = nil
+        return threadID
+    }
+
+    private func execute(
+        prompt: String,
+        control: TurnControl,
+        continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
+    ) async throws {
+        isRunning = true
+        defer { isRunning = false }
+        let thread = try await prepareThread()
+        guard !control.isCancelled else { return }
+
+        let handle = try await thread.turn(prompt, options: TurnOptions(summary: .concise))
+        control.attach(handle)
+
+        // Read to turn/completed even after a stop; yielding to a terminated stream does nothing.
         var translator = NotificationTranslator(turnID: handle.id)
         for try await notification in try await handle.stream() {
-            for event in try translator.events(for: notification) {
+            for event in translator.events(for: notification) {
                 continuation.yield(event)
             }
         }
-    }
-
-    func interrupt() async {
-        guard let activeTurn else { return }
-        do {
-            _ = try await activeTurn.interrupt()
-        } catch {
-            logger.warning("Failed to interrupt Codex turn", metadata: ["error": "\(error)"])
+        if let failure = translator.failure {
+            throw failure
         }
     }
 
@@ -95,7 +187,7 @@ private actor CodexSession {
             logger: logger,
         )
         self.codex = codex
-        let thread = try await codex.startThread(options: ThreadOptions(
+        let options = ThreadOptions(
             approvalPolicy: .never,
             cwd: settings.workspace,
             developerInstructions: """
@@ -104,8 +196,14 @@ private actor CodexSession {
             """,
             model: settings.model,
             sandboxPreset: .readOnly,
-        ))
+        )
+        let thread = if let threadID {
+            try await codex.resumeThread(id: threadID, options: options)
+        } else {
+            try await codex.startThread(options: options)
+        }
         self.thread = thread
+        threadID = thread.id
         return thread
     }
 }
@@ -123,13 +221,15 @@ struct NotificationTranslator {
     }
 
     let turnID: String
+    /// The turn's error, kept until the turn completes so the caller still reads it to the end.
+    private(set) var failure: Failure?
     private var lastMessageItemID: String?
 
     init(turnID: String) {
         self.turnID = turnID
     }
 
-    mutating func events(for notification: CodexNotification) throws -> [AgentEvent] {
+    mutating func events(for notification: CodexNotification) -> [AgentEvent] {
         guard notification.turnID == nil || notification.turnID == turnID else {
             return []
         }
@@ -145,9 +245,11 @@ struct NotificationTranslator {
         case let .itemCompleted(payload):
             return task(for: payload.item).map { [.task($0)] } ?? []
         case let .turnCompleted(payload) where payload.turn.status == .failed:
-            throw Failure.turnFailed(payload.turn.error?.message ?? "Codex turn failed")
+            failure = failure ?? .turnFailed(payload.turn.error?.message ?? "Codex turn failed")
+            return []
         case let .error(payload):
-            throw Failure.turnFailed(payload.error.message)
+            failure = failure ?? .turnFailed(payload.error.message)
+            return []
         default:
             return []
         }
