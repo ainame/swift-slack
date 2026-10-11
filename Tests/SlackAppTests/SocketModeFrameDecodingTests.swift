@@ -165,6 +165,34 @@ struct SocketModeFrameDecodingTests {
         #expect(payload.command == "/echo")
         #expect(await acks.envelopeIds.isEmpty)
     }
+
+    #if Events
+    @Test func `retried Events API envelope carries its retry attempt and reason`() async throws {
+        let json = """
+        {
+          "envelope_id": "env-3",
+          "type": "events_api",
+          "accepts_response_payload": false,
+          "retry_attempt": 1,
+          "retry_reason": "timeout",
+          "payload": {
+            "team_id": "T123",
+            "api_app_id": "A123",
+            "event": {"type": "app_mention", "channel": "C123", "user": "U123", "text": "hi", "ts": "1", "event_ts": "1"},
+            "type": "event_callback",
+            "event_id": "Ev123",
+            "event_time": 123
+          }
+        }
+        """
+
+        let envelope = await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) { _ in }
+
+        let decoded = try #require(envelope)
+        #expect(decoded.retryAttempt == 1)
+        #expect(decoded.retryReason == "timeout")
+    }
+    #endif
 }
 
 private struct AckFailure: Error {}

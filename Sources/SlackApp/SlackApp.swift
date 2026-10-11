@@ -26,6 +26,27 @@ public final class SlackApp {
         public let logger: Logger
         public let respond: Respond
         public let say: Say
+        /// How many times Slack has retried delivering this event, or `nil` for the first delivery.
+        /// Slack retries when the app did not acknowledge the event in time; check this to skip duplicate work.
+        public let retryNum: Int?
+        /// Why Slack retried this event, such as `http_timeout`, or `nil` for the first delivery.
+        public let retryReason: String?
+
+        init(
+            client: APIProtocol,
+            logger: Logger,
+            respond: Respond,
+            say: Say,
+            retryNum: Int? = nil,
+            retryReason: String? = nil,
+        ) {
+            self.client = client
+            self.logger = logger
+            self.respond = respond
+            self.say = say
+            self.retryNum = retryNum
+            self.retryReason = retryReason
+        }
     }
 
     public struct Context: Sendable {
@@ -137,6 +158,8 @@ extension SlackApp {
                                     logger: runtimeLogger,
                                     respond: Respond(transport: transport, logger: logger),
                                     say: Say(client: client, logger: logger),
+                                    retryNum: envelope.retryAttempt,
+                                    retryReason: envelope.retryReason,
                                 )
                                 try await router.dispatch(context: .event(context), request: request)
                             case .interactive, .slashCommand:

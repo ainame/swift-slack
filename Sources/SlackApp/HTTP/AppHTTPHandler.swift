@@ -45,6 +45,10 @@ private actor HTTPAcknowledgmentState {
 }
 
 struct AppHTTPHandler {
+    /// Headers that Slack adds when it retries an Events API request.
+    private static let retryNumField = HTTPField.Name("X-Slack-Retry-Num")!
+    private static let retryReasonField = HTTPField.Name("X-Slack-Retry-Reason")!
+
     private static let contentTypeField = HTTPField.Name.contentType
 
     private struct JSONEnvelope: Decodable {
@@ -142,7 +146,11 @@ struct AppHTTPHandler {
             #if Events
             do {
                 let payload = try jsonDecoder.decode(EventsApiEnvelope<Event>.self, from: body)
-                return try await dispatchEvent(.event(payload))
+                return try await dispatchEvent(
+                    .event(payload),
+                    retryNum: request.headerFields[Self.retryNumField].flatMap { Int($0) },
+                    retryReason: request.headerFields[Self.retryReasonField],
+                )
             } catch {
                 logger.warning("Ignoring malformed Slack event_callback request after successful signature verification")
                 return (HTTPResponse(status: .ok), nil)
@@ -178,7 +186,11 @@ struct AppHTTPHandler {
         return try await dispatchRequest(.slashCommand(payload))
     }
 
-    private func dispatchEvent(_ request: Request) async throws -> (response: HTTPResponse, body: Foundation.Data?) {
+    private func dispatchEvent(
+        _ request: Request,
+        retryNum: Int?,
+        retryReason: String?,
+    ) async throws -> (response: HTTPResponse, body: Foundation.Data?) {
         let client = await slack.client
         let transport = await slack.transport
         let logger = await slack.logger
@@ -190,6 +202,8 @@ struct AppHTTPHandler {
             logger: logger,
             respond: respond,
             say: say,
+            retryNum: retryNum,
+            retryReason: retryReason,
         )
         do {
             _ = try await router.dispatch(context: .event(context), request: request)
