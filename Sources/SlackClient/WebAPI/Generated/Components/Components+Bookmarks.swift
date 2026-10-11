@@ -9,225 +9,221 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Bookmarks
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/BookmarksAddResponse`.
     public struct BookmarksAddResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/BookmarksAddResponse/bookmark`.
-        public var bookmark: SlackModels.Bookmark?
+        /// - Remark: Generated from `#/components/schemas/BookmarksAddResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/BookmarksAddResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksAddResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksAddResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/BookmarksAddResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/BookmarksAddResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksAddResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/BookmarksAddResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/BookmarksAddResponse/bookmark`.
+        public var bookmark: Components.Schemas.Bookmark?
         /// Creates a new `BookmarksAddResponse`.
         ///
         /// - Parameters:
-        ///   - bookmark:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
+        ///   - bookmark:
         public init(
-            bookmark: SlackModels.Bookmark? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+            bookmark: Components.Schemas.Bookmark? = nil,
         ) {
-            self.bookmark = bookmark
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
+            self.bookmark = bookmark
         }
 
         public enum CodingKeys: String, CodingKey {
-            case bookmark
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
+            case bookmark
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/BookmarksEditResponse`.
     public struct BookmarksEditResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/BookmarksEditResponse/bookmark`.
-        public var bookmark: SlackModels.Bookmark?
+        /// - Remark: Generated from `#/components/schemas/BookmarksEditResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/BookmarksEditResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksEditResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksEditResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/BookmarksEditResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/BookmarksEditResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksEditResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/BookmarksEditResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/BookmarksEditResponse/bookmark`.
+        public var bookmark: Components.Schemas.Bookmark?
         /// Creates a new `BookmarksEditResponse`.
         ///
         /// - Parameters:
-        ///   - bookmark:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
+        ///   - bookmark:
         public init(
-            bookmark: SlackModels.Bookmark? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+            bookmark: Components.Schemas.Bookmark? = nil,
         ) {
-            self.bookmark = bookmark
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
+            self.bookmark = bookmark
         }
 
         public enum CodingKeys: String, CodingKey {
-            case bookmark
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
+            case bookmark
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/BookmarksListResponse`.
     public struct BookmarksListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/BookmarksListResponse/bookmarks`.
-        public var bookmarks: [SlackModels.Bookmark]?
+        /// - Remark: Generated from `#/components/schemas/BookmarksListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/BookmarksListResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksListResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksListResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/BookmarksListResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/BookmarksListResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksListResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/BookmarksListResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/BookmarksListResponse/bookmarks`.
+        public var bookmarks: [Components.Schemas.Bookmark]?
         /// Creates a new `BookmarksListResponse`.
         ///
         /// - Parameters:
-        ///   - bookmarks:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
+        ///   - bookmarks:
         public init(
-            bookmarks: [SlackModels.Bookmark]? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
+            bookmarks: [Components.Schemas.Bookmark]? = nil,
         ) {
-            self.bookmarks = bookmarks
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
+            self.bookmarks = bookmarks
         }
 
         public enum CodingKeys: String, CodingKey {
-            case bookmarks
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
+            case bookmarks
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/BookmarksRemoveResponse`.
     public struct BookmarksRemoveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/BookmarksRemoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/BookmarksRemoveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksRemoveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksRemoveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/BookmarksRemoveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/BookmarksRemoveResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BookmarksRemoveResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/BookmarksRemoveResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `BookmarksRemoveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
         }
     }
 }

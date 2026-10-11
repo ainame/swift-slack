@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Bookmarks
 extension Operations {
+    /// Add bookmark to a channel.
+    ///
+    /// - Remark: HTTP `POST /bookmarks.add`.
+    /// - Remark: Generated from `#/paths//bookmarks.add/post(bookmarksAdd)`.
     public enum BookmarksAdd {
         public static let id: Swift.String = "bookmarksAdd"
         public struct Input: Sendable, Hashable {
@@ -217,6 +221,10 @@ extension Operations {
         }
     }
 
+    /// Edit bookmark.
+    ///
+    /// - Remark: HTTP `POST /bookmarks.edit`.
+    /// - Remark: Generated from `#/paths//bookmarks.edit/post(bookmarksEdit)`.
     public enum BookmarksEdit {
         public static let id: Swift.String = "bookmarksEdit"
         public struct Input: Sendable, Hashable {
@@ -397,6 +405,10 @@ extension Operations {
         }
     }
 
+    /// List bookmark for the channel.
+    ///
+    /// - Remark: HTTP `POST /bookmarks.list`.
+    /// - Remark: Generated from `#/paths//bookmarks.list/post(bookmarksList)`.
     public enum BookmarksList {
         public static let id: Swift.String = "bookmarksList"
         public struct Input: Sendable, Hashable {
@@ -543,6 +555,10 @@ extension Operations {
         }
     }
 
+    /// Remove bookmark from the channel.
+    ///
+    /// - Remark: HTTP `POST /bookmarks.remove`.
+    /// - Remark: Generated from `#/paths//bookmarks.remove/post(bookmarksRemove)`.
     public enum BookmarksRemove {
         public static let id: Swift.String = "bookmarksRemove"
         public struct Input: Sendable, Hashable {

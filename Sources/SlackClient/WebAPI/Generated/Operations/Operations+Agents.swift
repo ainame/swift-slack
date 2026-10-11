@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Agents
 extension Operations {
+    /// Rename an agent session.
+    ///
+    /// - Remark: HTTP `POST /agents.sessions.rename`.
+    /// - Remark: Generated from `#/paths//agents.sessions.rename/post(agentsSessionsRename)`.
     public enum AgentsSessionsRename {
         public static let id: Swift.String = "agentsSessionsRename"
         public struct Input: Sendable, Hashable {
@@ -178,6 +182,10 @@ extension Operations {
         }
     }
 
+    /// Set an agent session's lifecycle status, creating the session if needed.
+    ///
+    /// - Remark: HTTP `POST /agents.sessions.setStatus`.
+    /// - Remark: Generated from `#/paths//agents.sessions.setStatus/post(agentsSessionsSetStatus)`.
     public enum AgentsSessionsSetStatus {
         public static let id: Swift.String = "agentsSessionsSetStatus"
         public struct Input: Sendable, Hashable {

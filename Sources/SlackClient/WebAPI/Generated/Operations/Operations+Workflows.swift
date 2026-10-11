@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Workflows
 extension Operations {
+    /// Add featured workflows to a channel.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.add`.
+    /// - Remark: Generated from `#/paths//workflows.featured.add/post(workflowsFeaturedAdd)`.
     public enum WorkflowsFeaturedAdd {
         public static let id: Swift.String = "workflowsFeaturedAdd"
         public struct Input: Sendable, Hashable {
@@ -169,6 +173,10 @@ extension Operations {
         }
     }
 
+    /// List the featured workflows for specified channels.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.list`.
+    /// - Remark: Generated from `#/paths//workflows.featured.list/post(workflowsFeaturedList)`.
     public enum WorkflowsFeaturedList {
         public static let id: Swift.String = "workflowsFeaturedList"
         public struct Input: Sendable, Hashable {
@@ -315,6 +323,10 @@ extension Operations {
         }
     }
 
+    /// Remove featured workflows from a channel.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.remove`.
+    /// - Remark: Generated from `#/paths//workflows.featured.remove/post(workflowsFeaturedRemove)`.
     public enum WorkflowsFeaturedRemove {
         public static let id: Swift.String = "workflowsFeaturedRemove"
         public struct Input: Sendable, Hashable {
@@ -471,6 +483,10 @@ extension Operations {
         }
     }
 
+    /// Set featured workflows for a channel.
+    ///
+    /// - Remark: HTTP `POST /workflows.featured.set`.
+    /// - Remark: Generated from `#/paths//workflows.featured.set/post(workflowsFeaturedSet)`.
     public enum WorkflowsFeaturedSet {
         public static let id: Swift.String = "workflowsFeaturedSet"
         public struct Input: Sendable, Hashable {

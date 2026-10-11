@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Tooling
 extension Operations {
+    /// Exchanges a refresh token for a new app configuration token.
+    ///
+    /// - Remark: HTTP `POST /tooling.tokens.rotate`.
+    /// - Remark: Generated from `#/paths//tooling.tokens.rotate/post(toolingTokensRotate)`.
     public enum ToolingTokensRotate {
         public static let id: Swift.String = "toolingTokensRotate"
         public struct Input: Sendable, Hashable {

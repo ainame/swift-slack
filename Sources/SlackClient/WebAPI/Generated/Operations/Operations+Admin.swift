@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Admin
 extension Operations {
+    /// Revoke a single session for a user. The user will be forced to login to Slack.
+    ///
+    /// - Remark: HTTP `POST /admin.users.session.invalidate`.
+    /// - Remark: Generated from `#/paths//admin.users.session.invalidate/post(adminUsersSessionInvalidate)`.
     public enum AdminUsersSessionInvalidate {
         public static let id: Swift.String = "adminUsersSessionInvalidate"
         public struct Input: Sendable, Hashable {
@@ -169,6 +173,10 @@ extension Operations {
         }
     }
 
+    /// Get logs for a specified team/org
+    ///
+    /// - Remark: HTTP `POST /admin.apps.activities.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.activities.list/post(adminAppsActivitiesList)`.
     public enum AdminAppsActivitiesList {
         public static let id: Swift.String = "adminAppsActivitiesList"
         public struct Input: Sendable, Hashable {
@@ -417,6 +425,10 @@ extension Operations {
         }
     }
 
+    /// Approve an app for installation on a workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.approve`.
+    /// - Remark: Generated from `#/paths//admin.apps.approve/post(adminAppsApprove)`.
     public enum AdminAppsApprove {
         public static let id: Swift.String = "adminAppsApprove"
         public struct Input: Sendable, Hashable {
@@ -613,6 +625,10 @@ extension Operations {
         }
     }
 
+    /// List approved apps for an org or workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.approved.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.approved.list/post(adminAppsApprovedList)`.
     public enum AdminAppsApprovedList {
         public static let id: Swift.String = "adminAppsApprovedList"
         public struct Input: Sendable, Hashable {
@@ -793,6 +809,10 @@ extension Operations {
         }
     }
 
+    /// Clear an app resolution
+    ///
+    /// - Remark: HTTP `POST /admin.apps.clearResolution`.
+    /// - Remark: Generated from `#/paths//admin.apps.clearResolution/post(adminAppsClearResolution)`.
     public enum AdminAppsClearResolution {
         public static let id: Swift.String = "adminAppsClearResolution"
         public struct Input: Sendable, Hashable {
@@ -957,6 +977,10 @@ extension Operations {
         }
     }
 
+    /// Look up the app config for connectors by their IDs
+    ///
+    /// - Remark: HTTP `POST /admin.apps.config.lookup`.
+    /// - Remark: Generated from `#/paths//admin.apps.config.lookup/post(adminAppsConfigLookup)`.
     public enum AdminAppsConfigLookup {
         public static let id: Swift.String = "adminAppsConfigLookup"
         public struct Input: Sendable, Hashable {
@@ -1113,6 +1137,10 @@ extension Operations {
         }
     }
 
+    /// Set the app config for a connector
+    ///
+    /// - Remark: HTTP `POST /admin.apps.config.set`.
+    /// - Remark: Generated from `#/paths//admin.apps.config.set/post(adminAppsConfigSet)`.
     public enum AdminAppsConfigSet {
         public static let id: Swift.String = "adminAppsConfigSet"
         public struct Input: Sendable, Hashable {
@@ -1287,6 +1315,10 @@ extension Operations {
         }
     }
 
+    /// Cancel app request for team
+    ///
+    /// - Remark: HTTP `POST /admin.apps.requests.cancel`.
+    /// - Remark: Generated from `#/paths//admin.apps.requests.cancel/post(adminAppsRequestsCancel)`.
     public enum AdminAppsRequestsCancel {
         public static let id: Swift.String = "adminAppsRequestsCancel"
         public struct Input: Sendable, Hashable {
@@ -1451,6 +1483,10 @@ extension Operations {
         }
     }
 
+    /// List app requests for a team/workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.requests.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.requests.list/post(adminAppsRequestsList)`.
     public enum AdminAppsRequestsList {
         public static let id: Swift.String = "adminAppsRequestsList"
         public struct Input: Sendable, Hashable {
@@ -1631,6 +1667,10 @@ extension Operations {
         }
     }
 
+    /// Restrict an app for installation on a workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.restrict`.
+    /// - Remark: Generated from `#/paths//admin.apps.restrict/post(adminAppsRestrict)`.
     public enum AdminAppsRestrict {
         public static let id: Swift.String = "adminAppsRestrict"
         public struct Input: Sendable, Hashable {
@@ -1803,6 +1843,10 @@ extension Operations {
         }
     }
 
+    /// List restricted apps for an org or workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.restricted.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.restricted.list/post(adminAppsRestrictedList)`.
     public enum AdminAppsRestrictedList {
         public static let id: Swift.String = "adminAppsRestrictedList"
         public struct Input: Sendable, Hashable {
@@ -1983,6 +2027,10 @@ extension Operations {
         }
     }
 
+    /// Uninstall an app from one or many workspaces, or an entire enterprise organization.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.uninstall`.
+    /// - Remark: Generated from `#/paths//admin.apps.uninstall/post(adminAppsUninstall)`.
     public enum AdminAppsUninstall {
         public static let id: Swift.String = "adminAppsUninstall"
         public struct Input: Sendable, Hashable {
@@ -2147,6 +2195,10 @@ extension Operations {
         }
     }
 
+    /// Assign entities to a particular authentication policy.
+    ///
+    /// - Remark: HTTP `POST /admin.auth.policy.assignEntities`.
+    /// - Remark: Generated from `#/paths//admin.auth.policy.assignEntities/post(adminAuthPolicyAssignEntities)`.
     public enum AdminAuthPolicyAssignEntities {
         public static let id: Swift.String = "adminAuthPolicyAssignEntities"
         public struct Input: Sendable, Hashable {
@@ -2311,6 +2363,10 @@ extension Operations {
         }
     }
 
+    /// Fetch all the entities assigned to a particular authentication policy by name.
+    ///
+    /// - Remark: HTTP `POST /admin.auth.policy.getEntities`.
+    /// - Remark: Generated from `#/paths//admin.auth.policy.getEntities/post(adminAuthPolicyGetEntities)`.
     public enum AdminAuthPolicyGetEntities {
         public static let id: Swift.String = "adminAuthPolicyGetEntities"
         public struct Input: Sendable, Hashable {
@@ -2483,6 +2539,10 @@ extension Operations {
         }
     }
 
+    /// Remove specified entities from a specified authentication policy.
+    ///
+    /// - Remark: HTTP `POST /admin.auth.policy.removeEntities`.
+    /// - Remark: Generated from `#/paths//admin.auth.policy.removeEntities/post(adminAuthPolicyRemoveEntities)`.
     public enum AdminAuthPolicyRemoveEntities {
         public static let id: Swift.String = "adminAuthPolicyRemoveEntities"
         public struct Input: Sendable, Hashable {
@@ -2647,6 +2707,10 @@ extension Operations {
         }
     }
 
+    /// Create an Information Barrier
+    ///
+    /// - Remark: HTTP `POST /admin.barriers.create`.
+    /// - Remark: Generated from `#/paths//admin.barriers.create/post(adminBarriersCreate)`.
     public enum AdminBarriersCreate {
         public static let id: Swift.String = "adminBarriersCreate"
         public struct Input: Sendable, Hashable {
@@ -2811,6 +2875,10 @@ extension Operations {
         }
     }
 
+    /// Delete an existing Information Barrier
+    ///
+    /// - Remark: HTTP `POST /admin.barriers.delete`.
+    /// - Remark: Generated from `#/paths//admin.barriers.delete/post(adminBarriersDelete)`.
     public enum AdminBarriersDelete {
         public static let id: Swift.String = "adminBarriersDelete"
         public struct Input: Sendable, Hashable {
@@ -2957,6 +3025,10 @@ extension Operations {
         }
     }
 
+    /// Get all Information Barriers for your organization
+    ///
+    /// - Remark: HTTP `POST /admin.barriers.list`.
+    /// - Remark: Generated from `#/paths//admin.barriers.list/post(adminBarriersList)`.
     public enum AdminBarriersList {
         public static let id: Swift.String = "adminBarriersList"
         public struct Input: Sendable, Hashable {
@@ -3113,6 +3185,10 @@ extension Operations {
         }
     }
 
+    /// Update an existing Information Barrier
+    ///
+    /// - Remark: HTTP `POST /admin.barriers.update`.
+    /// - Remark: Generated from `#/paths//admin.barriers.update/post(adminBarriersUpdate)`.
     public enum AdminBarriersUpdate {
         public static let id: Swift.String = "adminBarriersUpdate"
         public struct Input: Sendable, Hashable {
@@ -3285,6 +3361,10 @@ extension Operations {
         }
     }
 
+    /// Archive a public or private channel.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.archive`.
+    /// - Remark: Generated from `#/paths//admin.conversations.archive/post(adminConversationsArchive)`.
     public enum AdminConversationsArchive {
         public static let id: Swift.String = "adminConversationsArchive"
         public struct Input: Sendable, Hashable {
@@ -3431,6 +3511,10 @@ extension Operations {
         }
     }
 
+    /// Archive public or private channels in bulk.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.bulkArchive`.
+    /// - Remark: Generated from `#/paths//admin.conversations.bulkArchive/post(adminConversationsBulkArchive)`.
     public enum AdminConversationsBulkArchive {
         public static let id: Swift.String = "adminConversationsBulkArchive"
         public struct Input: Sendable, Hashable {
@@ -3577,6 +3661,10 @@ extension Operations {
         }
     }
 
+    /// Delete public or private channels in bulk
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.bulkDelete`.
+    /// - Remark: Generated from `#/paths//admin.conversations.bulkDelete/post(adminConversationsBulkDelete)`.
     public enum AdminConversationsBulkDelete {
         public static let id: Swift.String = "adminConversationsBulkDelete"
         public struct Input: Sendable, Hashable {
@@ -3723,6 +3811,10 @@ extension Operations {
         }
     }
 
+    /// Move public or private channels in bulk.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.bulkMove`.
+    /// - Remark: Generated from `#/paths//admin.conversations.bulkMove/post(adminConversationsBulkMove)`.
     public enum AdminConversationsBulkMove {
         public static let id: Swift.String = "adminConversationsBulkMove"
         public struct Input: Sendable, Hashable {
@@ -3879,6 +3971,10 @@ extension Operations {
         }
     }
 
+    /// Convert a public channel to a private channel.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.convertToPrivate`.
+    /// - Remark: Generated from `#/paths//admin.conversations.convertToPrivate/post(adminConversationsConvertToPrivate)`.
     public enum AdminConversationsConvertToPrivate {
         public static let id: Swift.String = "adminConversationsConvertToPrivate"
         public struct Input: Sendable, Hashable {
@@ -4035,6 +4131,10 @@ extension Operations {
         }
     }
 
+    /// Convert a private channel to a public channel.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.convertToPublic`.
+    /// - Remark: Generated from `#/paths//admin.conversations.convertToPublic/post(adminConversationsConvertToPublic)`.
     public enum AdminConversationsConvertToPublic {
         public static let id: Swift.String = "adminConversationsConvertToPublic"
         public struct Input: Sendable, Hashable {
@@ -4181,6 +4281,10 @@ extension Operations {
         }
     }
 
+    /// Create a public or private channel-based conversation.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.create`.
+    /// - Remark: Generated from `#/paths//admin.conversations.create/post(adminConversationsCreate)`.
     public enum AdminConversationsCreate {
         public static let id: Swift.String = "adminConversationsCreate"
         public struct Input: Sendable, Hashable {
@@ -4361,6 +4465,10 @@ extension Operations {
         }
     }
 
+    /// Delete a public or private channel.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.delete`.
+    /// - Remark: Generated from `#/paths//admin.conversations.delete/post(adminConversationsDelete)`.
     public enum AdminConversationsDelete {
         public static let id: Swift.String = "adminConversationsDelete"
         public struct Input: Sendable, Hashable {
@@ -4507,6 +4615,10 @@ extension Operations {
         }
     }
 
+    /// Disconnect a connected channel from one or more workspaces.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.disconnectShared`.
+    /// - Remark: Generated from `#/paths//admin.conversations.disconnectShared/post(adminConversationsDisconnectShared)`.
     public enum AdminConversationsDisconnectShared {
         public static let id: Swift.String = "adminConversationsDisconnectShared"
         public struct Input: Sendable, Hashable {
@@ -4663,6 +4775,10 @@ extension Operations {
         }
     }
 
+    /// List all disconnected channels—i.e., channels that were once connected to other workspaces and then disconnected—and the corresponding original channel IDs for key revocation with EKM.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.ekm.listOriginalConnectedChannelInfo`.
+    /// - Remark: Generated from `#/paths//admin.conversations.ekm.listOriginalConnectedChannelInfo/post(adminConversationsEkmListOriginalConnectedChannelInfo)`.
     public enum AdminConversationsEkmListOriginalConnectedChannelInfo {
         public static let id: Swift.String = "adminConversationsEkmListOriginalConnectedChannelInfo"
         public struct Input: Sendable, Hashable {
@@ -4835,6 +4951,10 @@ extension Operations {
         }
     }
 
+    /// Get conversation preferences for a public or private channel.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.getConversationPrefs`.
+    /// - Remark: Generated from `#/paths//admin.conversations.getConversationPrefs/post(adminConversationsGetConversationPrefs)`.
     public enum AdminConversationsGetConversationPrefs {
         public static let id: Swift.String = "adminConversationsGetConversationPrefs"
         public struct Input: Sendable, Hashable {
@@ -4981,6 +5101,10 @@ extension Operations {
         }
     }
 
+    /// This API endpoint can be used by any admin to get a conversation's retention policy.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.getCustomRetention`.
+    /// - Remark: Generated from `#/paths//admin.conversations.getCustomRetention/post(adminConversationsGetCustomRetention)`.
     public enum AdminConversationsGetCustomRetention {
         public static let id: Swift.String = "adminConversationsGetCustomRetention"
         public struct Input: Sendable, Hashable {
@@ -5127,6 +5251,10 @@ extension Operations {
         }
     }
 
+    /// Get all the workspaces a given public or private channel is connected to within this Enterprise org.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.getTeams`.
+    /// - Remark: Generated from `#/paths//admin.conversations.getTeams/post(adminConversationsGetTeams)`.
     public enum AdminConversationsGetTeams {
         public static let id: Swift.String = "adminConversationsGetTeams"
         public struct Input: Sendable, Hashable {
@@ -5291,6 +5419,10 @@ extension Operations {
         }
     }
 
+    /// Invite a user to a public or private channel.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.invite`.
+    /// - Remark: Generated from `#/paths//admin.conversations.invite/post(adminConversationsInvite)`.
     public enum AdminConversationsInvite {
         public static let id: Swift.String = "adminConversationsInvite"
         public struct Input: Sendable, Hashable {
@@ -5447,6 +5579,10 @@ extension Operations {
         }
     }
 
+    /// Returns channels on the given team using the filters.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.lookup`.
+    /// - Remark: Generated from `#/paths//admin.conversations.lookup/post(adminConversationsLookup)`.
     public enum AdminConversationsLookup {
         public static let id: Swift.String = "adminConversationsLookup"
         public struct Input: Sendable, Hashable {
@@ -5627,6 +5763,10 @@ extension Operations {
         }
     }
 
+    /// This API endpoint can be used by any admin to remove a conversation's retention policy.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.removeCustomRetention`.
+    /// - Remark: Generated from `#/paths//admin.conversations.removeCustomRetention/post(adminConversationsRemoveCustomRetention)`.
     public enum AdminConversationsRemoveCustomRetention {
         public static let id: Swift.String = "adminConversationsRemoveCustomRetention"
         public struct Input: Sendable, Hashable {
@@ -5773,6 +5913,10 @@ extension Operations {
         }
     }
 
+    /// Rename a public or private channel.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.rename`.
+    /// - Remark: Generated from `#/paths//admin.conversations.rename/post(adminConversationsRename)`.
     public enum AdminConversationsRename {
         public static let id: Swift.String = "adminConversationsRename"
         public struct Input: Sendable, Hashable {
@@ -5929,6 +6073,10 @@ extension Operations {
         }
     }
 
+    /// Add an allowlist of IDP groups for accessing a channel
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.restrictAccess.addGroup`.
+    /// - Remark: Generated from `#/paths//admin.conversations.restrictAccess.addGroup/post(adminConversationsRestrictAccessAddGroup)`.
     public enum AdminConversationsRestrictAccessAddGroup {
         public static let id: Swift.String = "adminConversationsRestrictAccessAddGroup"
         public struct Input: Sendable, Hashable {
@@ -6094,6 +6242,10 @@ extension Operations {
         }
     }
 
+    /// List all IDP Groups linked to a channel
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.restrictAccess.listGroups`.
+    /// - Remark: Generated from `#/paths//admin.conversations.restrictAccess.listGroups/post(adminConversationsRestrictAccessListGroups)`.
     public enum AdminConversationsRestrictAccessListGroups {
         public static let id: Swift.String = "adminConversationsRestrictAccessListGroups"
         public struct Input: Sendable, Hashable {
@@ -6251,6 +6403,10 @@ extension Operations {
         }
     }
 
+    /// Remove a linked IDP group linked from a private channel
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.restrictAccess.removeGroup`.
+    /// - Remark: Generated from `#/paths//admin.conversations.restrictAccess.removeGroup/post(adminConversationsRestrictAccessRemoveGroup)`.
     public enum AdminConversationsRestrictAccessRemoveGroup {
         public static let id: Swift.String = "adminConversationsRestrictAccessRemoveGroup"
         public struct Input: Sendable, Hashable {
@@ -6416,6 +6572,10 @@ extension Operations {
         }
     }
 
+    /// Search for public or private channels in an Enterprise organization.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.search`.
+    /// - Remark: Generated from `#/paths//admin.conversations.search/post(adminConversationsSearch)`.
     public enum AdminConversationsSearch {
         public static let id: Swift.String = "adminConversationsSearch"
         public struct Input: Sendable, Hashable {
@@ -6632,6 +6792,10 @@ extension Operations {
         }
     }
 
+    /// Set the posting permissions for a public or private channel.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.setConversationPrefs`.
+    /// - Remark: Generated from `#/paths//admin.conversations.setConversationPrefs/post(adminConversationsSetConversationPrefs)`.
     public enum AdminConversationsSetConversationPrefs {
         public static let id: Swift.String = "adminConversationsSetConversationPrefs"
         public struct Input: Sendable, Hashable {
@@ -6788,6 +6952,10 @@ extension Operations {
         }
     }
 
+    /// This API endpoint can be used by any admin to set a conversation's retention policy.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.setCustomRetention`.
+    /// - Remark: Generated from `#/paths//admin.conversations.setCustomRetention/post(adminConversationsSetCustomRetention)`.
     public enum AdminConversationsSetCustomRetention {
         public static let id: Swift.String = "adminConversationsSetCustomRetention"
         public struct Input: Sendable, Hashable {
@@ -6944,6 +7112,10 @@ extension Operations {
         }
     }
 
+    /// Set the workspaces in an Enterprise org that connect to a public or private channel.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.setTeams`.
+    /// - Remark: Generated from `#/paths//admin.conversations.setTeams/post(adminConversationsSetTeams)`.
     public enum AdminConversationsSetTeams {
         public static let id: Swift.String = "adminConversationsSetTeams"
         public struct Input: Sendable, Hashable {
@@ -7117,6 +7289,10 @@ extension Operations {
         }
     }
 
+    /// Unarchive a public or private channel.
+    ///
+    /// - Remark: HTTP `POST /admin.conversations.unarchive`.
+    /// - Remark: Generated from `#/paths//admin.conversations.unarchive/post(adminConversationsUnarchive)`.
     public enum AdminConversationsUnarchive {
         public static let id: Swift.String = "adminConversationsUnarchive"
         public struct Input: Sendable, Hashable {
@@ -7263,6 +7439,10 @@ extension Operations {
         }
     }
 
+    /// Add an emoji.
+    ///
+    /// - Remark: HTTP `POST /admin.emoji.add`.
+    /// - Remark: Generated from `#/paths//admin.emoji.add/post(adminEmojiAdd)`.
     public enum AdminEmojiAdd {
         public static let id: Swift.String = "adminEmojiAdd"
         public struct Input: Sendable, Hashable {
@@ -7419,6 +7599,10 @@ extension Operations {
         }
     }
 
+    /// Add an emoji alias.
+    ///
+    /// - Remark: HTTP `POST /admin.emoji.addAlias`.
+    /// - Remark: Generated from `#/paths//admin.emoji.addAlias/post(adminEmojiAddAlias)`.
     public enum AdminEmojiAddAlias {
         public static let id: Swift.String = "adminEmojiAddAlias"
         public struct Input: Sendable, Hashable {
@@ -7575,6 +7759,10 @@ extension Operations {
         }
     }
 
+    /// List emoji for an Enterprise organization.
+    ///
+    /// - Remark: HTTP `POST /admin.emoji.list`.
+    /// - Remark: Generated from `#/paths//admin.emoji.list/post(adminEmojiList)`.
     public enum AdminEmojiList {
         public static let id: Swift.String = "adminEmojiList"
         public struct Input: Sendable, Hashable {
@@ -7731,6 +7919,10 @@ extension Operations {
         }
     }
 
+    /// Remove an emoji across an Enterprise organization
+    ///
+    /// - Remark: HTTP `POST /admin.emoji.remove`.
+    /// - Remark: Generated from `#/paths//admin.emoji.remove/post(adminEmojiRemove)`.
     public enum AdminEmojiRemove {
         public static let id: Swift.String = "adminEmojiRemove"
         public struct Input: Sendable, Hashable {
@@ -7877,6 +8069,10 @@ extension Operations {
         }
     }
 
+    /// Rename an emoji.
+    ///
+    /// - Remark: HTTP `POST /admin.emoji.rename`.
+    /// - Remark: Generated from `#/paths//admin.emoji.rename/post(adminEmojiRename)`.
     public enum AdminEmojiRename {
         public static let id: Swift.String = "adminEmojiRename"
         public struct Input: Sendable, Hashable {
@@ -8033,6 +8229,10 @@ extension Operations {
         }
     }
 
+    /// Look up functions by a set of apps.
+    ///
+    /// - Remark: HTTP `POST /admin.functions.list`.
+    /// - Remark: Generated from `#/paths//admin.functions.list/post(adminFunctionsList)`.
     public enum AdminFunctionsList {
         public static let id: Swift.String = "adminFunctionsList"
         public struct Input: Sendable, Hashable {
@@ -8215,6 +8415,10 @@ extension Operations {
         }
     }
 
+    /// Lookup the visibility of multiple Slack functions and include the users if it is limited to particular named entities.
+    ///
+    /// - Remark: HTTP `POST /admin.functions.permissions.lookup`.
+    /// - Remark: Generated from `#/paths//admin.functions.permissions.lookup/post(adminFunctionsPermissionsLookup)`.
     public enum AdminFunctionsPermissionsLookup {
         public static let id: Swift.String = "adminFunctionsPermissionsLookup"
         public struct Input: Sendable, Hashable {
@@ -8361,6 +8565,10 @@ extension Operations {
         }
     }
 
+    /// Set the visibility of a Slack function and define the users or workspaces if it is set to named_entities.
+    ///
+    /// - Remark: HTTP `POST /admin.functions.permissions.set`.
+    /// - Remark: Generated from `#/paths//admin.functions.permissions.set/post(adminFunctionsPermissionsSet)`.
     public enum AdminFunctionsPermissionsSet {
         public static let id: Swift.String = "adminFunctionsPermissionsSet"
         public struct Input: Sendable, Hashable {
@@ -8533,6 +8741,10 @@ extension Operations {
         }
     }
 
+    /// Approve a workspace invite request.
+    ///
+    /// - Remark: HTTP `POST /admin.inviteRequests.approve`.
+    /// - Remark: Generated from `#/paths//admin.inviteRequests.approve/post(adminInviteRequestsApprove)`.
     public enum AdminInviteRequestsApprove {
         public static let id: Swift.String = "adminInviteRequestsApprove"
         public struct Input: Sendable, Hashable {
@@ -8689,6 +8901,10 @@ extension Operations {
         }
     }
 
+    /// List all approved workspace invite requests.
+    ///
+    /// - Remark: HTTP `POST /admin.inviteRequests.approved.list`.
+    /// - Remark: Generated from `#/paths//admin.inviteRequests.approved.list/post(adminInviteRequestsApprovedList)`.
     public enum AdminInviteRequestsApprovedList {
         public static let id: Swift.String = "adminInviteRequestsApprovedList"
         public struct Input: Sendable, Hashable {
@@ -8853,6 +9069,10 @@ extension Operations {
         }
     }
 
+    /// List all denied workspace invite requests.
+    ///
+    /// - Remark: HTTP `POST /admin.inviteRequests.denied.list`.
+    /// - Remark: Generated from `#/paths//admin.inviteRequests.denied.list/post(adminInviteRequestsDeniedList)`.
     public enum AdminInviteRequestsDeniedList {
         public static let id: Swift.String = "adminInviteRequestsDeniedList"
         public struct Input: Sendable, Hashable {
@@ -9017,6 +9237,10 @@ extension Operations {
         }
     }
 
+    /// Deny a workspace invite request.
+    ///
+    /// - Remark: HTTP `POST /admin.inviteRequests.deny`.
+    /// - Remark: Generated from `#/paths//admin.inviteRequests.deny/post(adminInviteRequestsDeny)`.
     public enum AdminInviteRequestsDeny {
         public static let id: Swift.String = "adminInviteRequestsDeny"
         public struct Input: Sendable, Hashable {
@@ -9173,6 +9397,10 @@ extension Operations {
         }
     }
 
+    /// List all pending workspace invite requests.
+    ///
+    /// - Remark: HTTP `POST /admin.inviteRequests.list`.
+    /// - Remark: Generated from `#/paths//admin.inviteRequests.list/post(adminInviteRequestsList)`.
     public enum AdminInviteRequestsList {
         public static let id: Swift.String = "adminInviteRequestsList"
         public struct Input: Sendable, Hashable {
@@ -9337,6 +9565,10 @@ extension Operations {
         }
     }
 
+    /// Adds members to the specified role with the specified scopes
+    ///
+    /// - Remark: HTTP `POST /admin.roles.addAssignments`.
+    /// - Remark: Generated from `#/paths//admin.roles.addAssignments/post(adminRolesAddAssignments)`.
     public enum AdminRolesAddAssignments {
         public static let id: Swift.String = "adminRolesAddAssignments"
         public struct Input: Sendable, Hashable {
@@ -9501,6 +9733,10 @@ extension Operations {
         }
     }
 
+    /// Lists assignments for all roles across entities. Options to scope results by any combination of roles or entities
+    ///
+    /// - Remark: HTTP `POST /admin.roles.listAssignments`.
+    /// - Remark: Generated from `#/paths//admin.roles.listAssignments/post(adminRolesListAssignments)`.
     public enum AdminRolesListAssignments {
         public static let id: Swift.String = "adminRolesListAssignments"
         public struct Input: Sendable, Hashable {
@@ -9681,6 +9917,10 @@ extension Operations {
         }
     }
 
+    /// Removes a set of users from a role for the given scopes and entities
+    ///
+    /// - Remark: HTTP `POST /admin.roles.removeAssignments`.
+    /// - Remark: Generated from `#/paths//admin.roles.removeAssignments/post(adminRolesRemoveAssignments)`.
     public enum AdminRolesRemoveAssignments {
         public static let id: Swift.String = "adminRolesRemoveAssignments"
         public struct Input: Sendable, Hashable {
@@ -9845,6 +10085,10 @@ extension Operations {
         }
     }
 
+    /// List all of the admins on a given workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.teams.admins.list`.
+    /// - Remark: Generated from `#/paths//admin.teams.admins.list/post(adminTeamsAdminsList)`.
     public enum AdminTeamsAdminsList {
         public static let id: Swift.String = "adminTeamsAdminsList"
         public struct Input: Sendable, Hashable {
@@ -10009,6 +10253,10 @@ extension Operations {
         }
     }
 
+    /// Create an Enterprise team.
+    ///
+    /// - Remark: HTTP `POST /admin.teams.create`.
+    /// - Remark: Generated from `#/paths//admin.teams.create/post(adminTeamsCreate)`.
     public enum AdminTeamsCreate {
         public static let id: Swift.String = "adminTeamsCreate"
         public struct Input: Sendable, Hashable {
@@ -10181,6 +10429,10 @@ extension Operations {
         }
     }
 
+    /// List all teams in an Enterprise organization
+    ///
+    /// - Remark: HTTP `POST /admin.teams.list`.
+    /// - Remark: Generated from `#/paths//admin.teams.list/post(adminTeamsList)`.
     public enum AdminTeamsList {
         public static let id: Swift.String = "adminTeamsList"
         public struct Input: Sendable, Hashable {
@@ -10337,6 +10589,10 @@ extension Operations {
         }
     }
 
+    /// List all of the owners on a given workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.teams.owners.list`.
+    /// - Remark: Generated from `#/paths//admin.teams.owners.list/post(adminTeamsOwnersList)`.
     public enum AdminTeamsOwnersList {
         public static let id: Swift.String = "adminTeamsOwnersList"
         public struct Input: Sendable, Hashable {
@@ -10501,6 +10757,10 @@ extension Operations {
         }
     }
 
+    /// Fetch information about settings in a workspace
+    ///
+    /// - Remark: HTTP `POST /admin.teams.settings.info`.
+    /// - Remark: Generated from `#/paths//admin.teams.settings.info/post(adminTeamsSettingsInfo)`.
     public enum AdminTeamsSettingsInfo {
         public static let id: Swift.String = "adminTeamsSettingsInfo"
         public struct Input: Sendable, Hashable {
@@ -10647,6 +10907,10 @@ extension Operations {
         }
     }
 
+    /// Set the default channels of a workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.teams.settings.setDefaultChannels`.
+    /// - Remark: Generated from `#/paths//admin.teams.settings.setDefaultChannels/post(adminTeamsSettingsSetDefaultChannels)`.
     public enum AdminTeamsSettingsSetDefaultChannels {
         public static let id: Swift.String = "adminTeamsSettingsSetDefaultChannels"
         public struct Input: Sendable, Hashable {
@@ -10803,6 +11067,10 @@ extension Operations {
         }
     }
 
+    /// Set the description of a given workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.teams.settings.setDescription`.
+    /// - Remark: Generated from `#/paths//admin.teams.settings.setDescription/post(adminTeamsSettingsSetDescription)`.
     public enum AdminTeamsSettingsSetDescription {
         public static let id: Swift.String = "adminTeamsSettingsSetDescription"
         public struct Input: Sendable, Hashable {
@@ -10959,6 +11227,10 @@ extension Operations {
         }
     }
 
+    /// An API method that allows admins to set the discoverability of a given workspace
+    ///
+    /// - Remark: HTTP `POST /admin.teams.settings.setDiscoverability`.
+    /// - Remark: Generated from `#/paths//admin.teams.settings.setDiscoverability/post(adminTeamsSettingsSetDiscoverability)`.
     public enum AdminTeamsSettingsSetDiscoverability {
         public static let id: Swift.String = "adminTeamsSettingsSetDiscoverability"
         public struct Input: Sendable, Hashable {
@@ -11115,6 +11387,10 @@ extension Operations {
         }
     }
 
+    /// Sets the icon of a workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.teams.settings.setIcon`.
+    /// - Remark: Generated from `#/paths//admin.teams.settings.setIcon/post(adminTeamsSettingsSetIcon)`.
     public enum AdminTeamsSettingsSetIcon {
         public static let id: Swift.String = "adminTeamsSettingsSetIcon"
         public struct Input: Sendable, Hashable {
@@ -11271,6 +11547,10 @@ extension Operations {
         }
     }
 
+    /// Set the name of a given workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.teams.settings.setName`.
+    /// - Remark: Generated from `#/paths//admin.teams.settings.setName/post(adminTeamsSettingsSetName)`.
     public enum AdminTeamsSettingsSetName {
         public static let id: Swift.String = "adminTeamsSettingsSetName"
         public struct Input: Sendable, Hashable {
@@ -11427,6 +11707,10 @@ extension Operations {
         }
     }
 
+    /// Add up to one hundred default channels to an IDP group.
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.addChannels`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.addChannels/post(adminUsergroupsAddChannels)`.
     public enum AdminUsergroupsAddChannels {
         public static let id: Swift.String = "adminUsergroupsAddChannels"
         public struct Input: Sendable, Hashable {
@@ -11591,6 +11875,10 @@ extension Operations {
         }
     }
 
+    /// Associate one or more default workspaces with an organization-wide IDP group.
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.addTeams`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.addTeams/post(adminUsergroupsAddTeams)`.
     public enum AdminUsergroupsAddTeams {
         public static let id: Swift.String = "adminUsergroupsAddTeams"
         public struct Input: Sendable, Hashable {
@@ -11755,6 +12043,10 @@ extension Operations {
         }
     }
 
+    /// List the channels linked to an org-level IDP group (user group).
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.listChannels`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.listChannels/post(adminUsergroupsListChannels)`.
     public enum AdminUsergroupsListChannels {
         public static let id: Swift.String = "adminUsergroupsListChannels"
         public struct Input: Sendable, Hashable {
@@ -11919,6 +12211,10 @@ extension Operations {
         }
     }
 
+    /// Remove one or more default channels from an org-level IDP group (user group).
+    ///
+    /// - Remark: HTTP `POST /admin.usergroups.removeChannels`.
+    /// - Remark: Generated from `#/paths//admin.usergroups.removeChannels/post(adminUsergroupsRemoveChannels)`.
     public enum AdminUsergroupsRemoveChannels {
         public static let id: Swift.String = "adminUsergroupsRemoveChannels"
         public struct Input: Sendable, Hashable {
@@ -12075,6 +12371,10 @@ extension Operations {
         }
     }
 
+    /// Add an Enterprise user to a workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.users.assign`.
+    /// - Remark: Generated from `#/paths//admin.users.assign/post(adminUsersAssign)`.
     public enum AdminUsersAssign {
         public static let id: Swift.String = "adminUsersAssign"
         public struct Input: Sendable, Hashable {
@@ -12255,6 +12555,10 @@ extension Operations {
         }
     }
 
+    /// Fetches the expiration timestamp for a guest
+    ///
+    /// - Remark: HTTP `POST /admin.users.getExpiration`.
+    /// - Remark: Generated from `#/paths//admin.users.getExpiration/post(adminUsersGetExpiration)`.
     public enum AdminUsersGetExpiration {
         public static let id: Swift.String = "adminUsersGetExpiration"
         public struct Input: Sendable, Hashable {
@@ -12412,6 +12716,10 @@ extension Operations {
         }
     }
 
+    /// Invite a user to a workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.users.invite`.
+    /// - Remark: Generated from `#/paths//admin.users.invite/post(adminUsersInvite)`.
     public enum AdminUsersInvite {
         public static let id: Swift.String = "adminUsersInvite"
         public struct Input: Sendable, Hashable {
@@ -12633,6 +12941,10 @@ extension Operations {
         }
     }
 
+    /// List users on a workspace
+    ///
+    /// - Remark: HTTP `POST /admin.users.list`.
+    /// - Remark: Generated from `#/paths//admin.users.list/post(adminUsersList)`.
     public enum AdminUsersList {
         public static let id: Swift.String = "adminUsersList"
         public struct Input: Sendable, Hashable {
@@ -12840,6 +13152,10 @@ extension Operations {
         }
     }
 
+    /// Remove a user from a workspace.
+    ///
+    /// - Remark: HTTP `POST /admin.users.remove`.
+    /// - Remark: Generated from `#/paths//admin.users.remove/post(adminUsersRemove)`.
     public enum AdminUsersRemove {
         public static let id: Swift.String = "adminUsersRemove"
         public struct Input: Sendable, Hashable {
@@ -12996,6 +13312,10 @@ extension Operations {
         }
     }
 
+    /// Clear user-specific session settings—the session duration and what happens when the client closes—for a list of users.
+    ///
+    /// - Remark: HTTP `POST /admin.users.session.clearSettings`.
+    /// - Remark: Generated from `#/paths//admin.users.session.clearSettings/post(adminUsersSessionClearSettings)`.
     public enum AdminUsersSessionClearSettings {
         public static let id: Swift.String = "adminUsersSessionClearSettings"
         public struct Input: Sendable, Hashable {
@@ -13142,6 +13462,10 @@ extension Operations {
         }
     }
 
+    /// Get user-specific session settings—the session duration and what happens when the client closes—given a list of users.
+    ///
+    /// - Remark: HTTP `POST /admin.users.session.getSettings`.
+    /// - Remark: Generated from `#/paths//admin.users.session.getSettings/post(adminUsersSessionGetSettings)`.
     public enum AdminUsersSessionGetSettings {
         public static let id: Swift.String = "adminUsersSessionGetSettings"
         public struct Input: Sendable, Hashable {
@@ -13288,6 +13612,10 @@ extension Operations {
         }
     }
 
+    /// List active user sessions for an organization
+    ///
+    /// - Remark: HTTP `POST /admin.users.session.list`.
+    /// - Remark: Generated from `#/paths//admin.users.session.list/post(adminUsersSessionList)`.
     public enum AdminUsersSessionList {
         public static let id: Swift.String = "adminUsersSessionList"
         public struct Input: Sendable, Hashable {
@@ -13460,6 +13788,10 @@ extension Operations {
         }
     }
 
+    /// Wipes all valid sessions on all devices for a given user
+    ///
+    /// - Remark: HTTP `POST /admin.users.session.reset`.
+    /// - Remark: Generated from `#/paths//admin.users.session.reset/post(adminUsersSessionReset)`.
     public enum AdminUsersSessionReset {
         public static let id: Swift.String = "adminUsersSessionReset"
         public struct Input: Sendable, Hashable {
@@ -13624,6 +13956,10 @@ extension Operations {
         }
     }
 
+    /// Enqueues an asynchronous job to wipe all valid sessions on all devices for a given list of users
+    ///
+    /// - Remark: HTTP `POST /admin.users.session.resetBulk`.
+    /// - Remark: Generated from `#/paths//admin.users.session.resetBulk/post(adminUsersSessionResetBulk)`.
     public enum AdminUsersSessionResetBulk {
         public static let id: Swift.String = "adminUsersSessionResetBulk"
         public struct Input: Sendable, Hashable {
@@ -13788,6 +14124,10 @@ extension Operations {
         }
     }
 
+    /// Configure the user-level session settings—the session duration and what happens when the client closes—for one or more users.
+    ///
+    /// - Remark: HTTP `POST /admin.users.session.setSettings`.
+    /// - Remark: Generated from `#/paths//admin.users.session.setSettings/post(adminUsersSessionSetSettings)`.
     public enum AdminUsersSessionSetSettings {
         public static let id: Swift.String = "adminUsersSessionSetSettings"
         public struct Input: Sendable, Hashable {
@@ -13952,6 +14292,10 @@ extension Operations {
         }
     }
 
+    /// Set an existing regular user or owner to be a workspace or org admin.
+    ///
+    /// - Remark: HTTP `POST /admin.users.setAdmin`.
+    /// - Remark: Generated from `#/paths//admin.users.setAdmin/post(adminUsersSetAdmin)`.
     public enum AdminUsersSetAdmin {
         public static let id: Swift.String = "adminUsersSetAdmin"
         public struct Input: Sendable, Hashable {
@@ -14108,6 +14452,10 @@ extension Operations {
         }
     }
 
+    /// Set an expiration for a guest user
+    ///
+    /// - Remark: HTTP `POST /admin.users.setExpiration`.
+    /// - Remark: Generated from `#/paths//admin.users.setExpiration/post(adminUsersSetExpiration)`.
     public enum AdminUsersSetExpiration {
         public static let id: Swift.String = "adminUsersSetExpiration"
         public struct Input: Sendable, Hashable {
@@ -14272,6 +14620,10 @@ extension Operations {
         }
     }
 
+    /// Set an existing regular user or admin to be a workspace or org owner.
+    ///
+    /// - Remark: HTTP `POST /admin.users.setOwner`.
+    /// - Remark: Generated from `#/paths//admin.users.setOwner/post(adminUsersSetOwner)`.
     public enum AdminUsersSetOwner {
         public static let id: Swift.String = "adminUsersSetOwner"
         public struct Input: Sendable, Hashable {
@@ -14428,6 +14780,10 @@ extension Operations {
         }
     }
 
+    /// Set an existing guest user, admin user, or owner to be a regular user.
+    ///
+    /// - Remark: HTTP `POST /admin.users.setRegular`.
+    /// - Remark: Generated from `#/paths//admin.users.setRegular/post(adminUsersSetRegular)`.
     public enum AdminUsersSetRegular {
         public static let id: Swift.String = "adminUsersSetRegular"
         public struct Input: Sendable, Hashable {
@@ -14584,6 +14940,10 @@ extension Operations {
         }
     }
 
+    /// Ask Slackbot to send you an export listing all workspace members using unsupported software, presented as a zipped CSV file.
+    ///
+    /// - Remark: HTTP `POST /admin.users.unsupportedVersions.export`.
+    /// - Remark: Generated from `#/paths//admin.users.unsupportedVersions.export/post(adminUsersUnsupportedVersionsExport)`.
     public enum AdminUsersUnsupportedVersionsExport {
         public static let id: Swift.String = "adminUsersUnsupportedVersionsExport"
         public struct Input: Sendable, Hashable {
@@ -14740,6 +15100,10 @@ extension Operations {
         }
     }
 
+    /// Add collaborators to workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.collaborators.add`.
+    /// - Remark: Generated from `#/paths//admin.workflows.collaborators.add/post(adminWorkflowsCollaboratorsAdd)`.
     public enum AdminWorkflowsCollaboratorsAdd {
         public static let id: Swift.String = "adminWorkflowsCollaboratorsAdd"
         public struct Input: Sendable, Hashable {
@@ -14896,6 +15260,10 @@ extension Operations {
         }
     }
 
+    /// Remove collaborators from workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.collaborators.remove`.
+    /// - Remark: Generated from `#/paths//admin.workflows.collaborators.remove/post(adminWorkflowsCollaboratorsRemove)`.
     public enum AdminWorkflowsCollaboratorsRemove {
         public static let id: Swift.String = "adminWorkflowsCollaboratorsRemove"
         public struct Input: Sendable, Hashable {
@@ -15052,6 +15420,10 @@ extension Operations {
         }
     }
 
+    /// Look up the permissions for a set of workflows
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.permissions.lookup`.
+    /// - Remark: Generated from `#/paths//admin.workflows.permissions.lookup/post(adminWorkflowsPermissionsLookup)`.
     public enum AdminWorkflowsPermissionsLookup {
         public static let id: Swift.String = "adminWorkflowsPermissionsLookup"
         public struct Input: Sendable, Hashable {
@@ -15208,6 +15580,10 @@ extension Operations {
         }
     }
 
+    /// Search workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.search`.
+    /// - Remark: Generated from `#/paths//admin.workflows.search/post(adminWorkflowsSearch)`.
     public enum AdminWorkflowsSearch {
         public static let id: Swift.String = "adminWorkflowsSearch"
         public struct Input: Sendable, Hashable {
@@ -15460,6 +15836,10 @@ extension Operations {
         }
     }
 
+    /// Unpublish workflows within the team or enterprise
+    ///
+    /// - Remark: HTTP `POST /admin.workflows.unpublish`.
+    /// - Remark: Generated from `#/paths//admin.workflows.unpublish/post(adminWorkflowsUnpublish)`.
     public enum AdminWorkflowsUnpublish {
         public static let id: Swift.String = "adminWorkflowsUnpublish"
         public struct Input: Sendable, Hashable {

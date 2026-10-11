@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Team
 extension Operations {
+    /// Gets the access logs for the current team.
+    ///
+    /// - Remark: HTTP `POST /team.accessLogs`.
+    /// - Remark: Generated from `#/paths//team.accessLogs/post(teamAccessLogs)`.
     public enum TeamAccessLogs {
         public static let id: Swift.String = "teamAccessLogs"
         public struct Input: Sendable, Hashable {
@@ -189,6 +193,10 @@ extension Operations {
         }
     }
 
+    /// Gets billable users information for the current team.
+    ///
+    /// - Remark: HTTP `POST /team.billableInfo`.
+    /// - Remark: Generated from `#/paths//team.billableInfo/post(teamBillableInfo)`.
     public enum TeamBillableInfo {
         public static let id: Swift.String = "teamBillableInfo"
         public struct Input: Sendable, Hashable {
@@ -361,6 +369,10 @@ extension Operations {
         }
     }
 
+    /// Reads a workspace's billing plan information.
+    ///
+    /// - Remark: HTTP `POST /team.billing.info`.
+    /// - Remark: Generated from `#/paths//team.billing.info/post(teamBillingInfo)`.
     public enum TeamBillingInfo {
         public static let id: Swift.String = "teamBillingInfo"
         public struct Input: Sendable, Hashable {
@@ -497,6 +509,10 @@ extension Operations {
         }
     }
 
+    /// Disconnect an external organization.
+    ///
+    /// - Remark: HTTP `POST /team.externalTeams.disconnect`.
+    /// - Remark: Generated from `#/paths//team.externalTeams.disconnect/post(teamExternalTeamsDisconnect)`.
     public enum TeamExternalTeamsDisconnect {
         public static let id: Swift.String = "teamExternalTeamsDisconnect"
         public struct Input: Sendable, Hashable {
@@ -643,6 +659,10 @@ extension Operations {
         }
     }
 
+    /// Returns a list of all the external teams connected and details about the connection.
+    ///
+    /// - Remark: HTTP `POST /team.externalTeams.list`.
+    /// - Remark: Generated from `#/paths//team.externalTeams.list/post(teamExternalTeamsList)`.
     public enum TeamExternalTeamsList {
         public static let id: Swift.String = "teamExternalTeamsList"
         public struct Input: Sendable, Hashable {
@@ -843,6 +863,10 @@ extension Operations {
         }
     }
 
+    /// Gets information about the current team.
+    ///
+    /// - Remark: HTTP `POST /team.info`.
+    /// - Remark: Generated from `#/paths//team.info/post(teamInfo)`.
     public enum TeamInfo {
         public static let id: Swift.String = "teamInfo"
         public struct Input: Sendable, Hashable {
@@ -1003,6 +1027,10 @@ extension Operations {
         }
     }
 
+    /// Gets the integration logs for the current team.
+    ///
+    /// - Remark: HTTP `POST /team.integrationLogs`.
+    /// - Remark: Generated from `#/paths//team.integrationLogs/post(teamIntegrationLogs)`.
     public enum TeamIntegrationLogs {
         public static let id: Swift.String = "teamIntegrationLogs"
         public struct Input: Sendable, Hashable {
@@ -1183,6 +1211,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve a list of a workspace's team preferences.
+    ///
+    /// - Remark: HTTP `POST /team.preferences.list`.
+    /// - Remark: Generated from `#/paths//team.preferences.list/post(teamPreferencesList)`.
     public enum TeamPreferencesList {
         public static let id: Swift.String = "teamPreferencesList"
         public struct Input: Sendable, Hashable {
@@ -1319,6 +1351,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve a team's profile.
+    ///
+    /// - Remark: HTTP `POST /team.profile.get`.
+    /// - Remark: Generated from `#/paths//team.profile.get/post(teamProfileGet)`.
     public enum TeamProfileGet {
         public static let id: Swift.String = "teamProfileGet"
         public struct Input: Sendable, Hashable {

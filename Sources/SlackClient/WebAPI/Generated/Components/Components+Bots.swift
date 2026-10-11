@@ -9,60 +9,129 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Bots
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/BotsInfoResponse`.
     public struct BotsInfoResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot`.
-        public var bot: SlackModels.Bot?
+        /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot`.
+        public struct BotPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot/app_id`.
+            public var appId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot/user_id`.
+            public var userId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot/name`.
+            public var name: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot/deleted`.
+            public var deleted: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot/updated`.
+            public var updated: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot/icons`.
+            public var icons: Components.Schemas.BotIcons?
+            /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot/is_connector_bot`.
+            public var isConnectorBot: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot/is_workflow_bot`.
+            public var isWorkflowBot: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot/is_legacy_workflow_bot`.
+            public var isLegacyWorkflowBot: Swift.Bool?
+            /// Creates a new `BotPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - appId:
+            ///   - userId:
+            ///   - name:
+            ///   - deleted:
+            ///   - updated:
+            ///   - icons:
+            ///   - isConnectorBot:
+            ///   - isWorkflowBot:
+            ///   - isLegacyWorkflowBot:
+            public init(
+                id: Swift.String? = nil,
+                appId: Swift.String? = nil,
+                userId: Swift.String? = nil,
+                name: Swift.String? = nil,
+                deleted: Swift.Bool? = nil,
+                updated: Swift.Int? = nil,
+                icons: Components.Schemas.BotIcons? = nil,
+                isConnectorBot: Swift.Bool? = nil,
+                isWorkflowBot: Swift.Bool? = nil,
+                isLegacyWorkflowBot: Swift.Bool? = nil,
+            ) {
+                self.id = id
+                self.appId = appId
+                self.userId = userId
+                self.name = name
+                self.deleted = deleted
+                self.updated = updated
+                self.icons = icons
+                self.isConnectorBot = isConnectorBot
+                self.isWorkflowBot = isWorkflowBot
+                self.isLegacyWorkflowBot = isLegacyWorkflowBot
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case appId = "app_id"
+                case userId = "user_id"
+                case name
+                case deleted
+                case updated
+                case icons
+                case isConnectorBot = "is_connector_bot"
+                case isWorkflowBot = "is_workflow_bot"
+                case isLegacyWorkflowBot = "is_legacy_workflow_bot"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/BotsInfoResponse/bot`.
+        public var bot: Components.Schemas.BotsInfoResponse.BotPayload?
         /// Creates a new `BotsInfoResponse`.
         ///
         /// - Parameters:
-        ///   - bot:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
+        ///   - bot:
         public init(
-            bot: SlackModels.Bot? = nil,
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
+            bot: Components.Schemas.BotsInfoResponse.BotPayload? = nil,
         ) {
-            self.bot = bot
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
+            self.bot = bot
         }
 
         public enum CodingKeys: String, CodingKey {
-            case bot
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
+            case bot
         }
     }
 }

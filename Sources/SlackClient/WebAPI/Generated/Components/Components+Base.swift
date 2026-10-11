@@ -9,8 +9,19 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
+
 /// Types generated from the components section of the OpenAPI document.
 public enum Components {
-    public enum Schemas {}
+    /// Types generated from the `#/components/schemas` section of the OpenAPI document.
+    public enum Schemas {
+        /// - Remark: Generated from `#/components/schemas/Block`.
+        public typealias Block = SlackBlockKit.Block
+        /// - Remark: Generated from `#/components/schemas/RichTextBlock`.
+        public typealias RichTextBlock = SlackBlockKit.RichTextBlock
+        /// - Remark: Generated from `#/components/schemas/TextObject`.
+        public typealias TextObject = SlackBlockKit.TextObject
+        /// - Remark: Generated from `#/components/schemas/View`.
+        public typealias View = SlackBlockKit.View
+    }
 }

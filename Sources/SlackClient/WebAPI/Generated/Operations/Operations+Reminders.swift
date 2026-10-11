@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Reminders
 extension Operations {
+    /// Creates a reminder.
+    ///
+    /// - Remark: HTTP `POST /reminders.add`.
+    /// - Remark: Generated from `#/paths//reminders.add/post(remindersAdd)`.
     public enum RemindersAdd {
         public static let id: Swift.String = "remindersAdd"
         public struct Input: Sendable, Hashable {
@@ -195,6 +199,10 @@ extension Operations {
         }
     }
 
+    /// Marks a reminder as complete.
+    ///
+    /// - Remark: HTTP `POST /reminders.complete`.
+    /// - Remark: Generated from `#/paths//reminders.complete/post(remindersComplete)`.
     public enum RemindersComplete {
         public static let id: Swift.String = "remindersComplete"
         public struct Input: Sendable, Hashable {
@@ -351,6 +359,10 @@ extension Operations {
         }
     }
 
+    /// Deletes a reminder.
+    ///
+    /// - Remark: HTTP `POST /reminders.delete`.
+    /// - Remark: Generated from `#/paths//reminders.delete/post(remindersDelete)`.
     public enum RemindersDelete {
         public static let id: Swift.String = "remindersDelete"
         public struct Input: Sendable, Hashable {
@@ -507,6 +519,10 @@ extension Operations {
         }
     }
 
+    /// Gets information about a reminder.
+    ///
+    /// - Remark: HTTP `POST /reminders.info`.
+    /// - Remark: Generated from `#/paths//reminders.info/post(remindersInfo)`.
     public enum RemindersInfo {
         public static let id: Swift.String = "remindersInfo"
         public struct Input: Sendable, Hashable {
@@ -663,6 +679,10 @@ extension Operations {
         }
     }
 
+    /// Lists all reminders created by or for a given user.
+    ///
+    /// - Remark: HTTP `POST /reminders.list`.
+    /// - Remark: Generated from `#/paths//reminders.list/post(remindersList)`.
     public enum RemindersList {
         public static let id: Swift.String = "remindersList"
         public struct Input: Sendable, Hashable {

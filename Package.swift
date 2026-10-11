@@ -6,8 +6,6 @@ import PackageDescription
 // BEGIN: Generated WebAPI traits - Do not edit manually
 let webAPITraits: [String] = [
     "WebAPI_Admin",
-    "WebAPI_Chat",
-    "WebAPI_Views",
     "WebAPI_Agents",
     "WebAPI_Api",
     "WebAPI_Apps",
@@ -18,6 +16,7 @@ let webAPITraits: [String] = [
     "WebAPI_Bots",
     "WebAPI_Calls",
     "WebAPI_Canvases",
+    "WebAPI_Chat",
     "WebAPI_Conversations",
     "WebAPI_DND",
     "WebAPI_Emoji",
@@ -37,6 +36,7 @@ let webAPITraits: [String] = [
     "WebAPI_Tooling",
     "WebAPI_Usergroups",
     "WebAPI_Users",
+    "WebAPI_Views",
     "WebAPI_Workflows",
 ]
 
