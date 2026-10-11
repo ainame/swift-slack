@@ -8,8 +8,7 @@ func `Context actions block with feedback buttons decodes and round-trips`() thr
     let block = try JSONDecoder().decode(Block.self, from: Data(json.utf8))
 
     guard case let .contextActions(contextActions) = block,
-          case let .feedbackButtons(feedback) = contextActions.elements.first
-    else {
+          case let .feedbackButtons(feedback) = contextActions.elements.first else {
         Issue.record("Expected .contextActions with feedback buttons, got \(block)")
         return
     }
@@ -19,7 +18,7 @@ func `Context actions block with feedback buttons decodes and round-trips`() thr
     #expect(feedback.negativeButton.accessibilityLabel == nil)
 
     let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(block)) as? NSDictionary)
-    #expect(encoded == (try #require(JSONSerialization.jsonObject(with: Data(json.utf8)) as? NSDictionary)))
+    #expect(try encoded == #require(JSONSerialization.jsonObject(with: Data(json.utf8)) as? NSDictionary))
 }
 
 @Test
@@ -28,8 +27,7 @@ func `Context actions block with icon button decodes and round-trips`() throws {
     let block = try JSONDecoder().decode(Block.self, from: Data(json.utf8))
 
     guard case let .contextActions(contextActions) = block,
-          case let .iconButton(button) = contextActions.elements.first
-    else {
+          case let .iconButton(button) = contextActions.elements.first else {
         Issue.record("Expected .contextActions with icon button, got \(block)")
         return
     }
@@ -41,5 +39,5 @@ func `Context actions block with icon button decodes and round-trips`() throws {
     }
 
     let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(block)) as? NSDictionary)
-    #expect(encoded == (try #require(JSONSerialization.jsonObject(with: Data(json.utf8)) as? NSDictionary)))
+    #expect(try encoded == #require(JSONSerialization.jsonObject(with: Data(json.utf8)) as? NSDictionary))
 }

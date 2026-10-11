@@ -6,8 +6,8 @@ private let fixturesDirectory = ProcessInfo.processInfo.environment["SLACK_FIXTU
 
 @Suite(.enabled(if: fixturesDirectory != nil, "Run scripts/check_fixtures.rb to decode the upstream fixtures"))
 struct FixtureDecodingTests {
-    @Test func everyGeneratedResponseDecodesItsUpstreamFixture() throws {
-        let directory = URL(fileURLWithPath: try #require(fixturesDirectory)).appendingPathComponent("api")
+    @Test func `every generated response decodes its upstream fixture`() throws {
+        let directory = try URL(fileURLWithPath: #require(fixturesDirectory)).appendingPathComponent("api")
         let methods = try FileManager.default.contentsOfDirectory(atPath: directory.path)
             .filter { $0.hasSuffix(".json") }
             .map { String($0.dropLast(".json".count)) }

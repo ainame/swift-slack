@@ -28,7 +28,7 @@ func `Card block decodes and round-trips`() throws {
     }
 
     let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(block)) as? NSDictionary)
-    #expect(encoded == (try jsonObject(cardJSON)))
+    #expect(try encoded == jsonObject(cardJSON))
 }
 
 @Test
@@ -41,7 +41,7 @@ func `Card block with slack icon round-trips`() throws {
     }
     #expect(card.slackIcon?.name == "star")
     let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(block)) as? NSDictionary)
-    #expect(encoded == (try jsonObject(json)))
+    #expect(try encoded == jsonObject(json))
 }
 
 @Test
@@ -57,5 +57,5 @@ func `Carousel block decodes and round-trips`() throws {
     #expect(carousel.blockId == "car1")
 
     let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(block)) as? NSDictionary)
-    #expect(encoded == (try jsonObject(json)))
+    #expect(try encoded == jsonObject(json))
 }

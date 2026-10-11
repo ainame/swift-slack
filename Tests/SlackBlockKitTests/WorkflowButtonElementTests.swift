@@ -22,7 +22,7 @@ func `Workflow button as section accessory round-trips`() throws {
     #expect(button.workflow.trigger.customizableInputParameters?.count == 2)
 
     let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(block)) as? NSDictionary)
-    #expect(encoded == (try jsonObject(json)))
+    #expect(try encoded == jsonObject(json))
 }
 
 @Test
@@ -36,5 +36,5 @@ func `Workflow button in actions block round-trips`() throws {
     }
 
     let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(block)) as? NSDictionary)
-    #expect(encoded == (try jsonObject(json)))
+    #expect(try encoded == jsonObject(json))
 }

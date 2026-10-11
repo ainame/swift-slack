@@ -16,5 +16,5 @@ func `URL input element in input block decodes and round-trips`() throws {
     #expect(element.focusOnLoad == true)
 
     let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(block)) as? NSDictionary)
-    #expect(encoded == (try #require(JSONSerialization.jsonObject(with: Data(json.utf8)) as? NSDictionary)))
+    #expect(try encoded == #require(JSONSerialization.jsonObject(with: Data(json.utf8)) as? NSDictionary))
 }

@@ -7,7 +7,7 @@ private func jsonObject(_ data: Data) throws -> NSDictionary {
     try #require(JSONSerialization.jsonObject(with: data) as? NSDictionary)
 }
 
-private func roundTrip<T: Codable>(_ type: T.Type, _ json: String) throws -> (T, NSDictionary) {
+private func roundTrip<T: Codable>(_: T.Type, _ json: String) throws -> (T, NSDictionary) {
     let value = try JSONDecoder().decode(T.self, from: Data(json.utf8))
     return try (value, jsonObject(JSONEncoder().encode(value)))
 }
@@ -23,7 +23,7 @@ func `Unknown block type decodes as unknown and round-trips`() throws {
     }
     #expect(type == "future_block")
     #expect(payload.string(forKey: "block_id") == "b1")
-    #expect(encoded == (try jsonObject(Data(json.utf8))))
+    #expect(try encoded == jsonObject(Data(json.utf8)))
 }
 
 @Test
@@ -60,7 +60,7 @@ func `Unknown rich text types decode as unknown and round-trip`() throws {
     let contentJSON = #"{"type":"future_inline","value":"x"}"#
     let (content, contentEncoded) = try roundTrip(RichTextContentElement.self, contentJSON)
     guard case .unknown("future_inline", _) = content else { Issue.record("content: \(content)"); return }
-    #expect(contentEncoded == (try jsonObject(Data(contentJSON.utf8))))
+    #expect(try contentEncoded == jsonObject(Data(contentJSON.utf8)))
 }
 
 @Test
@@ -75,7 +75,7 @@ func `Unknown view type decodes as unknown and round-trips`() throws {
     #expect(view.id == "V1")
     #expect(view.callbackId == "cb")
     #expect(view.state == nil)
-    #expect(encoded == (try jsonObject(Data(json.utf8))))
+    #expect(try encoded == jsonObject(Data(json.utf8)))
 }
 
 @Test

@@ -229,9 +229,13 @@ struct AppRouterTests {
         let registerView = {
             router.onView("modal") { _, payload in await tracker.set("view:\(payload._type)") }
         }
-        if viewFirst { registerView() }
+        if viewFirst {
+            registerView()
+        }
         router.onViewSubmission("modal") { _, _ in await tracker.set("submission") }
-        if !viewFirst { registerView() }
+        if !viewFirst {
+            registerView()
+        }
 
         #expect(try await dispatch(router, makeViewSubmissionEnvelope(callbackId: "modal")))
         #expect(await tracker.value == "submission")

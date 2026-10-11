@@ -91,12 +91,16 @@ public final class SlackApp {
 extension SlackApp {
     private func runSocketMode(options: SocketModeOptions, appLogger: Logger?) async throws {
         while true {
-            if Task.isCancelled { break }
+            if Task.isCancelled {
+                break
+            }
 
             let url = try await slack.openSocketModeConnection()
             try await startSocketMode(with: url, options: options, appLogger: appLogger)
 
-            if !options.contains(.autoReconnectWhenDisconnected) { break }
+            if !options.contains(.autoReconnectWhenDisconnected) {
+                break
+            }
         }
     }
 
