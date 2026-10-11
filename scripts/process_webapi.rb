@@ -495,10 +495,16 @@ class EventEnum
     words.first.downcase + words.drop(1).join
   end
 
-  # `type` => events with that type, raising when several events share a type without a subtype.
+  # `type` => events with that type, raising when several events share a type and subtype: they would
+  # be duplicate keys in a decoder table, which traps when the table is first used.
   def events_by_type
     @events_by_type ||= @events.group_by { |_, event| event['type'] }.sort.to_h.each do |type, events|
-      raise "several events have type #{type} and no subtype" if events.count { |_, event| !event['subtype'] } > 1
+      events.group_by { |_, event| event['subtype'] }.each do |subtype, duplicates|
+        next if duplicates.size == 1
+
+        names = duplicates.map(&:first).join(', ')
+        raise "several events have type #{type} and #{subtype ? "subtype #{subtype}" : 'no subtype'}: #{names}"
+      end
     end
   end
 

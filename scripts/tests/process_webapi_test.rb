@@ -72,7 +72,18 @@ class EventEnumTest < Minitest::Test
   def test_several_plain_events_with_same_type_raise
     events = { 'AEvent' => { 'type' => 'x' }, 'BEvent' => { 'type' => 'x' } }
 
-    assert_raises(RuntimeError) { EventEnum.new(events).source }
+    error = assert_raises(RuntimeError) { EventEnum.new(events).source }
+    assert_equal 'several events have type x and no subtype: AEvent, BEvent', error.message
+  end
+
+  def test_several_events_with_same_type_and_subtype_raise
+    events = {
+      'MessageAEvent' => { 'type' => 'message', 'subtype' => 'bot_message' },
+      'MessageBEvent' => { 'type' => 'message', 'subtype' => 'bot_message' },
+    }
+
+    error = assert_raises(RuntimeError) { EventEnum.new(events).source }
+    assert_equal 'several events have type message and subtype bot_message: MessageAEvent, MessageBEvent', error.message
   end
 
   def test_source_is_wrapped_in_events_trait
