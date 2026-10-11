@@ -58,7 +58,7 @@ struct ChatStreamTests {
     }
 
     @Test
-    func `stops the message when the sending task is cancelled`() async throws {
+    func `stops the message when the sending task is cancelled, though the transport honors cancellation`() async throws {
         let transport = FakeTransport()
         let (chunks, continuation) = AsyncStream.makeStream(of: StreamChunk.self)
         continuation.yield(.markdownText("partial"))
@@ -77,7 +77,7 @@ struct ChatStreamTests {
     }
 
     @Test
-    func `throws the transport's error`() async {
+    func `stops the message and throws when an append fails`() async {
         let transport = FakeTransport(failing: "append")
         let (chunks, continuation) = AsyncStream.makeStream(of: StreamChunk.self)
         let sending = Task {
@@ -91,6 +91,10 @@ struct ChatStreamTests {
             try await sending.value
         }
         continuation.finish()
+
+        let calls = await transport.calls
+        #expect(calls.map(\.method) == ["start", "append", "stop"])
+        #expect(calls.last?.chunks == [])
     }
 
     private func text(_ calls: [FakeTransport.Call]) -> String {
@@ -138,6 +142,8 @@ private actor FakeTransport: ChatStreamTransport {
     }
 
     private func record(_ call: Call) throws {
+        // Like an HTTP transport, which abandons requests made from a cancelled task.
+        try Task.checkCancellation()
         calls.append(call)
         for waiter in waiters where waiter.count <= calls.count {
             waiter.continuation.resume()
