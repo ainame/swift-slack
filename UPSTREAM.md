@@ -5,7 +5,7 @@ selected delta, not complete historical parity or live Slack service behavior.
 
 ## Review on 2026-10-11
 
-Sync PR: pending.
+Sync PR: #243.
 
 | Source | Previous commit | Reviewed snapshot |
 | --- | --- | --- |
