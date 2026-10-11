@@ -435,14 +435,10 @@ class EventEnum
           private typealias Decode = @Sendable (any Decoder) throws -> Event
 
           /// Decoders for event types without subtypes, keyed by `type`.
-          private static let decoders: [String: Decode] = [
-      #{plain_decoders.join("\n")}
-          ]
+          private static let decoders: [String: Decode] = #{dictionary_literal(plain_decoders)}
 
           /// Decoders for event types with subtypes, keyed by `type` and then `subtype` (`nil` for none).
-          private static let subtypeDecoders: [String: [String?: Decode]] = [
-      #{subtype_decoders.join("\n")}
-          ]
+          private static let subtypeDecoders: [String: [String?: Decode]] = #{dictionary_literal(subtype_decoders)}
 
           /// Returns the contained event as a SlackEvent
           public var payload: (any SlackEvent)? {
@@ -506,6 +502,11 @@ class EventEnum
         raise "several events have type #{type} and #{subtype ? "subtype #{subtype}" : 'no subtype'}: #{names}"
       end
     end
+  end
+
+  # A Swift dictionary literal of `entries` (lines indented for the enum's members), or `[:]` when empty.
+  def dictionary_literal(entries)
+    entries.empty? ? '[:]' : "[\n#{entries.join("\n")}\n    ]"
   end
 
   def decoder(name)

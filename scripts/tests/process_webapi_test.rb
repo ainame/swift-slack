@@ -44,6 +44,15 @@ class EventEnumTest < Minitest::Test
     refute_includes source, '"message": {'
   end
 
+  def test_empty_decoder_tables_are_empty_dictionary_literals
+    plain_only = EventEnum.new({ 'IMCloseEvent' => { 'type' => 'im_close' } }).source
+    subtype_only = EventEnum.new({ 'MessageBotEvent' => { 'type' => 'message', 'subtype' => 'bot_message' } }).source
+
+    assert_includes plain_only, 'private static let subtypeDecoders: [String: [String?: Decode]] = [:]'
+    assert_includes subtype_only, 'private static let decoders: [String: Decode] = [:]'
+    refute_includes source, '= [:]'
+  end
+
   def test_decoding_does_not_switch_over_every_event
     refute_match(/switch type/, source)
     refute_match(/^\s*case "/, source)
