@@ -27,3 +27,8 @@ Web API methods and request parameters come from the community-maintained [slack
 - <doc:GettingStarted>
 - <doc:Traits>
 - ``Slack``
+
+### Streaming messages
+
+- <doc:StreamingMessages>
+- ``StreamingMessage``
