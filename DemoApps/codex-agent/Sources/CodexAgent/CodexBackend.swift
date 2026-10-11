@@ -196,26 +196,32 @@ private actor CodexSession {
                 codexPathOverride: settings.codexPath,
                 environment: Self.childEnvironment(),
                 clientName: "swift-slack-codex-agent",
+                dynamicToolCallHandler: CardsTool.handle,
             ),
             logger: logger,
         )
         self.codex = codex
-        let options = ThreadOptions(
+        var options = ThreadOptions(
             approvalPolicy: .never,
             cwd: settings.workspace,
             developerInstructions: """
             You are answering a person in Slack. Keep answers short and use Markdown that Slack renders: \
             bold, italics, lists, inline code, and fenced code blocks. Do not use tables or headings.
 
-            \(SlackUI.instructions)
+            When a few items deserve to stand out, such as files, links, or options to explore next, call \
+            the `\(SlackUI.toolName)` tool. The cards appear under your answer, so mention them briefly \
+            instead of repeating them.
             """,
             model: settings.model,
             sandboxPreset: .readOnly,
         )
-        let thread = if let threadID {
-            try await codex.resumeThread(id: threadID, options: options)
+        let thread: CodexThread
+        if let threadID {
+            // A resumed thread keeps the tools it started with and rejects new definitions.
+            thread = try await codex.resumeThread(id: threadID, options: options)
         } else {
-            try await codex.startThread(options: options)
+            options.dynamicTools = [CardsTool.spec]
+            thread = try await codex.startThread(options: options)
         }
         self.thread = thread
         threadID = thread.id
@@ -258,6 +264,9 @@ struct NotificationTranslator {
         case let .itemStarted(payload):
             return task(for: payload.item).map { [.task($0)] } ?? []
         case let .itemCompleted(payload):
+            if case let .dynamicToolCall(call) = payload.item {
+                return CardsTool.cards(from: call).map { [.cards($0)] } ?? []
+            }
             return task(for: payload.item).map { [.task($0)] } ?? []
         case let .turnCompleted(payload) where payload.turn.status == .failed:
             failure = failure ?? .turnFailed(payload.turn.error?.message ?? "Codex turn failed")
@@ -280,7 +289,12 @@ struct NotificationTranslator {
                 output: command.aggregatedOutput.flatMap { $0.isEmpty ? nil : String($0.suffix(200)) },
             )
         case let .webSearch(search):
-            TaskUpdate(id: search.id, title: "Search the web for \"\(search.query)\"", status: .complete)
+            // The query is empty until the search completes.
+            TaskUpdate(
+                id: search.id,
+                title: search.query.isEmpty ? "Search the web" : "Search the web for \"\(search.query)\"",
+                status: .complete,
+            )
         case let .fileChange(change):
             TaskUpdate(
                 id: change.id,
@@ -326,5 +340,70 @@ struct NotificationTranslator {
         case .completed: .complete
         default: .error
         }
+    }
+}
+
+/// The `show_cards` tool registered with Codex, which carries ``SlackUI`` cards from the agent to the app.
+enum CardsTool {
+    static let spec = DynamicToolSpec.function(.init(
+        description: """
+        Show cards under your answer in Slack, one per item worth highlighting. Each card may link to an \
+        https URL and offer a follow-up question the person can ask with one click.
+        """,
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "cards": [
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "items": [
+                        "type": "object",
+                        "properties": [
+                            "title": ["type": "string", "maxLength": 150],
+                            "subtitle": ["type": "string", "maxLength": 150],
+                            "body": ["type": "string", "maxLength": 200, "description": "Slack mrkdwn"],
+                            "url": ["type": "string", "pattern": "^https://"],
+                            "ask": ["type": "string", "maxLength": 2000, "description": "A follow-up question"],
+                        ],
+                        "additionalProperties": false,
+                    ],
+                ],
+            ],
+            "required": ["cards"],
+            "additionalProperties": false,
+        ],
+        name: SlackUI.toolName,
+        type: .function,
+    ))
+
+    /// Answers a tool call. It only checks the arguments: the cards are read from the completed tool call item,
+    /// and handlers must not wait on another request to the same app server.
+    @Sendable
+    static func handle(_ call: DynamicToolCallParams) async -> DynamicToolCallResponse {
+        guard call.tool == SlackUI.toolName, call.namespace == nil else {
+            return reply("There is no tool named \(call.tool).", success: false)
+        }
+        do {
+            _ = try SlackUI(arguments: JSONEncoder().encode(call.arguments))
+            return reply("The cards will appear under your answer.", success: true)
+        } catch let error as SlackUI.InvalidArguments {
+            return reply(error.message, success: false)
+        } catch {
+            return reply("The arguments could not be read.", success: false)
+        }
+    }
+
+    /// The cards from a successful `show_cards` call.
+    static func cards(from call: DynamicToolCallThreadItem) -> SlackUI? {
+        guard call.tool == SlackUI.toolName, call.success == true,
+              let arguments = try? JSONEncoder().encode(call.arguments) else {
+            return nil
+        }
+        return try? SlackUI(arguments: arguments)
+    }
+
+    private static func reply(_ text: String, success: Bool) -> DynamicToolCallResponse {
+        DynamicToolCallResponse(contentItems: [.inputText(.init(text: text, type: .inputText))], success: success)
     }
 }

@@ -15,6 +15,8 @@ enum AgentEvent: Sendable, Equatable {
     case task(TaskUpdate)
     /// More text for the answer, appended to what was streamed so far.
     case text(String)
+    /// Cards to show under the answer, from the agent's `show_cards` tool.
+    case cards(SlackUI)
 }
 
 /// Produces the agent's side of a turn. The Slack layer turns the events into streamed messages.

@@ -127,13 +127,13 @@ actor AgentResponder {
         }
     }
 
-    /// Streams the backend's events as chunks and returns the blocks for the answer's `slack-ui` block.
+    /// Streams the backend's events as chunks and returns the blocks for the cards the agent asked for.
     private nonisolated func produce(
         _ turn: Turn,
         prompt: String,
         into continuation: AsyncStream<StreamChunk>.Continuation,
     ) async -> [Block] {
-        var extractor = SlackUIExtractor()
+        var cards: [SlackUI.Card] = []
         defer { continuation.finish() }
         do {
             for try await event in backend.respond(to: prompt, in: turn.session) {
@@ -141,25 +141,20 @@ actor AgentResponder {
                 case let .task(task):
                     continuation.yield(.taskUpdate(task))
                 case let .text(text):
-                    let visible = extractor.consume(text)
-                    if !visible.isEmpty {
-                        continuation.yield(.markdownText(visible))
-                    }
+                    continuation.yield(.markdownText(text))
+                case let .cards(ui):
+                    cards += ui.cards
                 }
-            }
-            let (text, ui) = extractor.finish()
-            if !text.isEmpty {
-                continuation.yield(.markdownText(text))
             }
             // Iterating a stream from a cancelled task ends it without an error.
             if Task.isCancelled {
                 continuation.yield(.markdownText("\n\n_Stopped._"))
                 return []
             }
-            return ui?.blocks() ?? []
+            return SlackUI(cards: cards).blocks()
         } catch {
             logger.error("Agent turn failed", metadata: ["session": "\(turn.session)", "error": "\(error)"])
-            continuation.yield(.markdownText(extractor.finish().text + "\n\n:warning: Something went wrong: \(error)"))
+            continuation.yield(.markdownText("\n\n:warning: Something went wrong: \(error)"))
             return []
         }
     }

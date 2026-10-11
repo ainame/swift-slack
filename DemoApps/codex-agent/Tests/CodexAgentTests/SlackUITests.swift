@@ -1,45 +1,65 @@
+import Codex
 @testable import CodexAgent
 import Foundation
 import SlackKit
 import Testing
 
-struct SlackUIExtractorTests {
+struct SlackUIArgumentsTests {
     @Test
-    func `passes text without a fence through`() {
-        var extractor = SlackUIExtractor()
-        let streamed = ["Hello ", "world"].map { extractor.consume($0) }.joined()
-        let finished = extractor.finish()
-        #expect(streamed + finished.text == "Hello world")
-        #expect(finished.ui == nil)
+    func `decodes cards from tool arguments`() throws {
+        let ui = try SlackUI(arguments: Data(#"{"cards": [{"title": "A", "url": "https://example.com"}]}"#.utf8))
+        #expect(ui == SlackUI(cards: [.init(title: "A", url: "https://example.com")]))
+    }
+
+    @Test(arguments: [
+        #"{"items": []}"#,
+        #"{"cards": [{"title": 1}]}"#,
+        #"{"cards": [{"subtitle": "no title or body"}]}"#,
+    ])
+    func `rejects arguments without a usable card`(json: String) {
+        #expect(throws: SlackUI.InvalidArguments.self) {
+            try SlackUI(arguments: Data(json.utf8))
+        }
+    }
+}
+
+struct CardsToolTests {
+    @Test
+    func `accepts valid cards and rejects invalid ones with a message for the agent`() async {
+        let valid = await CardsTool.handle(call(["cards": [["title": "A"]]]))
+        #expect(valid.success)
+
+        let invalid = await CardsTool.handle(call(["cards": []]))
+        #expect(!invalid.success)
+        #expect(invalid.contentItems == [.inputText(.init(text: "Give at least one card a title or a body.", type: .inputText))])
     }
 
     @Test
-    func `separates a fence split across deltas`() {
-        var extractor = SlackUIExtractor()
-        let deltas = ["Answer.\n\n``", "`slack", "-ui\n{\"cards\": [{\"title\": \"A\"}]}", "\n```"]
-        let streamed = deltas.map { extractor.consume($0) }.joined()
-        let finished = extractor.finish()
-        #expect(streamed == "Answer.\n\n")
-        #expect(finished.text == "")
-        #expect(finished.ui == SlackUI(cards: [.init(title: "A")]))
+    func `rejects unknown tools`() async {
+        #expect(await !CardsTool.handle(call([:], tool: "rm_rf")).success)
     }
 
     @Test
-    func `releases held-back backticks that start another code block`() {
-        var extractor = SlackUIExtractor()
-        var streamed = extractor.consume("Run:\n``")
-        #expect(streamed == "Run:\n")
-        streamed += extractor.consume("`swift\nprint(1)\n```")
-        #expect(streamed + extractor.finish().text == "Run:\n```swift\nprint(1)\n```")
+    func `reads cards only from successful show_cards calls`() {
+        let arguments: JSONValue = ["cards": [["title": "A"]]]
+        #expect(CardsTool.cards(from: item(arguments, success: true)) == SlackUI(cards: [.init(title: "A")]))
+        #expect(CardsTool.cards(from: item(arguments, success: false)) == nil)
+        #expect(CardsTool.cards(from: item(arguments, success: true, tool: "other")) == nil)
     }
 
-    @Test
-    func `drops an invalid block but keeps text after it`() {
-        var extractor = SlackUIExtractor()
-        _ = extractor.consume("Hi\n```slack-ui\n{not json}\n```\nBye")
-        let finished = extractor.finish()
-        #expect(finished.ui == nil)
-        #expect(finished.text == "Bye")
+    private func call(_ arguments: JSONValue, tool: String = SlackUI.toolName) -> DynamicToolCallParams {
+        DynamicToolCallParams(arguments: arguments, callId: "call-1", threadId: "thread", tool: tool, turnId: "turn")
+    }
+
+    private func item(_ arguments: JSONValue, success: Bool, tool: String = SlackUI.toolName) -> DynamicToolCallThreadItem {
+        DynamicToolCallThreadItem(
+            arguments: arguments,
+            id: "call-1",
+            status: success ? .completed : .failed,
+            success: success,
+            tool: tool,
+            type: .dynamicToolCall,
+        )
     }
 }
 

@@ -130,7 +130,7 @@ struct CodexAgentApp {
 
         Feedback.register(on: router, logger: logger)
 
-        // Buttons on the cards built from an answer's slack-ui block.
+        // Buttons on the cards from the agent's show_cards tool.
         router.onAction(SlackUI.openActionId) { context, _ in
             // Slack opens the link; the click still needs an acknowledgement.
             try await context.ack()
