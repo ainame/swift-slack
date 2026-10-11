@@ -45,6 +45,21 @@ public struct ChatStream: Sendable {
         blocks: [Block]? = nil,
         sessionStatus: String? = nil,
     ) async throws -> String {
+        try await send(chunks, sessionStatus: sessionStatus) { blocks }
+    }
+
+    /// Streams `chunks` into one message and stops it with blocks that are known only once `chunks` finishes,
+    /// such as blocks built from the streamed text.
+    ///
+    /// - Parameters:
+    ///   - finalBlocks: Called after `chunks` finishes, for the blocks rendered at the bottom of the message.
+    ///     It is not called when a call fails partway; the message is then stopped without blocks.
+    @discardableResult
+    public func send(
+        _ chunks: AsyncStream<StreamChunk>,
+        sessionStatus: String? = nil,
+        finalBlocks: @escaping @Sendable () async -> [Block]?,
+    ) async throws -> String {
         let buffer = ChunkBuffer()
         return try await withThrowingTaskGroup(of: String?.self) { group in
             group.addTask {
@@ -55,7 +70,7 @@ public struct ChatStream: Sendable {
                 return nil
             }
             group.addTask {
-                try await deliver(from: buffer, blocks: blocks, sessionStatus: sessionStatus)
+                try await deliver(from: buffer, finalBlocks: finalBlocks, sessionStatus: sessionStatus)
             }
             // If delivery fails, cancelling the group ends the input loop, which stops consuming `chunks`.
             defer { group.cancelAll() }
@@ -68,7 +83,11 @@ public struct ChatStream: Sendable {
         }
     }
 
-    private func deliver(from buffer: ChunkBuffer, blocks: [Block]?, sessionStatus: String?) async throws -> String {
+    private func deliver(
+        from buffer: ChunkBuffer,
+        finalBlocks: @escaping @Sendable () async -> [Block]?,
+        sessionStatus: String?,
+    ) async throws -> String {
         var ts: String?
         let remaining: [StreamChunk]
         do {
@@ -76,8 +95,9 @@ public struct ChatStream: Sendable {
         } catch {
             // Stop the message so it does not stay streaming, then report the failure.
             if let ts {
+                // The input may still be running, so `finalBlocks` could wait for it; stop without blocks.
                 try? await Self.uncancellable { [transport] in
-                    try await transport.stop(ts: ts, chunks: [], blocks: blocks, sessionStatus: sessionStatus)
+                    try await transport.stop(ts: ts, chunks: [], blocks: nil, sessionStatus: sessionStatus)
                 }
             }
             throw error
@@ -86,6 +106,7 @@ public struct ChatStream: Sendable {
         // The final calls run even when the caller was cancelled, because cancelling must still stop the
         // message, and a real HTTP transport abandons requests made from a cancelled task.
         return try await Self.uncancellable { [transport, ts] in
+            let blocks = await finalBlocks()
             var chunks = remaining
             let messageTs: String
             if let ts {
