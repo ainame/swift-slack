@@ -24,43 +24,64 @@ The return value is the reply's message timestamp. Supply `recipient` when reply
 
 ### Produce tasks, text, and blocks
 
-An `AsyncStream` lets a producer yield different kinds of parts. Keep its task handle to implement a stop button:
+An `AsyncStream` lets a producer yield different kinds of parts. Run production in a structured child scope, and use a separate stop signal so a stop button cancels production while Slack delivery finishes the message:
 
 ```swift
 let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
-let producer = Task {
-    defer { continuation.finish() }
-    continuation.yield(.task(.init(
-        id: "search",
-        title: "Searching documentation",
-        status: .inProgress,
-    )))
-    for await token in llm.tokens(for: prompt) {
-        continuation.yield(.markdown(token))
-    }
-    if Task.isCancelled {
-        continuation.yield(.markdown("\n\n_Stopped._"))
-    } else {
-        continuation.yield(.task(.init(
-            id: "search",
-            title: "Searching documentation",
-            status: .complete,
-        )))
-        continuation.yield(.blocks(resultBlocks))
-    }
-}
+let (stopRequests, stopContinuation) = AsyncStream.makeStream(of: Void.self)
+// Register stopContinuation with your stop-button handler before awaiting.
+// The handler calls stopContinuation.finish() to request a stop.
 
-// A stop-button handler calls producer.cancel().
-try await client.streamMessage(
-    parts,
-    channel: channel,
-    threadTs: threadTs,
-    recipient: .init(userId: userId, teamId: teamId),
-    blocks: feedbackBlocks,
-)
+try await withThrowingTaskGroup(of: Void.self) { group in
+    group.addTask {
+        await withTaskGroup(of: Void.self) { production in
+            production.addTask {
+                defer { continuation.finish() }
+                continuation.yield(.task(.init(
+                    id: "search",
+                    title: "Searching documentation",
+                    status: .inProgress,
+                )))
+                if !Task.isCancelled {
+                    for await token in llm.tokens(for: prompt) {
+                        continuation.yield(.markdown(token))
+                    }
+                }
+                if Task.isCancelled {
+                    continuation.yield(.markdown("\n\n_Stopped._"))
+                } else {
+                    continuation.yield(.task(.init(
+                        id: "search",
+                        title: "Searching documentation",
+                        status: .complete,
+                    )))
+                    continuation.yield(.blocks(resultBlocks))
+                }
+            }
+            production.addTask {
+                for await _ in stopRequests {}
+            }
+            // Stop cancels the producer; normal completion cancels the stop waiter.
+            _ = await production.next()
+            production.cancelAll()
+        }
+    }
+    // Delivery ending also cancels production, including when a Slack call throws.
+    defer { group.cancelAll() }
+
+    try await client.streamMessage(
+        parts,
+        channel: channel,
+        threadTs: threadTs,
+        recipient: .init(userId: userId, teamId: teamId),
+        blocks: feedbackBlocks,
+    )
+}
 ```
 
-Cancelling the producer lets it yield a stopped notice and finish the sequence. If the producer uses a throwing sequence, handle its error and cancellation and always finish the continuation. If `streamMessage` throws, cancel any producer task you created so it does not keep working.
+The inner group races production against the stop signal. Finishing that signal cancels only production, letting it yield a stopped notice and finish the sequence while `streamMessage` drains the remaining parts and attaches feedback blocks. The outer group waits for producer cleanup before returning, including when delivery fails or the caller is cancelled. Remove the registered stop control after the outer group returns; keep a session busy until then.
+
+This example assumes the values captured by the producer, including `llm`, are `Sendable`. Create the token sequence inside the child task; the sequence itself need not be `Sendable`. To read a sequence in the caller's actor isolation, use the direct mapping example above. If the producer uses a throwing sequence, handle its error and cancellation and always finish the continuation.
 
 Task updates with the same `id` update an existing task. The default `taskDisplay: .timeline` shows task cards between surrounding text. Use `.plan` and `.plan(title:)` parts to show tasks together in a plan. Task updates can also include details, output, and source links.
 
