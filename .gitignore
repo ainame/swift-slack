@@ -9,7 +9,6 @@ DerivedData/
 .netrc
 
 .tmp
-/node_modules
 openapi.json
 .vscode
 
