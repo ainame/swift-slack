@@ -64,6 +64,23 @@ For new or changed API families and payloads:
 - Inspect handwritten Block Kit and Events changes even if generation is unchanged.
   Explicitly assess additions/removals that affect exhaustive switches or public API.
 
+For events, compare the Java event classes with java-slack-sdk's recorded
+`json-logs/samples/events` and `scripts/event_fixtures.yml`:
+
+- A new event class without a recorded fixture is generated only through
+  `scripts/event_fixtures.yml`. Copy the payload of its upstream unit test verbatim
+  when that test deserializes a complete payload; otherwise record the event as a
+  coverage gap. Do not build a payload from Slack documentation or other SDKs.
+- Cross-check a copied payload against the Slack event reference and the other SDKs'
+  types. Record fields that they document but the Java class lacks (for example
+  `enterprise_id` on `agent_session_title_changed`) as gaps, not `added` overrides,
+  because no recorded payload carries them.
+- Generation fails when a copy drifts from its unit test: copy it again and review the
+  changed fields. It also fails once upstream records the event: delete the copy and
+  its entry, then review the recorded fixture like any other.
+- A new generated event adds an `Event` case, which breaks exhaustive switches; mark it
+  `**BREAKING**:` in the changelog.
+
 Decide whether work is needed from the reviewed upstream delta, not generated-file
 changes alone. Do not make vendor-only PRs for irrelevant churn by default. If no
 applicable change exists, leave the repository pins unchanged and report a verified
