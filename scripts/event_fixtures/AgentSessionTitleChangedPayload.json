@@ -1,0 +1,10 @@
+{
+  "type": "agent_session_title_changed",
+  "channel": "C0123ABC456",
+  "user": "U0123ABC456",
+  "team_id": "T0123ABC456",
+  "thread_ts": "1787267269.063879",
+  "title": "New title",
+  "previous_title": "Old title",
+  "event_ts": "1787267281.002810"
+}
