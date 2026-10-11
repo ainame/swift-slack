@@ -13,6 +13,8 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 This is the first beta of 2027.1.0, a major release that is worth upgrading to. Web API responses and events are now generated from the model classes of java-slack-sdk, Slack's Java SDK, instead of being inferred from single recorded JSON samples.
 
+**Why a beta?** swift-slack uses calendar versioning, so this release can only be tagged `2027.1.0` in January 2027. The beta makes the new models available now. APIs may still change before `2027.1.0` based on feedback, so please [open an issue](https://github.com/ainame/swift-slack/issues) if something decodes incorrectly or the migration is harder than expected.
+
 ### Summary
 
 **Why upgrade**
