@@ -1,4 +1,5 @@
 import Codex
+import Foundation
 import Logging
 import SlackStreaming
 import Synchronization
@@ -178,12 +179,24 @@ private actor CodexSession {
         }
     }
 
+    /// The variables Codex needs to run and find its login in `~/.codex`. Without an explicit environment,
+    /// swift-codex passes the app's own, including any exported Slack tokens, and Codex can print it.
+    private static func childEnvironment() -> [String: String] {
+        let names = ["PATH", "HOME", "USER", "LOGNAME", "SHELL", "TMPDIR", "LANG", "LC_ALL", "TERM", "CODEX_HOME"]
+        let environment = ProcessInfo.processInfo.environment
+        return environment.filter { names.contains($0.key) }
+    }
+
     private func prepareThread() async throws -> CodexThread {
         if let thread {
             return thread
         }
         let codex = try await Codex(
-            config: CodexConfig(codexPathOverride: settings.codexPath, clientName: "swift-slack-codex-agent"),
+            config: CodexConfig(
+                codexPathOverride: settings.codexPath,
+                environment: Self.childEnvironment(),
+                clientName: "swift-slack-codex-agent",
+            ),
             logger: logger,
         )
         self.codex = codex
