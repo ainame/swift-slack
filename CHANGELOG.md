@@ -9,6 +9,10 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+### Added
+
+* Added the nine `agents.conversations.*` Web API methods (`archive`, `create`, `getCanvas`, `listViews`, `removeView`, `setCanvasContent`, `setCommands`, `setProperties` and `setView`) to the `WebAPI_Agents` trait, now that slack-api-ref defines their arguments - #243
+
 ### Changed
 
 * Raised the minimum `swift-openapi-runtime` version to 1.13.0, which code from swift-openapi-generator 1.14.0 requires - #241
