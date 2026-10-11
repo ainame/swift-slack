@@ -46,29 +46,37 @@ Tool calls appear as task cards, and failures go back to Codex as messages it ca
 
 ## Streaming with AsyncSequence
 
-The library's `client.streamMessage` takes any `AsyncSequence` of `StreamingMessage.Part`. The demo uses an `AsyncStream` so the stop button can cancel the producer independently:
+The library's `client.streamMessage` takes any `AsyncSequence` of `StreamingMessage.Part`. The demo uses an `AsyncStream` and a demo-local `TurnProducer` stop control. Production runs in a structured child scope, so the stop button can cancel it independently while Slack delivery drains and finishes the message:
 
 ```swift
 let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
-let producer = Task {
-    defer { continuation.finish() }
-    for await text in agent.tokens(for: prompt) {
-        continuation.yield(.markdown(text))
+let producer = TurnProducer()
+// Register producer before awaiting; the stop handler calls producer.stop().
+try await withThrowingTaskGroup(of: Void.self) { group in
+    group.addTask {
+        await producer.run {
+            defer { continuation.finish() }
+            for await text in agent.tokens(for: prompt) {
+                continuation.yield(.markdown(text))
+            }
+            if Task.isCancelled {
+                continuation.yield(.markdown("\n\n_Stopped._"))
+            }
+        }
     }
-    if Task.isCancelled {
-        continuation.yield(.markdown("\n\n_Stopped._"))
-    }
-}
+    defer { group.cancelAll() }
 
-try await client.streamMessage(
-    parts,
-    channel: channel,
-    threadTs: threadTs,
-    recipient: .init(userId: userId, teamId: teamId),
-    blocks: feedbackBlocks,
-)
+    try await client.streamMessage(
+        parts,
+        channel: channel,
+        threadTs: threadTs,
+        recipient: .init(userId: userId, teamId: teamId),
+        blocks: feedbackBlocks,
+    )
+}
 ```
 
+- `TurnProducer.run` races production against a stop signal and cancels the remaining child. The enclosing group waits for producer cleanup before the demo clears the busy session, including when delivery fails.
 - Parts include `.markdown`, `.task`, `.plan(title:)`, and `.blocks`. Blocks are streamed in order with other parts; the `blocks:` argument adds blocks at the bottom of the finished message.
 - `streamMessage` collects parts while requests are in flight, merges adjacent markdown up to 12,000 characters and blocks up to 50, and spaces calls by `minimumInterval` (1 second by default).
 - Finishing the input sends remaining parts and closing blocks with `chat.stopStream`. Cancelling the producer lets it yield a stopped notice and finish the input normally. Cancelling the task calling `streamMessage` also closes the message, using a task that does not inherit cancellation.

@@ -17,8 +17,8 @@ actor AgentResponder {
     private let backend: any AgentBackend
     private let questions: PendingQuestions
     private let logger: Logger
-    /// The task producing parts for each session's running turn. Cancelling it stops the turn.
-    private var producers: [SessionKey: Task<Void, Never>] = [:]
+    /// Stop controls for the structured producer scopes of the running turns.
+    private var producers: [SessionKey: TurnProducer] = [:]
     private var titledSessions: Set<SessionKey> = []
     /// Sessions the person renamed, whose title the agent leaves alone.
     private var userTitledSessions: Set<SessionKey> = []
@@ -62,8 +62,8 @@ actor AgentResponder {
             return
         }
 
-        // The agent's events go into an AsyncStream that streamMessage sends to Slack. The producer task is
-        // separate so the stop button can cancel the agent while the message is still stopped properly.
+        // The agent's events go into an AsyncStream that streamMessage sends to Slack. Only the producer
+        // scope is stopped by the button, so Slack delivery can drain and finish the message.
         // It is registered before the first `await`: the actor takes other calls while this one waits,
         // and a second message in the same thread must find the session busy.
         let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
@@ -75,33 +75,43 @@ actor AgentResponder {
             questions: questions,
             isTitledByUser: { [weak self] in await self?.isTitledByUser(session) ?? true },
         )
-        let producer = Task {
-            await self.setProcessing(turn, client: client)
-            let prompt = await self.prompt(for: turn, client: client)
-            await self.produce(turn, prompt: prompt, tools: tools, into: continuation)
-        }
+        let producer = TurnProducer()
         producers[session] = producer
-        defer {
-            if producers[session] == producer {
-                producers[session] = nil
-            }
-        }
+        defer { producers[session] = nil }
 
-        do {
-            _ = try await client.streamMessage(
-                parts,
-                channel: session.channel,
-                threadTs: session.threadTs,
-                recipient: .init(userId: turn.userId, teamId: turn.teamId),
-                blocks: Feedback.blocks(),
-            )
-        } catch {
-            // The stop button ends the streaming message on Slack's side, so stopping it can fail here.
-            // Leave `processing` anyway, or the session keeps spinning for an hour.
-            logger.info("Could not finish the stream", metadata: ["session": "\(session)", "error": "\(error)"])
-            await questions.cancel(session)
-            producer.cancel()
-            await setActive(session, client: client)
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask {
+                await producer.run {
+                    if !Task.isCancelled {
+                        await self.setProcessing(turn, client: client)
+                    }
+                    let prompt = if Task.isCancelled {
+                        turn.prompt
+                    } else {
+                        await self.prompt(for: turn, client: client)
+                    }
+                    await self.produce(turn, prompt: prompt, tools: tools, into: continuation)
+                }
+            }
+            // A failed Slack delivery must also stop and join the producer before clearing the session.
+            defer { group.cancelAll() }
+
+            do {
+                _ = try await client.streamMessage(
+                    parts,
+                    channel: session.channel,
+                    threadTs: session.threadTs,
+                    recipient: .init(userId: turn.userId, teamId: turn.teamId),
+                    blocks: Feedback.blocks(),
+                )
+            } catch {
+                // The stop button ends the streaming message on Slack's side, so stopping it can fail here.
+                // Leave `processing` anyway, or the session keeps spinning for an hour.
+                logger.info("Could not finish the stream", metadata: ["session": "\(session)", "error": "\(error)"])
+                await questions.cancel(session)
+                producer.stop()
+                await setActive(session, client: client)
+            }
         }
     }
 
@@ -112,7 +122,7 @@ actor AgentResponder {
         // A question waiting for a click holds Codex's message loop, so end it before interrupting.
         await questions.cancel(session)
         // Cancelling the producer ends its iteration of the backend's stream, which stops the turn.
-        producer.cancel()
+        producer.stop()
     }
 
     func titleChanged(_ session: SessionKey) {
@@ -156,6 +166,7 @@ actor AgentResponder {
             continuation.finish()
         }
         do {
+            try Task.checkCancellation()
             for try await event in backend.respond(to: prompt, in: turn.session, tools: tools) {
                 switch event {
                 case let .task(task):
