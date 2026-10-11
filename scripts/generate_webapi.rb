@@ -1,13 +1,27 @@
 #!/usr/bin/env ruby
 
+# Builds .tmp/WebAPI/openapi.json and the swift-openapi-generator configs for the Web API and events.
+#
+#   * Paths and request bodies come from the upstream slack-api-ref method docs.
+#   * Response schemas and event schemas come from the upstream java-slack-sdk Java classes
+#     (scripts/lib/java_openapi.rb), with the explicit exceptions in scripts/java_type_overrides.yml.
+#   * Only methods and events with an upstream java-slack-sdk fixture are generated, so every generated type
+#     is checked against a recorded payload (scripts/check_fixtures.rb).
+
 require 'fileutils'
 require 'json'
 require 'yaml'
-require_relative './lib/visitors'
 require_relative './lib/helpers'
+require_relative './lib/java_openapi'
 
 # Repository sources are UTF-8; do not depend on the caller's locale.
 Encoding.default_external = Encoding::UTF_8
+
+ROOT_DIR = File.expand_path('..', __dir__)
+SDK_DIR = File.join(ROOT_DIR, 'vendor/java-slack-sdk')
+TYPE_OVERRIDES_PATH = File.join(__dir__, 'java_type_overrides.yml')
+HANDWRITTEN_SCHEMAS_PATH = File.join(__dir__, 'handwritten_schemas.yml')
+BLOCK_KIT_DIR = File.join(ROOT_DIR, 'Sources/SlackBlockKit')
 
 # Based on the exclusion list in slack-web-api-client:
 # https://github.com/slack-edge/slack-web-api-client/blob/649fb67cc970fe04f05ea3fb215180bd698cee97/scripts/code_generator.rb#L91-L115
@@ -36,8 +50,37 @@ UNSUPPORTED_METHODS = [
   /\Aadmin\.analytics\.getFile\z/, # Returns a gzip-compressed file, not a JSON body
 ].freeze
 
+# Events with an upstream fixture that are not generated.
+UNSUPPORTED_EVENTS = [
+  /\AResources/,          # Retired workspace apps (resources_added, resources_removed)
+  /\AUserResource/,       # Retired workspace apps (user_resource_*)
+  /\AFileComment(Added|Edited)\z/, # File comments are legacy
+].freeze
+
+# Event schema names whose spelling differs from the fixture name, kept for source compatibility.
+EVENT_SCHEMA_NAMES = {
+  'ChannelIdChanged' => 'ChannelIDChangedEvent',
+  'ImClose' => 'IMCloseEvent',
+  'ImCreated' => 'IMCreatedEvent',
+  'ImHistoryChanged' => 'IMHistoryChangedEvent',
+  'ImOpen' => 'IMOpenEvent',
+}.freeze
+
 def unsupported_method?(method_name)
   UNSUPPORTED_METHODS.any? { _1.match?(method_name) }
+end
+
+def unsupported_event?(event_name)
+  UNSUPPORTED_EVENTS.any? { _1.match?(event_name) }
+end
+
+# `ImClosePayload.json` => "ImClose"
+def event_name_from_fixture(path)
+  File.basename(path, '.json').delete_suffix('Payload')
+end
+
+def event_schema_name(event_name)
+  EVENT_SCHEMA_NAMES.fetch(event_name) { "#{event_name}Event" }
 end
 
 # Data-quality warnings are printed as they happen and, on GitHub Actions,
@@ -67,116 +110,106 @@ def report_generator_warnings(warnings = GENERATOR_WARNINGS, env: ENV, io: $stdo
   end
 end
 
-api_ref_dir = './vendor/slack-api-ref/methods/'
-api_ref_paths = Dir.glob("#{api_ref_dir}/**/*.json").sort
+# Builds the OpenAPI document. `methods_with_fixtures` and `event_fixture_paths` select what is generated.
+# `check_unused` fails on entries of java_type_overrides.yml and handwritten_schemas.yml that nothing used,
+# which is only meaningful for a full generation.
+def build_openapi(api_ref_paths, methods_with_fixtures, event_fixture_paths, sdk_dir: SDK_DIR, check_unused: false)
+  index = JavaOpenAPI.load_index(sdk_dir)
+  GsonAdapters.validate!(sdk_dir)
+  type_overrides = TypeOverrides.load(TYPE_OVERRIDES_PATH)
+  type_overrides.validate!(index)
+  builder = SchemaBuilder.new(index, type_overrides: type_overrides,
+                                     handwritten_schemas: YAML.safe_load_file(HANDWRITTEN_SCHEMAS_PATH),
+                                     block_kit_types: JavaOpenAPI.swift_public_types(BLOCK_KIT_DIR))
 
-json_logs = './vendor/java-slack-sdk/json-logs'
-api_dir = "#{json_logs}/samples/api/"
-sample_json_paths = Dir.glob("#{api_dir}*.json").sort
+  openapi = JSON.parse(File.read(File.join(__dir__, 'lib/base_openapi.json')))
+  openapi['paths'] = build_paths(api_ref_paths, methods_with_fixtures, index, builder)
+  add_events(openapi, event_fixture_paths, index, builder)
+  check_unused_entries(type_overrides, builder) if check_unused
 
-output_dir = './.tmp/WebAPI'
-FileUtils.mkdir_p(File.join(output_dir, 'schemas'))
-
-# Properties is the same ConversationProperties model across conversation fixtures.
-# Union its fields before replacing the definition; future fixture-only fields must
-# survive too. Keep the existing last-definition policy for overlapping fields and
-# other names: quicktype also reuses names for unrelated models (e.g. AgentSession),
-# which require semantic ref fixers rather than a blanket object union.
-def merge_response_schemas!(schemas, incoming)
-  previous = schemas['Properties']
-  current = incoming['Properties']
-  if previous && current
-    unless [previous, current].all? { _1['type'] == 'object' && _1['properties'].is_a?(Hash) }
-      raise 'Cannot merge conversation Properties: expected object schemas'
-    end
-    incoming = incoming.merge('Properties' => current.merge(
-      'properties' => previous['properties'].merge(current['properties'])
-    ))
-  end
-  schemas.merge!(incoming)
+  openapi['components']['schemas'] = builder.components
+  [openapi, builder]
 end
 
-def main(api_ref_paths, sample_json_paths, output_dir)
-  openapi = JSON.parse(File.read(File.join(__dir__, 'lib/base_openapi.json')))
+def check_unused_entries(type_overrides, builder)
+  unused_overrides = type_overrides.unused_keys
+  raise "unused entries in java_type_overrides.yml: #{unused_overrides.join(', ')}" unless unused_overrides.empty?
 
-  # Generate schemas by quicktype
-  process_in_queue(sample_json_paths) do |path|
-    generate_openapi_component(path, File.join(output_dir, 'schemas'))
-  end
+  unused_schemas = builder.unused_handwritten_schemas
+  raise "unreferenced schemas in handwritten_schemas.yml: #{unused_schemas.join(', ')}" unless unused_schemas.empty?
+end
 
-  # Load generated schemas and put them in #components/schemas section.
-  # quicktype may normalize the requested top-level name (e.g. ApiTest -> APITest),
-  # so operations reference the name recorded in each generated schema.
-  schema_paths = Dir.glob("#{output_dir}/schemas/*.json").sort
-  response_model_names = {}
-  schema_paths.each do |path|
-    json = JSON.parse(File.read(path))
-    merge_response_schemas!(openapi['components']['schemas'], json['definitions'])
-    response_model_names[File.basename(path, '.json')] = json['$ref'].split('/').last
-  end
+# One path per supported slack-api-ref method that has a fixture; the 200 response is the Java response class.
+def build_paths(api_ref_paths, methods_with_fixtures, index, builder)
+  # Request bodies refer to these shared schemas.
+  builder.shared_ref(index.fully_qualified('com.slack.api.model.Attachment'))
+  builder.map_to_swift('Block', 'SlackBlockKit.Block', 'SlackBlockKit')
+  builder.map_to_swift('View', 'SlackBlockKit.View', 'SlackBlockKit')
 
-  # Generate paths
-  paths = {}
-  api_ref_paths.each do |path|
+  api_ref_paths.each_with_object({}) do |path, paths|
     method_name = File.basename(path, '.json')
     if unsupported_method?(method_name)
       puts "Skip, this method isn't supported #{method_name}"
       next
     end
 
-    # Like java-slack-sdk, only methods with a recorded response fixture are
-    # generated; slack-api-ref documentation examples are not used for types.
-    unless response_model_names.key?(method_name)
+    # Only methods with a recorded java-slack-sdk response fixture are generated;
+    # slack-api-ref documentation examples are not used for types.
+    unless methods_with_fixtures.include?(method_name)
       generator_warning "Skip #{method_name}: no java-slack-sdk fixture"
       next
     end
 
-    result = generate_openapi_path(path, response_model_names[method_name])
-    paths.merge!(result) if result
+    schema_name = JavaOpenAPI.response_schema_name(method_name)
+    builder.add_root(schema_name, JavaOpenAPI.response_class(index, method_name), required: ['ok'])
+    paths.merge!(JSON.parse(JSON.generate(generate_openapi_path(path, schema_name))))
   end
-  openapi['paths'] = paths
-
-  remove_orphan_schemas(openapi)
-
-  # Output openapi_yaml
-  File.write(File.join(output_dir, 'openapi.json'), JSON.pretty_generate(openapi))
 end
 
-def generate_openapi_component(path, output_dir)
-  method_name = File.basename(path, '.json')
-  model_name = "#{method_name.split('.').map { _1.sub(/\A./, &:upcase) }.join}Response"
-  output_path = File.join(output_dir, "#{method_name}.json")
+# Adds each event with a fixture as a schema marked with its Slack `type` (and message `subtype`).
+def add_events(openapi, event_fixture_paths, index, builder)
+  events = {}
+  event_fixture_paths.each do |path|
+    event_name = event_name_from_fixture(path)
+    if unsupported_event?(event_name)
+      puts "Skip #{event_name}: unsupported event"
+      next
+    end
 
-  if File.exist?(output_path)
-    puts "Found #{path} exists. Skip generating schema."
-    json = JSON.parse(File.read(output_path))
-  else
-    json = generate_json_schema(path, output_path, model_name)
+    java_class = JavaOpenAPI.event_class(index, event_name)
+    type_name = java_class.constants['TYPE_NAME'] or raise "#{java_class.fqn} has no TYPE_NAME"
+    schema_name = event_schema_name(event_name)
+    builder.add_root(schema_name, java_class, required: ['type'])
+    events[schema_name] = { 'type' => type_name, 'subtype' => java_class.constants['SUBTYPE_NAME'] }.compact
   end
+  openapi['x-slack-events'] = events.sort.to_h
+end
 
-  # fix json
-  visitors = [
-    InvalidKeysRemover.new,
-    ReferenceFixer.new,
-    AcronymsFixer.new('DND' => 'Dnd', 'MCP' => 'Mcp'),
-    TypeFixer.new,
-    UserProfileRefFixer.new,
-    TeamProfileRefFixer.new,
-    CallRefFixer.new,
-    ConversationPropertiesRefFixer.new,
-    APITestArgsRefFixer.new,
-    AppWorkflowRefFixer.new,
-    UsergroupRefFixer.new,
-    WorkflowCollaboratorErrorRefFixer.new,
-    OptionalityFixer.new,
-    ItemTsOptionalAdder.new,
-  ]
-  visitors.each do |visitor|
-    visitor.walk(json)
-  end
+# swift-openapi-generator config: typeOverrides point placeholder schemas at hand-written Swift types.
+def generator_config(builder, mode:, access_modifier:)
+  config = {
+    'generate' => [mode],
+    'accessModifier' => access_modifier,
+    'namingStrategy' => 'idiomatic',
+  }
+  imports = builder.mapped_modules.to_a.sort & %w[SlackBlockKit]
+  config['additionalImports'] = imports unless imports.empty?
+  config['typeOverrides'] = { 'schemas' => builder.type_mappings } unless builder.type_mappings.empty?
+  config
+end
 
-  File.write(output_path, JSON.pretty_generate(json))
-  output_path
+def main(api_ref_paths, sample_json_paths, event_fixture_paths, output_dir)
+  methods_with_fixtures = sample_json_paths.map { File.basename(_1, '.json') }.to_set
+  openapi, builder = build_openapi(api_ref_paths, methods_with_fixtures, event_fixture_paths, check_unused: true)
+
+  FileUtils.mkdir_p(output_dir)
+  File.write(File.join(output_dir, 'openapi.json'), JSON.pretty_generate(openapi))
+  File.write(File.join(output_dir, 'types-config.yaml'),
+             generator_config(builder, mode: 'types', access_modifier: 'public').to_yaml)
+  File.write(File.join(output_dir, 'client-config.yaml'),
+             generator_config(builder, mode: 'client', access_modifier: 'internal').to_yaml)
+  File.write(File.join(output_dir, 'generation-report.json'),
+             JSON.pretty_generate(builder.report.transform_values { _1.to_a.sort }))
 end
 
 # slack-api-ref misses many properties' type
@@ -258,7 +291,7 @@ def generate_openapi_path(path, response_model_name)
     }
   }
 
-  base = {
+  {
     "#{method_name}": {
       # Slack seems accapt POST always
       'post': {
@@ -281,24 +314,12 @@ def generate_openapi_path(path, response_model_name)
       }
     }
   }
-
-  base
-end
-
-def remove_orphan_schemas(openapi)
-  loop do
-    defined = openapi['components']['schemas'].keys
-    referenced = openapi.to_json.scan(%r{"#/components/schemas/([^"]+)"}).flatten.uniq
-    orphans = defined - referenced
-    break if orphans.empty?
-
-    orphans.each do |orphan|
-      openapi['components']['schemas'].delete(orphan)
-    end
-  end
 end
 
 if $PROGRAM_NAME == __FILE__
-  main(api_ref_paths, sample_json_paths, output_dir)
+  api_ref_paths = Dir.glob(File.join(ROOT_DIR, 'vendor/slack-api-ref/methods/**/*.json')).sort
+  sample_json_paths = Dir.glob(File.join(SDK_DIR, 'json-logs/samples/api/*.json')).sort
+  event_fixture_paths = Dir.glob(File.join(SDK_DIR, 'json-logs/samples/events/*.json')).sort
+  main(api_ref_paths, sample_json_paths, event_fixture_paths, File.join(ROOT_DIR, '.tmp/WebAPI'))
   report_generator_warnings
 end
