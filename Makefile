@@ -41,8 +41,7 @@ update:
 		git submodule add https://github.com/slack-ruby/slack-api-ref.git vendor/slack-api-ref || true; \
 	fi
 	@git submodule init
-	@# vendor/tree-sitter-java is deliberately excluded: it stays pinned to the grammar commit recorded in the repo.
-	@git submodule update --remote --merge -- vendor/java-slack-sdk vendor/slack-api-ref
+	@git submodule update --remote --merge
 	@echo "Submodules updated to latest main/master branch"
 
 doc:
@@ -51,11 +50,26 @@ doc:
 doc-preview: doc
 	python3 -m http.server 8080 -d docs
 
-# Grammar shared library used by scripts/lib/java_openapi (via the ruby_tree_sitter gem).
+# Java grammar for scripts/lib/java_openapi (via the ruby_tree_sitter gem), compiled from the C parser that a
+# pinned tree-sitter-java release's source archive ships. Bump the version only when upstream Java syntax requires it.
+TREE_SITTER_JAVA_VERSION = 0.23.5
+TREE_SITTER_JAVA_SHA256 = cb199e0faae4b2c08425f88cbb51c1a9319612e7b96315a174a624db9bf3d9f0
+TREE_SITTER_JAVA_URL = https://github.com/tree-sitter/tree-sitter-java/archive/refs/tags/v$(TREE_SITTER_JAVA_VERSION).tar.gz
+TREE_SITTER_JAVA_SRC = .tmp/tree-sitter-java/$(TREE_SITTER_JAVA_VERSION)
 TREE_SITTER_JAVA_LIB = .tmp/tree-sitter-java/libtree-sitter-java.$(if $(filter Darwin,$(shell uname -s)),dylib,so)
 
 tree-sitter-java: $(TREE_SITTER_JAVA_LIB)
 
-$(TREE_SITTER_JAVA_LIB): vendor/tree-sitter-java/src/parser.c
-	mkdir -p $(dir $@)
-	cc -shared -fPIC -O2 -I vendor/tree-sitter-java/src vendor/tree-sitter-java/src/parser.c -o $@
+$(TREE_SITTER_JAVA_LIB): $(TREE_SITTER_JAVA_SRC)/src/parser.c
+	cc -shared -fPIC -O2 -I $(TREE_SITTER_JAVA_SRC)/src $< -o $@
+
+$(TREE_SITTER_JAVA_SRC)/src/parser.c:
+	rm -rf $(TREE_SITTER_JAVA_SRC)
+	mkdir -p $(TREE_SITTER_JAVA_SRC)
+	curl -fsSL --retry 3 -o $(TREE_SITTER_JAVA_SRC).tar.gz $(TREE_SITTER_JAVA_URL)
+	echo "$(TREE_SITTER_JAVA_SHA256)  $(TREE_SITTER_JAVA_SRC).tar.gz" | shasum -a 256 -c - \
+		|| { rm -f $(TREE_SITTER_JAVA_SRC).tar.gz; exit 1; }
+	tar -xzf $(TREE_SITTER_JAVA_SRC).tar.gz -C $(TREE_SITTER_JAVA_SRC) --strip-components 1 \
+		tree-sitter-java-$(TREE_SITTER_JAVA_VERSION)/src
+	rm -f $(TREE_SITTER_JAVA_SRC).tar.gz
+	touch $@
