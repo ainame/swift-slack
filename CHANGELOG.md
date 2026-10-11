@@ -9,6 +9,21 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+## [2027.1.0-beta.2] - 2026-10-12
+
+This beta expands swift-slack's agent APIs and adds a public message streaming API. It builds on beta.1's Java-derived models and new Block Kit blocks; APIs may still change before the January 2027 release.
+
+### Summary
+
+* **Agent APIs and events.** Nine `agents.conversations.*` methods manage agent conversation views, canvases, commands and properties. Handlers can receive session stop and title-change events and inspect event installation metadata and retry information - #243, #245, #246
+* **Message streaming.** `streamMessage` sends any `AsyncSequence` of markdown, task updates, plans and ordered Block Kit chunks into a thread, with batching, rate-limit retries and closing blocks - #250
+* **A working agent example.** `DemoApps/codex-agent` uses the library streaming API and Codex tools to show cards, title sessions, read Slack context and ask users questions through buttons - #248, #249, #250
+
+> [!WARNING]
+> **Upgrading from beta.1:** exhaustive `switch` statements over `Event` need `.agentSessionStopped` and `.agentSessionTitleChanged`, or `default` - #245
+>
+> Upgrading from 2026.x also requires the migration described in the beta.1 notes below and [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md).
+
 ### Added
 
 * Added `streamMessage` under `WebAPI_Chat` to stream any `AsyncSequence` of `StreamingMessage.Part` into a thread, with markdown, task updates, plans and ordered Block Kit chunks, batching, rate-limit retries and closing blocks. The Codex agent demo now uses this library API - #250
@@ -32,7 +47,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * Sped up `make generate` from about 125 to about 28 seconds by splitting generated Web API files by API namespace, such as `Operations+AdminConversations.swift`, so SwiftFormat no longer spends most of the run on one 16,000-line file - #242
 * CI builds `SlackApp` with `SocketMode` and `HummingbirdHTTPAdapter` but without `Events`, catching code that lacks its trait guard - #247
 * Events that java-slack-sdk models but has not recorded can now be generated from the payload their upstream unit test deserializes, copied into `scripts/event_fixtures/` and listed in `scripts/event_fixtures.yml`. Generation fails when a copy drifts from its unit test and once upstream records the event - #245
-* Added the `DemoApps/codex-agent` demo, a Slack agent that answers with Codex through swift-codex and streams its replies. Its `SlackStreaming` target sends an `AsyncStream` of chunks through `chat.startStream`, `chat.appendStream` and `chat.stopStream`, as a starting point for a streaming API in the library - #248
+* Added the `DemoApps/codex-agent` demo, a Slack agent that answers with Codex through swift-codex and streams its replies through the library's `streamMessage` API. Codex tools show cards, title sessions, read the current Slack thread or channel, and ask users questions through buttons; the demo also supports stopping a turn - #248, #249, #250
 
 ## [2027.1.0-beta.1] - 2026-10-11
 

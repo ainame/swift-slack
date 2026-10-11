@@ -23,7 +23,9 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 > * **Complete models.** Types declare every field the Java SDK knows, adding 469 properties across the Web API responses, including `nextCursor` for cursor pagination and fields such as user profile emails and `Conversation` membership.
 > * **New Block Kit blocks and elements.** Cards, carousels, alerts, context actions, workflow buttons and URL inputs are now supported.
 >
-> It is a breaking release, so SwiftPM does not move a `from: "2026.x.y"` requirement to it; change it to `from: "2027.1.0"`. Most bots only replace `import SlackModels` with `import SlackClient` or `import SlackKit`. See [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) for renamed and nested types, and the [CHANGELOG](CHANGELOG.md) for the APIs deprecated in 2026.10 that are now removed (`onBlockAction`, `payload.actions` and `ack(responseAction: .clear, view:)`).
+> **Available now as `2027.1.0-beta.2`.** This beta adds agent conversation APIs and session events, plus an `AsyncSequence` message streaming API. APIs may still change before the January 2027 release.
+>
+> It is a breaking release, so SwiftPM does not move a `from: "2026.x.y"` requirement to it; change it to `from: "2027.1.0-beta.2"`. Most bots only replace `import SlackModels` with `import SlackClient` or `import SlackKit`. See [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) for renamed and nested types, and the [CHANGELOG](CHANGELOG.md) for the APIs deprecated in 2026.10 that are now removed (`onBlockAction`, `payload.actions` and `ack(responseAction: .clear, view:)`).
 
 ```swift
 import SlackKit
@@ -106,7 +108,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/ainame/swift-slack.git",
-            from: "2027.1.0"
+            from: "2027.1.0-beta.2"
         )
     ],
     targets: [
@@ -255,7 +257,7 @@ The default package traits include the Web API, events, and Socket Mode. For sma
 ```swift
 .package(
     url: "https://github.com/ainame/swift-slack.git",
-    from: "2027.1.0",
+    from: "2027.1.0-beta.2",
     traits: ["SocketMode", "Events", "WebAPI_Chat", "WebAPI_Views"]
 )
 ```
