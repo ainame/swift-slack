@@ -8,6 +8,30 @@ on:
     branches: [ main ]
 
 jobs:
+  # Default traits enable everything, so the test job cannot catch code that is missing its
+  # trait guard. Build the adapters without Events to cover the optional-trait boundaries.
+  build-without-events:
+    runs-on: ubuntu-26.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Update apt package index
+        run: sudo apt-get update
+
+      - name: Read Swift version
+        id: env-info
+        run: echo "swift-version=$(cat .swift-version)" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Swiftly
+        uses: vapor/swiftly-action@v0.2.1
+        with:
+          toolchain: ${{ steps.env-info.outputs.swift-version }}
+
+      - name: Build with SocketMode and HummingbirdHTTPAdapter only
+        run: swift build --disable-default-traits --traits SocketMode,HummingbirdHTTPAdapter
+
   test:
     runs-on: ubuntu-26.04
 
