@@ -3,6 +3,8 @@ import Foundation
 
 /// Polymorphic event type that can decode any Slack event based on the type field
 public enum Event: Decodable, Hashable, Sendable {
+    case agentSessionStopped(AgentSessionStoppedEvent)
+    case agentSessionTitleChanged(AgentSessionTitleChangedEvent)
     case appHomeOpened(AppHomeOpenedEvent)
     case appMention(AppMentionEvent)
     case appRateLimited(AppRateLimitedEvent)
@@ -123,6 +125,8 @@ public enum Event: Decodable, Hashable, Sendable {
 
     /// Decoders for event types without subtypes, keyed by `type`.
     private static let decoders: [String: Decode] = [
+        "agent_session_stopped": { try .agentSessionStopped(AgentSessionStoppedEvent(from: $0)) },
+        "agent_session_title_changed": { try .agentSessionTitleChanged(AgentSessionTitleChangedEvent(from: $0)) },
         "app_home_opened": { try .appHomeOpened(AppHomeOpenedEvent(from: $0)) },
         "app_mention": { try .appMention(AppMentionEvent(from: $0)) },
         "app_rate_limited": { try .appRateLimited(AppRateLimitedEvent(from: $0)) },
@@ -225,6 +229,10 @@ public enum Event: Decodable, Hashable, Sendable {
     /// Returns the contained event as a SlackEvent
     public var payload: (any SlackEvent)? {
         switch self {
+        case let .agentSessionStopped(event):
+            event
+        case let .agentSessionTitleChanged(event):
+            event
         case let .appHomeOpened(event):
             event
         case let .appMention(event):
