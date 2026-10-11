@@ -134,13 +134,13 @@ class WebAPIProcessor
   end
 
   def run
-    header, declarations = SwiftDeclarations.split(read_lines('Types.swift'), indent: 0)
+    header, declarations = read_types
     @header = header.join
     protocol, protocol_extension = declarations.select { |declaration| declaration.name == 'APIProtocol' }
 
     write_api_protocol(protocol, protocol_extension)
     write_declaration_file('Servers.swift', declarations.find { |declaration| declaration.name == 'Servers' })
-    write_components(declarations.find { |declaration| declaration.name == 'Components' })
+    write_components(declarations.select { |declaration| declaration.name == 'Components' })
     write_operations(declarations.find { |declaration| declaration.name == 'Operations' })
     groups = write_client
     PackageTraits.update(@package_file, groups)
@@ -153,8 +153,19 @@ class WebAPIProcessor
 
   private
 
+  # Imports without the access level that the generator adds, as the rest of the package imports them.
   def read_lines(name)
-    File.readlines(File.join(@input_directory, name))
+    File.readlines(File.join(@input_directory, name)).map { |line| line.sub(/\A((?:@\w+(?:\(\w+\))? )*)public import /, '\\1import ') }
+  end
+
+  # [header, declarations] of the types, which the generator splits into Types.swift and one
+  # Types+<Namespace>.swift file per namespace, each with the same imports.
+  def read_types
+    header, declarations = SwiftDeclarations.split(read_lines('Types.swift'), indent: 0)
+    Dir.glob('Types+*.swift', base: @input_directory).sort.each do |name|
+      declarations += SwiftDeclarations.split(read_lines(name), indent: 0).last
+    end
+    [header, declarations]
   end
 
   def write_declaration_file(name, declaration)
@@ -187,9 +198,10 @@ class WebAPIProcessor
 
   # ---------------------------------------------------------------- Components
 
+  # `components`: the `Components` enum and its extensions, one per namespace such as `Schemas`.
   def write_components(components)
-    _, sections = SwiftDeclarations.split(SwiftDeclarations.body(components), indent: 4)
-    schemas_section = sections.find { |section| section.name == 'Schemas' }
+    sections = components.flat_map { |declaration| SwiftDeclarations.split(SwiftDeclarations.body(declaration), indent: 4).last }
+    schemas_section = sections.find { |section| section.name == 'Schemas' } or raise 'Components has no Schemas'
     _, schemas = SwiftDeclarations.split(SwiftDeclarations.body(schemas_section), indent: 8)
 
     responses, events, models, aliases = classify(schemas)
