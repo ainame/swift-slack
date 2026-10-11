@@ -130,6 +130,37 @@ struct CodexAgentApp {
 
         Feedback.register(on: router, logger: logger)
 
+        // Buttons on the cards built from an answer's slack-ui block.
+        router.onAction(SlackUI.openActionId) { context, _ in
+            // Slack opens the link; the click still needs an acknowledgement.
+            try await context.ack()
+        }
+        router.onAction(SlackUI.askActionId) { context, payload in
+            try await context.ack()
+            guard let question = payload.blockActions.first(where: { $0.actionId == SlackUI.askActionId })?.value,
+                  let channel = payload.container.channelId,
+                  let messageTs = payload.container.messageTs,
+                  let user = payload.user.id, isAllowed(user),
+                  let teamId = payload.team.id else {
+                return
+            }
+            // Post the question so the thread shows what the agent is answering.
+            let threadTs = payload.message?.threadTs ?? messageTs
+            let posted = try await context.client.chatPostMessage(body: .json(.init(
+                channel: channel,
+                text: "<@\(user)> asked: \(question)",
+                threadTs: threadTs,
+            ))).ok.body.json.checked("chat.postMessage")
+            let turn = AgentResponder.Turn(
+                session: SessionKey(channel: channel, threadTs: threadTs),
+                messageTs: posted.ts ?? messageTs,
+                prompt: question,
+                userId: user,
+                teamId: teamId,
+            )
+            startTurn(turn, responder: responder, client: context.client)
+        }
+
         let app = try SlackApp(
             configuration: configuration(from: environment),
             router: router,

@@ -206,6 +206,8 @@ private actor CodexSession {
             developerInstructions: """
             You are answering a person in Slack. Keep answers short and use Markdown that Slack renders: \
             bold, italics, lists, inline code, and fenced code blocks. Do not use tables or headings.
+
+            \(SlackUI.instructions)
             """,
             model: settings.model,
             sandboxPreset: .readOnly,
