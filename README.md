@@ -17,15 +17,20 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
 > [!TIP]
-> **Try the 2027.1.0 beta, especially if you're starting a new app.** In [2027.1.0-beta.1](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.1), Web API responses and events are generated from the model classes of [Slack's Java SDK](https://github.com/slackapi/java-slack-sdk). Every generated response and event type decodes the Java SDK's recorded payloads (268 responses and 91 events), and models declare every field the Java SDK knows. The new generator pipeline resolves the decoding failures and dropped fields found by auditing the 2026.x types ([#177](https://github.com/ainame/swift-slack/issues/177)), such as missing pagination cursors and Slack Lists rows that failed to decode.
+> **Try [2027.1.0-beta.2](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.2), especially if you're starting a new app.** The two betas bring these improvements over 2026.x:
 >
-> Because swift-slack uses calendar versioning, the final release is `2027.1.0`, published in January 2027. Until then, depend on the beta, which SwiftPM does not pick up from a `2026.x` requirement:
+> * **More reliable, complete models.** Web API responses and events are generated from upstream [java-slack-sdk](https://github.com/slackapi/java-slack-sdk) model classes. The pipeline checks decoding against its recorded payloads and resolves failures and dropped fields found in the [2026.x audit (#177)](https://github.com/ainame/swift-slack/issues/177), including missing pagination cursors and Slack Lists rows that failed to decode.
+> * **New Block Kit blocks and elements.** Cards, carousels, alerts, context actions, workflow buttons and URL inputs are supported.
+> * **Agent APIs and events.** Nine `agents.conversations.*` methods manage agent conversation views, canvases, commands and properties. Handlers can receive session stop and title-change events and inspect event installation metadata and retry information.
+> * **Message streaming.** `streamMessage` sends an `AsyncSequence` of markdown, task updates, plans and ordered Block Kit chunks into a thread, with batching, rate-limit retries and closing blocks. The [Codex agent demo](https://github.com/ainame/swift-slack/tree/2027.1.0-beta.2/DemoApps/codex-agent) combines streaming with tools for cards, session titles, Slack context and questions with buttons.
+>
+> Because swift-slack uses calendar versioning, the final release is planned as `2027.1.0` in January 2027. APIs may still change before then. Depend on the beta, which SwiftPM does not pick up from a `2026.x` requirement:
 >
 > ```swift
-> .package(url: "https://github.com/ainame/swift-slack.git", from: "2027.1.0-beta.1")
+> .package(url: "https://github.com/ainame/swift-slack.git", from: "2027.1.0-beta.2")
 > ```
 >
-> The beta is a breaking release. Existing apps should read [Migrating to Java-derived models](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.1/MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [release notes](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.1) before upgrading. The quickstart below works with both versions.
+> The beta is a breaking release. Existing apps should read [Migrating to Java-derived models](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.2/MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [changelog for both betas](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.2/CHANGELOG.md) before upgrading. From beta.1, exhaustive `switch` statements over `Event` need `.agentSessionStopped` and `.agentSessionTitleChanged`, or `default`. The quickstart below works with both 2026.x and the beta.
 
 > [!IMPORTANT]
 > **Upgrading from 2026.9.x or earlier?** Releases 2026.10.0 through 2026.10.2 include changes that may need code updates.
