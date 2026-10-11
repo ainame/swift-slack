@@ -100,200 +100,127 @@ public enum Event: Decodable, Hashable, Sendable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(String.self, forKey: .type)
 
-        switch type {
-        case "app_home_opened":
-            self = try .appHomeOpened(AppHomeOpenedEvent(from: decoder))
-        case "app_mention":
-            self = try .appMention(AppMentionEvent(from: decoder))
-        case "app_rate_limited":
-            self = try .appRateLimited(AppRateLimitedEvent(from: decoder))
-        case "app_requested":
-            self = try .appRequested(AppRequestedEvent(from: decoder))
-        case "app_uninstalled":
-            self = try .appUninstalled(AppUninstalledEvent(from: decoder))
-        case "call_rejected":
-            self = try .callRejected(CallRejectedEvent(from: decoder))
-        case "channel_archive":
-            self = try .channelArchive(ChannelArchiveEvent(from: decoder))
-        case "channel_created":
-            self = try .channelCreated(ChannelCreatedEvent(from: decoder))
-        case "channel_deleted":
-            self = try .channelDeleted(ChannelDeletedEvent(from: decoder))
-        case "channel_history_changed":
-            self = try .channelHistoryChanged(ChannelHistoryChangedEvent(from: decoder))
-        case "channel_id_changed":
-            self = try .channelIdChanged(ChannelIDChangedEvent(from: decoder))
-        case "channel_left":
-            self = try .channelLeft(ChannelLeftEvent(from: decoder))
-        case "channel_rename":
-            self = try .channelRename(ChannelRenameEvent(from: decoder))
-        case "channel_shared":
-            self = try .channelShared(ChannelSharedEvent(from: decoder))
-        case "channel_unarchive":
-            self = try .channelUnarchive(ChannelUnarchiveEvent(from: decoder))
-        case "channel_unshared":
-            self = try .channelUnshared(ChannelUnsharedEvent(from: decoder))
-        case "dnd_updated":
-            self = try .dndUpdated(DndUpdatedEvent(from: decoder))
-        case "dnd_updated_user":
-            self = try .dndUpdatedUser(DndUpdatedUserEvent(from: decoder))
-        case "email_domain_changed":
-            self = try .emailDomainChanged(EmailDomainChangedEvent(from: decoder))
-        case "emoji_changed":
-            self = try .emojiChanged(EmojiChangedEvent(from: decoder))
-        case "file_change":
-            self = try .fileChange(FileChangeEvent(from: decoder))
-        case "file_created":
-            self = try .fileCreated(FileCreatedEvent(from: decoder))
-        case "file_deleted":
-            self = try .fileDeleted(FileDeletedEvent(from: decoder))
-        case "file_public":
-            self = try .filePublic(FilePublicEvent(from: decoder))
-        case "file_shared":
-            self = try .fileShared(FileSharedEvent(from: decoder))
-        case "file_unshared":
-            self = try .fileUnshared(FileUnsharedEvent(from: decoder))
-        case "goodbye":
-            self = try .goodbye(GoodbyeEvent(from: decoder))
-        case "grid_migration_finished":
-            self = try .gridMigrationFinished(GridMigrationFinishedEvent(from: decoder))
-        case "grid_migration_started":
-            self = try .gridMigrationStarted(GridMigrationStartedEvent(from: decoder))
-        case "group_archive":
-            self = try .groupArchive(GroupArchiveEvent(from: decoder))
-        case "group_close":
-            self = try .groupClose(GroupCloseEvent(from: decoder))
-        case "group_deleted":
-            self = try .groupDeleted(GroupDeletedEvent(from: decoder))
-        case "group_history_changed":
-            self = try .groupHistoryChanged(GroupHistoryChangedEvent(from: decoder))
-        case "group_left":
-            self = try .groupLeft(GroupLeftEvent(from: decoder))
-        case "group_open":
-            self = try .groupOpen(GroupOpenEvent(from: decoder))
-        case "group_rename":
-            self = try .groupRename(GroupRenameEvent(from: decoder))
-        case "group_unarchive":
-            self = try .groupUnarchive(GroupUnarchiveEvent(from: decoder))
-        case "im_close":
-            self = try .imClose(IMCloseEvent(from: decoder))
-        case "im_created":
-            self = try .imCreated(IMCreatedEvent(from: decoder))
-        case "im_history_changed":
-            self = try .imHistoryChanged(IMHistoryChangedEvent(from: decoder))
-        case "im_open":
-            self = try .imOpen(IMOpenEvent(from: decoder))
-        case "invite_requested":
-            self = try .inviteRequested(InviteRequestedEvent(from: decoder))
-        case "link_shared":
-            self = try .linkShared(LinkSharedEvent(from: decoder))
-        case "member_joined_channel":
-            self = try .memberJoinedChannel(MemberJoinedChannelEvent(from: decoder))
-        case "member_left_channel":
-            self = try .memberLeftChannel(MemberLeftChannelEvent(from: decoder))
-        case "message":
+        // Each event decodes in its own closure. A `switch` with an arm per event would give this
+        // initializer a stack frame that overflows a Swift concurrency thread in debug builds.
+        if let decoders = Self.subtypeDecoders[type] {
             let subtype = try decoder.container(keyedBy: SubtypeCodingKeys.self)
                 .decodeIfPresent(String.self, forKey: .subtype)
-            switch subtype {
-            case "bot_message":
-                self = try .messageBot(MessageBotEvent(from: decoder))
-            case "channel_archive":
-                self = try .messageChannelArchive(MessageChannelArchiveEvent(from: decoder))
-            case "channel_join":
-                self = try .messageChannelJoin(MessageChannelJoinEvent(from: decoder))
-            case "channel_leave":
-                self = try .messageChannelLeave(MessageChannelLeaveEvent(from: decoder))
-            case "channel_name":
-                self = try .messageChannelName(MessageChannelNameEvent(from: decoder))
-            case "channel_posting_permissions":
-                self = try .messageChannelPostingPermissions(MessageChannelPostingPermissionsEvent(from: decoder))
-            case "channel_purpose":
-                self = try .messageChannelPurpose(MessageChannelPurposeEvent(from: decoder))
-            case "channel_topic":
-                self = try .messageChannelTopic(MessageChannelTopicEvent(from: decoder))
-            case "channel_unarchive":
-                self = try .messageChannelUnarchive(MessageChannelUnarchiveEvent(from: decoder))
-            case "ekm_access_denied":
-                self = try .messageEkmAccessDenied(MessageEkmAccessDeniedEvent(from: decoder))
-            case "file_share":
-                self = try .messageFileShare(MessageFileShareEvent(from: decoder))
-            case "group_topic":
-                self = try .messageGroupTopic(MessageGroupTopicEvent(from: decoder))
-            case "me_message":
-                self = try .messageMe(MessageMeEvent(from: decoder))
-            case "message_changed":
-                self = try .messageChanged(MessageChangedEvent(from: decoder))
-            case "message_deleted":
-                self = try .messageDeleted(MessageDeletedEvent(from: decoder))
-            case "message_replied":
-                self = try .messageReplied(MessageRepliedEvent(from: decoder))
-            case "thread_broadcast":
-                self = try .messageThreadBroadcast(MessageThreadBroadcastEvent(from: decoder))
-            case nil:
-                self = try .message(MessageEvent(from: decoder))
-            case let .some(unknownSubtype):
-                self = .unsupported("message - \(unknownSubtype)")
+            if let decode = decoders[subtype] {
+                self = try decode(decoder)
+            } else if let subtype {
+                self = .unsupported("\(type) - \(subtype)")
+            } else {
+                self = .unsupported(type)
             }
-        case "pin_added":
-            self = try .pinAdded(PinAddedEvent(from: decoder))
-        case "pin_removed":
-            self = try .pinRemoved(PinRemovedEvent(from: decoder))
-        case "reaction_added":
-            self = try .reactionAdded(ReactionAddedEvent(from: decoder))
-        case "reaction_removed":
-            self = try .reactionRemoved(ReactionRemovedEvent(from: decoder))
-        case "scope_denied":
-            self = try .scopeDenied(ScopeDeniedEvent(from: decoder))
-        case "scope_granted":
-            self = try .scopeGranted(ScopeGrantedEvent(from: decoder))
-        case "star_added":
-            self = try .starAdded(StarAddedEvent(from: decoder))
-        case "star_removed":
-            self = try .starRemoved(StarRemovedEvent(from: decoder))
-        case "subteam_created":
-            self = try .subteamCreated(SubteamCreatedEvent(from: decoder))
-        case "subteam_members_changed":
-            self = try .subteamMembersChanged(SubteamMembersChangedEvent(from: decoder))
-        case "subteam_self_added":
-            self = try .subteamSelfAdded(SubteamSelfAddedEvent(from: decoder))
-        case "subteam_self_removed":
-            self = try .subteamSelfRemoved(SubteamSelfRemovedEvent(from: decoder))
-        case "subteam_updated":
-            self = try .subteamUpdated(SubteamUpdatedEvent(from: decoder))
-        case "team_access_granted":
-            self = try .teamAccessGranted(TeamAccessGrantedEvent(from: decoder))
-        case "team_access_revoked":
-            self = try .teamAccessRevoked(TeamAccessRevokedEvent(from: decoder))
-        case "team_domain_change":
-            self = try .teamDomainChange(TeamDomainChangeEvent(from: decoder))
-        case "team_join":
-            self = try .teamJoin(TeamJoinEvent(from: decoder))
-        case "team_rename":
-            self = try .teamRename(TeamRenameEvent(from: decoder))
-        case "tokens_revoked":
-            self = try .tokensRevoked(TokensRevokedEvent(from: decoder))
-        case "user_change":
-            self = try .userChange(UserChangeEvent(from: decoder))
-        case "user_huddle_changed":
-            self = try .userHuddleChanged(UserHuddleChangedEvent(from: decoder))
-        case "user_profile_changed":
-            self = try .userProfileChanged(UserProfileChangedEvent(from: decoder))
-        case "user_status_changed":
-            self = try .userStatusChanged(UserStatusChangedEvent(from: decoder))
-        case "workflow_deleted":
-            self = try .workflowDeleted(WorkflowDeletedEvent(from: decoder))
-        case "workflow_published":
-            self = try .workflowPublished(WorkflowPublishedEvent(from: decoder))
-        case "workflow_step_deleted":
-            self = try .workflowStepDeleted(WorkflowStepDeletedEvent(from: decoder))
-        case "workflow_step_execute":
-            self = try .workflowStepExecute(WorkflowStepExecuteEvent(from: decoder))
-        case "workflow_unpublished":
-            self = try .workflowUnpublished(WorkflowUnpublishedEvent(from: decoder))
-        default:
+        } else if let decode = Self.decoders[type] {
+            self = try decode(decoder)
+        } else {
             self = .unsupported(type)
         }
     }
+
+    private typealias Decode = @Sendable (any Decoder) throws -> Event
+
+    /// Decoders for event types without subtypes, keyed by `type`.
+    private static let decoders: [String: Decode] = [
+        "app_home_opened": { try .appHomeOpened(AppHomeOpenedEvent(from: $0)) },
+        "app_mention": { try .appMention(AppMentionEvent(from: $0)) },
+        "app_rate_limited": { try .appRateLimited(AppRateLimitedEvent(from: $0)) },
+        "app_requested": { try .appRequested(AppRequestedEvent(from: $0)) },
+        "app_uninstalled": { try .appUninstalled(AppUninstalledEvent(from: $0)) },
+        "call_rejected": { try .callRejected(CallRejectedEvent(from: $0)) },
+        "channel_archive": { try .channelArchive(ChannelArchiveEvent(from: $0)) },
+        "channel_created": { try .channelCreated(ChannelCreatedEvent(from: $0)) },
+        "channel_deleted": { try .channelDeleted(ChannelDeletedEvent(from: $0)) },
+        "channel_history_changed": { try .channelHistoryChanged(ChannelHistoryChangedEvent(from: $0)) },
+        "channel_id_changed": { try .channelIdChanged(ChannelIDChangedEvent(from: $0)) },
+        "channel_left": { try .channelLeft(ChannelLeftEvent(from: $0)) },
+        "channel_rename": { try .channelRename(ChannelRenameEvent(from: $0)) },
+        "channel_shared": { try .channelShared(ChannelSharedEvent(from: $0)) },
+        "channel_unarchive": { try .channelUnarchive(ChannelUnarchiveEvent(from: $0)) },
+        "channel_unshared": { try .channelUnshared(ChannelUnsharedEvent(from: $0)) },
+        "dnd_updated": { try .dndUpdated(DndUpdatedEvent(from: $0)) },
+        "dnd_updated_user": { try .dndUpdatedUser(DndUpdatedUserEvent(from: $0)) },
+        "email_domain_changed": { try .emailDomainChanged(EmailDomainChangedEvent(from: $0)) },
+        "emoji_changed": { try .emojiChanged(EmojiChangedEvent(from: $0)) },
+        "file_change": { try .fileChange(FileChangeEvent(from: $0)) },
+        "file_created": { try .fileCreated(FileCreatedEvent(from: $0)) },
+        "file_deleted": { try .fileDeleted(FileDeletedEvent(from: $0)) },
+        "file_public": { try .filePublic(FilePublicEvent(from: $0)) },
+        "file_shared": { try .fileShared(FileSharedEvent(from: $0)) },
+        "file_unshared": { try .fileUnshared(FileUnsharedEvent(from: $0)) },
+        "goodbye": { try .goodbye(GoodbyeEvent(from: $0)) },
+        "grid_migration_finished": { try .gridMigrationFinished(GridMigrationFinishedEvent(from: $0)) },
+        "grid_migration_started": { try .gridMigrationStarted(GridMigrationStartedEvent(from: $0)) },
+        "group_archive": { try .groupArchive(GroupArchiveEvent(from: $0)) },
+        "group_close": { try .groupClose(GroupCloseEvent(from: $0)) },
+        "group_deleted": { try .groupDeleted(GroupDeletedEvent(from: $0)) },
+        "group_history_changed": { try .groupHistoryChanged(GroupHistoryChangedEvent(from: $0)) },
+        "group_left": { try .groupLeft(GroupLeftEvent(from: $0)) },
+        "group_open": { try .groupOpen(GroupOpenEvent(from: $0)) },
+        "group_rename": { try .groupRename(GroupRenameEvent(from: $0)) },
+        "group_unarchive": { try .groupUnarchive(GroupUnarchiveEvent(from: $0)) },
+        "im_close": { try .imClose(IMCloseEvent(from: $0)) },
+        "im_created": { try .imCreated(IMCreatedEvent(from: $0)) },
+        "im_history_changed": { try .imHistoryChanged(IMHistoryChangedEvent(from: $0)) },
+        "im_open": { try .imOpen(IMOpenEvent(from: $0)) },
+        "invite_requested": { try .inviteRequested(InviteRequestedEvent(from: $0)) },
+        "link_shared": { try .linkShared(LinkSharedEvent(from: $0)) },
+        "member_joined_channel": { try .memberJoinedChannel(MemberJoinedChannelEvent(from: $0)) },
+        "member_left_channel": { try .memberLeftChannel(MemberLeftChannelEvent(from: $0)) },
+        "pin_added": { try .pinAdded(PinAddedEvent(from: $0)) },
+        "pin_removed": { try .pinRemoved(PinRemovedEvent(from: $0)) },
+        "reaction_added": { try .reactionAdded(ReactionAddedEvent(from: $0)) },
+        "reaction_removed": { try .reactionRemoved(ReactionRemovedEvent(from: $0)) },
+        "scope_denied": { try .scopeDenied(ScopeDeniedEvent(from: $0)) },
+        "scope_granted": { try .scopeGranted(ScopeGrantedEvent(from: $0)) },
+        "star_added": { try .starAdded(StarAddedEvent(from: $0)) },
+        "star_removed": { try .starRemoved(StarRemovedEvent(from: $0)) },
+        "subteam_created": { try .subteamCreated(SubteamCreatedEvent(from: $0)) },
+        "subteam_members_changed": { try .subteamMembersChanged(SubteamMembersChangedEvent(from: $0)) },
+        "subteam_self_added": { try .subteamSelfAdded(SubteamSelfAddedEvent(from: $0)) },
+        "subteam_self_removed": { try .subteamSelfRemoved(SubteamSelfRemovedEvent(from: $0)) },
+        "subteam_updated": { try .subteamUpdated(SubteamUpdatedEvent(from: $0)) },
+        "team_access_granted": { try .teamAccessGranted(TeamAccessGrantedEvent(from: $0)) },
+        "team_access_revoked": { try .teamAccessRevoked(TeamAccessRevokedEvent(from: $0)) },
+        "team_domain_change": { try .teamDomainChange(TeamDomainChangeEvent(from: $0)) },
+        "team_join": { try .teamJoin(TeamJoinEvent(from: $0)) },
+        "team_rename": { try .teamRename(TeamRenameEvent(from: $0)) },
+        "tokens_revoked": { try .tokensRevoked(TokensRevokedEvent(from: $0)) },
+        "user_change": { try .userChange(UserChangeEvent(from: $0)) },
+        "user_huddle_changed": { try .userHuddleChanged(UserHuddleChangedEvent(from: $0)) },
+        "user_profile_changed": { try .userProfileChanged(UserProfileChangedEvent(from: $0)) },
+        "user_status_changed": { try .userStatusChanged(UserStatusChangedEvent(from: $0)) },
+        "workflow_deleted": { try .workflowDeleted(WorkflowDeletedEvent(from: $0)) },
+        "workflow_published": { try .workflowPublished(WorkflowPublishedEvent(from: $0)) },
+        "workflow_step_deleted": { try .workflowStepDeleted(WorkflowStepDeletedEvent(from: $0)) },
+        "workflow_step_execute": { try .workflowStepExecute(WorkflowStepExecuteEvent(from: $0)) },
+        "workflow_unpublished": { try .workflowUnpublished(WorkflowUnpublishedEvent(from: $0)) },
+    ]
+
+    /// Decoders for event types with subtypes, keyed by `type` and then `subtype` (`nil` for none).
+    private static let subtypeDecoders: [String: [String?: Decode]] = [
+        "message": [
+            nil: { try .message(MessageEvent(from: $0)) },
+            "bot_message": { try .messageBot(MessageBotEvent(from: $0)) },
+            "channel_archive": { try .messageChannelArchive(MessageChannelArchiveEvent(from: $0)) },
+            "channel_join": { try .messageChannelJoin(MessageChannelJoinEvent(from: $0)) },
+            "channel_leave": { try .messageChannelLeave(MessageChannelLeaveEvent(from: $0)) },
+            "channel_name": { try .messageChannelName(MessageChannelNameEvent(from: $0)) },
+            "channel_posting_permissions": { try .messageChannelPostingPermissions(MessageChannelPostingPermissionsEvent(from: $0)) },
+            "channel_purpose": { try .messageChannelPurpose(MessageChannelPurposeEvent(from: $0)) },
+            "channel_topic": { try .messageChannelTopic(MessageChannelTopicEvent(from: $0)) },
+            "channel_unarchive": { try .messageChannelUnarchive(MessageChannelUnarchiveEvent(from: $0)) },
+            "ekm_access_denied": { try .messageEkmAccessDenied(MessageEkmAccessDeniedEvent(from: $0)) },
+            "file_share": { try .messageFileShare(MessageFileShareEvent(from: $0)) },
+            "group_topic": { try .messageGroupTopic(MessageGroupTopicEvent(from: $0)) },
+            "me_message": { try .messageMe(MessageMeEvent(from: $0)) },
+            "message_changed": { try .messageChanged(MessageChangedEvent(from: $0)) },
+            "message_deleted": { try .messageDeleted(MessageDeletedEvent(from: $0)) },
+            "message_replied": { try .messageReplied(MessageRepliedEvent(from: $0)) },
+            "thread_broadcast": { try .messageThreadBroadcast(MessageThreadBroadcastEvent(from: $0)) },
+        ],
+    ]
 
     /// Returns the contained event as a SlackEvent
     public var payload: (any SlackEvent)? {
@@ -482,6 +409,28 @@ public enum Event: Decodable, Hashable, Sendable {
             event
         case .unsupported:
             nil
+        }
+    }
+
+    // `==` and `hash(into:)` compare `payload`, whose type identifies the case, instead of being
+    // synthesized as a `switch` over every case.
+    public static func == (lhs: Event, rhs: Event) -> Bool {
+        switch (lhs.payload, rhs.payload) {
+        case let (lhsPayload?, rhsPayload?):
+            return AnyHashable(lhsPayload) == AnyHashable(rhsPayload)
+        case (nil, nil):
+            guard case let .unsupported(lhsType) = lhs, case let .unsupported(rhsType) = rhs else { return false }
+            return lhsType == rhsType
+        default:
+            return false
+        }
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        if let payload {
+            hasher.combine(AnyHashable(payload))
+        } else if case let .unsupported(type) = self {
+            hasher.combine(type)
         }
     }
 
