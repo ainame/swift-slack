@@ -11,11 +11,11 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Changed
 
-* Raised the minimum `swift-openapi-runtime` version to 1.13.0, which code from swift-openapi-generator 1.14.0 requires - #144
+* Raised the minimum `swift-openapi-runtime` version to 1.13.0, which code from swift-openapi-generator 1.14.0 requires - #241
 
 ### Maintenance
 
-* Updated swift-openapi-generator to 1.14.0. `scripts/process_webapi.rb` now reads the types it splits into one file per namespace - #144
+* Updated swift-openapi-generator to 1.14.0. `scripts/process_webapi.rb` now reads the types it splits into one file per namespace - #241
 
 ## [2027.1.0-beta.1] - 2026-10-11
 
