@@ -14,6 +14,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * **BREAKING**: Removed `Router.onBlockAction(_:handler:)`, which matched the containing view's `callback_id` instead of the element's `action_id`. Use `onAction(_:blockId:handler:)` for each element, or `onInteractive(_:)` and check `payload.callbackId` for a whole view - #232
 * **BREAKING**: Removed `BlockActionsPayload.actions`, which decoded the interacted elements as Block Kit element definitions without their selected values. Use `BlockActionsPayload.blockActions` - #232
 * **BREAKING**: Removed the misspelled `BlockActionsPaylaod` typealias and `Router.onGlboalShortcut(_:handler:)`. Use `BlockActionsPayload` and `onGlobalShortcut(_:handler:)` - #232
+* **BREAKING**: Removed `Ack.ResponseAction.clear`, so `ack(responseAction: .clear, view:)` no longer compiles. Use `ack(responseAction: .clear)`, which sends `clear` without a view as Slack documents - #233
 
 ### Maintenance
 
