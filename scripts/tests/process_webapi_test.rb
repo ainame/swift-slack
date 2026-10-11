@@ -177,3 +177,33 @@ class DictionarySubscriptsTest < Minitest::Test
     refute_includes source, 'OtherPayload'
   end
 end
+
+class FileNameTest < Minitest::Test
+  def processor
+    processor = WebAPIProcessor.allocate
+    paths = %w[admin.analytics.getFile admin.users.session.reset chat.postMessage files.remote.add].to_h do |method|
+      operation_id = method.gsub(/\.(\w)/) { Regexp.last_match(1).upcase }
+      response = "#{operation_id[0].upcase}#{operation_id[1..]}Response"
+      ["/#{method}", { 'post' => { 'operationId' => operation_id, 'responses' => { '200' => { 'content' => {
+        'application/json' => { 'schema' => { '$ref' => "#/components/schemas/#{response}" } },
+      } } } } }]
+    end
+    processor.instance_variable_set(:@openapi, { 'paths' => paths })
+    processor
+  end
+
+  def test_methods_below_a_namespace_get_their_own_file
+    assert_equal 'AdminAnalytics', processor.send(:file_name, 'adminAnalyticsGetFile')
+    assert_equal 'AdminUsers', processor.send(:file_name, 'AdminUsersSessionReset')
+    assert_equal 'FilesRemote', processor.send(:file_name, 'FilesRemoteAddResponse')
+  end
+
+  def test_methods_directly_in_a_group_use_the_group_file
+    assert_equal 'Chat', processor.send(:file_name, 'ChatPostMessage')
+    assert_equal 'Chat', processor.send(:file_name, 'ChatPostMessageResponse')
+  end
+
+  def test_unknown_name_raises
+    assert_raises(RuntimeError) { processor.send(:file_name, 'ChatUpdate') }
+  end
+end

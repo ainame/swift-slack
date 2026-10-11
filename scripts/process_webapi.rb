@@ -6,9 +6,10 @@
 #
 #   Sources/SlackClient/WebAPI/Generated/
 #     APIProtocol.swift, Servers.swift
-#     Client/Client+Base.swift, Client/Client+<Group>.swift          (one trait per API group)
-#     Operations/Operations+Base.swift, Operations/Operations+<Group>.swift
-#     Components/Components+Base.swift, Components/Components+<Group>.swift  (<Method>Response types)
+#     Client/Client+Base.swift, Client/Client+<Namespace>.swift      (one trait per API group)
+#     Operations/Operations+Base.swift, Operations/Operations+<Namespace>.swift
+#     Components/Components+Base.swift, Components/Components+<Namespace>.swift  (<Method>Response types)
+#   where <Namespace> is a group such as Chat or a namespace below it such as AdminConversations.
 #     Models/<Name>.swift, Models/Typealiases.swift                   (shared models, also used by events)
 #   Sources/SlackApp/Events/Generated/
 #     <Name>Event.swift, Event.swift                                  (events, behind the Events trait)
@@ -176,6 +177,22 @@ class WebAPIProcessor
     path_item.dig('post', 'responses', '200', 'content', 'application/json', 'schema', '$ref').split('/').last
   end
 
+  # The file that holds a method's generated declarations, given its operation or response type name:
+  # `Admin` for `admin.analytics.getFile`'s group, plus the namespace below the group when the method has
+  # one, such as `AdminConversations` for `admin.conversations.setTeams`. SwiftFormat's run time grows
+  # faster than a file's length, so one file for all ~100 `admin.*` methods took most of `make generate`.
+  def file_name(name)
+    @file_names ||= @openapi['paths'].each_with_object({}) do |(path, item), names|
+      segments = path.delete_prefix('/').split('.')
+      operation_id = item.dig('post', 'operationId')
+      file = APIGroups.display_name(APIGroups.group_for(operation_id))
+      file += segments[1][0].upcase + segments[1][1..] if segments.size > 2
+      names[operation_id.downcase] = file
+      names[response_type(item).downcase] = file
+    end
+    @file_names.fetch(name.downcase) { raise "No Web API method generates #{name}" }
+  end
+
   # ---------------------------------------------------------------- APIProtocol
 
   # APIProtocol with every requirement and convenience overload behind its group's trait.
@@ -233,10 +250,10 @@ class WebAPIProcessor
     SWIFT
   end
 
-  # `<Method>Response` types, one file per API group behind its trait.
+  # `<Method>Response` types, one file per API namespace behind its group's trait.
   def write_responses(responses)
-    responses.group_by { |schema| APIGroups.group_for(schema.name) }.sort.each do |group, schemas|
-      @client.write("Components/Components+#{APIGroups.display_name(group)}.swift",
+    responses.group_by { |schema| [APIGroups.group_for(schema.name), file_name(schema.name)] }.sort.each do |(group, file), schemas|
+      @client.write("Components/Components+#{file}.swift",
                     "#{@header}\n#if #{APIGroups.trait(group)}\nextension Components.Schemas {\n" \
                     "#{schemas.map(&:text).join}}\n#{schemas.map { |schema| dictionary_subscripts(schema) }.join}" \
                     "#endif\n")
@@ -367,8 +384,8 @@ class WebAPIProcessor
     opening = operations.lines.take_while { |line| SwiftDeclarations.comment?(line) }
     @client.write('Operations/Operations+Base.swift', "#{@header}#{opening.join}public enum Operations {}\n")
     _, members = SwiftDeclarations.split(SwiftDeclarations.body(operations), indent: 4)
-    members.group_by { |member| APIGroups.group_for(member.name) }.sort.each do |group, group_members|
-      @client.write("Operations/Operations+#{APIGroups.display_name(group)}.swift",
+    members.group_by { |member| [APIGroups.group_for(member.name), file_name(member.name)] }.sort.each do |(group, file), group_members|
+      @client.write("Operations/Operations+#{file}.swift",
                     "#{@header}\n#if #{APIGroups.trait(group)}\nextension Operations {\n" \
                     "#{group_members.map(&:text).join}}\n#endif\n")
     end
@@ -376,8 +393,8 @@ class WebAPIProcessor
 
   # ---------------------------------------------------------------- Client
 
-  # Client+Base.swift keeps the stored properties and initializer; each group's methods go to an extension
-  # behind its trait. Returns the API groups.
+  # Client+Base.swift keeps the stored properties and initializer; each API namespace's methods go to an
+  # extension behind its group's trait. Returns the API groups.
   def write_client
     header, declarations = SwiftDeclarations.split(read_lines('Client.swift'), indent: 0)
     client = declarations.find { |declaration| declaration.name == 'Client' } or raise 'Client.swift has no Client'
@@ -390,12 +407,12 @@ class WebAPIProcessor
     base_text = base.map { |member| member.text.gsub(/^    private (let|var) /, '    internal \1 ') }.join
     @client.write('Client/Client+Base.swift', header.join + opening.join + base_text + "}\n")
 
-    methods.group_by { |method| APIGroups.group_for(method.name) }.sort.map do |group, group_methods|
-      @client.write("Client/Client+#{APIGroups.display_name(group)}.swift",
+    methods.group_by { |method| [APIGroups.group_for(method.name), file_name(method.name)] }.sort.map do |(group, file), file_methods|
+      @client.write("Client/Client+#{file}.swift",
                     "#if #{APIGroups.trait(group)}\n#{header.join}\nextension Client {\n" \
-                    "#{group_methods.map(&:text).join}}\n#endif\n")
+                    "#{file_methods.map(&:text).join}}\n#endif\n")
       group
-    end
+    end.uniq
   end
 end
 
