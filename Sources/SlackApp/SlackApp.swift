@@ -148,6 +148,7 @@ extension SlackApp {
                     group.addTask {
                         do {
                             switch request {
+                            #if Events
                             case .event:
                                 try await SocketModeAcknowledger.sendBasicAck(
                                     envelopeId: envelope.envelopeId,
@@ -162,6 +163,7 @@ extension SlackApp {
                                     retryReason: envelope.retryReason,
                                 )
                                 try await router.dispatch(context: .event(context), request: request)
+                            #endif
                             case .interactive, .slashCommand:
                                 let context = Context(
                                     client: client,

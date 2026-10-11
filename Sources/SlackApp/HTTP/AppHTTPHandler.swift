@@ -186,6 +186,7 @@ struct AppHTTPHandler {
         return try await dispatchRequest(.slashCommand(payload))
     }
 
+    #if Events
     private func dispatchEvent(
         _ request: Request,
         retryNum: Int?,
@@ -212,6 +213,7 @@ struct AppHTTPHandler {
         }
         return (HTTPResponse(status: .ok), nil)
     }
+    #endif
 
     private func dispatchRequest(_ request: Request) async throws -> (response: HTTPResponse, body: Foundation.Data?) {
         let client = await slack.client
