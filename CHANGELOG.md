@@ -20,11 +20,16 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 * Raised the minimum `swift-openapi-runtime` version to 1.13.0, which code from swift-openapi-generator 1.14.0 requires - #241
 
+### Fixed
+
+* Fixed building with the `Events` trait disabled, such as `--disable-default-traits --traits SocketMode`, which failed because event dispatch in the HTTP handler and the Socket Mode receive loop was not guarded by the trait - #247
+
 ### Maintenance
 
 * Updated swift-openapi-generator to 1.14.0. `scripts/process_webapi.rb` now reads the types that the generator splits into one file per Swift namespace (`Components`, `Operations`) - #241
 * Updated SwiftFormat to 0.63.1 - #242
 * Sped up `make generate` from about 125 to about 28 seconds by splitting generated Web API files by API namespace, such as `Operations+AdminConversations.swift`, so SwiftFormat no longer spends most of the run on one 16,000-line file - #242
+* CI builds `SlackApp` with `SocketMode` and `HummingbirdHTTPAdapter` but without `Events`, catching code that lacks its trait guard - #247
 * Events that java-slack-sdk models but has not recorded can now be generated from the payload their upstream unit test deserializes, copied into `scripts/event_fixtures/` and listed in `scripts/event_fixtures.yml`. Generation fails when a copy drifts from its unit test and once upstream records the event - #245
 
 ## [2027.1.0-beta.1] - 2026-10-11
