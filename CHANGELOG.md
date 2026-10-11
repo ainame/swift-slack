@@ -11,6 +11,8 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Added
 
+* Added `enterpriseId`, `contextTeamId`, `contextEnterpriseId`, `eventContext`, `authorizations` and `isExtSharedChannel` to `EventsApiEnvelope`, so event handlers can tell which organization and installation an event belongs to - #246
+* Added `retryNum` and `retryReason` to `SlackApp.EventContext`, filled from Socket Mode envelopes (`retry_attempt`, `retry_reason`, also on `SocketModeMessageEnvelope`) and the HTTP `X-Slack-Retry-Num` and `X-Slack-Retry-Reason` headers, so handlers can skip events Slack redelivered - #246
 * Added the nine `agents.conversations.*` Web API methods (`archive`, `create`, `getCanvas`, `listViews`, `removeView`, `setCanvasContent`, `setCommands`, `setProperties` and `setView`) to the `WebAPI_Agents` trait, now that slack-api-ref defines their arguments - #243
 * **BREAKING**: Added the `AgentSessionStoppedEvent` and `AgentSessionTitleChangedEvent` events, with `Event` cases `.agentSessionStopped` and `.agentSessionTitleChanged`. Exhaustive `switch` statements over `Event` need the new cases or `default` - #245
 
