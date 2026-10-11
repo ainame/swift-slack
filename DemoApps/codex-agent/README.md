@@ -98,17 +98,30 @@ brew install --cask codex
 codex login
 ```
 
-The agent runs Codex with a read-only sandbox and never asks for approval, in the directory set by `CODEX_WORKSPACE`, which defaults to the current directory. Each Slack session runs its own `codex app-server` process, because swift-codex allows one active turn per process. A session idle for 10 minutes closes its process, and its next message resumes the Codex thread in a new one. A stopped turn is interrupted and read to its end before the session's next turn starts.
+The agent runs Codex with a read-only sandbox and never asks for approval, in the directory set by `CODEX_WORKSPACE`. Each Slack session runs its own `codex app-server` process, because swift-codex allows one active turn per process. A session idle for 10 minutes closes its process, and its next message resumes the Codex thread in a new one. A stopped turn is interrupted and read to its end before the session's next turn starts.
 
-### 3. Configure and run
+### 3. Decide who can use it
+
+> [!WARNING]
+> The read-only sandbox stops Codex from writing files, not from reading them. Codex can read anything your user account can, such as `~/.ssh` or another project's `.env`, and whatever it reads can end up in a Slack reply. Run the agent only for people you trust with that access.
+
+The demo limits that exposure:
+
+- `ALLOWED_USER_IDS` lists the Slack user IDs the agent answers, comma-separated. The codex backend refuses to start without it, and other people get an ephemeral notice.
+- `CODEX_WORKSPACE` must be set, and the app refuses a workspace that contains its own directory, where `.env` holds the Slack tokens, or that has a `.env` file.
+- Codex starts with only the variables it needs (`PATH`, `HOME`, locale, and `CODEX_HOME`), so exported Slack tokens do not reach it.
+
+Messages from anyone in a thread the agent joins can still go into its prompt as context, so treat what they write as untrusted input.
+
+### 4. Configure and run
 
 ```bash
 cd DemoApps/codex-agent
-cp .env.example .env   # then fill in the tokens
+cp .env.example .env   # then fill in the tokens, ALLOWED_USER_IDS, and CODEX_WORKSPACE
 swift run codex-agent
 ```
 
-To try the Slack side without Codex, set `AGENT_BACKEND=mock` to replay a scripted turn.
+To try the Slack side without Codex, set `AGENT_BACKEND=mock` to replay a scripted turn. The mock backend answers everyone when `ALLOWED_USER_IDS` is empty.
 
 To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_SECRET`, point the manifest's request URLs at the server, and run `swift run --traits HummingbirdHTTPAdapter codex-agent`.
 

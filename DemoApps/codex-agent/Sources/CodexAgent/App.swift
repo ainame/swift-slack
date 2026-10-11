@@ -10,6 +10,7 @@ struct CodexAgentApp {
     enum ConfigurationError: Error {
         case missingEnvironmentVariable(String)
         case unknownBackend(String)
+        case unsafeWorkspace(String)
     }
 
     struct Environment {
@@ -21,7 +22,9 @@ struct CodexAgentApp {
         let backend: String
         let codexPath: String?
         let codexModel: String?
-        let workspace: String
+        let workspace: String?
+        /// The users the agent answers. Empty answers everyone, which only the mock backend allows.
+        let allowedUserIds: Set<String>
     }
 
     static let logger: Logger = {
@@ -39,6 +42,9 @@ struct CodexAgentApp {
     static func main() async throws {
         let environment = try await loadEnvironment()
         let backend = try makeBackend(from: environment)
+        let isAllowed: @Sendable (String) -> Bool = { user in
+            environment.allowedUserIds.isEmpty || environment.allowedUserIds.contains(user)
+        }
         let responder = AgentResponder(backend: backend, logger: logger)
         let router = Router()
 
@@ -67,8 +73,11 @@ struct CodexAgentApp {
                 teamId: envelope.teamId,
             )
             if event.channelType == "im" {
+                guard isAllowed(user) else {
+                    return await postNotAllowed(turn, client: context.client)
+                }
                 startTurn(turn, responder: responder, client: context.client)
-            } else if event.threadTs != nil {
+            } else if event.threadTs != nil, isAllowed(user) {
                 startTurn(turn, responder: responder, client: context.client) {
                     await responder.shouldAnswerThreadReply(text: text, in: turn.session, client: context.client)
                 }
@@ -92,6 +101,9 @@ struct CodexAgentApp {
                 userId: user,
                 teamId: envelope.teamId,
             )
+            guard isAllowed(user) else {
+                return await postNotAllowed(turn, client: context.client)
+            }
             startTurn(turn, responder: responder, client: context.client)
         }
 
@@ -138,6 +150,20 @@ struct CodexAgentApp {
         }
     }
 
+    private static func postNotAllowed(_ turn: AgentResponder.Turn, client: any APIProtocol) async {
+        logger.info("Ignoring a message from a user not in ALLOWED_USER_IDS", metadata: ["user": "\(turn.userId)"])
+        do {
+            _ = try await client.chatPostEphemeral(body: .json(.init(
+                channel: turn.session.channel,
+                text: "Sorry, this agent only answers the people it is set up for.",
+                threadTs: turn.session.threadTs,
+                user: turn.userId,
+            ))).ok.body.json.checked("chat.postEphemeral")
+        } catch {
+            logger.warning("Failed to post the not-allowed notice", metadata: ["error": "\(error)"])
+        }
+    }
+
     private static func setSuggestedPrompts(channel: String, client: any APIProtocol) async throws {
         // swift-slack types `prompts` as a string because slack-api-ref does; requests are form-encoded,
         // so it takes the JSON array as text.
@@ -153,19 +179,46 @@ struct CodexAgentApp {
     private static func makeBackend(from environment: Environment) throws -> any AgentBackend {
         switch environment.backend {
         case "codex":
-            CodexBackend(
+            // Codex can read the whole disk, even in its read-only sandbox, and its answers go to Slack.
+            // Only answer chosen people, and keep the app's own secrets out of its working directory.
+            guard !environment.allowedUserIds.isEmpty else {
+                throw ConfigurationError.missingEnvironmentVariable("ALLOWED_USER_IDS")
+            }
+            guard let workspace = environment.workspace else {
+                throw ConfigurationError.missingEnvironmentVariable("CODEX_WORKSPACE")
+            }
+            return try CodexBackend(
                 settings: .init(
                     codexPath: environment.codexPath,
                     model: environment.codexModel,
-                    workspace: environment.workspace,
+                    workspace: checkedWorkspace(workspace),
                 ),
                 logger: logger,
             )
         case "mock":
-            MockBackend()
+            return MockBackend()
         default:
             throw ConfigurationError.unknownBackend(environment.backend)
         }
+    }
+
+    /// Rejects a workspace that contains the app's directory, where `.env` holds the Slack tokens, or that
+    /// has a `.env` of its own.
+    private static func checkedWorkspace(_ path: String) throws -> String {
+        let workspace = URL(filePath: path).standardizedFileURL.resolvingSymlinksInPath()
+        let appDirectory = URL(filePath: FileManager.default.currentDirectoryPath)
+            .standardizedFileURL.resolvingSymlinksInPath()
+        let workspacePath = workspace.path(percentEncoded: false)
+        let appPath = appDirectory.path(percentEncoded: false)
+        let containsApp = appPath == workspacePath
+            || appPath.hasPrefix(workspacePath.hasSuffix("/") ? workspacePath : workspacePath + "/")
+        if containsApp {
+            throw ConfigurationError.unsafeWorkspace("CODEX_WORKSPACE contains the app's directory and its .env")
+        }
+        if FileManager.default.fileExists(atPath: workspace.appending(path: ".env").path(percentEncoded: false)) {
+            throw ConfigurationError.unsafeWorkspace("CODEX_WORKSPACE has a .env file")
+        }
+        return workspacePath
     }
 
     private static func loadEnvironment() async throws -> Environment {
@@ -190,8 +243,13 @@ struct CodexAgentApp {
             backend: normalized(configuration.string(forKey: "AGENT_BACKEND")) ?? "codex",
             codexPath: normalized(configuration.string(forKey: "CODEX_PATH")),
             codexModel: normalized(configuration.string(forKey: "CODEX_MODEL")),
-            workspace: normalized(configuration.string(forKey: "CODEX_WORKSPACE"))
-                ?? FileManager.default.currentDirectoryPath,
+            workspace: normalized(configuration.string(forKey: "CODEX_WORKSPACE")),
+            allowedUserIds: Set(
+                (configuration.string(forKey: "ALLOWED_USER_IDS") ?? "")
+                    .split(separator: ",")
+                    .map { $0.trimmingCharacters(in: .whitespaces) }
+                    .filter { !$0.isEmpty },
+            ),
         )
     }
 
