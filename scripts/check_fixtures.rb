@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Decodes the upstream java-slack-sdk fixture of every generated Web API method and event with the real
+# Decodes the fixture of every generated Web API method and event with the real
 # generated types, and fails unless all of them decode.
 #
 #   1. Preprocesses the fixtures (scripts/lib/java_openapi/fixture_placeholders.rb) into .tmp/Fixtures/
@@ -13,6 +13,7 @@
 
 require 'fileutils'
 require 'json'
+require_relative 'lib/event_fixtures'
 require_relative 'lib/java_openapi/fixture_placeholders'
 
 Encoding.default_external = Encoding::UTF_8
@@ -34,8 +35,8 @@ end
 # The fixture file of an event schema: IMCloseEvent => ImClosePayload.json (names differ only in case).
 def event_fixture_path(schema_name)
   wanted = "#{schema_name.delete_suffix('Event')}Payload.json".downcase
-  Dir.glob(File.join(SAMPLES_DIR, 'events/*.json')).find { |path| File.basename(path).downcase == wanted } or
-    raise "no upstream fixture for #{schema_name}"
+  EventFixtures.paths.find { |path| File.basename(path).downcase == wanted } or
+    raise "no event fixture for #{schema_name}"
 end
 
 def write_fixture(directory, name, json, schema, preprocessor)

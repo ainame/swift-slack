@@ -57,7 +57,7 @@ Keep exceptions explicit, one per field or type, and backed by upstream java-sla
 
 ### Web API Coverage
 
-- A Web API method is generated only when java-slack-sdk has a response fixture for it (`vendor/java-slack-sdk/json-logs/samples/api/<method>.json`), and an event only when it has an event fixture. slack-api-ref supplies the method list and request arguments, not response types; do not generate response types from its documentation examples.
+- A Web API method is generated only when java-slack-sdk has a response fixture for it (`vendor/java-slack-sdk/json-logs/samples/api/<method>.json`), and an event only when it has an event fixture (`json-logs/samples/events/<Name>Payload.json`). An event that java-slack-sdk models but has not recorded may instead use the payload its upstream unit test deserializes, copied verbatim into `scripts/event_fixtures/` with an entry in `scripts/event_fixtures.yml`; generation fails once upstream records it, so delete the copy then. slack-api-ref supplies the method list and request arguments, not response types; do not generate response types from its documentation examples.
 - `UNSUPPORTED_METHODS` and `UNSUPPORTED_EVENTS` in `scripts/generate_webapi.rb` exclude legacy methods and events. Anchor every pattern to the start of the name and give each entry an inline reason.
 
 ## Serialization

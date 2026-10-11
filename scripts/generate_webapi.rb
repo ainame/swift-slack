@@ -6,12 +6,14 @@
 #   * Response schemas and event schemas come from the upstream java-slack-sdk Java classes
 #     (scripts/lib/java_openapi.rb), with the explicit exceptions in scripts/java_type_overrides.yml.
 #   * Only methods and events with an upstream java-slack-sdk fixture are generated, so every generated type
-#     is checked against a recorded payload (scripts/check_fixtures.rb).
+#     is checked against a recorded payload (scripts/check_fixtures.rb). Events that java-slack-sdk models
+#     but has not recorded use the payload of their upstream unit test instead (scripts/event_fixtures.yml).
 
 require 'fileutils'
 require 'json'
 require 'yaml'
 require_relative './lib/helpers'
+require_relative './lib/event_fixtures'
 require_relative './lib/java_openapi'
 
 # Repository sources are UTF-8; do not depend on the caller's locale.
@@ -319,7 +321,7 @@ end
 if $PROGRAM_NAME == __FILE__
   api_ref_paths = Dir.glob(File.join(ROOT_DIR, 'vendor/slack-api-ref/methods/**/*.json')).sort
   sample_json_paths = Dir.glob(File.join(SDK_DIR, 'json-logs/samples/api/*.json')).sort
-  event_fixture_paths = Dir.glob(File.join(SDK_DIR, 'json-logs/samples/events/*.json')).sort
+  event_fixture_paths = EventFixtures.paths
   main(api_ref_paths, sample_json_paths, event_fixture_paths, File.join(ROOT_DIR, '.tmp/WebAPI'))
   report_generator_warnings
 end

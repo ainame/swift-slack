@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Static check, no Swift involved: compares every upstream java-slack-sdk fixture of a generated method or
-# event with its schema in .tmp/WebAPI/openapi.json and lists each value whose JSON type differs.
+# Static check, no Swift involved: compares the fixture of every generated method or event
+# (scripts/lib/event_fixtures.rb) with its schema in .tmp/WebAPI/openapi.json and lists each value whose
+# JSON type differs.
 #
 # Policy (scripts/java_type_overrides.yml): a fixture mismatch must be explained by a type override,
 # otherwise this script prints it and exits non-zero. An overridden property keeps the Java type in
@@ -17,6 +18,7 @@
 
 require 'json'
 require 'set'
+require_relative 'lib/event_fixtures'
 require_relative 'lib/java_openapi/fixture_placeholders'
 
 Encoding.default_external = Encoding::UTF_8
@@ -166,7 +168,7 @@ end
 fixtures = response_schemas.map do |method, schema|
   [method, read_json(File.join(SAMPLES_DIR, "api/#{method}.json")), schema]
 end
-event_files = Dir.glob(File.join(SAMPLES_DIR, 'events/*.json')).to_h { |path| [File.basename(path).downcase, path] }
+event_files = EventFixtures.paths.to_h { |path| [File.basename(path).downcase, path] }
 fixtures += document.fetch('x-slack-events').keys.map do |name|
   json = read_json(event_files.fetch("#{name.delete_suffix('Event')}Payload.json".downcase))
   json = json['event'] if json.key?('token') && json.key?('event')
