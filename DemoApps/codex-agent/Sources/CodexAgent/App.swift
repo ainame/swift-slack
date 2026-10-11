@@ -33,10 +33,18 @@ struct CodexAgentApp {
         return logger
     }()
 
-    static let suggestedPrompts: [(title: String, message: String)] = [
+    /// Prompts for a repository set with `CODEX_WORKSPACE`.
+    static let workspacePrompts: [(title: String, message: String)] = [
         ("Explain this repository", "What does this repository do? Give me a short tour of its layout."),
         ("Find a function", "Where is the main entry point, and what does it do?"),
         ("Review recent changes", "Summarize the most recent commit and point out anything risky."),
+    ]
+
+    /// Prompts for the empty default workspace.
+    static let generalPrompts: [(title: String, message: String)] = [
+        ("Explain a concept", "Explain Swift's structured concurrency in a few short paragraphs."),
+        ("Write a script", "Write a shell script that lists the ten largest files in a directory."),
+        ("Debug an error", "What usually causes \"Sendable\" warnings in Swift 6, and how do I fix them?"),
     ]
 
     static func main() async throws {
@@ -52,7 +60,8 @@ struct CodexAgentApp {
         // assistant_thread_started. Suggested prompts sit at the top of the Messages tab.
         router.onEvent(AppHomeOpenedEvent.self) { context, _, event in
             guard event.tab == "messages", let channel = event.channel else { return }
-            try await setSuggestedPrompts(channel: channel, client: context.client)
+            let prompts = environment.workspace == nil ? generalPrompts : workspacePrompts
+            try await setSuggestedPrompts(prompts, channel: channel, client: context.client)
         }
 
         // Direct messages to the agent, from the Messages tab or the split view, and replies in channel
@@ -164,15 +173,19 @@ struct CodexAgentApp {
         }
     }
 
-    private static func setSuggestedPrompts(channel: String, client: any APIProtocol) async throws {
+    private static func setSuggestedPrompts(
+        _ prompts: [(title: String, message: String)],
+        channel: String,
+        client: any APIProtocol,
+    ) async throws {
         // swift-slack types `prompts` as a string because slack-api-ref does; requests are form-encoded,
         // so it takes the JSON array as text.
-        let prompts = suggestedPrompts.map { ["title": $0.title, "message": $0.message] }
-        let json = try String(decoding: JSONSerialization.data(withJSONObject: prompts), as: UTF8.self)
+        let objects = prompts.map { ["title": $0.title, "message": $0.message] }
+        let json = try String(decoding: JSONSerialization.data(withJSONObject: objects), as: UTF8.self)
         _ = try await client.assistantThreadsSetSuggestedPrompts(body: .json(.init(
             channelId: channel,
             prompts: json,
-            title: "Ask Codex about the workspace",
+            title: "What can I help with?",
         ))).ok.body.json.checked("assistant.threads.setSuggestedPrompts")
     }
 
@@ -184,14 +197,11 @@ struct CodexAgentApp {
             if environment.allowedUserIds.isEmpty {
                 logger.warning("ALLOWED_USER_IDS is not set: anyone who can message the app can make Codex read files")
             }
-            guard let workspace = environment.workspace else {
-                throw ConfigurationError.missingEnvironmentVariable("CODEX_WORKSPACE")
-            }
             return try CodexBackend(
                 settings: .init(
                     codexPath: environment.codexPath,
                     model: environment.codexModel,
-                    workspace: checkedWorkspace(workspace),
+                    workspace: environment.workspace.map(checkedWorkspace) ?? emptyWorkspace(),
                 ),
                 logger: logger,
             )
@@ -200,6 +210,17 @@ struct CodexAgentApp {
         default:
             throw ConfigurationError.unknownBackend(environment.backend)
         }
+    }
+
+    /// An empty directory for Codex to work in when `CODEX_WORKSPACE` is not set. The app's own directory
+    /// would expose `.env`, which holds the Slack tokens.
+    private static func emptyWorkspace() throws -> String {
+        let directory = FileManager.default.temporaryDirectory.appending(path: "codex-agent-workspace")
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        logger.info("CODEX_WORKSPACE is not set; Codex works in an empty directory", metadata: [
+            "path": "\(directory.path(percentEncoded: false))",
+        ])
+        return directory.path(percentEncoded: false)
     }
 
     /// Rejects a workspace that contains the app's directory, where `.env` holds the Slack tokens, or that
