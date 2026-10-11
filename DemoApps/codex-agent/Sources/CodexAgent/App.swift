@@ -2,7 +2,6 @@ import Configuration
 import Foundation
 import Logging
 import SlackKit
-import SlackStreaming
 import SystemPackage
 
 @main

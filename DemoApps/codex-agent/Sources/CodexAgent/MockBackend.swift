@@ -1,4 +1,4 @@
-import SlackStreaming
+import SlackKit
 
 /// Replays a scripted turn so the Slack side can be tried without the Codex CLI.
 struct MockBackend: AgentBackend {

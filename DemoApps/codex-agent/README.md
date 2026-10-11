@@ -27,7 +27,7 @@ The agent never writes Block Kit. The codex backend registers a `show_cards` too
 - `AgentToolset.handle` only checks the arguments of `show_cards`. Invalid ones get `success: false` with a message, so Codex can retry. The handler must not wait on another request to the same app server.
 - The cards are read from the completed `dynamicToolCall` item and stream nothing. When the answer is done, `SlackUI` turns them into a `card`, or a `carousel` for two to ten cards, within the card block's limits (150 characters for titles and subtitles, 200 for bodies).
 - The app decides the buttons: Open for an `https` link, and "Ask about this", which posts the question in the thread and answers it. The model cannot add other actions or links.
-- The cards go out with `chat.stopStream`, because Slack takes blocks only when a stream stops. `ChatStream.send(_:sessionStatus:finalBlocks:)` asks for them once the input finishes.
+- When the answer finishes, the producer yields the cards as a `StreamingMessage.Part.blocks` chunk. Feedback buttons are passed separately to `streamMessage` as the closing message's `blocks`.
 - Tools are registered when a Codex thread starts. A thread resumed after an idle close keeps them.
 
 The mock backend sends two cards the same way, so `AGENT_BACKEND=mock` shows them without Codex.
@@ -44,34 +44,36 @@ Besides `show_cards`, the codex backend registers three tools. Each turn gets a 
 
 Tool calls appear as task cards, and failures go back to Codex as messages it can act on. swift-codex runs a tool handler while it reads the app-server's messages, so a waiting `ask_user` holds every other message, including the reply to an interrupt. The stop button therefore ends the question before it interrupts the turn.
 
-## Streaming with AsyncStream
+## Streaming with AsyncSequence
 
-The `SlackStreaming` target is a layer over the streaming methods built around Swift concurrency. It depends only on swift-slack, so it can move into the library later. A producer yields chunks into an `AsyncStream` as they come, for example one chunk per token, and `ChatStream` sends them:
+The library's `client.streamMessage` takes any `AsyncSequence` of `StreamingMessage.Part`. The demo uses an `AsyncStream` so the stop button can cancel the producer independently:
 
 ```swift
-let (chunks, continuation) = AsyncStream.makeStream(of: StreamChunk.self)
+let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
 let producer = Task {
-    for try await event in agent.events(for: prompt) {
-        continuation.yield(.markdownText(event.text))
+    defer { continuation.finish() }
+    for await text in agent.tokens(for: prompt) {
+        continuation.yield(.markdown(text))
     }
-    continuation.finish()
+    if Task.isCancelled {
+        continuation.yield(.markdown("\n\n_Stopped._"))
+    }
 }
 
-let transport = SlackChatStreamTransport(
-    client: client,
+try await client.streamMessage(
+    parts,
     channel: channel,
     threadTs: threadTs,
-    recipientUserId: userId,
-    recipientTeamId: teamId,
+    recipient: .init(userId: userId, teamId: teamId),
+    blocks: feedbackBlocks,
 )
-try await ChatStream(transport: transport).send(chunks, blocks: feedbackBlocks)
 ```
 
-- `StreamChunk` encodes the `markdown_text`, `task_update`, and `plan_update` chunks. swift-slack types `chunks` as an untyped array because slack-api-ref declares it without an item schema.
-- `ChatStream.send` starts the message with the first chunks. It collects whatever arrives while a request is in flight, merges adjacent markdown, and sends the result with the next `chat.appendStream` call, at most once per `minimumInterval` (1 second by default; the method is Tier 4). Once the stream finishes, the remaining chunks and the blocks go out with `chat.stopStream`.
-- Cancelling the task that calls `send` stops the message too: no more appends go out, and the closing call runs in a task that does not inherit the cancellation, which an HTTP transport would otherwise abandon. To stop on request, cancel the producer instead, as `AgentResponder` does for the stop button. The producer then finishes the stream, and `send` closes the message normally.
-- If `chat.appendStream` fails partway, `send` stops the message before throwing, so the message does not stay streaming. `SlackChatStreamTransport` retries calls that Slack rate limits (HTTP 429) after their `Retry-After` delay.
-- `ChatStreamTransport` separates the three Web API calls from the timing logic, so the tests run against a fake transport.
+- Parts include `.markdown`, `.task`, `.plan(title:)`, and `.blocks`. Blocks are streamed in order with other parts; the `blocks:` argument adds blocks at the bottom of the finished message.
+- `streamMessage` collects parts while requests are in flight, merges adjacent markdown up to 12,000 characters and blocks up to 50, and spaces calls by `minimumInterval` (1 second by default).
+- Finishing the input sends remaining parts and closing blocks with `chat.stopStream`. Cancelling the producer lets it yield a stopped notice and finish the input normally. Cancelling the task calling `streamMessage` also closes the message, using a task that does not inherit cancellation.
+- If the input throws, buffered parts and closing blocks are sent before the error is rethrown. If a Slack call fails, the message is stopped without additional chunks or blocks before rethrowing. HTTP 429 responses are retried after `Retry-After`, up to three attempts.
+- The library's streaming tests use fake transports and HTTP responses. The API requires the `WebAPI_Chat` trait, enabled by this demo.
 
 ## Setup
 
@@ -157,7 +159,7 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 
 ## Layout
 
-- `Sources/SlackStreaming`: the AsyncStream layer (`ChatStream`, `ChunkBuffer`, `StreamChunk`, `ChatStreamTransport`), plus a `checked(_:)` helper because swift-slack does not throw for `"ok": false` responses
+- `Sources/CodexAgent/SlackResponse.swift`: the demo's `checked(_:)` helper for non-streaming Web API responses with `"ok": false`; streaming uses the library's `StreamingMessage.Error`
 - `Sources/CodexAgent/App.swift`: configuration and event routing
 - `Sources/CodexAgent/AgentResponder.swift`: the response loop for one message, and the stop button
 - `Sources/CodexAgent/CodexBackend.swift`: one Codex thread per session, with notifications mapped to tasks and text

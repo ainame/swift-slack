@@ -1,4 +1,4 @@
-import SlackStreaming
+import SlackKit
 
 /// Identifies one agent session: Slack scopes sessions to a single thread in a channel or DM.
 struct SessionKey: Hashable, Sendable, CustomStringConvertible {
@@ -9,6 +9,8 @@ struct SessionKey: Hashable, Sendable, CustomStringConvertible {
         "\(channel)/\(threadTs)"
     }
 }
+
+typealias TaskUpdate = StreamingMessage.TaskUpdate
 
 enum AgentEvent: Sendable, Equatable {
     /// A task started or changed status.

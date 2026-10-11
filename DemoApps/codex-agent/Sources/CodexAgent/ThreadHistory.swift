@@ -1,5 +1,4 @@
 import SlackKit
-import SlackStreaming
 
 /// The app's own bot user, from `auth.test`.
 struct BotIdentity: Sendable {

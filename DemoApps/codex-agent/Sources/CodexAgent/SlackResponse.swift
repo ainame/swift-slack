@@ -33,9 +33,6 @@ extension SlackResponse {
     }
 }
 
-extension Components.Schemas.ChatStartStreamResponse: SlackResponse {}
-extension Components.Schemas.ChatAppendStreamResponse: SlackResponse {}
-extension Components.Schemas.ChatStopStreamResponse: SlackResponse {}
 extension Components.Schemas.ChatPostEphemeralResponse: SlackResponse {}
 extension Components.Schemas.AgentsSessionsSetStatusResponse: SlackResponse {}
 extension Components.Schemas.AssistantThreadsSetSuggestedPromptsResponse: SlackResponse {}
