@@ -16,6 +16,17 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
+> [!TIP]
+> **Try the 2027.1.0 beta, especially if you're starting a new app.** In [2027.1.0-beta.1](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.1), Web API responses and events are generated from the model classes of [Slack's Java SDK](https://github.com/slackapi/java-slack-sdk). Every generated response and event type decodes the Java SDK's recorded payloads (268 responses and 91 events), models declare every field the Java SDK knows, and the decoding failures of 2026.x are fixed.
+>
+> Because swift-slack uses calendar versioning, the final release is `2027.1.0`, published in January 2027. Until then, depend on the beta, which SwiftPM does not pick up from a `2026.x` requirement:
+>
+> ```swift
+> .package(url: "https://github.com/ainame/swift-slack.git", from: "2027.1.0-beta.1")
+> ```
+>
+> The beta is a breaking release. Existing apps should read [Migrating to Java-derived models](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.1/MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [release notes](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.1) before upgrading. The quickstart below works with both versions.
+
 > [!IMPORTANT]
 > **Upgrading from 2026.9.x or earlier?** Releases 2026.10.0 through 2026.10.2 include changes that may need code updates.
 >
