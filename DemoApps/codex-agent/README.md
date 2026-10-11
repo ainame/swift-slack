@@ -12,7 +12,25 @@ It follows the agent response loop from [Developing an agent](https://docs.slack
 - **Streaming**: commands, web searches, file edits, and tool calls appear as task cards (`task_update` chunks in `timeline` mode). The answer streams as `markdown_text` chunks through `chat.startStream`, `chat.appendStream`, and `chat.stopStream`.
 - **Stop button**: subscribing to `agent_session_stopped` makes Slack show a stop button while the session is processing. Slack stops the streaming message itself. The agent interrupts the Codex turn and returns the session to `active`. Slack may then reject the closing `chat.stopStream`, so a stopped reply can end without the feedback buttons.
 - **Renaming**: after `agent_session_title_changed`, it stops proposing titles for that session.
+- **Cards**: an answer can end with cards or a carousel, with Open and "Ask about this" buttons. See below.
 - **Feedback**: every reply ends with `feedback_buttons` in a `context_actions` block, and a click gets an ephemeral reply.
+
+## Cards from the agent's answer
+
+The agent never writes Block Kit. Its instructions describe a small vocabulary instead: it may end an answer with a fenced `slack-ui` block of cards, each with an optional title, subtitle, body, `https` link, and follow-up question.
+
+````
+```slack-ui
+{"cards": [{"title": "Agent sessions", "body": "How Slack shows the stop button.", "url": "https://docs.slack.dev/ai/agent-sessions", "ask": "How does the stop button work?"}]}
+```
+````
+
+- `SlackUIExtractor` streams the text before the fence as it arrives and keeps the rest. A tail that might begin the fence is held back until the next delta settles it.
+- When the answer is done, `SlackUI` turns the block into a `card`, or a `carousel` for two to ten cards. It applies the card block's limits (150 characters for titles and subtitles, 200 for bodies) and drops invalid JSON, keeping the text answer.
+- The app decides the buttons: Open for an `https` link, and "Ask about this", which posts the question in the thread and answers it. The model cannot add other actions or links.
+- The cards go out with `chat.stopStream`, because Slack takes blocks only when a stream stops. `ChatStream.send(_:sessionStatus:finalBlocks:)` asks for them once the input finishes.
+
+The mock backend ends its answer with two cards, so `AGENT_BACKEND=mock` shows them without Codex.
 
 ## Streaming with AsyncStream
 
@@ -133,5 +151,6 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 - `Sources/CodexAgent/CodexBackend.swift`: one Codex thread per session, with notifications mapped to tasks and text
 - `Sources/CodexAgent/MockBackend.swift`: a scripted backend for trying the app without Codex
 - `Sources/CodexAgent/Feedback.swift`: the feedback buttons and their action handler
+- `Sources/CodexAgent/SlackUI.swift`: the `slack-ui` vocabulary, its instructions for the agent, and the extractor
 
 Run the tests with `swift test`.

@@ -53,5 +53,9 @@ let package = Package(
             name: "SlackStreamingTests",
             dependencies: ["SlackStreaming"],
         ),
+        .testTarget(
+            name: "CodexAgentTests",
+            dependencies: ["CodexAgent"],
+        ),
     ],
 )

@@ -34,6 +34,13 @@ struct MockBackend: AgentBackend {
         > \(prompt)
 
         Set `AGENT_BACKEND=codex` to answer with Codex instead.
+
+        ```slack-ui
+        {"cards": [
+          {"title": "Codex", "subtitle": "openai/codex", "body": "The coding agent behind the codex backend.", "url": "https://github.com/openai/codex"},
+          {"title": "Agent sessions", "body": "How Slack shows status, titles, and the stop button.", "url": "https://docs.slack.dev/ai/agent-sessions", "ask": "How does the stop button work?"}
+        ]}
+        ```
         """
         for word in answer.split(separator: " ", omittingEmptySubsequences: false) {
             continuation.yield(.text(word + " "))

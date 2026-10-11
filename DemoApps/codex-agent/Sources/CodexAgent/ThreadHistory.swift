@@ -50,3 +50,4 @@ enum ThreadHistory {
 
 extension Components.Schemas.ConversationsRepliesResponse: SlackResponse {}
 extension Components.Schemas.AuthTestResponse: SlackResponse {}
+extension Components.Schemas.ChatPostMessageResponse: SlackResponse {}
