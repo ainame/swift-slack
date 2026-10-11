@@ -55,7 +55,10 @@ let package = Package(
         ),
         .testTarget(
             name: "CodexAgentTests",
-            dependencies: ["CodexAgent"],
+            dependencies: [
+                "CodexAgent",
+                .product(name: "Codex", package: "swift-codex"),
+            ],
         ),
     ],
 )
