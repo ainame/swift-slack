@@ -131,26 +131,28 @@ struct CodexAgentApp {
 
         Feedback.register(on: router, logger: logger)
 
-        // Answers to the agent's ask_user tool. Only the person asked can answer.
-        router.onAction(SlackAgentTools.choiceActionId) { context, payload in
-            try await context.ack()
-            guard let action = payload.blockActions.first(where: { $0.actionId == SlackAgentTools.choiceActionId }),
-                  let parts = action.value?.split(separator: "|"), parts.count == 2, let index = Int(parts[1]),
-                  let user = payload.user.id, let channel = payload.container.channelId else {
-                return
-            }
-            let notice: String? = switch await questions.answer(id: String(parts[0]), index: index, userId: user) {
-            case .accepted: nil
-            case let .notAsked(asked): "Only <@\(asked)> can answer this question."
-            case .expired: "This question is no longer waiting for an answer."
-            }
-            if let notice {
-                _ = try await context.client.chatPostEphemeral(body: .json(.init(
-                    channel: channel,
-                    text: notice,
-                    threadTs: payload.message?.threadTs ?? payload.container.messageTs,
-                    user: user,
-                ))).ok.body.json.checked("chat.postEphemeral")
+        // Answers to the agent's ask_user tool, one action_id per option. Only the person asked can answer.
+        for index in 0 ..< SlackAgentTools.maxOptions {
+            let actionId = SlackAgentTools.choiceActionId(index)
+            router.onAction(actionId) { context, payload in
+                try await context.ack()
+                guard let id = payload.blockActions.first(where: { $0.actionId == actionId })?.value,
+                      let user = payload.user.id, let channel = payload.container.channelId else {
+                    return
+                }
+                let notice: String? = switch await questions.answer(id: id, index: index, userId: user) {
+                case .accepted: nil
+                case let .notAsked(asked): "Only <@\(asked)> can answer this question."
+                case .expired: "This question is no longer waiting for an answer."
+                }
+                if let notice {
+                    _ = try await context.client.chatPostEphemeral(body: .json(.init(
+                        channel: channel,
+                        text: notice,
+                        threadTs: payload.message?.threadTs ?? payload.container.messageTs,
+                        user: user,
+                    ))).ok.body.json.checked("chat.postEphemeral")
+                }
             }
         }
 

@@ -5,7 +5,13 @@ import SlackStreaming
 
 /// ``AgentTools`` for one turn, acting in the turn's session for the person it answers.
 struct SlackAgentTools: AgentTools {
-    static let choiceActionId = "ask_user_choice"
+    /// The `ask_user` tool's schema allows two to five options.
+    static let maxOptions = 5
+
+    /// The button for option `index`. Slack rejects a block whose elements share an `action_id`.
+    static func choiceActionId(_ index: Int) -> String {
+        "ask_user_choice_\(index)"
+    }
 
     let client: any APIProtocol
     let session: SessionKey
@@ -49,23 +55,16 @@ struct SlackAgentTools: AgentTools {
     func askUser(_ question: String, options: [String]) async throws -> String {
         let id = UUID().uuidString
         let posted = try await client.chatPostMessage(body: .json(.init(
-            blocks: [
-                .section(SectionBlock(text: TextObject(type: .mrkdwn, text: "<@\(userId)> \(question)"))),
-                .actions(ActionsBlock(
-                    elements: options.enumerated().map { index, option in
-                        .button(ButtonElement(
-                            text: TextObject(type: .plainText, text: String(option.prefix(75))),
-                            actionId: Self.choiceActionId,
-                            value: "\(id)|\(index)",
-                        ))
-                    },
-                    blockId: id,
-                )),
-            ],
+            blocks: Self.questionBlocks(id: id, question: question, options: options, userId: userId),
             channel: session.channel,
             text: question,
             threadTs: session.threadTs,
-        ))).ok.body.json.checked("chat.postMessage")
+        ))).ok.body.json
+        guard posted.ok else {
+            // `invalid_blocks` explains itself in response_metadata.messages.
+            let details = [posted.error ?? "unknown_error"] + (posted.responseMetadata?.messages ?? [])
+            throw SlackAPIError(method: "chat.postMessage", code: details.joined(separator: ": "))
+        }
 
         // Waiting for the person, not working: `suspended` shows that the agent needs input.
         await setStatus("suspended")
@@ -90,6 +89,24 @@ struct SlackAgentTools: AgentTools {
             )))
         }
         return try outcome.get()
+    }
+
+    /// The question and one button per option, each with its own `action_id` and the question's ID as
+    /// its value.
+    static func questionBlocks(id: String, question: String, options: [String], userId: String) -> [Block] {
+        [
+            .section(SectionBlock(text: TextObject(type: .mrkdwn, text: "<@\(userId)> \(question)"))),
+            .actions(ActionsBlock(
+                elements: options.prefix(maxOptions).enumerated().map { index, option in
+                    .button(ButtonElement(
+                        text: TextObject(type: .plainText, text: String(option.prefix(75))),
+                        actionId: choiceActionId(index),
+                        value: id,
+                    ))
+                },
+                blockId: id,
+            )),
+        ]
     }
 
     private func setStatus(_ status: String) async {
