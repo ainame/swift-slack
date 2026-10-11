@@ -107,7 +107,7 @@ The agent runs Codex with a read-only sandbox and never asks for approval, in th
 
 The demo limits that exposure:
 
-- `ALLOWED_USER_IDS` lists the Slack user IDs the agent answers, comma-separated. The codex backend refuses to start without it, and other people get an ephemeral notice.
+- `ALLOWED_USER_IDS` optionally lists the Slack user IDs the agent answers, comma-separated, and other people get an ephemeral notice. Without it the agent answers everyone and logs a warning at startup; set it when other people share the workspace.
 - `CODEX_WORKSPACE` must be set, and the app refuses a workspace that contains its own directory, where `.env` holds the Slack tokens, or that has a `.env` file.
 - Codex starts with only the variables it needs (`PATH`, `HOME`, locale, and `CODEX_HOME`), so exported Slack tokens do not reach it.
 
@@ -117,11 +117,11 @@ Messages from anyone in a thread the agent joins can still go into its prompt as
 
 ```bash
 cd DemoApps/codex-agent
-cp .env.example .env   # then fill in the tokens, ALLOWED_USER_IDS, and CODEX_WORKSPACE
+cp .env.example .env   # then fill in the tokens and CODEX_WORKSPACE
 swift run codex-agent
 ```
 
-To try the Slack side without Codex, set `AGENT_BACKEND=mock` to replay a scripted turn. The mock backend answers everyone when `ALLOWED_USER_IDS` is empty.
+To try the Slack side without Codex, set `AGENT_BACKEND=mock` to replay a scripted turn.
 
 To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_SECRET`, point the manifest's request URLs at the server, and run `swift run --traits HummingbirdHTTPAdapter codex-agent`.
 

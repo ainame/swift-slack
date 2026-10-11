@@ -23,7 +23,7 @@ struct CodexAgentApp {
         let codexPath: String?
         let codexModel: String?
         let workspace: String?
-        /// The users the agent answers. Empty answers everyone, which only the mock backend allows.
+        /// The users the agent answers, or everyone when empty.
         let allowedUserIds: Set<String>
     }
 
@@ -180,9 +180,9 @@ struct CodexAgentApp {
         switch environment.backend {
         case "codex":
             // Codex can read the whole disk, even in its read-only sandbox, and its answers go to Slack.
-            // Only answer chosen people, and keep the app's own secrets out of its working directory.
-            guard !environment.allowedUserIds.isEmpty else {
-                throw ConfigurationError.missingEnvironmentVariable("ALLOWED_USER_IDS")
+            // Keep the app's own secrets out of its working directory, and warn when anyone can ask.
+            if environment.allowedUserIds.isEmpty {
+                logger.warning("ALLOWED_USER_IDS is not set: anyone who can message the app can make Codex read files")
             }
             guard let workspace = environment.workspace else {
                 throw ConfigurationError.missingEnvironmentVariable("CODEX_WORKSPACE")
