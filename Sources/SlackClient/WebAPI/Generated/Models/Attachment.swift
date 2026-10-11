@@ -15,505 +15,105 @@ extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/Attachment`.
     public struct Attachment: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/Attachment/msg_subtype`.
-        public var msgSubtype: Swift.String? {
-            get {
-                storage.value.msgSubtype
-            }
-            _modify {
-                yield &storage.value.msgSubtype
-            }
-        }
-
+        public var msgSubtype: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/fallback`.
-        public var fallback: Swift.String? {
-            get {
-                storage.value.fallback
-            }
-            _modify {
-                yield &storage.value.fallback
-            }
-        }
-
+        public var fallback: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/callback_id`.
-        public var callbackId: Swift.String? {
-            get {
-                storage.value.callbackId
-            }
-            _modify {
-                yield &storage.value.callbackId
-            }
-        }
-
+        public var callbackId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/color`.
-        public var color: Swift.String? {
-            get {
-                storage.value.color
-            }
-            _modify {
-                yield &storage.value.color
-            }
-        }
-
+        public var color: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/hide_color`.
-        public var hideColor: Swift.Bool? {
-            get {
-                storage.value.hideColor
-            }
-            _modify {
-                yield &storage.value.hideColor
-            }
-        }
-
+        public var hideColor: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/Attachment/pretext`.
-        public var pretext: Swift.String? {
-            get {
-                storage.value.pretext
-            }
-            _modify {
-                yield &storage.value.pretext
-            }
-        }
-
+        public var pretext: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/service_url`.
-        public var serviceUrl: Swift.String? {
-            get {
-                storage.value.serviceUrl
-            }
-            _modify {
-                yield &storage.value.serviceUrl
-            }
-        }
-
+        public var serviceUrl: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/service_name`.
-        public var serviceName: Swift.String? {
-            get {
-                storage.value.serviceName
-            }
-            _modify {
-                yield &storage.value.serviceName
-            }
-        }
-
+        public var serviceName: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/service_icon`.
-        public var serviceIcon: Swift.String? {
-            get {
-                storage.value.serviceIcon
-            }
-            _modify {
-                yield &storage.value.serviceIcon
-            }
-        }
-
+        public var serviceIcon: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/author_id`.
-        public var authorId: Swift.String? {
-            get {
-                storage.value.authorId
-            }
-            _modify {
-                yield &storage.value.authorId
-            }
-        }
-
+        public var authorId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/author_name`.
-        public var authorName: Swift.String? {
-            get {
-                storage.value.authorName
-            }
-            _modify {
-                yield &storage.value.authorName
-            }
-        }
-
+        public var authorName: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/author_link`.
-        public var authorLink: Swift.String? {
-            get {
-                storage.value.authorLink
-            }
-            _modify {
-                yield &storage.value.authorLink
-            }
-        }
-
+        public var authorLink: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/author_icon`.
-        public var authorIcon: Swift.String? {
-            get {
-                storage.value.authorIcon
-            }
-            _modify {
-                yield &storage.value.authorIcon
-            }
-        }
-
+        public var authorIcon: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/from_url`.
-        public var fromUrl: Swift.String? {
-            get {
-                storage.value.fromUrl
-            }
-            _modify {
-                yield &storage.value.fromUrl
-            }
-        }
-
+        public var fromUrl: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/original_url`.
-        public var originalUrl: Swift.String? {
-            get {
-                storage.value.originalUrl
-            }
-            _modify {
-                yield &storage.value.originalUrl
-            }
-        }
-
+        public var originalUrl: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/author_subname`.
-        public var authorSubname: Swift.String? {
-            get {
-                storage.value.authorSubname
-            }
-            _modify {
-                yield &storage.value.authorSubname
-            }
-        }
-
+        public var authorSubname: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/channel_id`.
-        public var channelId: Swift.String? {
-            get {
-                storage.value.channelId
-            }
-            _modify {
-                yield &storage.value.channelId
-            }
-        }
-
+        public var channelId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/channel_name`.
-        public var channelName: Swift.String? {
-            get {
-                storage.value.channelName
-            }
-            _modify {
-                yield &storage.value.channelName
-            }
-        }
-
+        public var channelName: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/channel_team`.
-        public var channelTeam: Swift.String? {
-            get {
-                storage.value.channelTeam
-            }
-            _modify {
-                yield &storage.value.channelTeam
-            }
-        }
-
+        public var channelTeam: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/id`.
-        public var id: Swift.Int? {
-            get {
-                storage.value.id
-            }
-            _modify {
-                yield &storage.value.id
-            }
-        }
-
+        public var id: Swift.Int?
         /// - Remark: Generated from `#/components/schemas/Attachment/app_id`.
-        public var appId: Swift.String? {
-            get {
-                storage.value.appId
-            }
-            _modify {
-                yield &storage.value.appId
-            }
-        }
-
+        public var appId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/bot_id`.
-        public var botId: Swift.String? {
-            get {
-                storage.value.botId
-            }
-            _modify {
-                yield &storage.value.botId
-            }
-        }
-
+        public var botId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/bot_team_id`.
-        public var botTeamId: Swift.String? {
-            get {
-                storage.value.botTeamId
-            }
-            _modify {
-                yield &storage.value.botTeamId
-            }
-        }
-
+        public var botTeamId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/indent`.
-        public var indent: Swift.Bool? {
-            get {
-                storage.value.indent
-            }
-            _modify {
-                yield &storage.value.indent
-            }
-        }
-
+        public var indent: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/Attachment/is_msg_unfurl`.
-        public var isMsgUnfurl: Swift.Bool? {
-            get {
-                storage.value.isMsgUnfurl
-            }
-            _modify {
-                yield &storage.value.isMsgUnfurl
-            }
-        }
-
+        public var isMsgUnfurl: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/Attachment/is_reply_unfurl`.
-        public var isReplyUnfurl: Swift.Bool? {
-            get {
-                storage.value.isReplyUnfurl
-            }
-            _modify {
-                yield &storage.value.isReplyUnfurl
-            }
-        }
-
+        public var isReplyUnfurl: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/Attachment/is_thread_root_unfurl`.
-        public var isThreadRootUnfurl: Swift.Bool? {
-            get {
-                storage.value.isThreadRootUnfurl
-            }
-            _modify {
-                yield &storage.value.isThreadRootUnfurl
-            }
-        }
-
+        public var isThreadRootUnfurl: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/Attachment/is_app_unfurl`.
-        public var isAppUnfurl: Swift.Bool? {
-            get {
-                storage.value.isAppUnfurl
-            }
-            _modify {
-                yield &storage.value.isAppUnfurl
-            }
-        }
-
+        public var isAppUnfurl: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/Attachment/app_unfurl_url`.
-        public var appUnfurlUrl: Swift.String? {
-            get {
-                storage.value.appUnfurlUrl
-            }
-            _modify {
-                yield &storage.value.appUnfurlUrl
-            }
-        }
-
+        public var appUnfurlUrl: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/title`.
-        public var title: Swift.String? {
-            get {
-                storage.value.title
-            }
-            _modify {
-                yield &storage.value.title
-            }
-        }
-
+        public var title: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/title_link`.
-        public var titleLink: Swift.String? {
-            get {
-                storage.value.titleLink
-            }
-            _modify {
-                yield &storage.value.titleLink
-            }
-        }
-
+        public var titleLink: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/text`.
-        public var text: Swift.String? {
-            get {
-                storage.value.text
-            }
-            _modify {
-                yield &storage.value.text
-            }
-        }
-
+        public var text: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/fields`.
-        public var fields: [Components.Schemas.Field]? {
-            get {
-                storage.value.fields
-            }
-            _modify {
-                yield &storage.value.fields
-            }
-        }
-
+        public var fields: [Components.Schemas.Field]?
         /// - Remark: Generated from `#/components/schemas/Attachment/image_url`.
-        public var imageUrl: Swift.String? {
-            get {
-                storage.value.imageUrl
-            }
-            _modify {
-                yield &storage.value.imageUrl
-            }
-        }
-
+        public var imageUrl: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/image_width`.
-        public var imageWidth: Swift.Int? {
-            get {
-                storage.value.imageWidth
-            }
-            _modify {
-                yield &storage.value.imageWidth
-            }
-        }
-
+        public var imageWidth: Swift.Int?
         /// - Remark: Generated from `#/components/schemas/Attachment/image_height`.
-        public var imageHeight: Swift.Int? {
-            get {
-                storage.value.imageHeight
-            }
-            _modify {
-                yield &storage.value.imageHeight
-            }
-        }
-
+        public var imageHeight: Swift.Int?
         /// - Remark: Generated from `#/components/schemas/Attachment/image_bytes`.
-        public var imageBytes: Swift.Int? {
-            get {
-                storage.value.imageBytes
-            }
-            _modify {
-                yield &storage.value.imageBytes
-            }
-        }
-
+        public var imageBytes: Swift.Int?
         /// - Remark: Generated from `#/components/schemas/Attachment/thumb_url`.
-        public var thumbUrl: Swift.String? {
-            get {
-                storage.value.thumbUrl
-            }
-            _modify {
-                yield &storage.value.thumbUrl
-            }
-        }
-
+        public var thumbUrl: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/thumb_width`.
-        public var thumbWidth: Swift.Int? {
-            get {
-                storage.value.thumbWidth
-            }
-            _modify {
-                yield &storage.value.thumbWidth
-            }
-        }
-
+        public var thumbWidth: Swift.Int?
         /// - Remark: Generated from `#/components/schemas/Attachment/thumb_height`.
-        public var thumbHeight: Swift.Int? {
-            get {
-                storage.value.thumbHeight
-            }
-            _modify {
-                yield &storage.value.thumbHeight
-            }
-        }
-
+        public var thumbHeight: Swift.Int?
         /// - Remark: Generated from `#/components/schemas/Attachment/video_url`.
-        public var videoUrl: Swift.String? {
-            get {
-                storage.value.videoUrl
-            }
-            _modify {
-                yield &storage.value.videoUrl
-            }
-        }
-
+        public var videoUrl: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/video_html`.
-        public var videoHtml: Components.Schemas.AttachmentVideoHtml? {
-            get {
-                storage.value.videoHtml
-            }
-            _modify {
-                yield &storage.value.videoHtml
-            }
-        }
-
+        public var videoHtml: Components.Schemas.AttachmentVideoHtml?
         /// - Remark: Generated from `#/components/schemas/Attachment/video_html_width`.
-        public var videoHtmlWidth: Swift.Double? {
-            get {
-                storage.value.videoHtmlWidth
-            }
-            _modify {
-                yield &storage.value.videoHtmlWidth
-            }
-        }
-
+        public var videoHtmlWidth: Swift.Double?
         /// - Remark: Generated from `#/components/schemas/Attachment/video_html_height`.
-        public var videoHtmlHeight: Swift.Double? {
-            get {
-                storage.value.videoHtmlHeight
-            }
-            _modify {
-                yield &storage.value.videoHtmlHeight
-            }
-        }
-
+        public var videoHtmlHeight: Swift.Double?
         /// - Remark: Generated from `#/components/schemas/Attachment/footer`.
-        public var footer: Swift.String? {
-            get {
-                storage.value.footer
-            }
-            _modify {
-                yield &storage.value.footer
-            }
-        }
-
+        public var footer: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/footer_icon`.
-        public var footerIcon: Swift.String? {
-            get {
-                storage.value.footerIcon
-            }
-            _modify {
-                yield &storage.value.footerIcon
-            }
-        }
-
+        public var footerIcon: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/ts`.
-        public var ts: Swift.String? {
-            get {
-                storage.value.ts
-            }
-            _modify {
-                yield &storage.value.ts
-            }
-        }
-
+        public var ts: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/mrkdwn_in`.
-        public var mrkdwnIn: [Swift.String]? {
-            get {
-                storage.value.mrkdwnIn
-            }
-            _modify {
-                yield &storage.value.mrkdwnIn
-            }
-        }
-
+        public var mrkdwnIn: [Swift.String]?
         /// - Remark: Generated from `#/components/schemas/Attachment/actions`.
-        public var actions: [Components.Schemas.Action]? {
-            get {
-                storage.value.actions
-            }
-            _modify {
-                yield &storage.value.actions
-            }
-        }
-
+        public var actions: [Components.Schemas.Action]?
         /// - Remark: Generated from `#/components/schemas/Attachment/blocks`.
-        public var blocks: [Components.Schemas.Block]? {
-            get {
-                storage.value.blocks
-            }
-            _modify {
-                yield &storage.value.blocks
-            }
-        }
-
+        public var blocks: [Components.Schemas.Block]?
         /// - Remark: Generated from `#/components/schemas/Attachment/MessageBlocksPayload`.
         public struct MessageBlocksPayloadPayload: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/Attachment/MessageBlocksPayload/team`.
@@ -554,15 +154,7 @@ extension Components.Schemas {
         /// - Remark: Generated from `#/components/schemas/Attachment/message_blocks`.
         public typealias MessageBlocksPayload = [Components.Schemas.Attachment.MessageBlocksPayloadPayload]
         /// - Remark: Generated from `#/components/schemas/Attachment/message_blocks`.
-        public var messageBlocks: Components.Schemas.Attachment.MessageBlocksPayload? {
-            get {
-                storage.value.messageBlocks
-            }
-            _modify {
-                yield &storage.value.messageBlocks
-            }
-        }
-
+        public var messageBlocks: Components.Schemas.Attachment.MessageBlocksPayload?
         /// - Remark: Generated from `#/components/schemas/Attachment/preview`.
         public struct PreviewPayload: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/Attachment/preview/type`.
@@ -607,45 +199,13 @@ extension Components.Schemas {
         }
 
         /// - Remark: Generated from `#/components/schemas/Attachment/preview`.
-        public var preview: Components.Schemas.Attachment.PreviewPayload? {
-            get {
-                storage.value.preview
-            }
-            _modify {
-                yield &storage.value.preview
-            }
-        }
-
+        public var preview: Components.Schemas.Attachment.PreviewPayload?
         /// - Remark: Generated from `#/components/schemas/Attachment/file_id`.
-        public var fileId: Swift.String? {
-            get {
-                storage.value.fileId
-            }
-            _modify {
-                yield &storage.value.fileId
-            }
-        }
-
+        public var fileId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/slack_file_id`.
-        public var slackFileId: Swift.String? {
-            get {
-                storage.value.slackFileId
-            }
-            _modify {
-                yield &storage.value.slackFileId
-            }
-        }
-
+        public var slackFileId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/list_record_id`.
-        public var listRecordId: Swift.String? {
-            get {
-                storage.value.listRecordId
-            }
-            _modify {
-                yield &storage.value.listRecordId
-            }
-        }
-
+        public var listRecordId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/list_record`.
         public struct ListRecordPayload: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record`.
@@ -897,125 +457,29 @@ extension Components.Schemas {
         }
 
         /// - Remark: Generated from `#/components/schemas/Attachment/list_record`.
-        public var listRecord: Components.Schemas.Attachment.ListRecordPayload? {
-            get {
-                storage.value.listRecord
-            }
-            _modify {
-                yield &storage.value.listRecord
-            }
-        }
-
+        public var listRecord: Components.Schemas.Attachment.ListRecordPayload?
         /// - Remark: Generated from `#/components/schemas/Attachment/list_records`.
-        public var listRecords: [Components.Schemas.ListRecord]? {
-            get {
-                storage.value.listRecords
-            }
-            _modify {
-                yield &storage.value.listRecords
-            }
-        }
-
+        public var listRecords: [Components.Schemas.ListRecord]?
         /// - Remark: Generated from `#/components/schemas/Attachment/hide_border`.
-        public var hideBorder: Swift.Bool? {
-            get {
-                storage.value.hideBorder
-            }
-            _modify {
-                yield &storage.value.hideBorder
-            }
-        }
-
+        public var hideBorder: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/Attachment/list_view_id`.
-        public var listViewId: Swift.String? {
-            get {
-                storage.value.listViewId
-            }
-            _modify {
-                yield &storage.value.listViewId
-            }
-        }
-
+        public var listViewId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/list`.
-        public var list: Components.Schemas.ListAttachment? {
-            get {
-                storage.value.list
-            }
-            _modify {
-                yield &storage.value.list
-            }
-        }
-
+        public var list: Components.Schemas.ListAttachment?
         /// - Remark: Generated from `#/components/schemas/Attachment/list_schema`.
-        public var listSchema: [Components.Schemas.ListColumn]? {
-            get {
-                storage.value.listSchema
-            }
-            _modify {
-                yield &storage.value.listSchema
-            }
-        }
-
+        public var listSchema: [Components.Schemas.ListColumn]?
         /// - Remark: Generated from `#/components/schemas/Attachment/list_view`.
-        public var listView: Components.Schemas.ListView? {
-            get {
-                storage.value.listView
-            }
-            _modify {
-                yield &storage.value.listView
-            }
-        }
-
+        public var listView: Components.Schemas.ListView?
         /// - Remark: Generated from `#/components/schemas/Attachment/files`.
-        public var files: [Components.Schemas.File]? {
-            get {
-                storage.value.files
-            }
-            _modify {
-                yield &storage.value.files
-            }
-        }
-
+        public var files: [Components.Schemas.File]?
         /// - Remark: Generated from `#/components/schemas/Attachment/filename`.
-        public var filename: Swift.String? {
-            get {
-                storage.value.filename
-            }
-            _modify {
-                yield &storage.value.filename
-            }
-        }
-
+        public var filename: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/size`.
-        public var size: Swift.Int? {
-            get {
-                storage.value.size
-            }
-            _modify {
-                yield &storage.value.size
-            }
-        }
-
+        public var size: Swift.Int?
         /// - Remark: Generated from `#/components/schemas/Attachment/mimetype`.
-        public var mimetype: Swift.String? {
-            get {
-                storage.value.mimetype
-            }
-            _modify {
-                yield &storage.value.mimetype
-            }
-        }
-
+        public var mimetype: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/url`.
-        public var url: Swift.String? {
-            get {
-                storage.value.url
-            }
-            _modify {
-                yield &storage.value.url
-            }
-        }
-
+        public var url: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/metadata`.
         public struct MetadataPayload: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_64`.
@@ -1096,25 +560,9 @@ extension Components.Schemas {
         }
 
         /// - Remark: Generated from `#/components/schemas/Attachment/metadata`.
-        public var metadata: Components.Schemas.Attachment.MetadataPayload? {
-            get {
-                storage.value.metadata
-            }
-            _modify {
-                yield &storage.value.metadata
-            }
-        }
-
+        public var metadata: Components.Schemas.Attachment.MetadataPayload?
         /// - Remark: Generated from `#/components/schemas/Attachment/is_file_attachment`.
-        public var isFileAttachment: Swift.Bool? {
-            get {
-                storage.value.isFileAttachment
-            }
-            _modify {
-                yield &storage.value.isFileAttachment
-            }
-        }
-
+        public var isFileAttachment: Swift.Bool?
         /// Creates a new `Attachment`.
         ///
         /// - Parameters:
@@ -1258,77 +706,75 @@ extension Components.Schemas {
             metadata: Components.Schemas.Attachment.MetadataPayload? = nil,
             isFileAttachment: Swift.Bool? = nil,
         ) {
-            storage = .init(value: .init(
-                msgSubtype: msgSubtype,
-                fallback: fallback,
-                callbackId: callbackId,
-                color: color,
-                hideColor: hideColor,
-                pretext: pretext,
-                serviceUrl: serviceUrl,
-                serviceName: serviceName,
-                serviceIcon: serviceIcon,
-                authorId: authorId,
-                authorName: authorName,
-                authorLink: authorLink,
-                authorIcon: authorIcon,
-                fromUrl: fromUrl,
-                originalUrl: originalUrl,
-                authorSubname: authorSubname,
-                channelId: channelId,
-                channelName: channelName,
-                channelTeam: channelTeam,
-                id: id,
-                appId: appId,
-                botId: botId,
-                botTeamId: botTeamId,
-                indent: indent,
-                isMsgUnfurl: isMsgUnfurl,
-                isReplyUnfurl: isReplyUnfurl,
-                isThreadRootUnfurl: isThreadRootUnfurl,
-                isAppUnfurl: isAppUnfurl,
-                appUnfurlUrl: appUnfurlUrl,
-                title: title,
-                titleLink: titleLink,
-                text: text,
-                fields: fields,
-                imageUrl: imageUrl,
-                imageWidth: imageWidth,
-                imageHeight: imageHeight,
-                imageBytes: imageBytes,
-                thumbUrl: thumbUrl,
-                thumbWidth: thumbWidth,
-                thumbHeight: thumbHeight,
-                videoUrl: videoUrl,
-                videoHtml: videoHtml,
-                videoHtmlWidth: videoHtmlWidth,
-                videoHtmlHeight: videoHtmlHeight,
-                footer: footer,
-                footerIcon: footerIcon,
-                ts: ts,
-                mrkdwnIn: mrkdwnIn,
-                actions: actions,
-                blocks: blocks,
-                messageBlocks: messageBlocks,
-                preview: preview,
-                fileId: fileId,
-                slackFileId: slackFileId,
-                listRecordId: listRecordId,
-                listRecord: listRecord,
-                listRecords: listRecords,
-                hideBorder: hideBorder,
-                listViewId: listViewId,
-                list: list,
-                listSchema: listSchema,
-                listView: listView,
-                files: files,
-                filename: filename,
-                size: size,
-                mimetype: mimetype,
-                url: url,
-                metadata: metadata,
-                isFileAttachment: isFileAttachment,
-            ))
+            self.msgSubtype = msgSubtype
+            self.fallback = fallback
+            self.callbackId = callbackId
+            self.color = color
+            self.hideColor = hideColor
+            self.pretext = pretext
+            self.serviceUrl = serviceUrl
+            self.serviceName = serviceName
+            self.serviceIcon = serviceIcon
+            self.authorId = authorId
+            self.authorName = authorName
+            self.authorLink = authorLink
+            self.authorIcon = authorIcon
+            self.fromUrl = fromUrl
+            self.originalUrl = originalUrl
+            self.authorSubname = authorSubname
+            self.channelId = channelId
+            self.channelName = channelName
+            self.channelTeam = channelTeam
+            self.id = id
+            self.appId = appId
+            self.botId = botId
+            self.botTeamId = botTeamId
+            self.indent = indent
+            self.isMsgUnfurl = isMsgUnfurl
+            self.isReplyUnfurl = isReplyUnfurl
+            self.isThreadRootUnfurl = isThreadRootUnfurl
+            self.isAppUnfurl = isAppUnfurl
+            self.appUnfurlUrl = appUnfurlUrl
+            self.title = title
+            self.titleLink = titleLink
+            self.text = text
+            self.fields = fields
+            self.imageUrl = imageUrl
+            self.imageWidth = imageWidth
+            self.imageHeight = imageHeight
+            self.imageBytes = imageBytes
+            self.thumbUrl = thumbUrl
+            self.thumbWidth = thumbWidth
+            self.thumbHeight = thumbHeight
+            self.videoUrl = videoUrl
+            self.videoHtml = videoHtml
+            self.videoHtmlWidth = videoHtmlWidth
+            self.videoHtmlHeight = videoHtmlHeight
+            self.footer = footer
+            self.footerIcon = footerIcon
+            self.ts = ts
+            self.mrkdwnIn = mrkdwnIn
+            self.actions = actions
+            self.blocks = blocks
+            self.messageBlocks = messageBlocks
+            self.preview = preview
+            self.fileId = fileId
+            self.slackFileId = slackFileId
+            self.listRecordId = listRecordId
+            self.listRecord = listRecord
+            self.listRecords = listRecords
+            self.hideBorder = hideBorder
+            self.listViewId = listViewId
+            self.list = list
+            self.listSchema = listSchema
+            self.listView = listView
+            self.files = files
+            self.filename = filename
+            self.size = size
+            self.mimetype = mimetype
+            self.url = url
+            self.metadata = metadata
+            self.isFileAttachment = isFileAttachment
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -1401,711 +847,6 @@ extension Components.Schemas {
             case url
             case metadata
             case isFileAttachment = "is_file_attachment"
-        }
-
-        public init(from decoder: any Swift.Decoder) throws {
-            storage = try .init(from: decoder)
-        }
-
-        public func encode(to encoder: any Swift.Encoder) throws {
-            try storage.encode(to: encoder)
-        }
-
-        /// Internal reference storage to allow type recursion.
-        private var storage: OpenAPIRuntime.CopyOnWriteBox<Storage>
-        private struct Storage: Codable, Hashable {
-            /// - Remark: Generated from `#/components/schemas/Attachment/msg_subtype`.
-            var msgSubtype: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/fallback`.
-            var fallback: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/callback_id`.
-            var callbackId: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/color`.
-            var color: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/hide_color`.
-            var hideColor: Swift.Bool?
-            /// - Remark: Generated from `#/components/schemas/Attachment/pretext`.
-            var pretext: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/service_url`.
-            var serviceUrl: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/service_name`.
-            var serviceName: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/service_icon`.
-            var serviceIcon: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/author_id`.
-            var authorId: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/author_name`.
-            var authorName: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/author_link`.
-            var authorLink: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/author_icon`.
-            var authorIcon: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/from_url`.
-            var fromUrl: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/original_url`.
-            var originalUrl: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/author_subname`.
-            var authorSubname: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/channel_id`.
-            var channelId: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/channel_name`.
-            var channelName: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/channel_team`.
-            var channelTeam: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/id`.
-            var id: Swift.Int?
-            /// - Remark: Generated from `#/components/schemas/Attachment/app_id`.
-            var appId: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/bot_id`.
-            var botId: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/bot_team_id`.
-            var botTeamId: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/indent`.
-            var indent: Swift.Bool?
-            /// - Remark: Generated from `#/components/schemas/Attachment/is_msg_unfurl`.
-            var isMsgUnfurl: Swift.Bool?
-            /// - Remark: Generated from `#/components/schemas/Attachment/is_reply_unfurl`.
-            var isReplyUnfurl: Swift.Bool?
-            /// - Remark: Generated from `#/components/schemas/Attachment/is_thread_root_unfurl`.
-            var isThreadRootUnfurl: Swift.Bool?
-            /// - Remark: Generated from `#/components/schemas/Attachment/is_app_unfurl`.
-            var isAppUnfurl: Swift.Bool?
-            /// - Remark: Generated from `#/components/schemas/Attachment/app_unfurl_url`.
-            var appUnfurlUrl: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/title`.
-            var title: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/title_link`.
-            var titleLink: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/text`.
-            var text: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/fields`.
-            var fields: [Components.Schemas.Field]?
-            /// - Remark: Generated from `#/components/schemas/Attachment/image_url`.
-            var imageUrl: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/image_width`.
-            var imageWidth: Swift.Int?
-            /// - Remark: Generated from `#/components/schemas/Attachment/image_height`.
-            var imageHeight: Swift.Int?
-            /// - Remark: Generated from `#/components/schemas/Attachment/image_bytes`.
-            var imageBytes: Swift.Int?
-            /// - Remark: Generated from `#/components/schemas/Attachment/thumb_url`.
-            var thumbUrl: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/thumb_width`.
-            var thumbWidth: Swift.Int?
-            /// - Remark: Generated from `#/components/schemas/Attachment/thumb_height`.
-            var thumbHeight: Swift.Int?
-            /// - Remark: Generated from `#/components/schemas/Attachment/video_url`.
-            var videoUrl: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/video_html`.
-            var videoHtml: Components.Schemas.AttachmentVideoHtml?
-            /// - Remark: Generated from `#/components/schemas/Attachment/video_html_width`.
-            var videoHtmlWidth: Swift.Double?
-            /// - Remark: Generated from `#/components/schemas/Attachment/video_html_height`.
-            var videoHtmlHeight: Swift.Double?
-            /// - Remark: Generated from `#/components/schemas/Attachment/footer`.
-            var footer: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/footer_icon`.
-            var footerIcon: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/ts`.
-            var ts: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/mrkdwn_in`.
-            var mrkdwnIn: [Swift.String]?
-            /// - Remark: Generated from `#/components/schemas/Attachment/actions`.
-            var actions: [Components.Schemas.Action]?
-            /// - Remark: Generated from `#/components/schemas/Attachment/blocks`.
-            var blocks: [Components.Schemas.Block]?
-            /// - Remark: Generated from `#/components/schemas/Attachment/MessageBlocksPayload`.
-            struct MessageBlocksPayloadPayload: Codable, Hashable {
-                /// - Remark: Generated from `#/components/schemas/Attachment/MessageBlocksPayload/team`.
-                var team: Swift.String?
-                /// - Remark: Generated from `#/components/schemas/Attachment/MessageBlocksPayload/channel`.
-                var channel: Swift.String?
-                /// - Remark: Generated from `#/components/schemas/Attachment/MessageBlocksPayload/ts`.
-                var ts: Swift.String?
-                /// - Remark: Generated from `#/components/schemas/Attachment/MessageBlocksPayload/message`.
-                var message: Components.Schemas.Message?
-                /// Creates a new `MessageBlocksPayloadPayload`.
-                ///
-                /// - Parameters:
-                ///   - team:
-                ///   - channel:
-                ///   - ts:
-                ///   - message:
-                init(
-                    team: Swift.String? = nil,
-                    channel: Swift.String? = nil,
-                    ts: Swift.String? = nil,
-                    message: Components.Schemas.Message? = nil,
-                ) {
-                    self.team = team
-                    self.channel = channel
-                    self.ts = ts
-                    self.message = message
-                }
-
-                enum CodingKeys: String, CodingKey {
-                    case team
-                    case channel
-                    case ts
-                    case message
-                }
-            }
-
-            /// - Remark: Generated from `#/components/schemas/Attachment/message_blocks`.
-            typealias MessageBlocksPayload = [Components.Schemas.Attachment.MessageBlocksPayloadPayload]
-            /// - Remark: Generated from `#/components/schemas/Attachment/message_blocks`.
-            var messageBlocks: Components.Schemas.Attachment.MessageBlocksPayload?
-            /// - Remark: Generated from `#/components/schemas/Attachment/preview`.
-            struct PreviewPayload: Codable, Hashable {
-                /// - Remark: Generated from `#/components/schemas/Attachment/preview/type`.
-                var _type: Swift.String?
-                /// - Remark: Generated from `#/components/schemas/Attachment/preview/can_remove`.
-                var canRemove: Swift.Bool?
-                /// - Remark: Generated from `#/components/schemas/Attachment/preview/title`.
-                var title: Components.Schemas.TextObject?
-                /// - Remark: Generated from `#/components/schemas/Attachment/preview/subtitle`.
-                var subtitle: Components.Schemas.TextObject?
-                /// - Remark: Generated from `#/components/schemas/Attachment/preview/icon_url`.
-                var iconUrl: Swift.String?
-                /// Creates a new `PreviewPayload`.
-                ///
-                /// - Parameters:
-                ///   - _type:
-                ///   - canRemove:
-                ///   - title:
-                ///   - subtitle:
-                ///   - iconUrl:
-                init(
-                    _type: Swift.String? = nil,
-                    canRemove: Swift.Bool? = nil,
-                    title: Components.Schemas.TextObject? = nil,
-                    subtitle: Components.Schemas.TextObject? = nil,
-                    iconUrl: Swift.String? = nil,
-                ) {
-                    self._type = _type
-                    self.canRemove = canRemove
-                    self.title = title
-                    self.subtitle = subtitle
-                    self.iconUrl = iconUrl
-                }
-
-                enum CodingKeys: String, CodingKey {
-                    case _type = "type"
-                    case canRemove = "can_remove"
-                    case title
-                    case subtitle
-                    case iconUrl = "icon_url"
-                }
-            }
-
-            /// - Remark: Generated from `#/components/schemas/Attachment/preview`.
-            var preview: Components.Schemas.Attachment.PreviewPayload?
-            /// - Remark: Generated from `#/components/schemas/Attachment/file_id`.
-            var fileId: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/slack_file_id`.
-            var slackFileId: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/list_record_id`.
-            var listRecordId: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/list_record`.
-            struct ListRecordPayload: Codable, Hashable {
-                /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record`.
-                struct RecordPayload: Codable, Hashable {
-                    /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/record_id`.
-                    var recordId: Swift.String?
-                    /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload`.
-                    struct FieldsPayloadPayload: Codable, Hashable {
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/key`.
-                        var key: Swift.String?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/column_id`.
-                        var columnId: Swift.String?
-                        /// Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another shape.
-                        ///
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/value`.
-                        var value: Components.Schemas.ListRecordFieldValue?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/text`.
-                        var text: Swift.String?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/rich_text`.
-                        var richText: [Components.Schemas.RichTextBlock]?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/message`.
-                        var message: Components.Schemas.Message?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/number`.
-                        var number: [Swift.Double]?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/select`.
-                        var select: [Swift.String]?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/date`.
-                        var date: [Swift.String]?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/user`.
-                        var user: [Swift.String]?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/attachment`.
-                        var attachment: [Swift.String]?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/checkbox`.
-                        var checkbox: Swift.Bool?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/email`.
-                        var email: [Swift.String]?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/phone`.
-                        var phone: [Swift.String]?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/channel`.
-                        var channel: [Swift.String]?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/rating`.
-                        var rating: [Swift.Int]?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/timestamp`.
-                        var timestamp: [Swift.Int]?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/LinkPayload`.
-                        struct LinkPayloadPayload: Codable, Hashable {
-                            /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/LinkPayload/original_url`.
-                            var originalUrl: Swift.String?
-                            /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/LinkPayload/display_as_url`.
-                            var displayAsUrl: Swift.Bool?
-                            /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/LinkPayload/display_name`.
-                            var displayName: Swift.String?
-                            /// Creates a new `LinkPayloadPayload`.
-                            ///
-                            /// - Parameters:
-                            ///   - originalUrl:
-                            ///   - displayAsUrl:
-                            ///   - displayName:
-                            init(
-                                originalUrl: Swift.String? = nil,
-                                displayAsUrl: Swift.Bool? = nil,
-                                displayName: Swift.String? = nil,
-                            ) {
-                                self.originalUrl = originalUrl
-                                self.displayAsUrl = displayAsUrl
-                                self.displayName = displayName
-                            }
-
-                            enum CodingKeys: String, CodingKey {
-                                case originalUrl = "original_url"
-                                case displayAsUrl = "display_as_url"
-                                case displayName = "display_name"
-                            }
-                        }
-
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/link`.
-                        typealias LinkPayload = [Components.Schemas.Attachment.ListRecordPayload.RecordPayload.FieldsPayloadPayload.LinkPayloadPayload]
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/link`.
-                        var link: Components.Schemas.Attachment.ListRecordPayload.RecordPayload.FieldsPayloadPayload.LinkPayload?
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/ReferencePayload`.
-                        struct ReferencePayloadPayload: Codable, Hashable {
-                            /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/ReferencePayload/file`.
-                            struct FilePayload: Codable, Hashable {
-                                /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/ReferencePayload/file/file_id`.
-                                var fileId: Swift.String?
-                                /// Creates a new `FilePayload`.
-                                ///
-                                /// - Parameters:
-                                ///   - fileId:
-                                init(fileId: Swift.String? = nil) {
-                                    self.fileId = fileId
-                                }
-
-                                enum CodingKeys: String, CodingKey {
-                                    case fileId = "file_id"
-                                }
-                            }
-
-                            /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/ReferencePayload/file`.
-                            var file: Components.Schemas.Attachment.ListRecordPayload.RecordPayload.FieldsPayloadPayload.ReferencePayloadPayload.FilePayload?
-                            /// Creates a new `ReferencePayloadPayload`.
-                            ///
-                            /// - Parameters:
-                            ///   - file:
-                            init(file: Components.Schemas.Attachment.ListRecordPayload.RecordPayload.FieldsPayloadPayload.ReferencePayloadPayload.FilePayload? = nil) {
-                                self.file = file
-                            }
-
-                            enum CodingKeys: String, CodingKey {
-                                case file
-                            }
-                        }
-
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/reference`.
-                        typealias ReferencePayload = [Components.Schemas.Attachment.ListRecordPayload.RecordPayload.FieldsPayloadPayload.ReferencePayloadPayload]
-                        /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/reference`.
-                        var reference: Components.Schemas.Attachment.ListRecordPayload.RecordPayload.FieldsPayloadPayload.ReferencePayload?
-                        /// Creates a new `FieldsPayloadPayload`.
-                        ///
-                        /// - Parameters:
-                        ///   - key:
-                        ///   - columnId:
-                        ///   - value: Type differs from java-slack-sdk: `ListRecord.Field.value` is declared `String`, but recorded responses send values of another shape.
-                        ///   - text:
-                        ///   - richText:
-                        ///   - message:
-                        ///   - number:
-                        ///   - select:
-                        ///   - date:
-                        ///   - user:
-                        ///   - attachment:
-                        ///   - checkbox:
-                        ///   - email:
-                        ///   - phone:
-                        ///   - channel:
-                        ///   - rating:
-                        ///   - timestamp:
-                        ///   - link:
-                        ///   - reference:
-                        init(
-                            key: Swift.String? = nil,
-                            columnId: Swift.String? = nil,
-                            value: Components.Schemas.ListRecordFieldValue? = nil,
-                            text: Swift.String? = nil,
-                            richText: [Components.Schemas.RichTextBlock]? = nil,
-                            message: Components.Schemas.Message? = nil,
-                            number: [Swift.Double]? = nil,
-                            select: [Swift.String]? = nil,
-                            date: [Swift.String]? = nil,
-                            user: [Swift.String]? = nil,
-                            attachment: [Swift.String]? = nil,
-                            checkbox: Swift.Bool? = nil,
-                            email: [Swift.String]? = nil,
-                            phone: [Swift.String]? = nil,
-                            channel: [Swift.String]? = nil,
-                            rating: [Swift.Int]? = nil,
-                            timestamp: [Swift.Int]? = nil,
-                            link: Components.Schemas.Attachment.ListRecordPayload.RecordPayload.FieldsPayloadPayload.LinkPayload? = nil,
-                            reference: Components.Schemas.Attachment.ListRecordPayload.RecordPayload.FieldsPayloadPayload.ReferencePayload? = nil,
-                        ) {
-                            self.key = key
-                            self.columnId = columnId
-                            self.value = value
-                            self.text = text
-                            self.richText = richText
-                            self.message = message
-                            self.number = number
-                            self.select = select
-                            self.date = date
-                            self.user = user
-                            self.attachment = attachment
-                            self.checkbox = checkbox
-                            self.email = email
-                            self.phone = phone
-                            self.channel = channel
-                            self.rating = rating
-                            self.timestamp = timestamp
-                            self.link = link
-                            self.reference = reference
-                        }
-
-                        enum CodingKeys: String, CodingKey {
-                            case key
-                            case columnId = "column_id"
-                            case value
-                            case text
-                            case richText = "rich_text"
-                            case message
-                            case number
-                            case select
-                            case date
-                            case user
-                            case attachment
-                            case checkbox
-                            case email
-                            case phone
-                            case channel
-                            case rating
-                            case timestamp
-                            case link
-                            case reference
-                        }
-                    }
-
-                    /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/fields`.
-                    typealias FieldsPayload = [Components.Schemas.Attachment.ListRecordPayload.RecordPayload.FieldsPayloadPayload]
-                    /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/fields`.
-                    var fields: Components.Schemas.Attachment.ListRecordPayload.RecordPayload.FieldsPayload?
-                    /// Creates a new `RecordPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - recordId:
-                    ///   - fields:
-                    init(
-                        recordId: Swift.String? = nil,
-                        fields: Components.Schemas.Attachment.ListRecordPayload.RecordPayload.FieldsPayload? = nil,
-                    ) {
-                        self.recordId = recordId
-                        self.fields = fields
-                    }
-
-                    enum CodingKeys: String, CodingKey {
-                        case recordId = "record_id"
-                        case fields
-                    }
-                }
-
-                /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record`.
-                var record: Components.Schemas.Attachment.ListRecordPayload.RecordPayload?
-                /// - Remark: Generated from `#/components/schemas/Attachment/list_record/schema`.
-                var schema: [Components.Schemas.ListColumn]?
-                /// Creates a new `ListRecordPayload`.
-                ///
-                /// - Parameters:
-                ///   - record:
-                ///   - schema:
-                init(
-                    record: Components.Schemas.Attachment.ListRecordPayload.RecordPayload? = nil,
-                    schema: [Components.Schemas.ListColumn]? = nil,
-                ) {
-                    self.record = record
-                    self.schema = schema
-                }
-
-                enum CodingKeys: String, CodingKey {
-                    case record
-                    case schema
-                }
-            }
-
-            /// - Remark: Generated from `#/components/schemas/Attachment/list_record`.
-            var listRecord: Components.Schemas.Attachment.ListRecordPayload?
-            /// - Remark: Generated from `#/components/schemas/Attachment/list_records`.
-            var listRecords: [Components.Schemas.ListRecord]?
-            /// - Remark: Generated from `#/components/schemas/Attachment/hide_border`.
-            var hideBorder: Swift.Bool?
-            /// - Remark: Generated from `#/components/schemas/Attachment/list_view_id`.
-            var listViewId: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/list`.
-            var list: Components.Schemas.ListAttachment?
-            /// - Remark: Generated from `#/components/schemas/Attachment/list_schema`.
-            var listSchema: [Components.Schemas.ListColumn]?
-            /// - Remark: Generated from `#/components/schemas/Attachment/list_view`.
-            var listView: Components.Schemas.ListView?
-            /// - Remark: Generated from `#/components/schemas/Attachment/files`.
-            var files: [Components.Schemas.File]?
-            /// - Remark: Generated from `#/components/schemas/Attachment/filename`.
-            var filename: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/size`.
-            var size: Swift.Int?
-            /// - Remark: Generated from `#/components/schemas/Attachment/mimetype`.
-            var mimetype: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/url`.
-            var url: Swift.String?
-            /// - Remark: Generated from `#/components/schemas/Attachment/metadata`.
-            struct MetadataPayload: Codable, Hashable {
-                /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_64`.
-                var thumb64: Swift.Bool?
-                /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_80`.
-                var thumb80: Swift.Bool?
-                /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_160`.
-                var thumb160: Swift.Bool?
-                /// - Remark: Generated from `#/components/schemas/Attachment/metadata/original_w`.
-                var originalW: Swift.Int?
-                /// - Remark: Generated from `#/components/schemas/Attachment/metadata/original_h`.
-                var originalH: Swift.Int?
-                /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_360_w`.
-                var thumb360W: Swift.Int?
-                /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_360_h`.
-                var thumb360H: Swift.Int?
-                /// - Remark: Generated from `#/components/schemas/Attachment/metadata/format`.
-                var format: Swift.String?
-                /// - Remark: Generated from `#/components/schemas/Attachment/metadata/extension`.
-                var _extension: Swift.String?
-                /// - Remark: Generated from `#/components/schemas/Attachment/metadata/rotation`.
-                var rotation: Swift.Int?
-                /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_tiny`.
-                var thumbTiny: Swift.String?
-                /// Creates a new `MetadataPayload`.
-                ///
-                /// - Parameters:
-                ///   - thumb64:
-                ///   - thumb80:
-                ///   - thumb160:
-                ///   - originalW:
-                ///   - originalH:
-                ///   - thumb360W:
-                ///   - thumb360H:
-                ///   - format:
-                ///   - _extension:
-                ///   - rotation:
-                ///   - thumbTiny:
-                init(
-                    thumb64: Swift.Bool? = nil,
-                    thumb80: Swift.Bool? = nil,
-                    thumb160: Swift.Bool? = nil,
-                    originalW: Swift.Int? = nil,
-                    originalH: Swift.Int? = nil,
-                    thumb360W: Swift.Int? = nil,
-                    thumb360H: Swift.Int? = nil,
-                    format: Swift.String? = nil,
-                    _extension: Swift.String? = nil,
-                    rotation: Swift.Int? = nil,
-                    thumbTiny: Swift.String? = nil,
-                ) {
-                    self.thumb64 = thumb64
-                    self.thumb80 = thumb80
-                    self.thumb160 = thumb160
-                    self.originalW = originalW
-                    self.originalH = originalH
-                    self.thumb360W = thumb360W
-                    self.thumb360H = thumb360H
-                    self.format = format
-                    self._extension = _extension
-                    self.rotation = rotation
-                    self.thumbTiny = thumbTiny
-                }
-
-                enum CodingKeys: String, CodingKey {
-                    case thumb64 = "thumb_64"
-                    case thumb80 = "thumb_80"
-                    case thumb160 = "thumb_160"
-                    case originalW = "original_w"
-                    case originalH = "original_h"
-                    case thumb360W = "thumb_360_w"
-                    case thumb360H = "thumb_360_h"
-                    case format
-                    case _extension = "extension"
-                    case rotation
-                    case thumbTiny = "thumb_tiny"
-                }
-            }
-
-            /// - Remark: Generated from `#/components/schemas/Attachment/metadata`.
-            var metadata: Components.Schemas.Attachment.MetadataPayload?
-            /// - Remark: Generated from `#/components/schemas/Attachment/is_file_attachment`.
-            var isFileAttachment: Swift.Bool?
-            init(
-                msgSubtype: Swift.String? = nil,
-                fallback: Swift.String? = nil,
-                callbackId: Swift.String? = nil,
-                color: Swift.String? = nil,
-                hideColor: Swift.Bool? = nil,
-                pretext: Swift.String? = nil,
-                serviceUrl: Swift.String? = nil,
-                serviceName: Swift.String? = nil,
-                serviceIcon: Swift.String? = nil,
-                authorId: Swift.String? = nil,
-                authorName: Swift.String? = nil,
-                authorLink: Swift.String? = nil,
-                authorIcon: Swift.String? = nil,
-                fromUrl: Swift.String? = nil,
-                originalUrl: Swift.String? = nil,
-                authorSubname: Swift.String? = nil,
-                channelId: Swift.String? = nil,
-                channelName: Swift.String? = nil,
-                channelTeam: Swift.String? = nil,
-                id: Swift.Int? = nil,
-                appId: Swift.String? = nil,
-                botId: Swift.String? = nil,
-                botTeamId: Swift.String? = nil,
-                indent: Swift.Bool? = nil,
-                isMsgUnfurl: Swift.Bool? = nil,
-                isReplyUnfurl: Swift.Bool? = nil,
-                isThreadRootUnfurl: Swift.Bool? = nil,
-                isAppUnfurl: Swift.Bool? = nil,
-                appUnfurlUrl: Swift.String? = nil,
-                title: Swift.String? = nil,
-                titleLink: Swift.String? = nil,
-                text: Swift.String? = nil,
-                fields: [Components.Schemas.Field]? = nil,
-                imageUrl: Swift.String? = nil,
-                imageWidth: Swift.Int? = nil,
-                imageHeight: Swift.Int? = nil,
-                imageBytes: Swift.Int? = nil,
-                thumbUrl: Swift.String? = nil,
-                thumbWidth: Swift.Int? = nil,
-                thumbHeight: Swift.Int? = nil,
-                videoUrl: Swift.String? = nil,
-                videoHtml: Components.Schemas.AttachmentVideoHtml? = nil,
-                videoHtmlWidth: Swift.Double? = nil,
-                videoHtmlHeight: Swift.Double? = nil,
-                footer: Swift.String? = nil,
-                footerIcon: Swift.String? = nil,
-                ts: Swift.String? = nil,
-                mrkdwnIn: [Swift.String]? = nil,
-                actions: [Components.Schemas.Action]? = nil,
-                blocks: [Components.Schemas.Block]? = nil,
-                messageBlocks: Components.Schemas.Attachment.MessageBlocksPayload? = nil,
-                preview: Components.Schemas.Attachment.PreviewPayload? = nil,
-                fileId: Swift.String? = nil,
-                slackFileId: Swift.String? = nil,
-                listRecordId: Swift.String? = nil,
-                listRecord: Components.Schemas.Attachment.ListRecordPayload? = nil,
-                listRecords: [Components.Schemas.ListRecord]? = nil,
-                hideBorder: Swift.Bool? = nil,
-                listViewId: Swift.String? = nil,
-                list: Components.Schemas.ListAttachment? = nil,
-                listSchema: [Components.Schemas.ListColumn]? = nil,
-                listView: Components.Schemas.ListView? = nil,
-                files: [Components.Schemas.File]? = nil,
-                filename: Swift.String? = nil,
-                size: Swift.Int? = nil,
-                mimetype: Swift.String? = nil,
-                url: Swift.String? = nil,
-                metadata: Components.Schemas.Attachment.MetadataPayload? = nil,
-                isFileAttachment: Swift.Bool? = nil,
-            ) {
-                self.msgSubtype = msgSubtype
-                self.fallback = fallback
-                self.callbackId = callbackId
-                self.color = color
-                self.hideColor = hideColor
-                self.pretext = pretext
-                self.serviceUrl = serviceUrl
-                self.serviceName = serviceName
-                self.serviceIcon = serviceIcon
-                self.authorId = authorId
-                self.authorName = authorName
-                self.authorLink = authorLink
-                self.authorIcon = authorIcon
-                self.fromUrl = fromUrl
-                self.originalUrl = originalUrl
-                self.authorSubname = authorSubname
-                self.channelId = channelId
-                self.channelName = channelName
-                self.channelTeam = channelTeam
-                self.id = id
-                self.appId = appId
-                self.botId = botId
-                self.botTeamId = botTeamId
-                self.indent = indent
-                self.isMsgUnfurl = isMsgUnfurl
-                self.isReplyUnfurl = isReplyUnfurl
-                self.isThreadRootUnfurl = isThreadRootUnfurl
-                self.isAppUnfurl = isAppUnfurl
-                self.appUnfurlUrl = appUnfurlUrl
-                self.title = title
-                self.titleLink = titleLink
-                self.text = text
-                self.fields = fields
-                self.imageUrl = imageUrl
-                self.imageWidth = imageWidth
-                self.imageHeight = imageHeight
-                self.imageBytes = imageBytes
-                self.thumbUrl = thumbUrl
-                self.thumbWidth = thumbWidth
-                self.thumbHeight = thumbHeight
-                self.videoUrl = videoUrl
-                self.videoHtml = videoHtml
-                self.videoHtmlWidth = videoHtmlWidth
-                self.videoHtmlHeight = videoHtmlHeight
-                self.footer = footer
-                self.footerIcon = footerIcon
-                self.ts = ts
-                self.mrkdwnIn = mrkdwnIn
-                self.actions = actions
-                self.blocks = blocks
-                self.messageBlocks = messageBlocks
-                self.preview = preview
-                self.fileId = fileId
-                self.slackFileId = slackFileId
-                self.listRecordId = listRecordId
-                self.listRecord = listRecord
-                self.listRecords = listRecords
-                self.hideBorder = hideBorder
-                self.listViewId = listViewId
-                self.list = list
-                self.listSchema = listSchema
-                self.listView = listView
-                self.files = files
-                self.filename = filename
-                self.size = size
-                self.mimetype = mimetype
-                self.url = url
-                self.metadata = metadata
-                self.isFileAttachment = isFileAttachment
-            }
-
-            typealias CodingKeys = Components.Schemas.Attachment.CodingKeys
         }
     }
 }
