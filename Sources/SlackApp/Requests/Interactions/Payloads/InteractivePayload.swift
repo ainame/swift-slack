@@ -1,8 +1,8 @@
 import Foundation
-import SlackModels
+import SlackClient
 
 public protocol InteractivePayloadProtocol: Decodable, Hashable, Sendable {
-    var user: SlackModels.User { get }
+    var user: User { get }
     var callbackId: String? { get }
 }
 

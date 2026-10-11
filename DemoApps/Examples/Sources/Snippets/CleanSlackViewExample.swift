@@ -282,7 +282,7 @@ enum CleanExamples {
             // ✨ Showcase the clean syntax
             print("Modal title: \(modalView.title.text)")
             print("Home tab blocks: \(modalView.blocks.count)")
-        case .homeTab:
+        case .homeTab, .unknown:
             break
         }
 

@@ -114,7 +114,7 @@ enum SimpleExamples {
         switch view {
         case let .modal(greetingModal):
             print("Modal title: \(greetingModal.title.text)")
-        case .homeTab:
+        case .homeTab, .unknown:
             break
         }
 
@@ -125,7 +125,7 @@ enum SimpleExamples {
         switch view2 {
         case let .modal(feedbackModal):
             print("Modal has submit button: \(feedbackModal.submit != nil)")
-        case .homeTab:
+        case .homeTab, .unknown:
             break
         }
 
@@ -134,7 +134,7 @@ enum SimpleExamples {
         let view3 = home.render()
 
         switch view3 {
-        case .modal:
+        case .modal, .unknown:
             break
         case let .homeTab(homeTab):
             print("Home tab has \(homeTab.blocks.count) blocks")
