@@ -17,13 +17,13 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
 > [!IMPORTANT]
-> **Upgrading from 2026.x?** 2027.1.0 is a breaking release. SwiftPM does not move a `from: "2026.x.y"` requirement to it, so change the requirement to `from: "2027.1.0"`.
+> **2027.1.0 is a major upgrade, and worth it.** Web API responses and events are now generated from the model classes of [Slack's Java SDK](https://github.com/slackapi/java-slack-sdk), the most widely tested description of Slack's payloads, instead of being inferred from single recorded samples.
 >
-> * **Web API and event models now come from [Slack's Java SDK](https://github.com/slackapi/java-slack-sdk), and the `SlackModels` module is gone.** Shared models such as `User` and `Message` live in `SlackClient`. Some types were renamed, and objects declared inside a response or event are now nested types. A bot that reads responses through property chains usually needs only to replace `import SlackModels`. See [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md).
-> * **APIs deprecated in 2026.10 are removed.** Use `router.onAction(_:blockId:)` instead of `router.onBlockAction(_:)`, `payload.blockActions` instead of `payload.actions`, and `ack(responseAction: .clear)` instead of `ack(responseAction: .clear, view:)`. To see which ID to match, read [Choosing Between action_id and callback_id](https://ainame.github.io/swift-slack/documentation/slackapp/interactionidentifiers).
-> * **Block Kit enums gained `.unknown` and cases for new blocks and elements.** Exhaustive `switch` statements over `Block`, `View` or the element enums need the new cases or `default`.
+> * **Decoding you can rely on.** Every generated response and event type decodes the Java SDK's recorded payloads (268 responses and 91 events), and CI checks it on every change. The decoding failures of 2026.x, such as `bots.info`, Slack Lists rows and `File` image sizes, are fixed.
+> * **Complete models.** Types declare every field the Java SDK knows, adding 469 properties across the Web API responses, including `nextCursor` for cursor pagination and fields such as user profile emails and `Conversation` membership.
+> * **Sturdier Block Kit.** A block or element that swift-slack does not model yet decodes as `.unknown` instead of failing the whole message, and new blocks such as cards, carousels and alerts are supported.
 >
-> See the [CHANGELOG](CHANGELOG.md) for the full list and migration steps.
+> It is a breaking release, so SwiftPM does not move a `from: "2026.x.y"` requirement to it; change it to `from: "2027.1.0"`. Most bots only replace `import SlackModels` with `import SlackClient` or `import SlackKit`. See [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) for renamed and nested types, and the [CHANGELOG](CHANGELOG.md) for the APIs deprecated in 2026.10 that are now removed (`onBlockAction`, `payload.actions` and `ack(responseAction: .clear, view:)`).
 
 ```swift
 import SlackKit
