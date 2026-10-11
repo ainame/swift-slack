@@ -47,6 +47,7 @@ extension APIProtocol {
     ///   - sessionStatus: The agent session's status after the stream stops, such as `suspended`. Slack
     ///     defaults to `active`.
     ///   - minimumInterval: The shortest time between two calls. `chat.appendStream` is a Tier 4 method.
+    ///   - isolation: The caller's actor isolation, inherited by default so the sequence is read in its context.
     /// - Returns: The message's `ts`.
     @discardableResult
     public func streamMessage<Parts: AsyncSequence>(
