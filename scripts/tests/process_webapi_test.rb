@@ -179,16 +179,21 @@ class DictionarySubscriptsTest < Minitest::Test
 end
 
 class FileNameTest < Minitest::Test
-  def processor
+  METHODS = %w[
+    admin.analytics.getFile admin.users.session.reset chat.postMessage files.remote.add oauth.v2.access
+    openid.connect.token slackLists.items.create
+  ].freeze
+
+  def path_item(method, response: nil)
+    operation_id = method.gsub(/\.(\w)/) { Regexp.last_match(1).upcase }
+    response ||= "#{operation_id[0].upcase}#{operation_id[1..]}Response"
+    { 'post' => { 'operationId' => operation_id, 'responses' => { '200' => { 'content' => {
+      'application/json' => { 'schema' => { '$ref' => "#/components/schemas/#{response}" } },
+    } } } } }
+  end
+
+  def processor(paths = METHODS.to_h { |method| ["/#{method}", path_item(method)] })
     processor = WebAPIProcessor.allocate
-    methods = %w[admin.analytics.getFile admin.users.session.reset chat.postMessage files.remote.add oauth.v2.access openid.connect.token]
-    paths = methods.to_h do |method|
-      operation_id = method.gsub(/\.(\w)/) { Regexp.last_match(1).upcase }
-      response = "#{operation_id[0].upcase}#{operation_id[1..]}Response"
-      ["/#{method}", { 'post' => { 'operationId' => operation_id, 'responses' => { '200' => { 'content' => {
-        'application/json' => { 'schema' => { '$ref' => "#/components/schemas/#{response}" } },
-      } } } } }]
-    end
     processor.instance_variable_set(:@openapi, { 'paths' => paths })
     processor
   end
@@ -202,6 +207,30 @@ class FileNameTest < Minitest::Test
   def test_methods_directly_in_a_group_use_the_group_file
     assert_equal 'Chat', processor.send(:file_name, 'ChatPostMessage')
     assert_equal 'Chat', processor.send(:file_name, 'ChatPostMessageResponse')
+  end
+
+  def test_aliased_groups_use_the_group_display_name
+    assert_equal 'ListsItems', processor.send(:file_name, 'slackListsItemsCreate')
+    assert_equal 'ListsItems', processor.send(:file_name, 'SlackListsItemsCreateResponse')
+  end
+
+  def test_response_type_shared_across_files_raises
+    paths = {
+      '/chat.postMessage' => path_item('chat.postMessage', response: 'SharedResponse'),
+      '/files.remote.add' => path_item('files.remote.add', response: 'SharedResponse'),
+    }
+    error = assert_raises(RuntimeError) { processor(paths).send(:file_name, 'ChatPostMessage') }
+
+    assert_match(/SharedResponse belongs to both Chat and FilesRemote/, error.message)
+  end
+
+  def test_response_type_shared_within_a_file_is_allowed
+    paths = {
+      '/chat.postMessage' => path_item('chat.postMessage', response: 'SharedResponse'),
+      '/chat.update' => path_item('chat.update', response: 'SharedResponse'),
+    }
+
+    assert_equal 'Chat', processor(paths).send(:file_name, 'SharedResponse')
   end
 
   def test_version_and_protocol_segments_are_not_namespaces

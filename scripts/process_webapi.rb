@@ -192,8 +192,13 @@ class WebAPIProcessor
       if segments.size > 2 && !APIGroups::UNNAMESPACED_PREFIXES.include?(segments.first(2).join('.'))
         file += segments[1][0].upcase + segments[1][1..]
       end
-      names[operation_id.downcase] = file
-      names[response_type(item).downcase] = file
+      [operation_id, response_type(item)].each do |key|
+        if names.fetch(key.downcase, file) != file
+          raise "#{key} belongs to both #{names[key.downcase]} and #{file}; give it one file"
+        end
+
+        names[key.downcase] = file
+      end
     end
     @file_names.fetch(name.downcase) { raise "No Web API method generates #{name}" }
   end
