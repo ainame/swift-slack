@@ -16,6 +16,10 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * **BREAKING**: Removed the misspelled `BlockActionsPaylaod` typealias and `Router.onGlboalShortcut(_:handler:)`. Use `BlockActionsPayload` and `onGlobalShortcut(_:handler:)` - #232
 * **BREAKING**: Removed `Ack.ResponseAction.clear`, so `ack(responseAction: .clear, view:)` no longer compiles. Use `ack(responseAction: .clear)`, which sends `clear` without a view as Slack documents - #233
 
+### Fixed
+
+* Fixed Socket Mode and HTTP apps built in debug configuration intermittently crashing with a stack overflow (SIGBUS) when decoding or comparing an `Event`. The generated `Event.init(from:)` and `==` needed stack frames close to or above the 512 KB stack of a Swift concurrency thread; decoding now goes through per-event closures, and `==` and `hash(into:)` compare `payload` - #234
+
 ### Maintenance
 
 * Added a `Gemfile` that pins json 2.19.1 or later for the generator scripts, which now run through `bundle exec`, because Ruby 4.0.7's bundled json 2.18.0 has generator GC bugs that intermittently failed script tests on Linux. Run `bundle install` before generating - #172
