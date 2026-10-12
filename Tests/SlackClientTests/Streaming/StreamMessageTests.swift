@@ -101,6 +101,39 @@ struct StreamMessageTests {
         #expect(await http.requests.map(\.operationID) == ["chatStartStream", "chatStartStream", "chatStopStream"])
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func `stops waiting Retry-After and does not retry when Slack ends the session`() async throws {
+        let http = SlackHTTP(rateLimitedOnce: "chatStartStream", retryAfter: "3600")
+        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+        let transport = WebAPIStreamingTransport(
+            client: client,
+            channel: "C1",
+            threadTs: "1.0",
+            recipient: nil,
+            taskDisplay: .timeline,
+            sessionStatus: nil,
+        )
+        let (sleeps, sleepContinuation) = AsyncStream.makeStream(of: Duration.self)
+        var sender = StreamingMessageSender(transport: transport, blocks: nil, minimumInterval: .zero)
+        sender.sleep = { duration in
+            sleepContinuation.yield(duration)
+            try await Task.sleep(for: duration)
+        }
+        let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
+        let sending = Task {
+            try await sender.send(parts)
+        }
+        continuation.yield(.markdown("hi"))
+        #expect(await sleeps.first { _ in true } == .seconds(3600))
+        continuation.finish(throwing: StreamingMessage.SessionStopped())
+
+        await #expect(throws: StreamingMessage.SessionStopped()) {
+            try await sending.value
+        }
+
+        #expect(await http.requests.map(\.operationID) == ["chatStartStream"])
+    }
+
     @Test
     func `throws StreamingMessage.Error when Slack answers ok false`() async throws {
         let http = SlackHTTP(failing: "chatStartStream", code: "not_in_channel")
@@ -153,11 +186,18 @@ private actor SlackHTTP: ClientTransport {
 
     private(set) var requests: [Request] = []
     private var rateLimitedOnce: String?
+    private let retryAfter: String
     private let failing: (operationID: String, code: String)?
     private var waiters: [(count: Int, continuation: CheckedContinuation<Void, Never>)] = []
 
-    init(rateLimitedOnce: String? = nil, failing operationID: String? = nil, code: String = "") {
+    init(
+        rateLimitedOnce: String? = nil,
+        retryAfter: String = "0",
+        failing operationID: String? = nil,
+        code: String = "",
+    ) {
         self.rateLimitedOnce = rateLimitedOnce
+        self.retryAfter = retryAfter
         failing = operationID.map { ($0, code) }
     }
 
@@ -185,7 +225,7 @@ private actor SlackHTTP: ClientTransport {
         if rateLimitedOnce == operationID {
             rateLimitedOnce = nil
             var response = HTTPResponse(status: .tooManyRequests)
-            response.headerFields[HTTPField.Name("Retry-After")!] = "0"
+            response.headerFields[HTTPField.Name("Retry-After")!] = retryAfter
             return (response, nil)
         }
         if let failing, failing.operationID == operationID {

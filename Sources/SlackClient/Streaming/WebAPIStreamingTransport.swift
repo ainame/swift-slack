@@ -5,7 +5,8 @@ import SlackBlockKit
 
 /// Streams one message through the generated Web API methods.
 ///
-/// A call that Slack rate limits (HTTP 429) is retried after its `Retry-After` delay, up to three attempts.
+/// A call that Slack rate limits (HTTP 429) is retried after its `Retry-After` delay, up to three attempts,
+/// unless Slack has ended the session meanwhile.
 struct WebAPIStreamingTransport: StreamingMessageTransport {
     let client: any APIProtocol
     let channel: String
@@ -17,7 +18,7 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
 
     static let maximumAttempts = 3
 
-    func start(chunks: [StreamingMessage.Part]) async throws -> String {
+    func start(chunks: [StreamingMessage.Part], stopSignal: SessionStopSignal) async throws -> String {
         let body = try Operations.ChatStartStream.Input.Body.json(.init(
             channel: channel,
             chunks: Self.container(for: chunks),
@@ -26,7 +27,7 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
             recipientTeamId: recipient?.teamId,
             taskDisplayMode: taskDisplay.rawValue,
         ))
-        let response = try await retryingRateLimits {
+        let response = try await retryingRateLimits(stopSignal: stopSignal) {
             try await client.chatStartStream(body: body)
         } rateLimited: {
             if case let .undocumented(429, payload) = $0 { payload } else { nil }
@@ -38,13 +39,13 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
         return ts
     }
 
-    func append(ts: String, chunks: [StreamingMessage.Part]) async throws {
+    func append(ts: String, chunks: [StreamingMessage.Part], stopSignal: SessionStopSignal) async throws {
         let body = try Operations.ChatAppendStream.Input.Body.json(.init(
             channel: channel,
             chunks: Self.container(for: chunks),
             ts: ts,
         ))
-        let response = try await retryingRateLimits {
+        let response = try await retryingRateLimits(stopSignal: stopSignal) {
             try await client.chatAppendStream(body: body)
         } rateLimited: {
             if case let .undocumented(429, payload) = $0 { payload } else { nil }
@@ -52,7 +53,12 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
         try Self.check("chat.appendStream", ok: response.ok, error: response.error)
     }
 
-    func stop(ts: String, chunks: [StreamingMessage.Part], blocks: [Block]?) async throws {
+    func stop(
+        ts: String,
+        chunks: [StreamingMessage.Part],
+        blocks: [Block]?,
+        stopSignal: SessionStopSignal,
+    ) async throws {
         let body = try Operations.ChatStopStream.Input.Body.json(.init(
             channel: channel,
             chunks: Self.container(for: chunks),
@@ -60,7 +66,7 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
             blocks: blocks,
             sessionStatus: sessionStatus,
         ))
-        let response = try await retryingRateLimits {
+        let response = try await retryingRateLimits(stopSignal: stopSignal) {
             try await client.chatStopStream(body: body)
         } rateLimited: {
             if case let .undocumented(429, payload) = $0 { payload } else { nil }
@@ -69,12 +75,16 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
     }
 
     /// Repeats `call` while `rateLimited` finds a 429 response, waiting the seconds in its `Retry-After`.
+    ///
+    /// Once `stopSignal` is raised, the wait ends and no retry starts.
     private func retryingRateLimits<Output>(
+        stopSignal: SessionStopSignal,
         _ call: () async throws -> Output,
         rateLimited: (Output) -> UndocumentedPayload?,
     ) async throws -> Output {
         var attempt = 1
         while true {
+            try await stopSignal.check()
             let output = try await call()
             guard let payload = rateLimited(output), attempt < Self.maximumAttempts else {
                 return output
@@ -82,7 +92,8 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
             let retryAfter = payload.headerFields
                 .first { $0.name.canonicalName == "retry-after" }
                 .flatMap { Int($0.value) }
-            try await Task.sleep(for: .seconds(retryAfter ?? 1))
+            try await stopSignal.sleep(for: .seconds(retryAfter ?? 1))
+            try Task.checkCancellation()
             attempt += 1
         }
     }
