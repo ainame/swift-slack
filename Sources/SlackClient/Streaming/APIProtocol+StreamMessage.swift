@@ -21,11 +21,15 @@ extension APIProtocol {
     /// `minimumInterval` between calls, and sends the parts left when `parts` ends with `chat.stopStream`.
     /// Adjacent markdown merges into one chunk, so a producer can yield one part per token.
     ///
-    /// The message is always stopped, so it never stays streaming:
+    /// The message is stopped, so it never stays streaming, unless Slack has already ended it:
     ///
     /// - When `parts` finishes, the remaining parts and `blocks` go out with the stop call.
     /// - When `parts` throws, the parts so far and `blocks` go out, and then the error is rethrown.
     ///   If `parts` throws before producing anything, no message is posted.
+    /// - When `parts` throws ``StreamingMessage/SessionStopped`` because Slack has already ended the session,
+    ///   the parts and `blocks` not yet sent are discarded and no further call is made, not even a retry or
+    ///   the stop call. A call already in progress cannot be withdrawn; the method waits for it without
+    ///   cancelling it, ignores its outcome, and rethrows ``StreamingMessage/SessionStopped``.
     /// - When the calling task is cancelled, the parts so far and `blocks` go out. The closing calls run in a
     ///   task that does not inherit the cancellation.
     /// - When a call fails, the message is stopped without further content, and the error is rethrown. Slack
@@ -34,7 +38,8 @@ extension APIProtocol {
     ///
     /// `parts` is read in the calling task, so it need not be `Sendable`. To stop a reply early while still
     /// finishing it, end `parts`, for example by cancelling the task that yields to an `AsyncStream`; that
-    /// task can still yield closing parts, such as a note that the reply was stopped.
+    /// task can still yield closing parts, such as a note that the reply was stopped. Ending `parts`, with any
+    /// error, does not stop whatever produces them; stop the producer separately.
     ///
     /// - Parameters:
     ///   - parts: The message content, in order.

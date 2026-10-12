@@ -105,5 +105,20 @@ public enum StreamingMessage {
             "\(method) failed: \(code)"
         }
     }
+
+    /// The signal that Slack has already ended a streaming message's session.
+    ///
+    /// Throw it from the parts sequence when your app learns that Slack ended the session, for example with
+    /// `AsyncThrowingStream.Continuation.finish(throwing:)`. Once streaming reads it, the parts and blocks not
+    /// yet sent are discarded, no further call is started, not even a closing `chat.stopStream` or a retry,
+    /// and waits between calls end. A call already in progress cannot be withdrawn, so streaming waits for it
+    /// without cancelling it and ignores its outcome. Streaming then throws this error instead of returning
+    /// the message's `ts`.
+    ///
+    /// Throwing it ends only the delivery; stop whatever produces the parts separately. Cancelling the task or
+    /// throwing any other error still sends the parts so far and stops the message.
+    public struct SessionStopped: Swift.Error, Sendable, Hashable {
+        public init() {}
+    }
 }
 #endif

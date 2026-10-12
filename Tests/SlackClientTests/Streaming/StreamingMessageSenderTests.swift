@@ -182,12 +182,139 @@ struct StreamingMessageSenderTests {
         ])
     }
 
+    @Test
+    func `posts nothing when Slack ends the session before the first part`() async {
+        let transport = FakeTransport()
+        let parts = AsyncThrowingStream<Part, any Error> { $0.finish(throwing: StreamingMessage.SessionStopped()) }
+
+        await #expect(throws: StreamingMessage.SessionStopped()) {
+            try await sender(transport, blocks: blocks).send(parts)
+        }
+
+        #expect(await transport.calls.isEmpty)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `finishes the start in flight but discards the queued parts when Slack ends the session`() async throws {
+        let transport = FakeTransport(holding: "start")
+        let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
+        let sending = Task {
+            try await sender(transport, blocks: blocks).send(parts)
+        }
+        continuation.yield(.markdown("first"))
+        await transport.waitForCalls(1)
+        continuation.yield(.markdown("queued"))
+        continuation.finish(throwing: StreamingMessage.SessionStopped())
+
+        await #expect(throws: StreamingMessage.SessionStopped()) {
+            try await sending.value
+        }
+
+        #expect(await transport.calls == [.init(method: "start", chunks: [.markdown("first")])])
+        #expect(await transport.heldCallWasCancelled == false)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `finishes the append in flight and makes no further call when Slack ends the session`() async throws {
+        let transport = FakeTransport(holding: "append")
+        let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
+        let sending = Task {
+            try await sender(transport, blocks: blocks).send(parts)
+        }
+        continuation.yield(.markdown("first"))
+        await transport.waitForCalls(1)
+        continuation.yield(.markdown("second"))
+        await transport.waitForCalls(2)
+        continuation.yield(.markdown("queued"))
+        continuation.finish(throwing: StreamingMessage.SessionStopped())
+
+        await #expect(throws: StreamingMessage.SessionStopped()) {
+            try await sending.value
+        }
+
+        #expect(await transport.calls == [
+            .init(method: "start", chunks: [.markdown("first")]),
+            .init(method: "append", chunks: [.markdown("second")]),
+        ])
+        #expect(await transport.heldCallWasCancelled == false)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `ignores a call that fails after Slack ends the session and does not stop the message`() async throws {
+        let transport = FakeTransport(failing: "append", holding: "append")
+        let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
+        let sending = Task {
+            try await sender(transport, blocks: blocks).send(parts)
+        }
+        continuation.yield(.markdown("first"))
+        await transport.waitForCalls(1)
+        continuation.yield(.markdown("second"))
+        await transport.waitForCalls(2)
+        continuation.finish(throwing: StreamingMessage.SessionStopped())
+
+        await #expect(throws: StreamingMessage.SessionStopped()) {
+            try await sending.value
+        }
+
+        #expect(await transport.calls.map(\.method) == ["start", "append"])
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `ignores the stop in flight after a failed call when Slack ends the session`() async throws {
+        // The failed append closes the buffer, but the input is still read, so the signal still takes effect.
+        let transport = FakeTransport(failing: "append", holding: "stop")
+        let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
+        let sending = Task {
+            try await sender(transport, blocks: blocks).send(parts)
+        }
+        continuation.yield(.markdown("first"))
+        await transport.waitForCalls(1)
+        continuation.yield(.markdown("second"))
+        await transport.waitForCalls(3)
+        continuation.finish(throwing: StreamingMessage.SessionStopped())
+
+        await #expect(throws: StreamingMessage.SessionStopped()) {
+            try await sending.value
+        }
+
+        #expect(await transport.calls.map(\.method) == ["start", "append", "stop"])
+        #expect(await transport.heldCallWasCancelled == false)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `stops waiting the minimum interval and discards the queued parts when Slack ends the session`() async throws {
+        let transport = FakeTransport()
+        let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
+        let (sleeps, sleepContinuation) = AsyncStream.makeStream(of: Duration.self)
+        let sending = Task {
+            try await sender(transport, blocks: blocks, minimumInterval: .seconds(3600)) { duration in
+                sleepContinuation.yield(duration)
+                try await Task.sleep(for: duration)
+            }.send(parts)
+        }
+        continuation.yield(.markdown("first"))
+        #expect(await sleeps.first { _ in true } == .seconds(3600))
+        continuation.yield(.markdown("queued"))
+        continuation.finish(throwing: StreamingMessage.SessionStopped())
+
+        await #expect(throws: StreamingMessage.SessionStopped()) {
+            try await sending.value
+        }
+
+        #expect(await transport.calls == [.init(method: "start", chunks: [.markdown("first")])])
+    }
+
     private func sender(
         _ transport: FakeTransport,
         blocks: [Block]? = nil,
         minimumInterval: Duration = .zero,
+        sleep: (@Sendable (Duration) async throws -> Void)? = nil,
     ) -> StreamingMessageSender<FakeTransport> {
-        StreamingMessageSender(transport: transport, blocks: blocks, minimumInterval: minimumInterval)
+        var sender = StreamingMessageSender(transport: transport, blocks: blocks, minimumInterval: minimumInterval)
+        if let sleep {
+            sender.sleep = sleep
+        }
+        return sender
     }
 
     private func text(_ calls: [FakeTransport.Call]) -> String {
@@ -238,24 +365,35 @@ actor FakeTransport: StreamingMessageTransport {
     static let ts = "1700000000.000100"
 
     private(set) var calls: [Call] = []
+    /// Whether the held call's task was cancelled while Slack had not answered it.
+    private(set) var heldCallWasCancelled = false
     private let failingMethod: String?
+    private let heldMethod: String?
     private var waiters: [(count: Int, continuation: CheckedContinuation<Void, Never>)] = []
 
-    init(failing failingMethod: String? = nil) {
+    /// Creates a transport whose `failing` calls fail, and whose `holding` calls are answered only once the
+    /// session's stop signal is raised, like a request Slack answers after it has ended the session.
+    init(failing failingMethod: String? = nil, holding heldMethod: String? = nil) {
         self.failingMethod = failingMethod
+        self.heldMethod = heldMethod
     }
 
-    func start(chunks: [StreamingMessage.Part]) async throws -> String {
-        try record(Call(method: "start", chunks: chunks))
+    func start(chunks: [StreamingMessage.Part], stopSignal: SessionStopSignal) async throws -> String {
+        try await record(Call(method: "start", chunks: chunks), stopSignal: stopSignal)
         return Self.ts
     }
 
-    func append(ts _: String, chunks: [StreamingMessage.Part]) async throws {
-        try record(Call(method: "append", chunks: chunks))
+    func append(ts _: String, chunks: [StreamingMessage.Part], stopSignal: SessionStopSignal) async throws {
+        try await record(Call(method: "append", chunks: chunks), stopSignal: stopSignal)
     }
 
-    func stop(ts _: String, chunks: [StreamingMessage.Part], blocks: [Block]?) async throws {
-        try record(Call(method: "stop", chunks: chunks, blocks: blocks))
+    func stop(
+        ts _: String,
+        chunks: [StreamingMessage.Part],
+        blocks: [Block]?,
+        stopSignal: SessionStopSignal,
+    ) async throws {
+        try await record(Call(method: "stop", chunks: chunks, blocks: blocks), stopSignal: stopSignal)
     }
 
     func waitForCalls(_ count: Int) async {
@@ -263,7 +401,7 @@ actor FakeTransport: StreamingMessageTransport {
         await withCheckedContinuation { waiters.append((count, $0)) }
     }
 
-    private func record(_ call: Call) throws {
+    private func record(_ call: Call, stopSignal: SessionStopSignal) async throws {
         // Like an HTTP transport, which abandons requests made from a cancelled task.
         try Task.checkCancellation()
         calls.append(call)
@@ -271,6 +409,10 @@ actor FakeTransport: StreamingMessageTransport {
             waiter.continuation.resume()
         }
         waiters.removeAll { $0.count <= calls.count }
+        if call.method == heldMethod {
+            await stopSignal.waitUntilRaised()
+            heldCallWasCancelled = heldCallWasCancelled || Task.isCancelled
+        }
         if call.method == failingMethod {
             throw StreamingMessage.Error(method: "chat.\(call.method)Stream", code: "rate_limited")
         }
