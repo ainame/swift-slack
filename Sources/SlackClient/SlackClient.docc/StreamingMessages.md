@@ -164,3 +164,7 @@ A failed Slack call triggers a best-effort stop without additional chunks or blo
 The library starts with `chat.startStream`, appends with `chat.appendStream`, and closes with `chat.stopStream`. It collects parts while calls are in flight, merging adjacent markdown up to 12,000 characters per chunk and adjacent blocks up to 50 per chunk. Parts of different kinds preserve their order.
 
 `minimumInterval:` defaults to one second between streaming calls. HTTP 429 responses wait for `Retry-After` and retry, up to three attempts per call. Closing calls run as soon as the final buffered batch is available.
+
+### Delivery failures while input is idle
+
+Sendable inputs, including `AsyncStream` and `AsyncThrowingStream`, are read concurrently with delivery. A failed Slack call cancels iteration immediately, so apps can stop an idle producer or pending question without waiting for another token. The input must cooperate with cancellation. Non-Sendable inputs remain in the caller's actor context and observe an early delivery failure when their next element arrives or the input ends.

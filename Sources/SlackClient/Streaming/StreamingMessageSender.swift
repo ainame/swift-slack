@@ -45,6 +45,42 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
     /// Waits between calls and before retries. Tests replace it to observe the waits.
     var sleep: @Sendable (Duration) async throws -> Void = { try await Task.sleep(for: $0) }
 
+    /// Sendable inputs can be read by a child task. Delivery failures then cancel the reader even while its
+    /// next element is suspended, rather than waiting for the producer to yield again.
+    func send<Parts: AsyncSequence & Sendable>(
+        _ parts: Parts,
+        isolation: isolated (any Actor)? = #isolation,
+    ) async throws -> String where Parts.Element == StreamingMessage.Part {
+        let buffer = PartBuffer()
+        let stopSignal = SessionStopSignal(sleep: sleep)
+        return try await withThrowingTaskGroup(of: String?.self, returning: String.self, isolation: isolation) { group in
+            group.addTask {
+                try await deliver(from: buffer, stopSignal: stopSignal)
+            }
+            group.addTask {
+                do {
+                    for try await part in parts {
+                        guard await buffer.append(part) else { break }
+                    }
+                    await buffer.finish(throwing: nil)
+                } catch let stopped as StreamingMessage.SessionStopped {
+                    await stopSignal.raise()
+                    await buffer.finish(throwing: stopped)
+                } catch {
+                    await buffer.finish(throwing: error)
+                }
+                return nil
+            }
+            defer { group.cancelAll() }
+            while let result = try await group.next() {
+                if let ts = result {
+                    return ts
+                }
+            }
+            preconditionFailure("delivery returns a ts or throws")
+        }
+    }
+
     func send<Parts: AsyncSequence>(
         _ parts: Parts,
         isolation: isolated (any Actor)? = #isolation,

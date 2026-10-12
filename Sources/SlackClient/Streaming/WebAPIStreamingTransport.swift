@@ -31,7 +31,11 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
         let response = try await retryingRateLimits(stopSignal: stopSignal) {
             try await client.chatStartStream(body: body)
         } rateLimited: {
-            if case let .undocumented(429, payload) = $0 { payload } else { nil }
+            if case let .undocumented(429, payload) = $0 {
+                payload
+            } else {
+                nil
+            }
         }.ok.body.json
         try Self.check("chat.startStream", ok: response.ok, error: response.error)
         guard let ts = response.ts else {
@@ -49,7 +53,11 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
         let response = try await retryingRateLimits(stopSignal: stopSignal) {
             try await client.chatAppendStream(body: body)
         } rateLimited: {
-            if case let .undocumented(429, payload) = $0 { payload } else { nil }
+            if case let .undocumented(429, payload) = $0 {
+                payload
+            } else {
+                nil
+            }
         }.ok.body.json
         try Self.check("chat.appendStream", ok: response.ok, error: response.error)
     }
@@ -70,7 +78,11 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
         let response = try await retryingRateLimits(stopSignal: stopSignal) {
             try await client.chatStopStream(body: body)
         } rateLimited: {
-            if case let .undocumented(429, payload) = $0 { payload } else { nil }
+            if case let .undocumented(429, payload) = $0 {
+                payload
+            } else {
+                nil
+            }
         }.ok.body.json
         try Self.check("chat.stopStream", ok: response.ok, error: response.error)
     }
