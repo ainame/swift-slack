@@ -3,6 +3,24 @@ import Foundation
 import Testing
 
 struct BlockActionsPayloadTests {
+    @Test(arguments: ["\"team\": null,", ""])
+    func `decode button without workspace team`(teamField: String) throws {
+        let json = """
+        {
+          "type": "block_actions",
+          \(teamField)
+          "user": { "id": "U123" },
+          "container": { "type": "message", "channel_id": "C123", "message_ts": "123.456" },
+          "actions": [{ "type": "button", "action_id": "approve", "value": "request-123" }]
+        }
+        """
+        let payload = try JSONDecoder().decode(BlockActionsPayload.self, from: Data(json.utf8))
+
+        #expect(payload.team == nil)
+        #expect(payload.blockActions.first?.actionId == "approve")
+        #expect(payload.blockActions.first?.value == "request-123")
+    }
+
     @Test
     func `decode message container block actions without view`() throws {
         let json = """
@@ -29,6 +47,7 @@ struct BlockActionsPayloadTests {
         let payload = try JSONDecoder().decode(BlockActionsPayload.self, from: #require(json.data(using: .utf8)))
 
         #expect(payload._type == "block_actions")
+        #expect(payload.team?.id == "T03T5HH7T9U")
         #expect(payload.container._type == "message")
         #expect(payload.view == nil)
         #expect(payload.callbackId == nil)

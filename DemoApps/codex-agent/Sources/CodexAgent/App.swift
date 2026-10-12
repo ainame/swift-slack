@@ -197,7 +197,7 @@ struct CodexAgentApp {
                   let channel = payload.container.channelId,
                   let messageTs = payload.container.messageTs,
                   let user = payload.user.id, isAllowed(user),
-                  let teamId = payload.team.id else {
+                  let teamId = payload.team?.id else {
                 return
             }
             turns.ask(.init(

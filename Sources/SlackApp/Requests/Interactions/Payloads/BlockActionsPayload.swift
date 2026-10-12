@@ -9,7 +9,8 @@ public struct BlockActionsPayload: InteractivePayloadProtocol, Decodable, Sendab
     public let _type: String
     public let triggerId: String?
     public let user: User
-    public let team: Team
+    /// The installing workspace, or `nil` for an organization-installed app.
+    public let team: Team?
     public let enterprise: Enterprise?
     public let container: Container
     public let apiAppId: String?
@@ -56,7 +57,7 @@ public struct BlockActionsPayload: InteractivePayloadProtocol, Decodable, Sendab
         _type = try container.decode(String.self, forKey: ._type)
         triggerId = try container.decodeIfPresent(String.self, forKey: .triggerId)
         user = try container.decode(User.self, forKey: .user)
-        team = try container.decode(Team.self, forKey: .team)
+        team = try container.decodeIfPresent(Team.self, forKey: .team)
         enterprise = try container.decodeIfPresent(Enterprise.self, forKey: .enterprise)
         self.container = try container.decode(Container.self, forKey: .container)
         apiAppId = try container.decodeIfPresent(String.self, forKey: .apiAppId)
