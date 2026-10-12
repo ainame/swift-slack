@@ -6,7 +6,8 @@ import SlackBlockKit
 /// Streams one message through the generated Web API methods.
 ///
 /// A call that Slack rate limits (HTTP 429) is retried after its `Retry-After` delay, up to three attempts,
-/// unless Slack has ended the session meanwhile.
+/// unless Slack has ended the session meanwhile. When the task is cancelled during the delay, the call throws
+/// ``RateLimitedCallCancelled`` instead, so the sender sends its parts with the closing calls.
 struct WebAPIStreamingTransport: StreamingMessageTransport {
     let client: any APIProtocol
     let channel: String
@@ -76,7 +77,8 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
 
     /// Repeats `call` while `rateLimited` finds a 429 response, waiting the seconds in its `Retry-After`.
     ///
-    /// Once `stopSignal` is raised, the wait ends and no retry starts.
+    /// Once `stopSignal` is raised, the wait ends and no retry starts. When the task is cancelled, the wait ends
+    /// and ``RateLimitedCallCancelled`` is thrown instead of retrying.
     private func retryingRateLimits<Output>(
         stopSignal: SessionStopSignal,
         _ call: () async throws -> Output,
@@ -92,8 +94,13 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
             let retryAfter = payload.headerFields
                 .first { $0.name.canonicalName == "retry-after" }
                 .flatMap { Int($0.value) }
-            try await stopSignal.sleep(for: .seconds(retryAfter ?? 1))
-            try Task.checkCancellation()
+            let delay = Duration.seconds(retryAfter ?? 1)
+            let retryAt = ContinuousClock.now + delay
+            try await stopSignal.sleep(for: delay)
+            if Task.isCancelled {
+                // A cancelled task does not retry; Slack rejected the call, so the sender can resend its parts.
+                throw RateLimitedCallCancelled(retryAt: retryAt)
+            }
             attempt += 1
         }
     }

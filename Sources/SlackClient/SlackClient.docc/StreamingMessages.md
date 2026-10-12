@@ -155,9 +155,9 @@ A `.blocks` part travels in order with other parts. The separate `blocks:` param
 
 When the sequence finishes, buffered parts and the closing `blocks` go out with `chat.stopStream`. `sessionStatus:` can set the final agent session status; Slack defaults it to `active`.
 
-If the input throws, buffered parts and closing blocks are sent before the input error is rethrown, unless the error is ``StreamingMessage/SessionStopped`` (see <doc:StreamingMessages#End-a-reply-that-Slack-has-already-stopped>). If it throws before producing anything, no message is posted. Cancelling the task that calls `streamMessage` also sends the parts collected so far and closes the message. Closing calls run in a task that does not inherit cancellation.
+If the input throws, buffered parts and closing blocks are sent before the input error is rethrown, unless the error is ``StreamingMessage/SessionStopped`` (see <doc:StreamingMessages#End-a-reply-that-Slack-has-already-stopped>). If it throws before producing anything, no message is posted. Cancelling the task that calls `streamMessage` also sends the parts collected so far and closes the message. Closing calls run in a task that does not inherit cancellation. If the cancellation comes while a call waits out a `Retry-After` delay, that call is not retried in the cancelled task; Slack rejected it without processing it, so its parts go out with the closing calls, which wait for the rest of the delay first.
 
-A failed Slack call triggers a best-effort stop without additional chunks or blocks, then rethrows the error. Slack responses with `"ok": false` throw ``StreamingMessage/Error``, containing the method and error code. A failed closing request can still prevent Slack from completing the message.
+A failed Slack call triggers a best-effort stop without additional chunks or blocks, then rethrows the error. Its parts are not resent: unlike a rate-limited rejection, a call that fails in flight, such as on a dropped connection, may already have reached Slack. Slack responses with `"ok": false` throw ``StreamingMessage/Error``, containing the method and error code. A failed closing request can still prevent Slack from completing the message.
 
 ### Batching and rate limits
 

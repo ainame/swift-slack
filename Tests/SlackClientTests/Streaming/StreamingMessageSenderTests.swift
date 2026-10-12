@@ -159,6 +159,34 @@ struct StreamingMessageSenderTests {
         #expect(calls.last == .init(method: "stop", chunks: []))
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func `sends the parts buffered during the minimum interval when the sending task is cancelled`() async throws {
+        let transport = FakeTransport()
+        let input = ManualInput()
+        let (sleeps, sleepContinuation) = AsyncStream.makeStream(of: Duration.self)
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await sender(transport, blocks: blocks, minimumInterval: .seconds(3600)) { duration in
+                sleepContinuation.yield(duration)
+                try await Task.sleep(for: duration)
+            }.send(input)
+        }
+        #expect(await sleeps.first { _ in true } == .seconds(3600))
+        await input.yield(.markdown("second"))
+        // The third read means the sender has buffered the second part.
+        await input.waitForReads(3)
+        sending.cancel()
+        // The input ignores cancellation, so the buffer stays open while the cancelled sender takes the part.
+        await transport.waitForCalls(2)
+        await input.finish()
+
+        #expect(try await sending.value == FakeTransport.ts)
+        #expect(await transport.calls == [
+            .init(method: "start", chunks: [.markdown("first")]),
+            .init(method: "stop", chunks: [.markdown("second")], blocks: blocks),
+        ])
+    }
+
     @Test
     func `waits the minimum interval between calls and sends what arrived meanwhile together`() async throws {
         let transport = FakeTransport()
@@ -354,6 +382,67 @@ private struct Words: AsyncSequence {
 
 @available(*, unavailable)
 extension Words: Sendable {}
+
+/// An input that a test feeds by hand.
+///
+/// Its reads ignore cancellation, like a producer that finishes on its own terms, and it counts them, so a test
+/// knows that the sender has buffered every part read before the latest read.
+actor ManualInput: AsyncSequence {
+    typealias Element = StreamingMessage.Part
+
+    struct AsyncIterator: AsyncIteratorProtocol {
+        let input: ManualInput
+
+        func next() async -> StreamingMessage.Part? {
+            await input.read()
+        }
+    }
+
+    private var parts: [StreamingMessage.Part] = []
+    private var isFinished = false
+    private var reader: CheckedContinuation<StreamingMessage.Part?, Never>?
+    private var reads = 0
+    private var readWaiters: [(count: Int, continuation: CheckedContinuation<Void, Never>)] = []
+
+    nonisolated func makeAsyncIterator() -> AsyncIterator {
+        AsyncIterator(input: self)
+    }
+
+    func yield(_ part: StreamingMessage.Part) {
+        if let reader {
+            self.reader = nil
+            reader.resume(returning: part)
+        } else {
+            parts.append(part)
+        }
+    }
+
+    func finish() {
+        isFinished = true
+        reader?.resume(returning: nil)
+        reader = nil
+    }
+
+    func waitForReads(_ count: Int) async {
+        guard reads < count else { return }
+        await withCheckedContinuation { readWaiters.append((count, $0)) }
+    }
+
+    private func read() async -> StreamingMessage.Part? {
+        reads += 1
+        for waiter in readWaiters where waiter.count <= reads {
+            waiter.continuation.resume()
+        }
+        readWaiters.removeAll { $0.count <= reads }
+        if !parts.isEmpty {
+            return parts.removeFirst()
+        }
+        if isFinished {
+            return nil
+        }
+        return await withCheckedContinuation { reader = $0 }
+    }
+}
 
 actor FakeTransport: StreamingMessageTransport {
     struct Call: Equatable {

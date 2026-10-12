@@ -63,7 +63,7 @@ struct CodeChannelTests {
 
     @Test
     func `returns the response with Slack's warning`() async throws {
-        let http = SlackHTTP(response: #"{"ok":true,"channel_id":"C1","warning":"context_bar_items_truncated"}"#)
+        let http = SlackHTTP(response: #"{"ok":true,"channel_id":"C1","warning":"too_many_context_bar_items"}"#)
         let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
 
         let response = try await client.setCodeChannelProperties(
@@ -72,7 +72,7 @@ struct CodeChannelTests {
         )
 
         #expect(response.ok)
-        #expect(response.warning == "context_bar_items_truncated")
+        #expect(response.warning == "too_many_context_bar_items")
     }
 
     @Test(arguments: [
