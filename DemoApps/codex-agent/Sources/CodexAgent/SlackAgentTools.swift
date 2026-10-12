@@ -32,6 +32,14 @@ struct SlackAgentTools: AgentTools {
     var onCodeChannel: @Sendable (String) async -> Void = { _ in }
     var endSession: @Sendable () async -> Void = {}
 
+    var currentCodeChannel: String? {
+        if case .codeChannel = session {
+            session.channel
+        } else {
+            nil
+        }
+    }
+
     func startCodeChannel(name: String) async throws -> String {
         try checkSession()
         guard let originTs = messageTs ?? session.threadTs else {
@@ -104,11 +112,16 @@ struct SlackAgentTools: AgentTools {
             throw AgentToolError(description: "The person named this conversation; keep their title.")
         }
         try checkSession()
-        _ = try await client.agentsSessionsRename(body: .json(.init(
-            channelId: session.channel,
-            title: String(title.prefix(200)),
-            threadTs: session.threadTs,
-        ))).ok.body.json.checked("agents.sessions.rename")
+        do {
+            _ = try await client.agentsSessionsRename(body: .json(.init(
+                channelId: session.channel,
+                title: String(title.prefix(200)),
+                threadTs: session.threadTs,
+            ))).ok.body.json.checked("agents.sessions.rename")
+        } catch let error as SlackAPIError {
+            logger.warning("Could not rename the conversation", metadata: ["session": "\(session)", "error": "\(error)"])
+            throw AgentToolError(description: "\(error). Keep the existing title and continue the task; do not create another channel to recover from a rename failure.")
+        }
     }
 
     /// Reads the thread the turn replies in. A top-level reply in a code channel has no thread, so `thread`

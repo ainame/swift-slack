@@ -84,7 +84,7 @@ actor CodexBackend: AgentBackend {
                 scoped.workspace = try await workspaces.workspace(for: key)
                 scoped.writable = true
             }
-            session = CodexSession(settings: scoped, threadID: threadIDs[key], logger: logger)
+            session = CodexSession(settings: scoped, session: key, threadID: threadIDs[key], logger: logger)
         }
         sessions[key] = session
         defer { scheduleIdleClose(key, session: session) }
@@ -147,6 +147,7 @@ private final class TurnControl: Sendable {
 
 private actor CodexSession {
     private let settings: CodexBackend.Settings
+    private let session: SessionKey
     private let toolRouter: ToolRouter
     private let logger: Logger
     private var codex: Codex?
@@ -156,8 +157,9 @@ private actor CodexSession {
     private var lastTurn: Task<Void, any Error>?
     private(set) var isRunning = false
 
-    init(settings: CodexBackend.Settings, threadID: String?, logger: Logger) {
+    init(settings: CodexBackend.Settings, session: SessionKey, threadID: String?, logger: Logger) {
         self.settings = settings
+        self.session = session
         self.threadID = threadID
         self.logger = logger
         toolRouter = ToolRouter(writeWorkspace: settings.writable ? settings.workspace : nil)
@@ -257,11 +259,10 @@ private actor CodexSession {
             they refer to earlier messages, and `\(AgentToolset.setTitle)` once the topic of the \
             conversation is clear.
 
-            For substantial coding work, call `start_code_channel` from an ordinary conversation. Its original
-            task is started in the new channel automatically; do not execute it twice. Inside a code channel,
-            publish useful artifacts with `publish_code_view`. Diff views update automatically. Only archive
-            with `archive_code_channel` when the person asks to end the task. A read-only sandbox cannot edit;
-            explain that writable code sessions require CODEX_SESSION_WORKSPACES configuration.
+            Renaming is optional. If it fails, keep the existing title and continue the task.
+            Never create a new channel to recover from a naming failure.
+
+            \(AgentToolset.sessionInstructions(for: session, writable: settings.writable, writableCodeSessions: settings.sessionWorkspaces != nil))
             """,
             model: settings.model,
             sandboxPreset: settings.writable ? .workspaceWrite : .readOnly,
@@ -271,7 +272,7 @@ private actor CodexSession {
             // A resumed thread keeps the tools it started with and rejects new definitions.
             thread = try await codex.resumeThread(id: threadID, options: options)
         } else {
-            options.dynamicTools = AgentToolset.specs
+            options.dynamicTools = AgentToolset.specs(for: session)
             thread = try await codex.startThread(options: options)
         }
         self.thread = thread
@@ -368,7 +369,7 @@ struct NotificationTranslator {
                 details: change.changes.map(\.path).joined(separator: "\n"),
             )
         case let .dynamicToolCall(call):
-            TaskUpdate(id: call.id, title: AgentToolset.title(for: call.tool), status: status(call))
+            TaskUpdate(id: call.id, title: AgentToolset.title(for: call.tool), status: status(call), details: failureDetails(call))
         case let .mcpToolCall(call):
             TaskUpdate(id: call.id, title: "Call \(call.server)/\(call.tool)", status: status(call.status))
         case let .reasoning(reasoning):
@@ -399,6 +400,15 @@ struct NotificationTranslator {
         case .completed: .complete
         default: .error
         }
+    }
+
+    private func failureDetails(_ call: DynamicToolCallThreadItem) -> String? {
+        guard status(call) == .error else { return nil }
+        let text = (call.contentItems ?? []).compactMap { item -> String? in
+            guard case let .inputText(item) = item else { return nil }
+            return item.text
+        }.joined(separator: "\n")
+        return text.isEmpty ? nil : String(text.prefix(2000))
     }
 
     private func status(_ call: DynamicToolCallThreadItem) -> TaskUpdate.Status {
@@ -565,6 +575,9 @@ enum AgentToolset {
                 let args = try decode(StartCodeChannelArguments.self, from: arguments)
                 guard !args.name.isEmpty else { throw AgentToolError(description: "Pass a channel name.") }
                 let channel = try await tools.startCodeChannel(name: args.name)
+                if tools.currentCodeChannel == channel {
+                    return reply("You are already in <#\(channel)>. Continue the requested work here now. No task was handed off and no new channel was created.", success: true)
+                }
                 return reply("The task continues in <#\(channel)>. Do not perform this task again in the origin thread.", success: true)
             case publishCodeView:
                 let args = try decode(CodeViewArguments.self, from: arguments)

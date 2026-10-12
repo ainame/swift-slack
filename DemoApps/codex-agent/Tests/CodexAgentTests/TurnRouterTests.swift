@@ -42,6 +42,28 @@ struct TurnRouterTests {
         #expect(prompt.hasSuffix("Hi"))
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func `known code channels keep their session when metadata lookup would fail`() async {
+        let client = await slack.client()
+        let session = SessionKey.codeChannel(channel: "C1")
+        let handling = Task {
+            await responder.handle(.init(
+                session: session, replyThreadTs: nil, messageTs: "1.0", prompt: "Fix the bug",
+                userId: "U1", teamId: "T1", origin: .init(channel: "C0", ts: "0.5"),
+            ), client: client)
+        }
+        await backend.probe.waitForStart(of: session)
+        await slack.reply(to: "conversationsInfo", with: .json(#"{"ok":false,"error":"missing_scope"}"#))
+        let decision = await router().route(message("E2", ts: "2.0", threadTs: "1.5"), client: client)
+        guard case let .answer(turn)? = decision else { Issue.record("Lost the Code channel session"); return }
+        #expect(turn.session == session)
+        #expect(turn.replyThreadTs == "1.5")
+        #expect(turn.origin == .init(channel: "C0", ts: "0.5"))
+        #expect(await slack.requests("conversationsInfo").isEmpty)
+        await backend.probe.release(session)
+        await handling.value
+    }
+
     @Test
     func `answers every person's message in a code channel in the channel's session`() async {
         await slack.channel(recordType: "agent_channel", origin: MessageLink(channel: "C0", ts: "0.5"))

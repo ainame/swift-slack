@@ -159,7 +159,7 @@ actor TurnRouter {
             if message.source == .message, identity?.isMentioned(in: message.text) == true {
                 return nil
             }
-            let kind = await channels.kind(of: message.channel, client: client)
+            let kind = await kind(of: message.channel, client: client)
             guard attempt?.isCancelled != true else { return nil }
             switch kind {
             case let .codeChannel(origin):
@@ -200,11 +200,18 @@ actor TurnRouter {
         messageTs: String,
         client: any APIProtocol,
     ) async -> (session: SessionKey, replyThreadTs: String?, origin: MessageLink?) {
-        if case let .codeChannel(origin) = await channels.kind(of: channel, client: client) {
+        if case let .codeChannel(origin) = await kind(of: channel, client: client) {
             return (.codeChannel(channel: channel), threadTs, origin)
         }
         let threadTs = threadTs ?? messageTs
         return (.thread(channel: channel, threadTs: threadTs), threadTs, nil)
+    }
+
+    private func kind(of channel: String, client: any APIProtocol) async -> ChannelClassifier.Kind? {
+        if let known = await responder.knownCodeChannel(in: channel) {
+            return known
+        }
+        return await channels.kind(of: channel, client: client)
     }
 
     private func postNotAllowed(

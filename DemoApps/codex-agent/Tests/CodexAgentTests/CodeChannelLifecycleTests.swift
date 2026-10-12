@@ -128,6 +128,50 @@ struct CodeChannelLifecycleTests {
         #expect(await slack.requests("agentsConversationsSetView").count == 1)
     }
 
+    @Test(arguments: ["agentsConversationsSetProperties", "agentsConversationsSetCommands"])
+    func `decoration failures still launch the original task once`(method: String) async throws {
+        let slack = FakeSlack()
+        await slack.reply(to: "agentsConversationsCreate", with: .json(#"{"ok":true,"channel_id":"CODE"}"#))
+        await slack.reply(to: method, with: .json(#"{"ok":false,"error":"missing_scope"}"#))
+        var tools = await tools(slack, session: .thread(channel: "C1", threadTs: "1.0"))
+        let launches = Launches()
+        tools.onCodeChannel = { channel in await launches.record(channel) }
+        #expect(try await tools.startCodeChannel(name: "fix") == "CODE")
+        #expect(try await tools.startCodeChannel(name: "fix") == "CODE")
+        #expect(await launches.channels == ["CODE"])
+        #expect(await slack.requests("agentsConversationsCreate").count == 1)
+        // Even if a later lookup incorrectly routes a created Code channel as a thread, never nest it.
+        let nested = try await tools.lifecycle.create(
+            name: "nested", from: .thread(channel: "CODE", threadTs: "2.0"), messageTs: "2.0",
+            client: slack.client(), producer: .init(), logger: .init(label: "test"),
+        )
+        #expect(nested.channel == "CODE")
+        #expect(!nested.shouldLaunch)
+        #expect(await slack.requests("agentsConversationsCreate").count == 1)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `promoted tasks continue after a rename failure without another handoff`() async {
+        let slack = FakeSlack()
+        await slack.reply(to: "agentsConversationsCreate", with: .json(#"{"ok":true,"channel_id":"CODE"}"#))
+        await slack.reply(to: "agentsSessionsRename", with: .json(#"{"ok":false,"error":"invalid_name"}"#))
+        let backend = PromotionBackend()
+        let responder = AgentResponder(backend: backend, questions: PendingQuestions(), logger: .init(label: "test"))
+        let origin = SessionKey.thread(channel: "C1", threadTs: "1.0")
+        let client = await slack.client()
+        await responder.handle(.init(
+            session: origin, replyThreadTs: "1.0", messageTs: "1.0",
+            prompt: "Fix the bug", userId: "U1", teamId: "T1",
+        ), client: client)
+        await backend.probe.waitFor("continued", in: .codeChannel(channel: "CODE"))
+        await slack.waitFor("chatStopStream", where: { $0["channel"] == "CODE" })
+        #expect(await slack.requests("agentsConversationsCreate").count == 1)
+        #expect(await backend.probe.prompts[.codeChannel(channel: "CODE")]?.count == 1)
+        #expect(await backend.probe.events[.codeChannel(channel: "CODE")]?.contains("rename failed") == true)
+        let chunks = await slack.requests.filter { $0["channel"] == "CODE" }.compactMap { $0["chunks"] }.joined()
+        #expect(chunks.contains("Working here"))
+    }
+
     private func tools(
         _ slack: FakeSlack,
         session: SessionKey = .codeChannel(channel: "CODE"),
@@ -157,6 +201,46 @@ private struct DiffBackend: AgentBackend {
             }
             continuation.yield(.text("Done"))
             continuation.finish()
+        }
+    }
+}
+
+private actor Launches {
+    private(set) var channels: [String] = []
+    func record(_ channel: String) {
+        channels.append(channel)
+    }
+}
+
+private struct PromotionBackend: AgentBackend {
+    let probe = BackendProbe()
+
+    func respond(to prompt: String, in session: SessionKey, tools: any AgentTools) -> AsyncThrowingStream<AgentEvent, any Error> {
+        AsyncThrowingStream { continuation in
+            let task = Task {
+                _ = await probe.start(session, prompt: prompt)
+                do {
+                    if case .thread = session {
+                        _ = try await tools.startCodeChannel(name: "fix")
+                        continuation.yield(.text("Moved the task"))
+                    } else {
+                        do { try await tools.setTitle("Bug fix") }
+                        catch { await probe.record(session, "rename failed") }
+                        // Defend against a model using a stale tool definition after resuming.
+                        let response = await AgentToolset.handle(.init(
+                            arguments: ["name": "another"], callId: "call", threadId: "thread",
+                            tool: AgentToolset.startCodeChannel, turnId: "turn",
+                        ), tools: tools)
+                        if case let .inputText(item)? = response.contentItems.first {
+                            #expect(item.text.contains("Continue the requested work here"))
+                        }
+                        continuation.yield(.text("Working here"))
+                        await probe.record(session, "continued")
+                    }
+                    continuation.finish()
+                } catch { continuation.finish(throwing: error) }
+            }
+            continuation.onTermination = { _ in task.cancel() }
         }
     }
 }
