@@ -212,6 +212,43 @@ struct AgentResponderTests {
         #expect(origin?["latest"] == "0.5")
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func `code channel context restores paginated thread replies in chronological order`() async {
+        await slack.reply(to: "conversationsHistory", with: .json("""
+        {"ok":true,"messages":[
+          {"text":"latest top-level","ts":"3.0"},
+          {"text":"thread parent","ts":"1.0","reply_count":2}
+        ]}
+        """))
+        await slack.reply(to: "conversationsReplies", with: .json("""
+        {"ok":true,"messages":[
+          {"text":"thread parent","ts":"1.0"},
+          {"text":"first decision","ts":"2.0","thread_ts":"1.0"}
+        ],"response_metadata":{"next_cursor":"page-2"}}
+        """), .json("""
+        {"ok":true,"messages":[
+          {"text":"final decision","ts":"4.0","thread_ts":"1.0"},
+          {"text":"current input","ts":"5.0","thread_ts":"1.0"}
+        ],"response_metadata":{"next_cursor":""}}
+        """))
+        let first = turn(.codeChannel(channel: "C1"), replyThreadTs: "1.0", messageTs: "5.0")
+        let client = await slack.client()
+        let handling = Task { await responder.handle(first, client: client) }
+        await backend.probe.waitForStart(of: first.session)
+        await backend.probe.release(first.session)
+        await handling.value
+        let prompt = await backend.probe.prompts[first.session]?.first ?? ""
+        let expected = ["thread parent", "first decision", "latest top-level", "final decision"]
+        let positions = expected.compactMap { prompt.range(of: $0)?.lowerBound }
+        #expect(positions.count == expected.count)
+        #expect(positions == positions.sorted())
+        #expect(prompt.components(separatedBy: "thread parent").count == 2)
+        #expect(!prompt.contains("current input"))
+        let requests = await slack.requests("conversationsReplies")
+        #expect(requests.count == 2)
+        #expect(requests.last?["cursor"] == "page-2")
+    }
+
     private func turn(
         _ session: SessionKey,
         replyThreadTs: String?,

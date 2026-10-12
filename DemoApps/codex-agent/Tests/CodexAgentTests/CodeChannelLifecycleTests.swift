@@ -57,9 +57,31 @@ struct CodeChannelLifecycleTests {
         #expect(requests.map(\.method) == ["chatPostMessage", "agentsConversationsSetProperties", "agentsConversationsArchive"])
         #expect(requests.first?["thread_ts"] == nil)
         #expect(requests[1]["code_channel"]?.contains("summary_message") == true)
+        #expect(requests[2]["summary_message_ts"] == nil)
         #expect(producer.isSessionStopped)
         do { try await tools.publishView(.diff(content: "x")); Issue.record("Published after archive") } catch {}
         #expect(await slack.requests.count == 3)
+    }
+
+    @Test(arguments: [true, false])
+    func `archive shares a summary for channels with a known origin`(createdHere: Bool) async throws {
+        let slack = FakeSlack()
+        let lifecycle = CodeChannelLifecycle()
+        if createdHere {
+            await slack.reply(to: "agentsConversationsCreate", with: .json(#"{"ok":true,"channel_id":"CODE"}"#))
+            _ = try await lifecycle.create(
+                name: "fix", from: .thread(channel: "C0", threadTs: "1.0"), messageTs: "1.0",
+                client: slack.client(), producer: .init(), logger: .init(label: "test"),
+            )
+        }
+        var tools = await tools(slack)
+        tools.lifecycle = lifecycle
+        if !createdHere {
+            tools.origin = .init(channel: "C0", ts: "1.0")
+        }
+        try await tools.archiveCodeChannel(summary: "Fixed.")
+        let archive = try #require(await slack.requests("agentsConversationsArchive").first)
+        #expect(archive["summary_message_ts"] == FakeSlack.ts)
     }
 
     @Test

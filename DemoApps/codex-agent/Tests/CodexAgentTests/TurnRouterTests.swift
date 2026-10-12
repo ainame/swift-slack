@@ -22,6 +22,24 @@ struct TurnRouterTests {
         guard case let .answer(turn)? = decision else { Issue.record("Command was not routed"); return }
         #expect(turn.session == .codeChannel(channel: "C1"))
         #expect(turn.replyThreadTs == nil)
+        #expect(turn.isCommand)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: ["/review", "/run"])
+    func `first command keeps history without comparing trigger IDs to timestamps`(command: String) async {
+        await slack.channel(recordType: "agent_channel")
+        await slack.reply(to: "conversationsHistory", with: .json("""
+        {"ok":true,"messages":[{"text":"Earlier requirements","ts":"1700000000.000100"}]}
+        """))
+        let client = await slack.client()
+        let handling = router().start(message(command, source: .command, ts: "13345224609.738474920.8088930838d88f008e0"), client: client)
+        let session = SessionKey.codeChannel(channel: "C1")
+        await backend.probe.waitForStart(of: session)
+        await backend.probe.release(session)
+        await handling.value
+        let prompt = await backend.probe.prompts[session]?.first ?? ""
+        #expect(prompt.contains("Earlier requirements"))
+        #expect(prompt.hasSuffix("Hi"))
     }
 
     @Test

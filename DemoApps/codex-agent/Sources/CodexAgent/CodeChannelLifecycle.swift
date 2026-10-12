@@ -54,6 +54,10 @@ actor CodeChannelLifecycle {
         return (channel, launched.insert(session).inserted)
     }
 
+    func hasOrigin(channel: String) -> Bool {
+        channels.values.contains(channel)
+    }
+
     private func check(_ producer: TurnProducer) throws {
         guard producer.reason == nil else { throw CancellationError() }
     }
