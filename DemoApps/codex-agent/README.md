@@ -148,7 +148,7 @@ The agent runs Codex with a read-only sandbox and never asks for approval. Set `
 The demo limits that exposure:
 
 - `ALLOWED_USER_IDS` optionally lists the Slack user IDs the agent answers, comma-separated, and other people get an ephemeral notice. Without it the agent answers everyone and logs a warning at startup; set it when other people share the workspace.
-- Codex never starts in the app's own directory, where `.env` holds the Slack tokens. The app refuses a `CODEX_WORKSPACE` that contains that directory or has a `.env` file, and uses an empty directory when it is not set.
+- The app refuses a `CODEX_WORKSPACE` that contains the app's `.env` file or has a `.env` file of its own, and uses an empty directory when it is not set. If you supply tokens through environment variables and no `.env` file exists, the workspace can contain the app's directory.
 - Codex starts with only the variables it needs (`PATH`, `HOME`, locale, and `CODEX_HOME`), so exported Slack tokens do not reach it.
 
 Messages from anyone in a thread the agent joins can still go into its prompt as context, so treat what they write as untrusted input.

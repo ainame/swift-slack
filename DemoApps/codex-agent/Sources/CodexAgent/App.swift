@@ -257,7 +257,7 @@ struct CodexAgentApp {
                 settings: .init(
                     codexPath: environment.codexPath,
                     model: environment.codexModel,
-                    workspace: environment.workspace.map(checkedWorkspace) ?? emptyWorkspace(),
+                    workspace: environment.workspace.map { try checkedWorkspace($0) } ?? emptyWorkspace(),
                 ),
                 logger: logger,
             )
@@ -279,17 +279,19 @@ struct CodexAgentApp {
         return directory.path(percentEncoded: false)
     }
 
-    /// Rejects a workspace that contains the app's directory, where `.env` holds the Slack tokens, or that
-    /// has a `.env` of its own.
-    private static func checkedWorkspace(_ path: String) throws -> String {
+    /// Rejects a workspace that contains the app's `.env` file or has a `.env` of its own.
+    static func checkedWorkspace(
+        _ path: String,
+        appDirectory: URL = URL(filePath: FileManager.default.currentDirectoryPath),
+    ) throws -> String {
         let workspace = URL(filePath: path).standardizedFileURL.resolvingSymlinksInPath()
-        let appDirectory = URL(filePath: FileManager.default.currentDirectoryPath)
-            .standardizedFileURL.resolvingSymlinksInPath()
+        let appDirectory = appDirectory.standardizedFileURL.resolvingSymlinksInPath()
         let workspacePath = workspace.path(percentEncoded: false)
         let appPath = appDirectory.path(percentEncoded: false)
         let containsApp = appPath == workspacePath
             || appPath.hasPrefix(workspacePath.hasSuffix("/") ? workspacePath : workspacePath + "/")
-        if containsApp {
+        if containsApp,
+           FileManager.default.fileExists(atPath: appDirectory.appending(path: ".env").path(percentEncoded: false)) {
             throw ConfigurationError.unsafeWorkspace("CODEX_WORKSPACE contains the app's directory and its .env")
         }
         if FileManager.default.fileExists(atPath: workspace.appending(path: ".env").path(percentEncoded: false)) {
