@@ -16,19 +16,23 @@ actor CodexBackend: AgentBackend {
         var codexPath: String?
         var model: String?
         var workspace: String
+        var sessionWorkspaces: String?
+        var writable = false
         var idleTimeout: Duration = .seconds(600)
     }
 
     private let settings: Settings
     private let logger: Logger
+    private let workspaces: SessionWorkspaces?
     private var sessions: [SessionKey: CodexSession] = [:]
     /// Threads of closed sessions, resumed when the session continues.
     private var threadIDs: [SessionKey: String] = [:]
     private var idleTimers: [SessionKey: Task<Void, Never>] = [:]
 
-    init(settings: Settings, logger: Logger) {
+    init(settings: Settings, logger: Logger) throws {
         self.settings = settings
         self.logger = logger
+        workspaces = try settings.sessionWorkspaces.map { try SessionWorkspaces(source: settings.workspace, root: $0) }
     }
 
     nonisolated func respond(
@@ -69,10 +73,22 @@ actor CodexBackend: AgentBackend {
         control: TurnControl,
         continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
     ) async throws {
+        guard !control.isCancelled else { return }
         idleTimers.removeValue(forKey: key)?.cancel()
-        let session = sessions[key] ?? CodexSession(settings: settings, threadID: threadIDs[key], logger: logger)
+        let session: CodexSession
+        if let existing = sessions[key] {
+            session = existing
+        } else {
+            var scoped = settings
+            if case .codeChannel = key, let workspaces {
+                scoped.workspace = try await workspaces.workspace(for: key)
+                scoped.writable = true
+            }
+            session = CodexSession(settings: scoped, threadID: threadIDs[key], logger: logger)
+        }
         sessions[key] = session
         defer { scheduleIdleClose(key, session: session) }
+        guard !control.isCancelled else { return }
         try await session.run(prompt: prompt, tools: tools, control: control, continuation: continuation)
     }
 
@@ -131,7 +147,7 @@ private final class TurnControl: Sendable {
 
 private actor CodexSession {
     private let settings: CodexBackend.Settings
-    private let toolRouter = ToolRouter()
+    private let toolRouter: ToolRouter
     private let logger: Logger
     private var codex: Codex?
     private var thread: CodexThread?
@@ -144,6 +160,7 @@ private actor CodexSession {
         self.settings = settings
         self.threadID = threadID
         self.logger = logger
+        toolRouter = ToolRouter(writeWorkspace: settings.writable ? settings.workspace : nil)
     }
 
     func run(
@@ -181,6 +198,7 @@ private actor CodexSession {
             isRunning = false
             toolRouter.tools = nil
         }
+        guard !control.isCancelled else { return }
         let thread = try await prepareThread()
         guard !control.isCancelled else { return }
 
@@ -217,12 +235,14 @@ private actor CodexSession {
                 environment: Self.childEnvironment(),
                 clientName: "swift-slack-codex-agent",
                 dynamicToolCallHandler: { [toolRouter] call in await toolRouter.handle(call) },
+                commandApprovalHandler: { [toolRouter] request in await toolRouter.approveCommand(request) },
+                fileChangeApprovalHandler: { [toolRouter] request in await toolRouter.approveFiles(request) },
             ),
             logger: logger,
         )
         self.codex = codex
         var options = ThreadOptions(
-            approvalPolicy: .never,
+            approvalPolicy: settings.writable ? .untrusted : .never,
             cwd: settings.workspace,
             developerInstructions: """
             You are answering a person in Slack. Keep answers short and use Markdown that Slack renders: \
@@ -236,9 +256,15 @@ private actor CodexSession {
             text and wait: the person cannot reply until your turn ends. Call `\(AgentToolset.readSlack)` when \
             they refer to earlier messages, and `\(AgentToolset.setTitle)` once the topic of the \
             conversation is clear.
+
+            For substantial coding work, call `start_code_channel` from an ordinary conversation. Its original
+            task is started in the new channel automatically; do not execute it twice. Inside a code channel,
+            publish useful artifacts with `publish_code_view`. Diff views update automatically. Only archive
+            with `archive_code_channel` when the person asks to end the task. A read-only sandbox cannot edit;
+            explain that writable code sessions require CODEX_SESSION_WORKSPACES configuration.
             """,
             model: settings.model,
-            sandboxPreset: .readOnly,
+            sandboxPreset: settings.writable ? .workspaceWrite : .readOnly,
         )
         let thread: CodexThread
         if let threadID {
@@ -287,6 +313,8 @@ struct NotificationTranslator {
         case let .agentMessageDelta(payload):
             streamedMessageIDs.insert(payload.itemId)
             return [text(payload.delta, inMessage: payload.itemId)]
+        case let .turnDiffUpdated(payload):
+            return [.diff(payload.diff)]
         case let .itemCompleted(payload):
             if case let .agentMessage(message) = payload.item, !streamedMessageIDs.contains(message.id) {
                 return message.text.isEmpty ? [] : [text(message.text, inMessage: message.id)]
@@ -392,8 +420,36 @@ struct NotificationTranslator {
 
 /// Routes Codex's tool calls to the running turn's ``AgentTools``. Codex calls the handler registered when
 /// the app-server starts, and a session runs one turn at a time, so the current turn's tools are set here.
-private final class ToolRouter: Sendable {
+final class ToolRouter: Sendable {
     private let current = Mutex<(any AgentTools)?>(nil)
+    private let writeWorkspace: String?
+
+    init(writeWorkspace: String? = nil) {
+        self.writeWorkspace = writeWorkspace
+    }
+
+    private func permits(_ directory: String?) -> Bool {
+        guard let writeWorkspace else { return false }
+        guard let directory else { return true }
+        let root = URL(filePath: writeWorkspace).resolvingSymlinksInPath().path
+        let path = URL(filePath: directory, relativeTo: URL(filePath: root, directoryHint: .isDirectory))
+            .standardizedFileURL.resolvingSymlinksInPath().path
+        return path == root || path.hasPrefix(root + "/")
+    }
+
+    func approveCommand(_ request: CommandApprovalRequest) async -> ApprovalDecision {
+        guard permits(request.workingDirectory), let tools, let command = request.command, !command.isEmpty else { return .deny }
+        let details = [command, request.workingDirectory, request.reason]
+            .compactMap(\.self).joined(separator: "\n")
+        return await tools.approve(.command(details)) ? .approve : .deny
+    }
+
+    func approveFiles(_ request: FileChangeApprovalRequest) async -> ApprovalDecision {
+        guard permits(request.grantRoot), let tools else { return .deny }
+        let details = [request.reason ?? "Codex requested permission to modify files", request.grantRoot ?? writeWorkspace]
+            .compactMap(\.self).joined(separator: "\n")
+        return await tools.approve(.files(details)) ? .approve : .deny
+    }
 
     var tools: (any AgentTools)? {
         get { current.withLock { $0 } }
@@ -418,11 +474,14 @@ enum AgentToolset {
     static let setTitle = "set_title"
     static let readSlack = "read_slack"
     static let askUser = "ask_user"
+    static let startCodeChannel = "start_code_channel"
+    static let publishCodeView = "publish_code_view"
+    static let archiveCodeChannel = "archive_code_channel"
 
     static let specs: [DynamicToolSpec] = [
         function(
             SlackUI.toolName,
-            """
+            description: """
             Show cards under your answer in Slack, one per item worth highlighting. Each card may link to an \
             https URL and offer a follow-up question the person can ask with one click.
             """,
@@ -448,13 +507,13 @@ enum AgentToolset {
         ),
         function(
             setTitle,
-            "Rename this Slack conversation to a short title that says what it is about, once the topic is clear.",
+            description: "Rename this Slack conversation to a short title that says what it is about, once the topic is clear.",
             properties: ["title": ["type": "string", "minLength": 1, "maxLength": 200]],
             required: ["title"],
         ),
         function(
             readSlack,
-            """
+            description: """
             Read recent messages from this Slack conversation: the current thread, or the channel it is in. \
             Use it when the person refers to something said earlier.
             """,
@@ -466,7 +525,7 @@ enum AgentToolset {
         ),
         function(
             askUser,
-            """
+            description: """
             Ask the person to choose between a few options and wait for their answer. Use it before acting on \
             a choice that is theirs to make, such as which approach to take.
             """,
@@ -481,7 +540,7 @@ enum AgentToolset {
             ],
             required: ["question", "options"],
         ),
-    ]
+    ] + codeSpecs
 
     static func title(for tool: String) -> String {
         switch tool {
@@ -502,6 +561,20 @@ enum AgentToolset {
         do {
             let arguments = try JSONEncoder().encode(call.arguments)
             switch call.tool {
+            case startCodeChannel:
+                let args = try decode(StartCodeChannelArguments.self, from: arguments)
+                guard !args.name.isEmpty else { throw AgentToolError(description: "Pass a channel name.") }
+                let channel = try await tools.startCodeChannel(name: args.name)
+                return reply("The task continues in <#\(channel)>. Do not perform this task again in the origin thread.", success: true)
+            case publishCodeView:
+                let args = try decode(CodeViewArguments.self, from: arguments)
+                try await tools.publishView(args.view())
+                return reply("Published the code channel view.", success: true)
+            case archiveCodeChannel:
+                let args = try decode(ArchiveArguments.self, from: arguments)
+                guard !args.summary.isEmpty else { throw AgentToolError(description: "Pass a summary.") }
+                try await tools.archiveCodeChannel(summary: args.summary)
+                return reply("Posted the summary and archived the code channel.", success: true)
             case SlackUI.toolName:
                 _ = try SlackUI(arguments: arguments)
                 return reply("The cards will appear under your answer.", success: true)
@@ -570,9 +643,9 @@ enum AgentToolset {
         DynamicToolCallResponse(contentItems: [.inputText(.init(text: text, type: .inputText))], success: success)
     }
 
-    private static func function(
+    static func function(
         _ name: String,
-        _ description: String,
+        description: String,
         properties: JSONObject,
         required: [String],
     ) -> DynamicToolSpec {

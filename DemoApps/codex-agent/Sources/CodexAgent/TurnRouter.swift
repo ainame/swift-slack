@@ -7,6 +7,7 @@ struct IncomingMessage: Sendable {
     enum Source: Sendable {
         case message
         case mention
+        case command
     }
 
     let source: Source
@@ -171,6 +172,7 @@ actor TurnRouter {
                     origin: origin,
                 )
             case .other, nil:
+                guard message.source != .command else { return nil }
                 // A failed lookup answers as in any channel; the next message looks the channel up again.
                 turn = threadTurn(for: message)
                 if message.source == .message {
@@ -291,6 +293,10 @@ final class RoutingAttempts: Sendable {
 
     var count: Int {
         attempts.withLock(\.count)
+    }
+
+    var isEmpty: Bool {
+        attempts.withLock(\.isEmpty)
     }
 }
 

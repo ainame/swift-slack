@@ -25,12 +25,79 @@ struct SlackAgentTools: AgentTools {
     let isTitledByUser: @Sendable () async -> Bool
     /// The turn's stop signal, which tells whether Slack has stopped the session.
     let producer: TurnProducer
+    var lifecycle = CodeChannelLifecycle()
+    var messageTs: String?
+    var logger = Logger(label: "codex-agent.tools")
+    var onCodeChannel: @Sendable (String) async -> Void = { _ in }
+    var endSession: @Sendable () async -> Void = {}
+
+    func startCodeChannel(name: String) async throws -> String {
+        try checkSession()
+        guard let originTs = messageTs ?? session.threadTs else {
+            if case .codeChannel = session {
+                return session.channel
+            }
+            throw AgentToolError(description: "There is no origin message for this conversation.")
+        }
+        let created = try await lifecycle.create(
+            name: name, from: session, messageTs: originTs, client: client, producer: producer, logger: logger,
+        )
+        try checkSession()
+        if created.shouldLaunch {
+            await onCodeChannel(created.channel)
+        }
+        return created.channel
+    }
+
+    func publishView(_ view: CodeChannel.View) async throws {
+        try checkCodeChannel()
+        let response = try await client.setCodeChannelView(channelId: session.channel, view: view)
+        if let warning = response.warning {
+            logger.warning("Code channel view: \(warning)")
+        }
+    }
+
+    func archiveCodeChannel(summary: String) async throws {
+        try checkCodeChannel()
+        let posted = try await client.chatPostMessage(body: .json(.init(
+            channel: session.channel, text: summary,
+        ))).ok.body.json.checked("chat.postMessage")
+        guard let ts = posted.ts else { throw AgentToolError(description: "Slack did not return the summary timestamp.") }
+        try checkSession()
+        let properties = try await client.setCodeChannelProperties(
+            channelId: session.channel, properties: .init(summaryMessage: .init(messageTs: ts)),
+        )
+        if let warning = properties.warning {
+            logger.warning("Code channel summary: \(warning)")
+        }
+        try checkSession()
+        _ = try await client.agentsConversationsArchive(body: .json(.init(channelId: session.channel)))
+            .ok.body.json.checked("agents.conversations.archive")
+        await endSession()
+    }
+
+    func approve(_ request: AgentApproval) async -> Bool {
+        // Never ask someone to approve details that the Slack message cannot show in full.
+        guard producer.reason == nil, request.question.count <= 2800 else { return false }
+        do {
+            let answer = try await askUser(request.question, options: ["Approve", "Deny"])
+            return answer == "Approve" && producer.reason == nil
+        } catch { return false }
+    }
+
+    private func checkCodeChannel() throws {
+        try checkSession()
+        guard case .codeChannel = session else {
+            throw AgentToolError(description: "Start a code channel first; views and archiving belong to that channel.")
+        }
+    }
 
     func setTitle(_ title: String) async throws {
         try checkSession()
         guard await !isTitledByUser() else {
             throw AgentToolError(description: "The person named this conversation; keep their title.")
         }
+        try checkSession()
         _ = try await client.agentsSessionsRename(body: .json(.init(
             channelId: session.channel,
             title: String(title.prefix(200)),
@@ -74,6 +141,12 @@ struct SlackAgentTools: AgentTools {
 
         // Waiting for the person, not working: `suspended` shows that the agent needs input.
         await setStatus("suspended")
+        let stopWaiter = Task { [producer, questions, session] in
+            await producer.waitForStop()
+            guard !Task.isCancelled else { return }
+            await questions.cancel(session)
+        }
+        defer { stopWaiter.cancel() }
         let outcome: Result<String, any Error>
         do {
             outcome = try await .success(questions.wait(
@@ -81,16 +154,19 @@ struct SlackAgentTools: AgentTools {
                 session: session,
                 options: options,
                 userId: userId,
-                isCancelled: { [producer] in producer.isSessionStopped },
+                isCancelled: { [producer] in producer.reason != nil },
             ))
         } catch {
             outcome = .failure(error)
         }
+        stopWaiter.cancel()
+        await stopWaiter.value
         // A stopped session takes no status or message updates; Slack has already ended it.
         try checkSession()
         await setStatus("processing")
 
         if let ts = posted.ts {
+            try checkSession()
             let summary = switch outcome {
             case let .success(choice): "<@\(userId)> chose *\(choice)*."
             case .failure: "_No answer._"
@@ -124,13 +200,13 @@ struct SlackAgentTools: AgentTools {
     }
 
     private func checkSession() throws {
-        if producer.isSessionStopped {
+        if producer.reason != nil || Task.isCancelled {
             throw AgentToolError(description: "The person stopped the turn.")
         }
     }
 
     private func setStatus(_ status: String) async {
-        guard !producer.isSessionStopped else { return }
+        guard producer.reason == nil, !Task.isCancelled else { return }
         _ = try? await client.agentsSessionsSetStatus(body: .json(.init(
             channelId: session.channel,
             status: status,
@@ -146,6 +222,7 @@ actor PendingQuestions {
         let options: [String]
         let userId: String
         let continuation: CheckedContinuation<String, any Error>
+        let timer: Task<Void, Never>
     }
 
     private let timeout: Duration
@@ -165,16 +242,28 @@ actor PendingQuestions {
         userId: String,
         isCancelled: @Sendable () -> Bool = { false },
     ) async throws -> String {
-        try await withCheckedThrowingContinuation { continuation in
-            questions[id] = Question(session: session, options: options, userId: userId, continuation: continuation)
-            if isCancelled() {
-                finish(id, with: .failure(AgentToolError(description: "The person stopped the turn.")))
-                return
+        try await withTaskCancellationHandler {
+            try Task.checkCancellation()
+            return try await withCheckedThrowingContinuation { continuation in
+                let timer = Task {
+                    try? await Task.sleep(for: timeout)
+                    guard !Task.isCancelled else { return }
+                    self.finish(id, with: .failure(AgentToolError(description: "The person did not answer.")))
+                }
+                questions[id] = Question(
+                    session: session,
+                    options: options,
+                    userId: userId,
+                    continuation: continuation,
+                    timer: timer,
+                )
+                if isCancelled() {
+                    finish(id, with: .failure(AgentToolError(description: "The person stopped the turn.")))
+                    return
+                }
             }
-            Task {
-                try? await Task.sleep(for: timeout)
-                self.finish(id, with: .failure(AgentToolError(description: "The person did not answer.")))
-            }
+        } onCancel: {
+            Task { await self.finish(id, with: .failure(CancellationError())) }
         }
     }
 
@@ -211,7 +300,9 @@ actor PendingQuestions {
     }
 
     private func finish(_ id: String, with result: Result<String, any Error>) {
-        questions.removeValue(forKey: id)?.continuation.resume(with: result)
+        guard let question = questions.removeValue(forKey: id) else { return }
+        question.timer.cancel()
+        question.continuation.resume(with: result)
     }
 }
 

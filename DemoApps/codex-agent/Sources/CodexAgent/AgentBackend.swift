@@ -31,6 +31,8 @@ enum SessionKey: Hashable, Sendable, CustomStringConvertible {
 typealias TaskUpdate = StreamingMessage.TaskUpdate
 
 enum AgentEvent: Sendable, Equatable {
+    /// The current aggregate unified diff for the turn.
+    case diff(String)
     /// A task started or changed status.
     case task(TaskUpdate)
     /// More text for the answer, appended to what was streamed so far.
@@ -42,6 +44,10 @@ enum AgentEvent: Sendable, Equatable {
 /// Slack actions an agent can take during a turn, offered to it as tools. Each turn gets its own,
 /// scoped to the turn's session and the person it answers.
 protocol AgentTools: Sendable {
+    func startCodeChannel(name: String) async throws -> String
+    func publishView(_ view: CodeChannel.View) async throws
+    func archiveCodeChannel(summary: String) async throws
+    func approve(_ request: AgentApproval) async -> Bool
     /// Renames the agent session. Throws ``AgentToolError`` when the person has named it themselves.
     func setTitle(_ title: String) async throws
 
@@ -50,6 +56,36 @@ protocol AgentTools: Sendable {
 
     /// Asks the person to pick one of `options` and returns their choice.
     func askUser(_ question: String, options: [String]) async throws -> String
+}
+
+enum AgentApproval: Sendable, Equatable {
+    case command(String)
+    case files(String)
+
+    var question: String {
+        switch self {
+        case let .command(details): "Approve this command?\n\(details)"
+        case let .files(details): "Approve these file changes?\n\(details)"
+        }
+    }
+}
+
+extension AgentTools {
+    func startCodeChannel(name _: String) async throws -> String {
+        throw AgentToolError(description: "Code channels are unavailable in this backend.")
+    }
+
+    func publishView(_: CodeChannel.View) async throws {
+        throw AgentToolError(description: "Code channel views are unavailable in this backend.")
+    }
+
+    func archiveCodeChannel(summary _: String) async throws {
+        throw AgentToolError(description: "Code channels are unavailable in this backend.")
+    }
+
+    func approve(_: AgentApproval) async -> Bool {
+        false
+    }
 }
 
 enum SlackReadScope: String, Sendable, Decodable {

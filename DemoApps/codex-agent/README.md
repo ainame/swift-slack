@@ -36,12 +36,15 @@ The mock backend sends two cards the same way, so `AGENT_BACKEND=mock` shows the
 
 ## Tools that act in Slack
 
-Besides `show_cards`, the codex backend registers three tools. Each turn gets a `SlackAgentTools` scoped to its session, the thread its reply goes into, and the person it answers, and the mock backend calls the same tools, so `AGENT_BACKEND=mock` shows them too.
+Besides `show_cards`, the Codex backend registers conversation and Code channel tools. Each turn gets a `SlackAgentTools` scoped to its session, the thread its reply goes into, and the person it answers, and the mock backend calls the same tools, so `AGENT_BACKEND=mock` shows them too.
 
 | Tool | What it does |
 | --- | --- |
 | `set_title` | Renames the session with `agents.sessions.rename`. It refuses once the person has renamed the session (`agent_session_title_changed`). |
 | `read_slack` | Returns up to 50 recent messages from the thread the reply goes into or from its channel, with `conversations.replies` or `conversations.history`. A top-level reply in a code channel has no thread, so it reads the channel. It cannot read other conversations. |
+| `start_code_channel` | Creates or reuses a Code channel for substantial coding work, preserves the origin link, registers `/review` and `/run`, and starts the original task there once. The agent decides when to call it; there is no keyword heuristic. |
+| `publish_code_view` | Publishes HTML, unified diff, Block Kit, an existing Canvas or a PR URL in the current Code channel. Stable keys update the same artifact. Codex diff notifications also update the channel's diff view automatically. |
+| `archive_code_channel` | Posts and attaches a summary, then archives the channel and stops the turn. The tool is reserved for a person's request to end the task. |
 | `ask_user` | Posts the question where the reply goes, with a button per option, sets the session to `suspended`, and returns the option the person picks. Only that person can answer; the question expires after 10 minutes. |
 
 Tool calls appear as task cards, and failures go back to Codex as messages it can act on. swift-codex runs a tool handler while it reads the app-server's messages, so a waiting `ask_user` holds every other message, including the reply to an interrupt. The stop button therefore ends the question before it interrupts the turn.
@@ -101,6 +104,8 @@ Agent features require a paid plan or a [Developer Program](https://api.slack.co
 display_information:
   name: Codex Agent
 features:
+  code_channels:
+    enabled: true
   agent_view:
     agent_description: Ask Codex about the code in its workspace.
   app_home:
@@ -118,6 +123,7 @@ oauth_config:
       - channels:history
       - channels:read
       - chat:write
+      - code_channels:manage
       - groups:history
       - groups:read
       - im:history
@@ -148,7 +154,13 @@ brew install --cask codex
 codex login
 ```
 
-The agent runs Codex with a read-only sandbox and never asks for approval. Set `CODEX_WORKSPACE` to a repository to ask about it; otherwise Codex works in an empty temporary directory and answers general questions. Each Slack session, a thread or a code channel, runs its own Codex thread in its own `codex app-server` process, because swift-codex allows one active turn per process. A session idle for 10 minutes closes its process, and its next message resumes the Codex thread in a new one. A stopped turn is interrupted and read to its end before the session's next turn starts.
+The agent runs Codex with a read-only sandbox by default. Set `CODEX_WORKSPACE` to a repository to ask about it; otherwise Codex works in an empty temporary directory and answers general questions. Each Slack session, a thread or a code channel, runs its own Codex thread in its own `codex app-server` process, because swift-codex allows one active turn per process. A session idle for 10 minutes closes its process, and its next message resumes the Codex thread in a new one. A stopped turn is interrupted and read to its end before the session's next turn starts.
+
+To enable coding, set both `CODEX_WORKSPACE` (a local Git repository) and `CODEX_SESSION_WORKSPACES` (a separate directory outside that repository). Only Code channel sessions become writable. Each gets an independent clone of committed content, with no hardlinks or shared Git directory. The local source remote is removed, so pushes do not target the developer's checkout; configure a publishing remote explicitly when needed. The original checkout and uncommitted changes are preserved. Checkouts remain on disk for inspection, and idle Codex processes resume in their existing checkout. After an app restart, new checkouts are allocated; conversation IDs and workspaces are not persisted across app restarts.
+
+Writable sessions use Codex's `workspace-write` sandbox and `untrusted` approval policy. Both command and file-change approval requests are shown as Slack buttons to the requesting person. Outside-checkout working directories and grant roots are refused; absent handlers, timeout, cancellation and session stop deny requests. Trusted operations inside the sandbox may run without an approval request, as determined by Codex's policy. The source repository should contain only material the agent is allowed to read: tracked `.env` files and escaping symlinks cause allocation to fail.
+
+The generated manifest model does not represent `features.code_channels`, so configure this YAML directly and reinstall the app for its new scope. In HTTP mode add `features.code_channels.slash_command_url` alongside the request URLs. Code channel `info` context items are used; `code_channel_action` has no upstream java-slack-sdk model and is not handled. Generated readback also omits views, summary messages and item types. Canvas publication uses an existing canvas ID.
 
 ### 3. Decide who can use it
 
@@ -183,6 +195,9 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 - `Sources/CodexAgent/AgentResponder.swift`: the response loop for one message, busy sessions, and the stop button
 - `Sources/CodexAgent/TurnProducer.swift`: the stop control for a turn's producer, telling a local cancellation from a session Slack stopped
 - `Sources/CodexAgent/ConversationHistory.swift`: reading a thread or a code channel for the prompt and the tools
+- `Sources/CodexAgent/CodeChannelLifecycle.swift`: channel creation, idempotency and initial properties/commands
+- `Sources/CodexAgent/SessionWorkspaces.swift`: independent writable checkouts
+- `Sources/CodexAgent/CodeTools.swift`: Code channel tool schemas and typed view arguments
 - `Sources/CodexAgent/CodexBackend.swift`: one Codex thread per session, with notifications mapped to tasks and text
 - `Sources/CodexAgent/MockBackend.swift`: a scripted backend for trying the app without Codex
 - `Sources/CodexAgent/Feedback.swift`: the feedback buttons and their action handler

@@ -46,15 +46,23 @@ struct TurnProducer: Sendable {
         signal.continuation.finish()
     }
 
+    func waitForStop() async {
+        for await _ in signal.stopped {}
+    }
+
     func run(_ operation: @escaping @Sendable () async -> Void) async {
-        await withTaskGroup(of: Void.self) { group in
-            group.addTask { await operation() }
-            group.addTask { [signal] in
-                for await _ in signal.stopped {}
+        await withTaskCancellationHandler {
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask { await operation() }
+                group.addTask { [signal] in
+                    for await _ in signal.stopped {}
+                }
+                // Production finishing also cancels the waiter, so a normal turn needs no stop signal.
+                _ = await group.next()
+                group.cancelAll()
             }
-            // Production finishing also cancels the waiter, so a normal turn needs no stop signal.
-            _ = await group.next()
-            group.cancelAll()
+        } onCancel: {
+            cancel()
         }
     }
 }

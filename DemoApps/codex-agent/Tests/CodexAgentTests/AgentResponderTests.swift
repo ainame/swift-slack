@@ -173,8 +173,7 @@ struct AgentResponderTests {
 
         let handling = Task { await responder.handle(failing, client: client) }
         await slack.waitFor("chatStartStream")
-        // streamMessage reports the failure once the input yields again or ends, so let the turn finish.
-        await backend.probe.release(failing.session)
+        // Delivery failure cancels the paused input and joins production without another backend event.
         await handling.value
 
         let active = await slack.requests("agentsSessionsSetStatus").filter { $0["status"] == "active" }

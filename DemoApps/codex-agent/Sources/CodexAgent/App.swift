@@ -22,6 +22,7 @@ struct CodexAgentApp {
         let codexPath: String?
         let codexModel: String?
         let workspace: String?
+        let sessionWorkspaces: String?
         /// The users the agent answers, or everyone when empty.
         let allowedUserIds: Set<String>
     }
@@ -139,13 +140,25 @@ struct CodexAgentApp {
 
         Feedback.register(on: router, logger: logger)
 
+        for command in ["/review", "/run"] {
+            router.onSlashCommand(command) { context, payload in
+                try await context.ack()
+                let prompt = command == "/review" ? "Review the current changes. \(payload.text)" : payload.text
+                guard !prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+                turns.start(.init(
+                    source: .command, eventId: payload.triggerId, channel: payload.channelId, isDirectMessage: false,
+                    ts: payload.triggerId, threadTs: nil, userId: payload.userId, text: prompt, teamId: payload.teamId,
+                ), client: context.client)
+            }
+        }
+
         // Answers to the agent's ask_user tool, one action_id per option. Only the person asked can answer.
         for index in 0 ..< SlackAgentTools.maxOptions {
             let actionId = SlackAgentTools.choiceActionId(index)
             router.onAction(actionId) { context, payload in
                 try await context.ack()
                 guard let id = payload.blockActions.first(where: { $0.actionId == actionId })?.value,
-                      let user = payload.user.id, let channel = payload.container.channelId else {
+                      let user = payload.user.id, isAllowed(user), let channel = payload.container.channelId else {
                     return
                 }
                 let notice: String? = switch await questions.answer(id: id, index: index, userId: user) {
@@ -222,6 +235,9 @@ struct CodexAgentApp {
     private static func makeBackend(from environment: Environment) throws -> any AgentBackend {
         switch environment.backend {
         case "codex":
+            if environment.sessionWorkspaces != nil, environment.workspace == nil {
+                throw ConfigurationError.missingEnvironmentVariable("CODEX_WORKSPACE")
+            }
             // Codex can read the whole disk, even in its read-only sandbox, and its answers go to Slack.
             // Keep the app's own secrets out of its working directory, and warn when anyone can ask.
             if environment.allowedUserIds.isEmpty {
@@ -232,6 +248,7 @@ struct CodexAgentApp {
                     codexPath: environment.codexPath,
                     model: environment.codexModel,
                     workspace: environment.workspace.map { try checkedWorkspace($0) } ?? emptyWorkspace(),
+                    sessionWorkspaces: environment.sessionWorkspaces,
                 ),
                 logger: logger,
             )
@@ -297,6 +314,7 @@ struct CodexAgentApp {
             codexPath: normalized(configuration.string(forKey: "CODEX_PATH")),
             codexModel: normalized(configuration.string(forKey: "CODEX_MODEL")),
             workspace: normalized(configuration.string(forKey: "CODEX_WORKSPACE")),
+            sessionWorkspaces: normalized(configuration.string(forKey: "CODEX_SESSION_WORKSPACES")),
             allowedUserIds: Set(
                 (configuration.string(forKey: "ALLOWED_USER_IDS") ?? "")
                     .split(separator: ",")
