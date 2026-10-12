@@ -32,3 +32,8 @@ Web API methods and request parameters come from the community-maintained [slack
 
 - <doc:StreamingMessages>
 - ``StreamingMessage``
+
+### Code channels
+
+- <doc:CodeChannels>
+- ``CodeChannel``
