@@ -9,6 +9,10 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+### Fixed
+
+* Fixed the Codex agent demo rejecting a workspace containing the app directory when no `.env` file exists, allowing startup with tokens supplied through environment variables - #254
+
 ## [2027.1.0-beta.2] - 2026-10-12
 
 This beta expands swift-slack's agent APIs and adds a public message streaming API. It builds on beta.1's Java-derived models and new Block Kit blocks; APIs may still change before the January 2027 release.
