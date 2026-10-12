@@ -16,8 +16,8 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Fixed
 
+* **BREAKING**: Accepted `team: null` in Block Kit button interactions from organization-installed apps, allowing approval and other action handlers to run. `BlockActionsPayload.team` is now optional; use optional chaining or unwrap it before accessing workspace information - #255
 * Reported Slack's Socket Mode connection error instead of hiding it behind a missing-URL error, and restored bot authentication after failed connection requests - #255
-
 * Cancelled cooperative Sendable streaming inputs immediately on delivery failure, allowing apps to stop idle producers and pending questions - #255
 * Preserved unsent streaming content and closing blocks when local cancellation occurs during batching or a rate-limit delay - #255
 
