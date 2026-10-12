@@ -3,6 +3,8 @@ import Logging
 import SlackKit
 
 /// ``AgentTools`` for one turn, acting in the turn's session for the person it answers.
+///
+/// Once Slack has stopped the session, the tools fail without calling Slack.
 struct SlackAgentTools: AgentTools {
     /// The `ask_user` tool's schema allows two to five options.
     static let maxOptions = 5
@@ -14,13 +16,18 @@ struct SlackAgentTools: AgentTools {
 
     let client: any APIProtocol
     let session: SessionKey
+    /// The thread the turn replies in, or `nil` for a top-level reply in a code channel.
+    let replyThreadTs: String?
     let userId: String
     let identity: BotIdentity?
     let questions: PendingQuestions
     /// Whether the person has renamed the session, so the agent leaves the title alone.
     let isTitledByUser: @Sendable () async -> Bool
+    /// The turn's stop signal, which tells whether Slack has stopped the session.
+    let producer: TurnProducer
 
     func setTitle(_ title: String) async throws {
+        try checkSession()
         guard await !isTitledByUser() else {
             throw AgentToolError(description: "The person named this conversation; keep their title.")
         }
@@ -31,33 +38,33 @@ struct SlackAgentTools: AgentTools {
         ))).ok.body.json.checked("agents.sessions.rename")
     }
 
+    /// Reads the thread the turn replies in. A top-level reply in a code channel has no thread, so `thread`
+    /// reads the channel, which is that session's conversation.
     func readSlack(_ scope: SlackReadScope, limit: Int) async throws -> String {
-        let messages: [Message] = switch scope {
-        case .thread:
-            try await Array(ThreadHistory.messages(in: session, client: client).suffix(limit))
-        case .channel:
-            try await client.conversationsHistory(body: .json(.init(
+        try checkSession()
+        let messages: [Message] = if scope == .thread, let replyThreadTs {
+            try await Array(ConversationHistory.replies(
                 channel: session.channel,
-                limit: Double(limit),
-            ))).ok.body.json.checked("conversations.history").messages?.reversed() ?? []
+                threadTs: replyThreadTs,
+                client: client,
+            ).suffix(limit))
+        } else {
+            try await ConversationHistory.channelMessages(channel: session.channel, limit: limit, client: client)
         }
-        let lines = messages.compactMap { message -> String? in
-            guard let text = message.text, !text.isEmpty else { return nil }
-            let author = identity?.isAuthor(of: message) == true ? "You" : "<@\(message.user ?? "unknown")>"
-            return "\(author): \(text)"
-        }
+        let lines = messages.compactMap { ConversationHistory.line(for: $0, identity: identity) }
         // Keep the tool result small; the conversation may be long.
         let transcript = lines.joined(separator: "\n\n")
         return transcript.isEmpty ? "There are no messages." : String(transcript.suffix(8000))
     }
 
     func askUser(_ question: String, options: [String]) async throws -> String {
+        try checkSession()
         let id = UUID().uuidString
         let posted = try await client.chatPostMessage(body: .json(.init(
             blocks: Self.questionBlocks(id: id, question: question, options: options, userId: userId),
             channel: session.channel,
             text: question,
-            threadTs: session.threadTs,
+            threadTs: replyThreadTs,
         ))).ok.body.json
         guard posted.ok else {
             // `invalid_blocks` explains itself in response_metadata.messages.
@@ -69,10 +76,18 @@ struct SlackAgentTools: AgentTools {
         await setStatus("suspended")
         let outcome: Result<String, any Error>
         do {
-            outcome = try await .success(questions.wait(id: id, session: session, options: options, userId: userId))
+            outcome = try await .success(questions.wait(
+                id: id,
+                session: session,
+                options: options,
+                userId: userId,
+                isCancelled: { [producer] in producer.isSessionStopped },
+            ))
         } catch {
             outcome = .failure(error)
         }
+        // A stopped session takes no status or message updates; Slack has already ended it.
+        try checkSession()
         await setStatus("processing")
 
         if let ts = posted.ts {
@@ -108,7 +123,14 @@ struct SlackAgentTools: AgentTools {
         ]
     }
 
+    private func checkSession() throws {
+        if producer.isSessionStopped {
+            throw AgentToolError(description: "The person stopped the turn.")
+        }
+    }
+
     private func setStatus(_ status: String) async {
+        guard !producer.isSessionStopped else { return }
         _ = try? await client.agentsSessionsSetStatus(body: .json(.init(
             channelId: session.channel,
             status: status,
@@ -134,9 +156,21 @@ actor PendingQuestions {
     }
 
     /// Waits until the person picks an option, the question times out, or its session is stopped.
-    func wait(id: String, session: SessionKey, options: [String], userId: String) async throws -> String {
+    ///
+    /// `isCancelled` reports a stop that ``cancel(_:)`` handled before this question was registered.
+    func wait(
+        id: String,
+        session: SessionKey,
+        options: [String],
+        userId: String,
+        isCancelled: @Sendable () -> Bool = { false },
+    ) async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
             questions[id] = Question(session: session, options: options, userId: userId, continuation: continuation)
+            if isCancelled() {
+                finish(id, with: .failure(AgentToolError(description: "The person stopped the turn.")))
+                return
+            }
             Task {
                 try? await Task.sleep(for: timeout)
                 self.finish(id, with: .failure(AgentToolError(description: "The person did not answer.")))
@@ -182,4 +216,3 @@ actor PendingQuestions {
 }
 
 extension Components.Schemas.AgentsSessionsRenameResponse: SlackResponse {}
-extension Components.Schemas.ConversationsHistoryResponse: SlackResponse {}

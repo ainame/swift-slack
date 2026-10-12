@@ -41,9 +41,17 @@ enum Feedback {
             _ = try await context.client.chatPostEphemeral(body: .json(.init(
                 channel: channel,
                 text: text,
-                threadTs: payload.message?.threadTs ?? payload.container.messageTs,
+                threadTs: payload.messageThreadTs,
                 user: user,
             ))).ok.body.json.checked("chat.postEphemeral")
         }
+    }
+}
+
+extension BlockActionsPayload {
+    /// The thread of the message the action came from, where a notice about it goes. A top-level reply in a
+    /// code channel has none, so the notice goes to the channel.
+    var messageThreadTs: String? {
+        message.map(\.threadTs) ?? container.messageTs
     }
 }

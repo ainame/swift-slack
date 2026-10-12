@@ -3,7 +3,7 @@ import SlackKit
 import Testing
 
 struct PendingQuestionsTests {
-    let session = SessionKey(channel: "C1", threadTs: "1.0")
+    let session = SessionKey.thread(channel: "C1", threadTs: "1.0")
 
     @Test
     func `returns the option the person picked`() async throws {
@@ -28,10 +28,20 @@ struct PendingQuestionsTests {
         let questions = PendingQuestions()
         let waiting = Task { try await questions.wait(id: "q", session: session, options: ["A", "B"], userId: "U1") }
         try await answerWhenWaiting(questions) { questions in
-            await questions.cancel(SessionKey(channel: "C1", threadTs: "1.0"))
+            await questions.cancel(.thread(channel: "C1", threadTs: "1.0"))
             return true
         }
         await #expect(throws: AgentToolError.self) { try await waiting.value }
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `a question asked after its session stopped ends at once`() async {
+        let questions = PendingQuestions()
+        await questions.cancel(session)
+        await #expect(throws: AgentToolError.self) {
+            try await questions.wait(id: "q", session: session, options: ["A", "B"], userId: "U1") { true }
+        }
+        #expect(await !questions.isWaiting(id: "q"))
     }
 
     @Test

@@ -54,6 +54,12 @@ struct CodexAgentApp {
         }
         let questions = PendingQuestions()
         let responder = AgentResponder(backend: backend, questions: questions, logger: logger)
+        let turns = TurnRouter(
+            responder: responder,
+            channels: ChannelClassifier(logger: logger),
+            isAllowed: isAllowed,
+            logger: logger,
+        )
         let router = Router()
 
         // In the Agent messaging experience, app_home_opened with tab "messages" replaces
@@ -64,8 +70,9 @@ struct CodexAgentApp {
             try await setSuggestedPrompts(prompts, channel: channel, client: context.client)
         }
 
-        // Direct messages to the agent, from the Messages tab or the split view, and replies in channel
-        // threads the agent takes part in, so a conversation continues without mentioning it each time.
+        // Direct messages to the agent, from the Messages tab or the split view, every message in a Slack Code
+        // channel, and replies in channel threads the agent takes part in, so a conversation continues without
+        // mentioning it each time. TurnRouter decides which of them to answer.
         router.onEvent(MessageEvent.self) { context, envelope, event in
             guard event.botId == nil,
                   let user = event.user,
@@ -74,28 +81,23 @@ struct CodexAgentApp {
                   let text = event.text, !text.isEmpty else {
                 return
             }
-            let turn = AgentResponder.Turn(
-                session: SessionKey(channel: channel, threadTs: event.threadTs ?? ts),
-                messageTs: ts,
-                prompt: text,
+            turns.start(IncomingMessage(
+                source: .message,
+                eventId: envelope.eventId,
+                channel: channel,
+                isDirectMessage: event.channelType == "im",
+                ts: ts,
+                threadTs: event.threadTs,
                 userId: user,
+                text: text,
                 teamId: envelope.teamId,
-            )
-            if event.channelType == "im" {
-                guard isAllowed(user) else {
-                    return await postNotAllowed(turn, client: context.client)
-                }
-                startTurn(turn, responder: responder, client: context.client)
-            } else if event.threadTs != nil, isAllowed(user) {
-                startTurn(turn, responder: responder, client: context.client) {
-                    await responder.shouldAnswerThreadReply(text: text, in: turn.session, client: context.client)
-                }
-            }
+            ), client: context.client)
         }
 
-        // Mentions in channels; the reply goes into the mention's thread.
+        // Mentions in channels; the reply goes into the mention's thread, or into a code channel's session.
         router.onEvent(AppMentionEvent.self) { context, envelope, event in
-            guard let user = event.user,
+            guard event.botId == nil,
+                  let user = event.user,
                   let channel = event.channel,
                   let ts = event.ts,
                   let text = event.text else {
@@ -103,29 +105,36 @@ struct CodexAgentApp {
             }
             let prompt = text.replacing(/<@[A-Z0-9]+>\s*/, with: "")
             guard !prompt.isEmpty else { return }
-            let turn = AgentResponder.Turn(
-                session: SessionKey(channel: channel, threadTs: event.threadTs ?? ts),
-                messageTs: ts,
-                prompt: prompt,
+            turns.start(IncomingMessage(
+                source: .mention,
+                eventId: envelope.eventId,
+                channel: channel,
+                isDirectMessage: false,
+                ts: ts,
+                threadTs: event.threadTs,
                 userId: user,
+                text: prompt,
                 teamId: envelope.teamId,
-            )
-            guard isAllowed(user) else {
-                return await postNotAllowed(turn, client: context.client)
-            }
-            startTurn(turn, responder: responder, client: context.client)
+            ), client: context.client)
         }
 
-        // Subscribing to agent_session_stopped is what makes Slack show the stop button.
+        // Subscribing to agent_session_stopped is what makes Slack show the stop button. A code channel's
+        // session has no thread, and stopping it stops every turn in the channel, including messages still
+        // being routed there.
         router.onEvent(AgentSessionStoppedEvent.self) { _, _, event in
-            guard let channel = event.channel, let threadTs = event.threadTs else { return }
-            await responder.stop(SessionKey(channel: channel, threadTs: threadTs))
+            guard let channel = event.channel else { return }
+            await turns.stop(channel: channel, threadTs: event.threadTs)
         }
 
         router.onEvent(AgentSessionTitleChangedEvent.self) { _, _, event in
-            guard let channel = event.channel, let threadTs = event.threadTs else { return }
+            guard let channel = event.channel else { return }
             logger.info("Session renamed", metadata: ["title": "\(event.title ?? "")"])
-            await responder.titleChanged(SessionKey(channel: channel, threadTs: threadTs))
+            let session: SessionKey = if let threadTs = event.threadTs {
+                .thread(channel: channel, threadTs: threadTs)
+            } else {
+                .codeChannel(channel: channel)
+            }
+            await responder.titleChanged(session)
         }
 
         Feedback.register(on: router, logger: logger)
@@ -148,7 +157,7 @@ struct CodexAgentApp {
                     _ = try await context.client.chatPostEphemeral(body: .json(.init(
                         channel: channel,
                         text: notice,
-                        threadTs: payload.message?.threadTs ?? payload.container.messageTs,
+                        threadTs: payload.messageThreadTs,
                         user: user,
                     ))).ok.body.json.checked("chat.postEphemeral")
                 }
@@ -169,21 +178,14 @@ struct CodexAgentApp {
                   let teamId = payload.team.id else {
                 return
             }
-            // Post the question so the thread shows what the agent is answering.
-            let threadTs = payload.message?.threadTs ?? messageTs
-            let posted = try await context.client.chatPostMessage(body: .json(.init(
+            turns.ask(.init(
+                question: question,
                 channel: channel,
-                text: "<@\(user)> asked: \(question)",
-                threadTs: threadTs,
-            ))).ok.body.json.checked("chat.postMessage")
-            let turn = AgentResponder.Turn(
-                session: SessionKey(channel: channel, threadTs: threadTs),
-                messageTs: posted.ts ?? messageTs,
-                prompt: question,
+                threadTs: payload.message?.threadTs,
+                messageTs: messageTs,
                 userId: user,
                 teamId: teamId,
-            )
-            startTurn(turn, responder: responder, client: context.client)
+            ), client: context.client)
         }
 
         let app = try SlackApp(
@@ -198,34 +200,6 @@ struct CodexAgentApp {
                 throw SlackAPIError(method: "auth.test", code: "missing_user_id")
             }
             await responder.setIdentity(BotIdentity(userId: userId, botId: response.botId))
-        }
-    }
-
-    /// Runs the turn outside the event handler: in HTTP mode, swift-slack answers the event request only
-    /// after the handler returns, and Slack retries events that take longer than three seconds.
-    private static func startTurn(
-        _ turn: AgentResponder.Turn,
-        responder: AgentResponder,
-        client: any APIProtocol,
-        if shouldStart: @escaping @Sendable () async -> Bool = { true },
-    ) {
-        Task {
-            guard await shouldStart() else { return }
-            await responder.handle(turn, client: client)
-        }
-    }
-
-    private static func postNotAllowed(_ turn: AgentResponder.Turn, client: any APIProtocol) async {
-        logger.info("Ignoring a message from a user not in ALLOWED_USER_IDS", metadata: ["user": "\(turn.userId)"])
-        do {
-            _ = try await client.chatPostEphemeral(body: .json(.init(
-                channel: turn.session.channel,
-                text: "Sorry, this agent only answers the people it is set up for.",
-                threadTs: turn.session.threadTs,
-                user: turn.userId,
-            ))).ok.body.json.checked("chat.postEphemeral")
-        } catch {
-            logger.warning("Failed to post the not-allowed notice", metadata: ["error": "\(error)"])
         }
     }
 
