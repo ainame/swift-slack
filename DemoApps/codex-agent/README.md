@@ -49,6 +49,15 @@ Besides `show_cards`, the Codex backend registers conversation and Code channel 
 
 Tool calls appear as task cards, and failures go back to Codex as messages it can act on. swift-codex runs a tool handler while it reads the app-server's messages, so a waiting `ask_user` holds every other message, including the reply to an interrupt. The stop button therefore ends the question before it interrupts the turn.
 
+## Startup errors
+
+Socket Mode needs an app-level `SLACK_APP_TOKEN` (`xapp-…`) with `connections:write`.
+If startup fails, the log includes the Slack method and error code, such as
+`apps.connections.open failed: invalid_auth`. Check the app token for `invalid_auth`
+or `not_allowed_token_type`, and its scopes for `missing_scope`. Process environment
+variables take precedence over `.env`; verify the token used by the shell running
+`swift run`, not only the value in the file. The app exits with status 1 on failure.
+
 ## Streaming with AsyncSequence
 
 The library's `client.streamMessage` takes any `AsyncSequence` of `StreamingMessage.Part`. The demo uses an `AsyncThrowingStream` and a demo-local `TurnProducer` stop control. Production runs in a structured child scope, so a stop can cancel it independently of Slack delivery:

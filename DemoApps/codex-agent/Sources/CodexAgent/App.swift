@@ -47,7 +47,16 @@ struct CodexAgentApp {
         ("Debug an error", "What usually causes \"Sendable\" warnings in Swift 6, and how do I fix them?"),
     ]
 
-    static func main() async throws {
+    static func main() async {
+        do {
+            try await run()
+        } catch {
+            logger.error("Codex agent failed: \(error)")
+            exit(1)
+        }
+    }
+
+    private static func run() async throws {
         let environment = try await loadEnvironment()
         let backend = try makeBackend(from: environment)
         let isAllowed: @Sendable (String) -> Bool = { user in
@@ -206,7 +215,7 @@ struct CodexAgentApp {
             router: router,
             mode: runtimeMode(from: environment),
         )
-        logger.info("Codex agent is running", metadata: ["backend": "\(environment.backend)"])
+        logger.info("Starting Codex agent", metadata: ["backend": "\(environment.backend)"])
         try await app.run { slack in
             let response = try await slack.client.authTest().ok.body.json.checked("auth.test")
             guard let userId = response.userId else {
