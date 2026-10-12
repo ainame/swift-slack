@@ -5,6 +5,34 @@ import SlackKit
 import Testing
 
 struct CodingApprovalTests {
+    @Test(.timeLimit(.minutes(1)), arguments: [0, 1])
+    func `approval decision returns to Codex without cancelling the running turn`(choice: Int) async throws {
+        let slack = FakeSlack()
+        let questions = PendingQuestions()
+        let producer = TurnProducer()
+        let router = ToolRouter(writeWorkspace: "/tmp/code")
+        router.tools = await tools(slack, questions: questions, producer: producer)
+        let outcome = ApprovalOutcome()
+        let production = Task {
+            await producer.run {
+                let decision = await router.approveCommand(.init(
+                    threadID: "t", turnID: "v", itemID: "i", command: "swift test", workingDirectory: "/tmp/code",
+                ))
+                await outcome.record(decision: decision)
+                try? await Task.sleep(for: .milliseconds(20))
+                await outcome.record(cancelled: Task.isCancelled)
+            }
+        }
+        await slack.waitFor("agentsSessionsSetStatus")
+        let id = try await questionID(slack)
+        #expect(await questions.answer(id: id, index: choice, userId: "U1") == .accepted(choice == 0 ? "Approve" : "Deny"))
+        await production.value
+
+        #expect(await outcome.decision == (choice == 0 ? .approve : .deny))
+        #expect(await outcome.cancelled == false)
+        #expect(producer.reason == nil)
+    }
+
     @Test
     func `both Codex approval handlers deny by default and reject outside roots`() async {
         let tools = AcceptingTools()
@@ -95,6 +123,14 @@ struct CodingApprovalTests {
         let json = try JSONSerialization.jsonObject(with: Data(blocks.utf8)) as? [[String: Any]]
         return try #require(json?.last?["block_id"] as? String)
     }
+}
+
+private actor ApprovalOutcome {
+    private(set) var decision: ApprovalDecision?
+    private(set) var cancelled: Bool?
+
+    func record(decision: ApprovalDecision) { self.decision = decision }
+    func record(cancelled: Bool) { self.cancelled = cancelled }
 }
 
 private actor AcceptingTools: AgentTools {

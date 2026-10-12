@@ -23,7 +23,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Maintenance
 
-* The Codex agent demo now creates and reuses Code channels, publishes artifacts and diff updates, shares final summaries back to linked origin threads when archiving, and offers isolated writable Git checkouts with Slack command and file-change approvals. It also restores channel and thread context, routes channel sessions without repeated task handoffs after naming or channel-decoration failures, deduplicates events and stops pending work when Slack ends a session - #255
+* The Codex agent demo now creates and reuses Code channels, publishes artifacts and diff updates, shares final summaries back to linked origin threads when archiving, and offers isolated writable Git checkouts with Slack command and file-change approvals that resume the running turn and log their outcomes. It also restores channel and thread context, routes channel sessions without repeated task handoffs after naming or channel-decoration failures, deduplicates events and stops pending work when Slack ends a session - #255
 
 ## [2027.1.0-beta.2] - 2026-10-12
 
