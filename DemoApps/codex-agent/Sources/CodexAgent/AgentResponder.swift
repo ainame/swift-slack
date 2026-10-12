@@ -16,7 +16,7 @@ actor AgentResponder {
         let userId: String
         let teamId: String
         /// The message a code channel was started from, shown to the agent with the channel's history.
-        var origin: MessageLink? = nil
+        var origin: MessageLink?
     }
 
     /// A turn being answered, registered before its first `await` so that a stop can always find it.
@@ -29,6 +29,7 @@ actor AgentResponder {
     private let backend: any AgentBackend
     private let questions: PendingQuestions
     private let logger: Logger
+    private let lifecycle = CodeChannelLifecycle()
     private var running: [SessionKey: RunningTurn] = [:]
     private var titledSessions: Set<SessionKey> = []
     /// Sessions the person renamed, whose title the agent leaves alone.
@@ -65,7 +66,8 @@ actor AgentResponder {
     /// Answers `turn`. `attempt` is the routing that produced it: a stop that discarded it ends the turn here,
     /// checked together with the registration below so that a stop either finds the turn running or the attempt
     /// discarded.
-    func handle(_ turn: Turn, client: any APIProtocol, attempt: RoutingAttempts.Attempt? = nil) async {
+    func handle(_ turn: Turn, client: any APIProtocol, attempt: RoutingAttempts.Attempt? = nil, parent: TurnProducer? = nil) async {
+        guard parent?.isSessionStopped != true else { return }
         let session = turn.session
         guard attempt?.isCancelled != true else { return }
         guard running[session] == nil else {
@@ -91,6 +93,20 @@ actor AgentResponder {
             questions: questions,
             isTitledByUser: { [weak self] in await self?.isTitledByUser(session) ?? true },
             producer: producer,
+            lifecycle: lifecycle,
+            messageTs: turn.messageTs,
+            logger: logger,
+            onCodeChannel: { [weak self] channel in
+                guard !producer.isSessionStopped else { return }
+                Task {
+                    await self?.handle(.init(
+                        session: .codeChannel(channel: channel), replyThreadTs: nil,
+                        messageTs: turn.messageTs, prompt: turn.prompt, userId: turn.userId, teamId: turn.teamId,
+                        origin: .init(channel: turn.session.channel, ts: turn.messageTs),
+                    ), client: client, parent: producer)
+                }
+            },
+            endSession: { [weak self] in await self?.stop(channel: session.channel, threadTs: nil) },
         )
 
         var deliveryFailed = false
@@ -225,6 +241,15 @@ actor AgentResponder {
             try Task.checkCancellation()
             for try await event in backend.respond(to: prompt, in: turn.session, tools: tools) {
                 switch event {
+                case let .diff(diff):
+                    if case .codeChannel = turn.session, !producer.isSessionStopped {
+                        do { try await tools.publishView(.diff(content: diff)) }
+                        catch {
+                            if !producer.isSessionStopped {
+                                logger.warning("Could not publish diff", metadata: ["error": "\(error)"])
+                            }
+                        }
+                    }
                 case let .task(task):
                     continuation.yield(.task(task))
                 case let .text(text):

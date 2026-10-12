@@ -5,12 +5,20 @@ import Testing
 
 struct AgentToolsetTests {
     @Test
-    func `registers the four tools`() {
+    func `registers conversation and code channel tools`() {
         let names = AgentToolset.specs.compactMap { spec -> String? in
             guard case let .function(function) = spec else { return nil }
             return function.name
         }
-        #expect(names == ["show_cards", "set_title", "read_slack", "ask_user"])
+        #expect(names == [
+            "show_cards",
+            "set_title",
+            "read_slack",
+            "ask_user",
+            "start_code_channel",
+            "publish_code_view",
+            "archive_code_channel",
+        ])
     }
 
     @Test

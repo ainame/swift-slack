@@ -13,6 +13,18 @@ struct TurnRouterTests {
     }
 
     @Test
+    func `commands use channel sessions and never answer in ordinary channels`() async {
+        let client = await slack.client()
+        await slack.channel(recordType: nil)
+        #expect(await router().route(message("command-1", source: .command, ts: "trigger-1"), client: client) == nil)
+        await slack.channel(recordType: "agent_channel")
+        let decision = await router().route(message("command-2", source: .command, ts: "trigger-2"), client: client)
+        guard case let .answer(turn)? = decision else { Issue.record("Command was not routed"); return }
+        #expect(turn.session == .codeChannel(channel: "C1"))
+        #expect(turn.replyThreadTs == nil)
+    }
+
+    @Test
     func `answers every person's message in a code channel in the channel's session`() async {
         await slack.channel(recordType: "agent_channel", origin: MessageLink(channel: "C0", ts: "0.5"))
         let router = router()
@@ -235,8 +247,13 @@ struct TurnRouterTests {
 struct RoutingStopTests {
     let routing = TurnRouterTests()
 
-    var slack: FakeSlack { routing.slack }
-    var probe: BackendProbe { routing.backend.probe }
+    var slack: FakeSlack {
+        routing.slack
+    }
+
+    var probe: BackendProbe {
+        routing.backend.probe
+    }
 
     @Test(.timeLimit(.minutes(1)))
     func `a channel stop discards a message waiting for its channel lookup, and a later message starts`() async {
@@ -253,7 +270,7 @@ struct RoutingStopTests {
 
         #expect(await slack.requests.map(\.method) == ["conversationsInfo"])
         #expect(await probe.prompts.isEmpty)
-        #expect(router.attempts.count == 0)
+        #expect(router.attempts.isEmpty)
 
         let session = SessionKey.codeChannel(channel: "C1")
         let fresh = router.start(routing.message("E2", ts: "2.0"), client: client)
