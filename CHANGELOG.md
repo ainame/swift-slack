@@ -9,6 +9,20 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+### Added
+
+* Added typed `CodeChannel` request values and helpers for properties, commands and HTML, diff, Block Kit, canvas and pull-request views, returning Slack warnings and throwing on unsuccessful responses - #255
+* `streamMessage` supports top-level replies by omitting `threadTs`, and `StreamingMessage.SessionStopped` lets apps abandon buffered content and retries when Slack ends the session - #255
+
+### Fixed
+
+* Cancelled cooperative Sendable streaming inputs immediately on delivery failure, allowing apps to stop idle producers and pending questions - #255
+* Preserved unsent streaming content and closing blocks when local cancellation occurs during batching or a rate-limit delay - #255
+
+### Maintenance
+
+* The Codex agent demo now creates and reuses Code channels, publishes artifacts and diff updates, posts summaries before archiving, and offers isolated writable Git checkouts with Slack command and file-change approvals. It also routes channel sessions, deduplicates events and stops pending work when Slack ends a session - #255
+
 ## [2027.1.0-beta.2] - 2026-10-12
 
 This beta expands swift-slack's agent APIs and adds a public message streaming API. It builds on beta.1's Java-derived models and new Block Kit blocks; APIs may still change before the January 2027 release.
