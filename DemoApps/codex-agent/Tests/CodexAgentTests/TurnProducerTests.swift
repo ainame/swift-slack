@@ -9,6 +9,7 @@ struct TurnProducerTests {
         await producer.run { await state.finish(cancelled: Task.isCancelled) }
         #expect(await state.finished)
         #expect(await !state.cancelled)
+        #expect(producer.reason == nil)
     }
 
     @Test(.timeLimit(.minutes(1)))
@@ -33,7 +34,7 @@ struct TurnProducerTests {
         for await part in parts {
             received.append(part)
             if part == "first" {
-                producer.stop()
+                producer.cancel()
             }
             #expect(!Task.isCancelled)
         }
@@ -41,6 +42,7 @@ struct TurnProducerTests {
         #expect(received == ["first", "Stopped"])
         #expect(await state.finished)
         #expect(await state.cancelled)
+        #expect(producer.reason == .cancelled)
     }
 
     @Test(.timeLimit(.minutes(1)))
@@ -97,14 +99,50 @@ struct TurnProducerTests {
         let state = ProductionState()
         let (events, continuation) = AsyncStream.makeStream(of: Void.self)
         defer { continuation.finish() }
-        producer.stop()
-        producer.stop()
+        producer.cancel()
+        producer.cancel()
         await producer.run {
             for await _ in events {}
             await state.finish(cancelled: Task.isCancelled)
         }
         #expect(await state.finished)
         #expect(await state.cancelled)
+    }
+}
+
+extension TurnProducerTests {
+    @Test(.timeLimit(.minutes(1)))
+    func `a session stop cancels production and is recorded`() async {
+        let producer = TurnProducer()
+        let state = ProductionState()
+        let (started, startContinuation) = AsyncStream.makeStream(of: Void.self)
+        let (events, eventContinuation) = AsyncStream.makeStream(of: Void.self)
+        defer { eventContinuation.finish() }
+
+        async let production: Void = producer.run {
+            startContinuation.finish()
+            for await _ in events {}
+            await state.finish(cancelled: Task.isCancelled)
+        }
+        for await _ in started {}
+        producer.stopSession()
+        await production
+        #expect(await state.cancelled)
+        #expect(producer.reason == .sessionStopped)
+        #expect(producer.isSessionStopped)
+    }
+
+    @Test
+    func `a session stop replaces a local cancellation, not the other way round`() {
+        let cancelledFirst = TurnProducer()
+        cancelledFirst.cancel()
+        cancelledFirst.stopSession()
+        #expect(cancelledFirst.reason == .sessionStopped)
+
+        let stoppedFirst = TurnProducer()
+        stoppedFirst.stopSession()
+        stoppedFirst.cancel()
+        #expect(stoppedFirst.reason == .sessionStopped)
     }
 }
 

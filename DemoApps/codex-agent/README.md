@@ -1,17 +1,19 @@
 # Codex Agent for Slack
 
-A Slack [agent](https://docs.slack.dev/ai/agents) built with swift-slack. It answers direct messages and mentions with [Codex](https://github.com/openai/codex), through [swift-codex](https://github.com/ainame/swift-codex), and streams each reply into its thread as Codex works.
+A Slack [agent](https://docs.slack.dev/ai/agents) built with swift-slack. It answers direct messages, mentions, and messages in Slack Code channels with [Codex](https://github.com/openai/codex), through [swift-codex](https://github.com/ainame/swift-codex), and streams each reply as Codex works.
 
-Each thread is one conversation. Reply in the thread to continue it: in DMs and in channel threads the agent has joined, replies need no mention.
+In DMs and other channels, each thread is one conversation. Reply in the thread to continue it: in DMs and in channel threads the agent has joined, replies need no mention. In a Slack Code channel, the whole channel is one conversation: every message in it, top-level or in a thread, continues it.
 
 It follows the agent response loop from [Developing an agent](https://docs.slack.dev/ai/developing-agents):
 
 - **Suggested prompts**: when someone opens the Messages tab (`app_home_opened` with `tab: "messages"`), it sets prompts with `assistant.threads.setSuggestedPrompts`.
 - **Threads**: replies in a channel thread the agent has answered in reach it through `message.channels` and `message.groups`. Replies that mention it are left to `app_mention`. After a restart, `conversations.replies` shows whether the bot has posted in the thread. When the agent joins a thread it has not seen, such as on a mention partway through a discussion or after a restart, the prompt starts with the thread so far.
-- **Sessions**: each thread is an agent session. It calls `agents.sessions.setStatus` with `processing` and a title taken from the first message, and `chat.stopStream` returns the session to `active`.
+- **Code channels**: a channel whose `conversations.info` reports `properties.record_channel.record_type` as `agent_channel` is a Slack Code channel. Every person's message there is a turn, without a mention, from anyone `ALLOWED_USER_IDS` allows. A top-level message gets a top-level reply, and a thread reply gets a reply in its thread, but both belong to the channel's one session. The lookup is cached: for good for a code channel, for 10 minutes for another channel, and not at all when it fails, so the next message tries again. The first prompt in a code channel starts with the channel's recent messages, oldest first, and the message the channel was started from when Slack reports one.
+- **Sessions**: each DM or channel thread is an agent session, and so is each code channel. It calls `agents.sessions.setStatus` with `processing` and a title taken from the first message, without `thread_ts` for a code channel, and `chat.stopStream` returns the session to `active`. A session answers one message at a time; a message that arrives meanwhile gets an ephemeral busy notice, which in a code channel can come from someone else's turn.
+- **One turn per message**: a message that mentions the bot arrives both as `message` and as `app_mention`, and Slack retries events it thinks were lost. The app remembers recent event IDs and message timestamps, so each message starts at most one turn, and it ignores its own and other bots' messages. Event handlers return at once and route the message in a task, because in HTTP mode Slack retries an event whose request takes longer than three seconds.
 - **Streaming**: commands, web searches, file edits, and tool calls appear as task cards (`task_update` chunks in `timeline` mode). The answer streams as `markdown_text` chunks through `chat.startStream`, `chat.appendStream`, and `chat.stopStream`.
-- **Stop button**: subscribing to `agent_session_stopped` makes Slack show a stop button while the session is processing. Slack stops the streaming message itself. The agent interrupts the Codex turn and returns the session to `active`. Slack may then reject the closing `chat.stopStream`, so a stopped reply can end without the feedback buttons.
-- **Renaming**: after `agent_session_title_changed`, it stops proposing titles for that session.
+- **Stop button**: subscribing to `agent_session_stopped` makes Slack show a stop button while the session is processing. Slack ends the session and its streaming message itself, so the agent ends the reply's input with `StreamingMessage.SessionStopped`: `streamMessage` drops what it has not sent and makes no further call. The agent then interrupts the Codex turn and ends a question waiting for a click, and calls Slack no more for that turn: no stopped notice, status change, question update, or rename. An event without `thread_ts` stops every turn in its channel, including thread sessions; one with `thread_ts` stops that thread's session, or the code channel turn replying in that thread. Messages and card questions still being routed there, such as one waiting for its channel lookup, are discarded too; messages sent after the stop start turns as usual.
+- **Renaming**: after `agent_session_title_changed`, it stops proposing titles for that session, which is the code channel's when the event has no `thread_ts`.
 - **Tools**: Codex can rename the session, read the conversation, and ask the person to choose, through tools that act in Slack. See below.
 - **Cards**: Codex can call a `show_cards` tool, and the answer ends with cards or a carousel with Open and "Ask about this" buttons. See below.
 - **Feedback**: every reply ends with `feedback_buttons` in a `context_actions` block, and a click gets an ephemeral reply.
@@ -34,52 +36,58 @@ The mock backend sends two cards the same way, so `AGENT_BACKEND=mock` shows the
 
 ## Tools that act in Slack
 
-Besides `show_cards`, the codex backend registers three tools. Each turn gets a `SlackAgentTools` scoped to its session and the person it answers, and the mock backend calls the same tools, so `AGENT_BACKEND=mock` shows them too.
+Besides `show_cards`, the codex backend registers three tools. Each turn gets a `SlackAgentTools` scoped to its session, the thread its reply goes into, and the person it answers, and the mock backend calls the same tools, so `AGENT_BACKEND=mock` shows them too.
 
 | Tool | What it does |
 | --- | --- |
 | `set_title` | Renames the session with `agents.sessions.rename`. It refuses once the person has renamed the session (`agent_session_title_changed`). |
-| `read_slack` | Returns up to 50 recent messages from the current thread or its channel, with `conversations.replies` or `conversations.history`. It cannot read other conversations. |
-| `ask_user` | Posts the question with a button per option, sets the session to `suspended`, and returns the option the person picks. Only that person can answer; the question expires after 10 minutes. |
+| `read_slack` | Returns up to 50 recent messages from the thread the reply goes into or from its channel, with `conversations.replies` or `conversations.history`. A top-level reply in a code channel has no thread, so it reads the channel. It cannot read other conversations. |
+| `ask_user` | Posts the question where the reply goes, with a button per option, sets the session to `suspended`, and returns the option the person picks. Only that person can answer; the question expires after 10 minutes. |
 
 Tool calls appear as task cards, and failures go back to Codex as messages it can act on. swift-codex runs a tool handler while it reads the app-server's messages, so a waiting `ask_user` holds every other message, including the reply to an interrupt. The stop button therefore ends the question before it interrupts the turn.
 
 ## Streaming with AsyncSequence
 
-The library's `client.streamMessage` takes any `AsyncSequence` of `StreamingMessage.Part`. The demo uses an `AsyncStream` and a demo-local `TurnProducer` stop control. Production runs in a structured child scope, so the stop button can cancel it independently while Slack delivery drains and finishes the message:
+The library's `client.streamMessage` takes any `AsyncSequence` of `StreamingMessage.Part`. The demo uses an `AsyncThrowingStream` and a demo-local `TurnProducer` stop control. Production runs in a structured child scope, so a stop can cancel it independently of Slack delivery:
 
 ```swift
-let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
+let (parts, continuation) = AsyncThrowingStream.makeStream(of: StreamingMessage.Part.self)
 let producer = TurnProducer()
-// Register producer before awaiting; the stop handler calls producer.stop().
-try await withThrowingTaskGroup(of: Void.self) { group in
+// Register both before awaiting. When Slack stops the session, the stop handler calls
+// continuation.finish(throwing: StreamingMessage.SessionStopped()) and then producer.stopSession().
+await withTaskGroup(of: Void.self) { group in
     group.addTask {
         await producer.run {
             defer { continuation.finish() }
             for await text in agent.tokens(for: prompt) {
                 continuation.yield(.markdown(text))
             }
-            if Task.isCancelled {
-                continuation.yield(.markdown("\n\n_Stopped._"))
-            }
         }
     }
     defer { group.cancelAll() }
 
-    try await client.streamMessage(
-        parts,
-        channel: channel,
-        threadTs: threadTs,
-        recipient: .init(userId: userId, teamId: teamId),
-        blocks: feedbackBlocks,
-    )
+    do {
+        try await client.streamMessage(
+            parts,
+            channel: channel,
+            threadTs: replyThreadTs, // nil for a top-level reply in a code channel
+            recipient: .init(userId: userId, teamId: teamId),
+            blocks: feedbackBlocks,
+        )
+    } catch is StreamingMessage.SessionStopped {
+        // Slack ended the session: make no more calls for this turn.
+    } catch {
+        producer.cancel()
+        // Then set the session back to `active`, which a failed delivery leaves `processing`.
+    }
 }
 ```
 
-- `TurnProducer.run` races production against a stop signal and cancels the remaining child. The enclosing group waits for producer cleanup before the demo clears the busy session, including when delivery fails.
+- `TurnProducer.run` races production against a stop signal and cancels the remaining child. The enclosing group waits for producer cleanup before the demo clears the busy session, including when delivery fails or Slack stops the session.
+- `TurnProducer` records why production stopped. `cancel()` is the app's own graceful stop: the message is still streaming, so the producer can yield a stopped notice and `streamMessage` finishes the message. `stopSession()` records that Slack ended the session, which the tools check before every Slack call.
 - Parts include `.markdown`, `.task`, `.plan(title:)`, and `.blocks`. Blocks are streamed in order with other parts; the `blocks:` argument adds blocks at the bottom of the finished message.
 - `streamMessage` collects parts while requests are in flight, merges adjacent markdown up to 12,000 characters and blocks up to 50, and spaces calls by `minimumInterval` (1 second by default).
-- Finishing the input sends remaining parts and closing blocks with `chat.stopStream`. Cancelling the producer lets it yield a stopped notice and finish the input normally. Cancelling the task calling `streamMessage` also closes the message, using a task that does not inherit cancellation.
+- Finishing the input sends remaining parts and closing blocks with `chat.stopStream`. Ending it with `StreamingMessage.SessionStopped` discards them and starts no further call. Cancelling the task calling `streamMessage` also closes the message, using a task that does not inherit cancellation.
 - If the input throws, buffered parts and closing blocks are sent before the error is rethrown. If a Slack call fails, the message is stopped without additional chunks or blocks before rethrowing. HTTP 429 responses are retried after `Retry-After`, up to three attempts.
 - The library's streaming tests use fake transports and HTTP responses. The API requires the `WebAPI_Chat` trait, enabled by this demo.
 
@@ -108,8 +116,10 @@ oauth_config:
       - app_mentions:read
       - assistant:write
       - channels:history
+      - channels:read
       - chat:write
       - groups:history
+      - groups:read
       - im:history
       - im:read
       - im:write
@@ -138,7 +148,7 @@ brew install --cask codex
 codex login
 ```
 
-The agent runs Codex with a read-only sandbox and never asks for approval. Set `CODEX_WORKSPACE` to a repository to ask about it; otherwise Codex works in an empty temporary directory and answers general questions. Each Slack session runs its own `codex app-server` process, because swift-codex allows one active turn per process. A session idle for 10 minutes closes its process, and its next message resumes the Codex thread in a new one. A stopped turn is interrupted and read to its end before the session's next turn starts.
+The agent runs Codex with a read-only sandbox and never asks for approval. Set `CODEX_WORKSPACE` to a repository to ask about it; otherwise Codex works in an empty temporary directory and answers general questions. Each Slack session, a thread or a code channel, runs its own Codex thread in its own `codex app-server` process, because swift-codex allows one active turn per process. A session idle for 10 minutes closes its process, and its next message resumes the Codex thread in a new one. A stopped turn is interrupted and read to its end before the session's next turn starts.
 
 ### 3. Decide who can use it
 
@@ -151,7 +161,7 @@ The demo limits that exposure:
 - The app refuses a `CODEX_WORKSPACE` that contains the app's `.env` file or has a `.env` file of its own, and uses an empty directory when it is not set. If you supply tokens through environment variables and no `.env` file exists, the workspace can contain the app's directory.
 - Codex starts with only the variables it needs (`PATH`, `HOME`, locale, and `CODEX_HOME`), so exported Slack tokens do not reach it.
 
-Messages from anyone in a thread the agent joins can still go into its prompt as context, so treat what they write as untrusted input.
+Messages from anyone in a thread the agent joins, or in a code channel, can still go into its prompt as context, so treat what they write as untrusted input.
 
 ### 4. Configure and run
 
@@ -168,8 +178,11 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 ## Layout
 
 - `Sources/CodexAgent/SlackResponse.swift`: the demo's `checked(_:)` helper for non-streaming Web API responses with `"ok": false`; streaming uses the library's `StreamingMessage.Error`
-- `Sources/CodexAgent/App.swift`: configuration and event routing
-- `Sources/CodexAgent/AgentResponder.swift`: the response loop for one message, and the stop button
+- `Sources/CodexAgent/App.swift`: configuration and event handlers
+- `Sources/CodexAgent/TurnRouter.swift`: which messages become turns, in which session, and where the reply goes; code channel detection and duplicate filtering
+- `Sources/CodexAgent/AgentResponder.swift`: the response loop for one message, busy sessions, and the stop button
+- `Sources/CodexAgent/TurnProducer.swift`: the stop control for a turn's producer, telling a local cancellation from a session Slack stopped
+- `Sources/CodexAgent/ConversationHistory.swift`: reading a thread or a code channel for the prompt and the tools
 - `Sources/CodexAgent/CodexBackend.swift`: one Codex thread per session, with notifications mapped to tasks and text
 - `Sources/CodexAgent/MockBackend.swift`: a scripted backend for trying the app without Codex
 - `Sources/CodexAgent/Feedback.swift`: the feedback buttons and their action handler

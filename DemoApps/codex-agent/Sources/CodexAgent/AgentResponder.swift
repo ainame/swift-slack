@@ -5,26 +5,37 @@ import SlackKit
 /// set the session to `processing`, stream tasks and text, then stop the stream with feedback buttons,
 /// which returns the session to `active`.
 actor AgentResponder {
-    struct Turn: Sendable {
+    struct Turn: Sendable, Equatable {
         let session: SessionKey
-        /// The `ts` of the message being answered. It equals `session.threadTs` for a thread's first message.
+        /// The thread the reply goes into, or `nil` for a top-level reply in a code channel. A thread reply in a
+        /// code channel is answered in its thread but belongs to the channel's session.
+        let replyThreadTs: String?
+        /// The `ts` of the message being answered. It equals the thread's `ts` for a thread's first message.
         let messageTs: String
         let prompt: String
         let userId: String
         let teamId: String
+        /// The message a code channel was started from, shown to the agent with the channel's history.
+        var origin: MessageLink? = nil
+    }
+
+    /// A turn being answered, registered before its first `await` so that a stop can always find it.
+    private struct RunningTurn {
+        let replyThreadTs: String?
+        let producer: TurnProducer
+        let parts: AsyncThrowingStream<StreamingMessage.Part, any Error>.Continuation
     }
 
     private let backend: any AgentBackend
     private let questions: PendingQuestions
     private let logger: Logger
-    /// Stop controls for the structured producer scopes of the running turns.
-    private var producers: [SessionKey: TurnProducer] = [:]
+    private var running: [SessionKey: RunningTurn] = [:]
     private var titledSessions: Set<SessionKey> = []
     /// Sessions the person renamed, whose title the agent leaves alone.
     private var userTitledSessions: Set<SessionKey> = []
     /// Sessions this process has answered in, whose backend already holds the conversation.
     private var engagedSessions: Set<SessionKey> = []
-    private var identity: BotIdentity?
+    private(set) var identity: BotIdentity?
 
     init(backend: any AgentBackend, questions: PendingQuestions, logger: Logger) {
         self.backend = backend
@@ -38,91 +49,113 @@ actor AgentResponder {
 
     /// Whether to answer a channel thread reply that does not mention the bot: only in threads the agent
     /// already takes part in. After a restart, the thread itself shows whether the bot has replied there.
-    func shouldAnswerThreadReply(text: String, in session: SessionKey, client: any APIProtocol) async -> Bool {
-        // A reply that mentions the bot also arrives as app_mention, which answers it.
-        if identity?.isMentioned(in: text) == true {
-            return false
-        }
+    func shouldAnswerThreadReply(in session: SessionKey, client: any APIProtocol) async -> Bool {
         if engagedSessions.contains(session) {
             return true
         }
         guard let identity else { return false }
         do {
-            return try await ThreadHistory.messages(in: session, client: client).contains(where: identity.isAuthor)
+            return try await ConversationHistory.messages(in: session, client: client).contains(where: identity.isAuthor)
         } catch {
             logger.warning("Failed to read the thread", metadata: ["session": "\(session)", "error": "\(error)"])
             return false
         }
     }
 
-    func handle(_ turn: Turn, client: any APIProtocol) async {
+    /// Answers `turn`. `attempt` is the routing that produced it: a stop that discarded it ends the turn here,
+    /// checked together with the registration below so that a stop either finds the turn running or the attempt
+    /// discarded.
+    func handle(_ turn: Turn, client: any APIProtocol, attempt: RoutingAttempts.Attempt? = nil) async {
         let session = turn.session
-        guard producers[session] == nil else {
+        guard attempt?.isCancelled != true else { return }
+        guard running[session] == nil else {
             await postBusyNotice(for: turn, client: client)
             return
         }
 
-        // The agent's events go into an AsyncStream that streamMessage sends to Slack. Only the producer
-        // scope is stopped by the button, so Slack delivery can drain and finish the message.
-        // It is registered before the first `await`: the actor takes other calls while this one waits,
-        // and a second message in the same thread must find the session busy.
-        let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
+        // The agent's events go into a stream that streamMessage sends to Slack. A local cancellation stops
+        // only the producer scope, so Slack delivery can drain and finish the message. A stop from Slack ends
+        // the stream with SessionStopped instead, and nothing more goes to Slack.
+        // The turn is registered before the first `await`: the actor takes other calls while this one waits,
+        // a second message in the same session must find it busy, and an early stop must find the turn.
+        let (parts, continuation) = AsyncThrowingStream.makeStream(of: StreamingMessage.Part.self)
+        let producer = TurnProducer()
+        running[session] = RunningTurn(replyThreadTs: turn.replyThreadTs, producer: producer, parts: continuation)
+        defer { running[session] = nil }
         let tools = SlackAgentTools(
             client: client,
             session: session,
+            replyThreadTs: turn.replyThreadTs,
             userId: turn.userId,
             identity: identity,
             questions: questions,
             isTitledByUser: { [weak self] in await self?.isTitledByUser(session) ?? true },
+            producer: producer,
         )
-        let producer = TurnProducer()
-        producers[session] = producer
-        defer { producers[session] = nil }
 
+        var deliveryFailed = false
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
                 await producer.run {
                     if !Task.isCancelled {
-                        await self.setProcessing(turn, client: client)
+                        await self.setProcessing(turn, producer: producer, client: client)
                     }
-                    let prompt = if Task.isCancelled {
+                    let prompt = if Task.isCancelled || producer.reason != nil {
                         turn.prompt
                     } else {
                         await self.prompt(for: turn, client: client)
                     }
-                    await self.produce(turn, prompt: prompt, tools: tools, into: continuation)
+                    await self.produce(turn, prompt: prompt, tools: tools, producer: producer, into: continuation)
                 }
             }
-            // A failed Slack delivery must also stop and join the producer before clearing the session.
+            // Delivery ending, for any reason, stops and joins the producer before the session is cleared.
             defer { group.cancelAll() }
 
             do {
                 _ = try await client.streamMessage(
                     parts,
                     channel: session.channel,
-                    threadTs: session.threadTs,
+                    threadTs: turn.replyThreadTs,
                     recipient: .init(userId: turn.userId, teamId: turn.teamId),
                     blocks: Feedback.blocks(),
                 )
+            } catch is StreamingMessage.SessionStopped {
+                logger.info("Slack stopped the session", metadata: ["session": "\(session)"])
             } catch {
-                // The stop button ends the streaming message on Slack's side, so stopping it can fail here.
-                // Leave `processing` anyway, or the session keeps spinning for an hour.
                 logger.info("Could not finish the stream", metadata: ["session": "\(session)", "error": "\(error)"])
+                deliveryFailed = true
                 await questions.cancel(session)
-                producer.stop()
-                await setActive(session, client: client)
+                producer.cancel()
             }
+        }
+        // A failed delivery leaves the session `processing`, which spins for an hour, so set it back. Slack has
+        // already ended a stopped session.
+        if deliveryFailed, !producer.isSessionStopped {
+            await setActive(session, client: client)
         }
     }
 
-    /// Handles the stop button: interrupts the agent, and the running turn stops its message.
-    func stop(_ session: SessionKey) async {
-        guard let producer = producers[session] else { return }
-        logger.info("Stopping turn", metadata: ["session": "\(session)"])
-        // A question waiting for a click holds Codex's message loop, so end it before interrupting.
-        await questions.cancel(session)
-        // Cancelling the producer ends its iteration of the backend's stream, which stops the turn.
-        producer.stop()
+    /// Handles Slack's `agent_session_stopped`. Without `threadTs`, every turn in the channel stops, including
+    /// the thread sessions in it. With `threadTs`, the turn of that thread's session stops, or the turn replying
+    /// in that thread of a code channel.
+    func stop(channel: String, threadTs: String?) async {
+        let stopped = running.filter { session, turn in
+            guard session.channel == channel else { return false }
+            guard let threadTs else { return true }
+            return session.threadTs == threadTs || turn.replyThreadTs == threadTs
+        }
+        for (session, turn) in stopped {
+            logger.info("Stopping turn", metadata: ["session": "\(session)"])
+            // Slack has ended the stream: streamMessage drops what it has not sent and makes no more calls.
+            turn.parts.finish(throwing: StreamingMessage.SessionStopped())
+            // Cancelling the producer ends its iteration of the backend's stream, which stops the turn. The
+            // tools see the stop before their question ends below, so they leave Slack alone.
+            turn.producer.stopSession()
+        }
+        // A question waiting for a click holds Codex's message loop, so end it to let the interrupt through.
+        for session in stopped.keys {
+            await questions.cancel(session)
+        }
     }
 
     func titleChanged(_ session: SessionKey) {
@@ -136,18 +169,40 @@ actor AgentResponder {
     }
 
     /// The backend keeps a session's conversation, but not one it has not seen: a mention in the middle of
-    /// a thread, or a thread from before a restart. Then the prompt starts with the thread so far.
+    /// a thread, a code channel with earlier messages, or a conversation from before a restart. Then the prompt
+    /// starts with the conversation so far.
     private func prompt(for turn: Turn, client: any APIProtocol) async -> String {
-        guard engagedSessions.insert(turn.session).inserted, turn.messageTs != turn.session.threadTs else {
+        guard engagedSessions.insert(turn.session).inserted else {
+            return turn.prompt
+        }
+        if case let .thread(_, threadTs) = turn.session, turn.messageTs == threadTs {
             return turn.prompt
         }
         do {
-            let messages = try await ThreadHistory.messages(in: turn.session, client: client)
-            let transcript = ThreadHistory.transcript(of: messages, before: turn.messageTs, identity: identity)
+            let messages = try await ConversationHistory.messages(in: turn.session, client: client)
+            let origin = await originMessage(turn.origin, client: client)
+            let transcript = ConversationHistory.transcript(
+                of: messages,
+                before: turn.messageTs,
+                in: turn.session,
+                origin: origin,
+                identity: identity,
+            )
             return (transcript ?? "") + turn.prompt
         } catch {
-            logger.warning("Failed to read the thread", metadata: ["session": "\(turn.session)", "error": "\(error)"])
+            logger.warning("Failed to read the conversation", metadata: ["session": "\(turn.session)", "error": "\(error)"])
             return turn.prompt
+        }
+    }
+
+    private func originMessage(_ link: MessageLink?, client: any APIProtocol) async -> Message? {
+        guard let link else { return nil }
+        do {
+            return try await ConversationHistory.message(at: link, client: client)
+        } catch {
+            // The app may not be able to read the channel the code channel was started from.
+            logger.info("Could not read the code channel's origin", metadata: ["error": "\(error)"])
+            return nil
         }
     }
 
@@ -156,7 +211,8 @@ actor AgentResponder {
         _ turn: Turn,
         prompt: String,
         tools: any AgentTools,
-        into continuation: AsyncStream<StreamingMessage.Part>.Continuation,
+        producer: TurnProducer,
+        into continuation: AsyncThrowingStream<StreamingMessage.Part, any Error>.Continuation,
     ) async {
         var cards: [SlackUI.Card] = []
         defer {
@@ -183,13 +239,16 @@ actor AgentResponder {
                 continuation.yield(.markdown("\n\n:warning: Something went wrong: \(error)"))
             }
         }
-        // Cancellation can end iteration normally or throw from the backend.
-        if Task.isCancelled {
+        // Cancellation can end iteration normally or throw from the backend. A message the app stops itself
+        // says so; a session that Slack stopped takes nothing more.
+        if Task.isCancelled, !producer.isSessionStopped {
             continuation.yield(.markdown("\n\n_Stopped._"))
         }
     }
 
-    private func setProcessing(_ turn: Turn, client: any APIProtocol) async {
+    private func setProcessing(_ turn: Turn, producer: TurnProducer, client: any APIProtocol) async {
+        // Checked on the actor, which also runs `stop`, so no call starts after a stop is recorded.
+        guard producer.reason == nil else { return }
         let session = turn.session
         let title = titledSessions.insert(session).inserted ? Self.title(for: turn.prompt) : nil
         do {
@@ -219,11 +278,16 @@ actor AgentResponder {
     }
 
     private func postBusyNotice(for turn: Turn, client: any APIProtocol) async {
+        // Everyone in a code channel shares its session, so the running turn may answer someone else.
+        let text = switch turn.session {
+        case .thread: "I'm still working on your previous message. Press stop to start over."
+        case .codeChannel: "I'm still working on an earlier message in this channel. Press stop to start over."
+        }
         do {
             _ = try await client.chatPostEphemeral(body: .json(.init(
                 channel: turn.session.channel,
-                text: "I'm still working on your previous message. Press stop to start over.",
-                threadTs: turn.session.threadTs,
+                text: text,
+                threadTs: turn.replyThreadTs,
                 user: turn.userId,
             ))).ok.body.json.checked("chat.postEphemeral")
         } catch {

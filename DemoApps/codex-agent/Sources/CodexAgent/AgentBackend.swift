@@ -1,12 +1,30 @@
 import SlackKit
 
-/// Identifies one agent session: Slack scopes sessions to a single thread in a channel or DM.
-struct SessionKey: Hashable, Sendable, CustomStringConvertible {
-    let channel: String
-    let threadTs: String
+/// Identifies one agent session. Slack scopes a session to a thread in a channel or DM, or, in a Slack Code
+/// channel, to the whole channel: its top-level messages and their threads share one session.
+enum SessionKey: Hashable, Sendable, CustomStringConvertible {
+    case thread(channel: String, threadTs: String)
+    case codeChannel(channel: String)
+
+    var channel: String {
+        switch self {
+        case let .thread(channel, _), let .codeChannel(channel): channel
+        }
+    }
+
+    /// The `thread_ts` that the `agents.sessions.*` methods take, or `nil` for a code channel's session.
+    var threadTs: String? {
+        switch self {
+        case let .thread(_, threadTs): threadTs
+        case .codeChannel: nil
+        }
+    }
 
     var description: String {
-        "\(channel)/\(threadTs)"
+        switch self {
+        case let .thread(channel, threadTs): "\(channel)/\(threadTs)"
+        case let .codeChannel(channel): channel
+        }
     }
 }
 
@@ -27,7 +45,7 @@ protocol AgentTools: Sendable {
     /// Renames the agent session. Throws ``AgentToolError`` when the person has named it themselves.
     func setTitle(_ title: String) async throws
 
-    /// Returns recent messages from the session's thread, or from its channel, as text.
+    /// Returns recent messages from the conversation being answered, or from its channel, as text.
     func readSlack(_ scope: SlackReadScope, limit: Int) async throws -> String
 
     /// Asks the person to pick one of `options` and returns their choice.

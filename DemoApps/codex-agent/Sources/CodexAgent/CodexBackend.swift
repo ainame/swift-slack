@@ -5,6 +5,8 @@ import SlackKit
 import Synchronization
 
 /// Runs each Slack agent session as a Codex thread, through the `codex app-server` that swift-codex launches.
+/// Sessions are keyed by ``SessionKey``, so a Slack thread or DM thread gets its own Codex thread, and so does
+/// a Slack Code channel, whose messages and thread replies all continue one conversation.
 ///
 /// swift-codex allows one active turn per `Codex` instance, so every session gets its own instance and
 /// app-server process. A session idle for `idleTimeout` closes its process and keeps the thread ID, so the
