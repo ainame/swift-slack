@@ -171,6 +171,7 @@ actor TurnRouter {
                     userId: message.userId,
                     teamId: message.teamId,
                     origin: origin,
+                    isCommand: message.source == .command,
                 )
             case .other, nil:
                 guard message.source != .command else { return nil }

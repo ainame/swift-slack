@@ -27,6 +27,7 @@ struct SlackAgentTools: AgentTools {
     let producer: TurnProducer
     var lifecycle = CodeChannelLifecycle()
     var messageTs: String?
+    var origin: MessageLink?
     var logger = Logger(label: "codex-agent.tools")
     var onCodeChannel: @Sendable (String) async -> Void = { _ in }
     var endSession: @Sendable () async -> Void = {}
@@ -71,8 +72,13 @@ struct SlackAgentTools: AgentTools {
             logger.warning("Code channel summary: \(warning)")
         }
         try checkSession()
-        _ = try await client.agentsConversationsArchive(body: .json(.init(channelId: session.channel)))
-            .ok.body.json.checked("agents.conversations.archive")
+        let createdWithOrigin = await lifecycle.hasOrigin(channel: session.channel)
+        try checkSession()
+        _ = try await client.agentsConversationsArchive(body: .json(.init(
+            channelId: session.channel,
+            summaryMessageTs: origin != nil || createdWithOrigin ? ts : nil,
+        )))
+        .ok.body.json.checked("agents.conversations.archive")
         await endSession()
     }
 

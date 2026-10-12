@@ -22,14 +22,30 @@ struct MessageLink: Hashable, Sendable {
 }
 
 /// Reads a session's conversation: a thread with `conversations.replies`, as the Slack docs suggest for thread
-/// context, and a code channel with `conversations.history`. Both return the oldest message first.
+/// context, and a code channel with `conversations.history` plus each message's thread replies.
+/// Both return the oldest message first.
 enum ConversationHistory {
     static func messages(in session: SessionKey, client: any APIProtocol) async throws -> [Message] {
         switch session {
         case let .thread(channel, threadTs):
-            try await replies(channel: channel, threadTs: threadTs, client: client)
+            return try await replies(channel: channel, threadTs: threadTs, client: client)
         case let .codeChannel(channel):
-            try await channelMessages(channel: channel, limit: 100, client: client)
+            let parents = try await channelMessages(channel: channel, limit: 100, client: client)
+            var messages = parents
+            for parent in parents where (parent.replyCount ?? 0) > 0 {
+                guard let ts = parent.ts else { continue }
+                var cursor: String?
+                repeat {
+                    try Task.checkCancellation()
+                    let response = try await client.conversationsReplies(body: .json(.init(
+                        channel: channel, cursor: cursor, limit: 100, ts: ts,
+                    ))).ok.body.json.checked("conversations.replies")
+                    // Replies includes the parent again; keep the history copy only once.
+                    messages.append(contentsOf: (response.messages ?? []).filter { $0.ts != ts })
+                    cursor = response.responseMetadata?.nextCursor
+                } while cursor?.isEmpty == false
+            }
+            return messages.sorted { ($0.ts ?? "") < ($1.ts ?? "") }
         }
     }
 
@@ -66,13 +82,16 @@ enum ConversationHistory {
     /// `origin` is the message a code channel was started from.
     static func transcript(
         of messages: [Message],
-        before messageTs: String,
+        before messageTs: String?,
         in session: SessionKey,
         origin: Message? = nil,
         identity: BotIdentity?,
     ) -> String? {
         let lines = messages
-            .filter { ($0.ts ?? "") < messageTs }
+            .filter { message in
+                guard let messageTs else { return true }
+                return (message.ts ?? "") < messageTs
+            }
             .compactMap { line(for: $0, identity: identity) }
         let originLine = origin.flatMap { line(for: $0, identity: identity) }
         guard !lines.isEmpty || originLine != nil else { return nil }

@@ -17,6 +17,8 @@ actor AgentResponder {
         let teamId: String
         /// The message a code channel was started from, shown to the agent with the channel's history.
         var origin: MessageLink?
+        /// Commands have a routing ID rather than a message timestamp and use all available history.
+        var isCommand = false
     }
 
     /// A turn being answered, registered before its first `await` so that a stop can always find it.
@@ -96,6 +98,7 @@ actor AgentResponder {
             producer: producer,
             lifecycle: lifecycle,
             messageTs: turn.messageTs,
+            origin: turn.origin,
             logger: logger,
             onCodeChannel: { [weak self] channel in
                 guard !producer.isSessionStopped, let self else { return }
@@ -203,7 +206,7 @@ actor AgentResponder {
             let origin = await originMessage(turn.origin, client: client)
             let transcript = ConversationHistory.transcript(
                 of: messages,
-                before: turn.messageTs,
+                before: turn.isCommand ? nil : turn.messageTs,
                 in: turn.session,
                 origin: origin,
                 identity: identity,
