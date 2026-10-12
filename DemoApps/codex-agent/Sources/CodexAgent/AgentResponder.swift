@@ -30,6 +30,7 @@ actor AgentResponder {
     private let questions: PendingQuestions
     private let logger: Logger
     private let lifecycle = CodeChannelLifecycle()
+    nonisolated let routingAttempts = RoutingAttempts()
     private var running: [SessionKey: RunningTurn] = [:]
     private var titledSessions: Set<SessionKey> = []
     /// Sessions the person renamed, whose title the agent leaves alone.
@@ -97,13 +98,15 @@ actor AgentResponder {
             messageTs: turn.messageTs,
             logger: logger,
             onCodeChannel: { [weak self] channel in
-                guard !producer.isSessionStopped else { return }
+                guard !producer.isSessionStopped, let self else { return }
+                let attempt = routingAttempts.begin(channel: channel, threadTs: nil, ts: turn.messageTs)
                 Task {
-                    await self?.handle(.init(
+                    defer { routingAttempts.end(attempt) }
+                    await self.handle(.init(
                         session: .codeChannel(channel: channel), replyThreadTs: nil,
                         messageTs: turn.messageTs, prompt: turn.prompt, userId: turn.userId, teamId: turn.teamId,
                         origin: .init(channel: turn.session.channel, ts: turn.messageTs),
-                    ), client: client, parent: producer)
+                    ), client: client, attempt: attempt, parent: producer)
                 }
             },
             endSession: { [weak self] in await self?.stop(channel: session.channel, threadTs: nil) },
@@ -155,6 +158,7 @@ actor AgentResponder {
     /// the thread sessions in it. With `threadTs`, the turn of that thread's session stops, or the turn replying
     /// in that thread of a code channel.
     func stop(channel: String, threadTs: String?) async {
+        routingAttempts.cancel(channel: channel, threadTs: threadTs)
         let stopped = running.filter { session, turn in
             guard session.channel == channel else { return false }
             guard let threadTs else { return true }
