@@ -57,7 +57,7 @@ actor TurnRouter {
         let teamId: String
     }
 
-    nonisolated let attempts = RoutingAttempts()
+    nonisolated let attempts: RoutingAttempts
     private let responder: AgentResponder
     private let channels: ChannelClassifier
     private let isAllowed: @Sendable (String) -> Bool
@@ -72,6 +72,7 @@ actor TurnRouter {
         logger: Logger,
     ) {
         self.responder = responder
+        attempts = responder.routingAttempts
         self.channels = channels
         self.isAllowed = isAllowed
         self.logger = logger

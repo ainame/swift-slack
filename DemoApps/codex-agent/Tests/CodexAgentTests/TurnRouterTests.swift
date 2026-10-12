@@ -247,6 +247,21 @@ struct TurnRouterTests {
 struct RoutingStopTests {
     let routing = TurnRouterTests()
 
+    @Test(.timeLimit(.minutes(1)))
+    func `channel stop discards a queued promotion before its turn registers`() async {
+        let responder = routing.responder
+        let router = routing.router()
+        let attempt = responder.routingAttempts.begin(channel: "NEW", threadTs: nil, ts: "1.0")
+        defer { responder.routingAttempts.end(attempt) }
+        await router.stop(channel: "NEW", threadTs: nil)
+        await responder.handle(.init(
+            session: .codeChannel(channel: "NEW"), replyThreadTs: nil, messageTs: "1.0", prompt: "fix",
+            userId: "U1", teamId: "T1",
+        ), client: routing.slack.client(), attempt: attempt, parent: TurnProducer())
+        #expect(await routing.slack.requests.isEmpty)
+        #expect(await routing.backend.probe.prompts.isEmpty)
+    }
+
     var slack: FakeSlack {
         routing.slack
     }
