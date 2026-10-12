@@ -67,6 +67,26 @@ struct StreamMessageTests {
     }
 
     @Test
+    func `omits thread_ts when streaming a top-level message`() async throws {
+        let http = SlackHTTP()
+        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+
+        let ts = try await client.streamMessage(
+            [Part.markdown("hi")].async,
+            channel: "C1",
+            minimumInterval: .zero,
+        )
+
+        #expect(ts == SlackHTTP.ts)
+        let requests = await http.requests
+        #expect(requests.map(\.operationID) == ["chatStartStream", "chatStopStream"])
+        let start = requests[0].fields
+        #expect(start["channel"] == "C1")
+        #expect(start.keys.contains("thread_ts") == false)
+        #expect(try requests[0].chunks() == [["type": "markdown_text", "text": "hi"]])
+    }
+
+    @Test
     func `retries a rate-limited call after Retry-After`() async throws {
         let http = SlackHTTP(rateLimitedOnce: "chatStartStream")
         let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client

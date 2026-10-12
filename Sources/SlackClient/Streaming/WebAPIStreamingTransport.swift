@@ -3,13 +3,14 @@ import Foundation
 import OpenAPIRuntime
 import SlackBlockKit
 
-/// Streams into one thread through the generated Web API methods.
+/// Streams one message through the generated Web API methods.
 ///
 /// A call that Slack rate limits (HTTP 429) is retried after its `Retry-After` delay, up to three attempts.
 struct WebAPIStreamingTransport: StreamingMessageTransport {
     let client: any APIProtocol
     let channel: String
-    let threadTs: String
+    /// The thread to reply in, or `nil` to omit `thread_ts` and stream a top-level message.
+    let threadTs: String?
     let recipient: StreamingMessage.Recipient?
     let taskDisplay: StreamingMessage.TaskDisplay
     let sessionStatus: String?

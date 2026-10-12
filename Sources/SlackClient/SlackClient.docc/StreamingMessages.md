@@ -1,6 +1,6 @@
 # Streaming messages
 
-Send text, task updates, and Block Kit parts into a thread as an asynchronous producer makes them available.
+Send text, task updates, and Block Kit parts into a message as an asynchronous producer makes them available.
 
 ## Overview
 
@@ -21,6 +21,14 @@ let ts = try await client.streamMessage(
 ```
 
 The return value is the reply's message timestamp. Supply `recipient` when replying in a channel; it identifies the user and their workspace.
+
+### Stream a top-level message
+
+Omit `threadTs` to stream a top-level message instead of a thread reply. The request then leaves out `thread_ts`. Slack supports this only in channels where the whole channel is one agent session, such as Slack Code; elsewhere `chat.startStream` fails with `invalid_thread_ts`, which throws ``StreamingMessage/Error``.
+
+```swift
+try await client.streamMessage(parts, channel: channel)
+```
 
 ### Produce tasks, text, and blocks
 

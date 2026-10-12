@@ -2,7 +2,7 @@
 import SlackBlockKit
 
 extension APIProtocol {
-    /// Streams `parts` into one message in a thread, and stops the message once `parts` ends.
+    /// Streams `parts` into one message, and stops the message once `parts` ends.
     ///
     /// Pass any `AsyncSequence` of ``StreamingMessage/Part``, such as an LLM's text deltas mapped to
     /// ``StreamingMessage/Part/markdown(_:)``:
@@ -39,7 +39,9 @@ extension APIProtocol {
     /// - Parameters:
     ///   - parts: The message content, in order.
     ///   - channel: The channel to post in.
-    ///   - threadTs: The thread to reply in. Streaming messages are always thread replies.
+    ///   - threadTs: The thread to reply in. Pass `nil` to stream a top-level message, which Slack supports only
+    ///     in channels where the whole channel is one agent session, such as Slack Code; elsewhere
+    ///     `chat.startStream` fails with `invalid_thread_ts`.
     ///   - recipient: The user the reply is for. Slack requires it when streaming into a channel rather than a
     ///     DM with the app.
     ///   - taskDisplay: How ``StreamingMessage/Part/task(_:)`` parts render.
@@ -53,7 +55,7 @@ extension APIProtocol {
     public func streamMessage<Parts: AsyncSequence>(
         _ parts: Parts,
         channel: String,
-        threadTs: String,
+        threadTs: String? = nil,
         recipient: StreamingMessage.Recipient? = nil,
         taskDisplay: StreamingMessage.TaskDisplay = .timeline,
         blocks: [Block]? = nil,
