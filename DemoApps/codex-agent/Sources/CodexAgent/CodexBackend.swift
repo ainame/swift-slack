@@ -244,7 +244,7 @@ private actor CodexSession {
         )
         self.codex = codex
         var options = ThreadOptions(
-            approvalPolicy: settings.writable ? .untrusted : .never,
+            approvalPolicy: settings.writable ? .onRequest : .never,
             cwd: settings.workspace,
             developerInstructions: """
             You are answering a person in Slack. Keep answers short and use Markdown that Slack renders: \
