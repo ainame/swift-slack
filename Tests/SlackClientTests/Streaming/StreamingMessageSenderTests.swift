@@ -60,7 +60,7 @@ struct StreamingMessageSenderTests {
 
         try await sender(transport).send(Words(["a", "b"]).map { Part.markdown($0) })
 
-        #expect(text(await transport.calls) == "ab")
+        #expect(await text(transport.calls) == "ab")
     }
 
     @Test
@@ -145,7 +145,7 @@ struct StreamingMessageSenderTests {
         continuation.yield(.markdown("first"))
         await transport.waitForCalls(1)
         continuation.yield(.markdown("second"))
-        // The input stops being read at its next part after the failure.
+        // Sendable input iteration is cancelled when delivery fails.
         await transport.waitForCalls(3)
         continuation.yield(.markdown("third"))
 

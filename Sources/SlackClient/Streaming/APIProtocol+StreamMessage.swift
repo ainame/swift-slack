@@ -2,6 +2,31 @@
 import SlackBlockKit
 
 extension APIProtocol {
+    /// Streams a Sendable input with concurrent reading and delivery. A delivery failure cancels input
+    /// iteration immediately, including while it waits for another element. The input must cooperate with
+    /// cancellation; `AsyncStream` and `AsyncThrowingStream` do so.
+    ///
+    /// Other arguments and completion behavior are the same as the actor-isolated sequence overload.
+    @discardableResult
+    public func streamMessage<Parts: AsyncSequence & Sendable>(
+        _ parts: Parts,
+        channel: String,
+        threadTs: String? = nil,
+        recipient: StreamingMessage.Recipient? = nil,
+        taskDisplay: StreamingMessage.TaskDisplay = .timeline,
+        blocks: [Block]? = nil,
+        sessionStatus: String? = nil,
+        minimumInterval: Duration = .seconds(1),
+        isolation: isolated (any Actor)? = #isolation,
+    ) async throws -> String where Parts.Element == StreamingMessage.Part {
+        let transport = WebAPIStreamingTransport(
+            client: self, channel: channel, threadTs: threadTs, recipient: recipient,
+            taskDisplay: taskDisplay, sessionStatus: sessionStatus,
+        )
+        return try await StreamingMessageSender(transport: transport, blocks: blocks, minimumInterval: minimumInterval)
+            .send(parts, isolation: isolation)
+    }
+
     /// Streams `parts` into one message, and stops the message once `parts` ends.
     ///
     /// Pass any `AsyncSequence` of ``StreamingMessage/Part``, such as an LLM's text deltas mapped to

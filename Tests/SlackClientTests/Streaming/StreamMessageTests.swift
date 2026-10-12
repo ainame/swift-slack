@@ -9,6 +9,27 @@ import Testing
 struct StreamMessageTests {
     typealias Part = StreamingMessage.Part
 
+    @Test(.timeLimit(.minutes(1)), arguments: ["chatStartStream", "chatAppendStream"])
+    func `fails and cancels a paused input without another part`(method: String) async {
+        let http = SlackHTTP(failing: method, code: "not_in_channel")
+        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+        let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
+        defer { continuation.finish() }
+        let sending = Task { try await client.streamMessage(parts, channel: "C1", minimumInterval: .zero) }
+        continuation.yield(.markdown("first"))
+        if method == "chatAppendStream" {
+            await http.waitForRequests(1)
+            continuation.yield(.markdown("second"))
+        }
+        await #expect(throws: StreamingMessage.Error.self) { try await sending.value }
+        if case .terminated = continuation.yield(.markdown("never sent")) {} else {
+            Issue.record("Input iteration was not cancelled")
+        }
+        let requests = await http.requests
+        #expect(requests.map(\.operationID) == (method == "chatStartStream"
+                ? ["chatStartStream"] : ["chatStartStream", "chatAppendStream", "chatStopStream"]))
+    }
+
     @Test
     func `sends the start, append, and stop requests Slack expects`() async throws {
         let http = SlackHTTP()
@@ -262,8 +283,8 @@ private actor Waits {
     }
 }
 
-private extension Array where Element: Sendable {
-    var async: AsyncStream<Element> {
+extension Array where Element: Sendable {
+    fileprivate var async: AsyncStream<Element> {
         AsyncStream { continuation in
             forEach { continuation.yield($0) }
             continuation.finish()
