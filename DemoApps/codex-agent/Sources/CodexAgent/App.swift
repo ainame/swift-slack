@@ -168,9 +168,17 @@ struct CodexAgentApp {
                 try await context.ack()
                 guard let id = payload.blockActions.first(where: { $0.actionId == actionId })?.value,
                       let user = payload.user.id, isAllowed(user), let channel = payload.container.channelId else {
+                    logger.warning("Ignored question button with missing fields or disallowed user", metadata: ["action_id": "\(actionId)"])
                     return
                 }
-                let notice: String? = switch await questions.answer(id: id, index: index, userId: user) {
+                let answer = await questions.answer(id: id, index: index, userId: user)
+                let result = switch answer {
+                case .accepted: "accepted"
+                case .notAsked: "wrong_user"
+                case .expired: "expired"
+                }
+                logger.info("Question button handled", metadata: ["question_id": "\(id)", "result": "\(result)"])
+                let notice: String? = switch answer {
                 case .accepted: nil
                 case let .notAsked(asked): "Only <@\(asked)> can answer this question."
                 case .expired: "This question is no longer waiting for an answer."

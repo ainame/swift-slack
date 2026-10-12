@@ -1,3 +1,4 @@
+import Foundation
 import Synchronization
 
 /// A one-turn stop signal. The producer and stop waiter are children of `run`, and both finish before it returns.
@@ -14,12 +15,22 @@ struct TurnProducer: Sendable {
     }
 
     private final class Signal: Sendable {
-        let reason = Mutex<Reason?>(nil)
-        let stopped: AsyncStream<Void>
-        let continuation: AsyncStream<Void>.Continuation
+        struct State {
+            var reason: Reason?
+            var waiters: [UUID: AsyncStream<Void>.Continuation] = [:]
+        }
+        let state = Mutex(State())
 
-        init() {
-            (stopped, continuation) = AsyncStream.makeStream(of: Void.self)
+        func stop(_ reason: Reason) {
+            let waiters = state.withLock { state in
+                if reason == .sessionStopped || state.reason == nil {
+                    state.reason = reason
+                }
+                let waiters = Array(state.waiters.values)
+                state.waiters.removeAll()
+                return waiters
+            }
+            for waiter in waiters { waiter.finish() }
         }
     }
 
@@ -27,7 +38,7 @@ struct TurnProducer: Sendable {
 
     /// Why the turn stopped, or `nil` while it runs. A session stop replaces an earlier local cancellation.
     var reason: Reason? {
-        signal.reason.withLock(\.self)
+        signal.state.withLock(\.reason)
     }
 
     var isSessionStopped: Bool {
@@ -36,27 +47,37 @@ struct TurnProducer: Sendable {
 
     /// Cancels production and leaves the caller free to finish the message.
     func cancel() {
-        signal.reason.withLock { $0 = $0 ?? .cancelled }
-        signal.continuation.finish()
+        signal.stop(.cancelled)
     }
 
     /// Records that Slack ended the session's stream and cancels production.
     func stopSession() {
-        signal.reason.withLock { $0 = .sessionStopped }
-        signal.continuation.finish()
+        signal.stop(.sessionStopped)
     }
 
     func waitForStop() async {
-        for await _ in signal.stopped {}
+        // Cancelling one consumer of a shared AsyncStream terminates the stream for every consumer.
+        // Each waiter owns a stream so question cleanup cannot stop the producing task.
+        let id = UUID()
+        let (stream, continuation) = AsyncStream.makeStream(of: Void.self)
+        let alreadyStopped = signal.state.withLock { state in
+            guard state.reason == nil else { return true }
+            state.waiters[id] = continuation
+            return false
+        }
+        if alreadyStopped { continuation.finish() }
+        defer {
+            _ = signal.state.withLock { $0.waiters.removeValue(forKey: id) }
+            continuation.finish()
+        }
+        for await _ in stream {}
     }
 
     func run(_ operation: @escaping @Sendable () async -> Void) async {
         await withTaskCancellationHandler {
             await withTaskGroup(of: Void.self) { group in
                 group.addTask { await operation() }
-                group.addTask { [signal] in
-                    for await _ in signal.stopped {}
-                }
+                group.addTask { await waitForStop() }
                 // Production finishing also cancels the waiter, so a normal turn needs no stop signal.
                 _ = await group.next()
                 group.cancelAll()

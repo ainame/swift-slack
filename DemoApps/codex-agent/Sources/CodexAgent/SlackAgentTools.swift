@@ -92,11 +92,19 @@ struct SlackAgentTools: AgentTools {
 
     func approve(_ request: AgentApproval) async -> Bool {
         // Never ask someone to approve details that the Slack message cannot show in full.
-        guard producer.reason == nil, request.question.count <= 2800 else { return false }
+        guard producer.reason == nil, request.question.count <= 2800 else {
+            logger.warning("Approval rejected before asking", metadata: ["session": "\(session)", "reason": producer.reason == nil ? "details_too_long" : "turn_stopped"])
+            return false
+        }
         do {
             let answer = try await askUser(request.question, options: ["Approve", "Deny"])
-            return answer == "Approve" && producer.reason == nil
-        } catch { return false }
+            let approved = answer == "Approve" && producer.reason == nil
+            logger.info("Approval resolved", metadata: ["session": "\(session)", "decision": approved ? "approve" : "deny"])
+            return approved
+        } catch {
+            logger.warning("Approval failed", metadata: ["session": "\(session)", "error": "\(error)"])
+            return false
+        }
     }
 
     private func checkCodeChannel() throws {

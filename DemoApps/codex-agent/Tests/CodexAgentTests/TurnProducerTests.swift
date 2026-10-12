@@ -3,6 +3,23 @@ import Testing
 
 struct TurnProducerTests {
     @Test(.timeLimit(.minutes(1)))
+    func `cancelling an auxiliary stop waiter does not cancel production`() async {
+        let producer = TurnProducer()
+        let state = ProductionState()
+        await producer.run {
+            let waiter = Task { await producer.waitForStop() }
+            await Task.yield()
+            waiter.cancel()
+            await waiter.value
+            try? await Task.sleep(for: .milliseconds(20))
+            await state.finish(cancelled: Task.isCancelled)
+        }
+        #expect(await state.finished)
+        #expect(await !state.cancelled)
+        #expect(producer.reason == nil)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
     func `normal completion needs no stop signal`() async {
         let producer = TurnProducer()
         let state = ProductionState()
