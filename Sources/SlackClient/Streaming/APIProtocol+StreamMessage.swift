@@ -31,10 +31,12 @@ extension APIProtocol {
     ///   the stop call. A call already in progress cannot be withdrawn; the method waits for it without
     ///   cancelling it, ignores its outcome, and rethrows ``StreamingMessage/SessionStopped``.
     /// - When the calling task is cancelled, the parts so far and `blocks` go out. The closing calls run in a
-    ///   task that does not inherit the cancellation.
+    ///   task that does not inherit the cancellation. A call that Slack rejected as rate limited is not retried
+    ///   in the cancelled task: its parts go out with the closing calls, after its `Retry-After` delay.
     /// - When a call fails, the message is stopped without further content, and the error is rethrown. Slack
     ///   answering `"ok": false` throws ``StreamingMessage/Error``. Rate-limited calls (HTTP 429) are retried
-    ///   after their `Retry-After` delay, up to three attempts.
+    ///   after their `Retry-After` delay, up to three attempts. Other failed calls are not resent, because a
+    ///   call that fails in flight may already have reached Slack.
     ///
     /// `parts` is read in the calling task, so it need not be `Sendable`. To stop a reply early while still
     /// finishing it, end `parts`, for example by cancelling the task that yields to an `AsyncStream`; that

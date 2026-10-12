@@ -134,6 +134,58 @@ struct StreamMessageTests {
         #expect(await http.requests.map(\.operationID) == ["chatStartStream"])
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func `sends a rate-limited start with the closing calls when cancelled during Retry-After`() async throws {
+        let http = SlackHTTP(rateLimitedOnce: "chatStartStream", retryAfter: "3600")
+        let waits = Waits()
+        let sender = await rateLimitedSender(http, waits: waits)
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await sender.send(input)
+        }
+        await waits.waitFor(1)
+        await input.yield(.markdown(" second"))
+        await input.waitForReads(3)
+        sending.cancel()
+        await input.finish()
+
+        #expect(try await sending.value == SlackHTTP.ts)
+        let requests = await http.requests
+        #expect(requests.map(\.operationID) == ["chatStartStream", "chatStartStream", "chatStopStream"])
+        #expect(try requests[1].chunks() == [["type": "markdown_text", "text": "first second"]])
+        #expect(requests[2].fields["chunks"] == nil)
+        #expect(requests[2].fields["blocks"]?.contains("divider") == true)
+        try await expectRetryAfterWaitedOut(waits)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `sends a rate-limited append with the closing calls when cancelled during Retry-After`() async throws {
+        let http = SlackHTTP(rateLimitedOnce: "chatAppendStream", retryAfter: "3600")
+        let waits = Waits()
+        let sender = await rateLimitedSender(http, waits: waits)
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await sender.send(input)
+        }
+        await http.waitForRequests(1)
+        await input.yield(.markdown(" second"))
+        await waits.waitFor(1)
+        await input.yield(.markdown(" third"))
+        await input.waitForReads(4)
+        sending.cancel()
+        await input.finish()
+
+        #expect(try await sending.value == SlackHTTP.ts)
+        let requests = await http.requests
+        #expect(requests.map(\.operationID) == ["chatStartStream", "chatAppendStream", "chatStopStream"])
+        #expect(try requests[1].chunks() == [["type": "markdown_text", "text": " second"]])
+        #expect(try requests[2].chunks() == [["type": "markdown_text", "text": " second third"]])
+        #expect(requests[2].fields["blocks"]?.contains("divider") == true)
+        try await expectRetryAfterWaitedOut(waits)
+    }
+
     @Test
     func `throws StreamingMessage.Error when Slack answers ok false`() async throws {
         let http = SlackHTTP(failing: "chatStartStream", code: "not_in_channel")
@@ -157,6 +209,56 @@ struct StreamMessageTests {
             #expect(value.count == 256)
             #expect(value.hasSuffix("…"))
         }
+    }
+}
+
+/// A sender that streams through `http`, ends with a divider, and waits through `waits`.
+private func rateLimitedSender(
+    _ http: SlackHTTP,
+    waits: Waits,
+) async -> StreamingMessageSender<WebAPIStreamingTransport> {
+    let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+    let transport = WebAPIStreamingTransport(
+        client: client,
+        channel: "C1",
+        threadTs: "1.0",
+        recipient: nil,
+        taskDisplay: .timeline,
+        sessionStatus: nil,
+    )
+    var sender = StreamingMessageSender(transport: transport, blocks: [.divider(DividerBlock())], minimumInterval: .zero)
+    sender.sleep = { try await waits.sleep(for: $0) }
+    return sender
+}
+
+/// Expects the cancelled `Retry-After` wait of an hour, then a wait for what remained of it before the closing calls.
+private func expectRetryAfterWaitedOut(_ waits: Waits) async throws {
+    let durations = await waits.durations
+    try #require(durations.count == 2)
+    #expect(durations[0] == .seconds(3600))
+    #expect(durations[1] > .seconds(3500) && durations[1] <= .seconds(3600))
+}
+
+/// Records the sender's waits. Only the first wait takes its time, until the task is cancelled; later waits,
+/// such as those of the uncancelled closing calls, return at once.
+private actor Waits {
+    private(set) var durations: [Duration] = []
+    private var waiters: [(count: Int, continuation: CheckedContinuation<Void, Never>)] = []
+
+    func sleep(for duration: Duration) async throws {
+        durations.append(duration)
+        for waiter in waiters where waiter.count <= durations.count {
+            waiter.continuation.resume()
+        }
+        waiters.removeAll { $0.count <= durations.count }
+        if durations.count == 1 {
+            try await Task.sleep(for: duration)
+        }
+    }
+
+    func waitFor(_ count: Int) async {
+        guard durations.count < count else { return }
+        await withCheckedContinuation { waiters.append((count, $0)) }
     }
 }
 

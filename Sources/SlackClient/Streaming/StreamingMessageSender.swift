@@ -19,6 +19,17 @@ protocol StreamingMessageTransport: Sendable {
     ) async throws
 }
 
+/// Thrown by a transport when Slack rejected a call as rate limited (HTTP 429) and the task was cancelled before
+/// the retry.
+///
+/// Slack did not process the rejected call, so its parts are still unsent: the sender sends them with the closing
+/// calls, which do not run in the cancelled task, once `retryAt` has passed. Other failures do not mean this,
+/// because a call that failed in flight may already have reached Slack.
+struct RateLimitedCallCancelled: Error {
+    /// When Slack accepts calls again, from the rejection's `Retry-After`.
+    var retryAt: ContinuousClock.Instant
+}
+
 /// Sends a sequence of parts as one streaming message.
 ///
 /// The caller's task reads the sequence into a ``PartBuffer``, and a child task sends whatever the buffer holds
@@ -71,8 +82,9 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
     private func deliver(from buffer: PartBuffer, stopSignal: SessionStopSignal) async throws -> String {
         var ts: String?
         let ending: PartBuffer.Batch
+        var retryAt: ContinuousClock.Instant?
         do {
-            ending = try await stream(from: buffer, ts: &ts, stopSignal: stopSignal)
+            ending = try await stream(from: buffer, ts: &ts, retryAt: &retryAt, stopSignal: stopSignal)
         } catch {
             await buffer.close()
             // Once Slack has ended the session, the failure no longer matters and the message needs no stop.
@@ -98,7 +110,11 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
         // message, and HTTP transports abandon requests made from a cancelled task.
         let messageTs: String
         do {
-            messageTs = try await Self.uncancellable { [transport, blocks, ts] in
+            messageTs = try await Self.uncancellable { [transport, blocks, ts, retryAt] in
+                if let retryAt {
+                    // Slack rejected the last call as rate limited, so wait out its Retry-After first.
+                    try await stopSignal.sleep(for: ContinuousClock.now.duration(to: retryAt))
+                }
                 var chunks = ending.parts
                 let messageTs: String
                 if let ts {
@@ -126,27 +142,38 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
         return messageTs
     }
 
-    /// Starts and appends to the message until the input ends, and returns the final batch for the stop call.
+    /// Starts and appends to the message until the input ends, and returns the final batch for the closing calls.
+    ///
+    /// `retryAt` is set when Slack rate limited the last call and the closing calls must wait before they start.
     private func stream(
         from buffer: PartBuffer,
         ts: inout String?,
+        retryAt: inout ContinuousClock.Instant?,
         stopSignal: SessionStopSignal,
     ) async throws -> PartBuffer.Batch {
         while true {
             var batch = await buffer.next()
             if !batch.isFinal, Task.isCancelled {
-                // Cancelling ends the input: everything buffered goes out with the stop call.
-                batch = await buffer.close()
+                // Cancelling ends the input: the batch just taken and everything still buffered go out with the
+                // closing calls.
+                batch = await buffer.close(prepending: batch.parts)
             }
             if batch.isFinal {
                 return batch
             }
 
             try await stopSignal.check()
-            if let ts {
-                try await transport.append(ts: ts, chunks: batch.parts, stopSignal: stopSignal)
-            } else {
-                ts = try await transport.start(chunks: batch.parts, stopSignal: stopSignal)
+            do {
+                if let ts {
+                    try await transport.append(ts: ts, chunks: batch.parts, stopSignal: stopSignal)
+                } else {
+                    ts = try await transport.start(chunks: batch.parts, stopSignal: stopSignal)
+                }
+            } catch let cancelled as RateLimitedCallCancelled {
+                // Slack did not process the batch, so it goes out with the closing calls like the rest.
+                try await stopSignal.check()
+                retryAt = cancelled.retryAt
+                return await buffer.close(prepending: batch.parts)
             }
             // A cancelled wait returns early, and the next batch is the final one. The wait throws once Slack has
             // ended the session, including during the call that just finished.
@@ -261,14 +288,7 @@ actor PartBuffer {
     @discardableResult
     func append(_ part: StreamingMessage.Part) -> Bool {
         guard !isClosed else { return false }
-        switch part {
-        case let .markdown(text):
-            appendMarkdown(text)
-        case let .blocks(blocks):
-            appendBlocks(blocks)
-        case .task, .plan:
-            parts.append(part)
-        }
+        add(part)
         resumeWaiter()
         return true
     }
@@ -281,10 +301,16 @@ actor PartBuffer {
         resumeWaiter()
     }
 
-    /// Stops taking parts and returns everything buffered as the final batch.
+    /// Stops taking parts and returns everything buffered as the final batch, after `taken`: parts the sender
+    /// took earlier but did not send.
     @discardableResult
-    func close() -> Batch {
+    func close(prepending taken: [StreamingMessage.Part] = []) -> Batch {
         isClosed = true
+        let buffered = parts
+        parts = []
+        for part in taken + buffered {
+            add(part)
+        }
         return take(isFinal: true)
     }
 
@@ -309,6 +335,17 @@ actor PartBuffer {
     private func take(isFinal: Bool) -> Batch {
         defer { parts = [] }
         return Batch(parts: parts, isFinal: isFinal, failure: isFinal ? failure : nil)
+    }
+
+    private func add(_ part: StreamingMessage.Part) {
+        switch part {
+        case let .markdown(text):
+            appendMarkdown(text)
+        case let .blocks(blocks):
+            appendBlocks(blocks)
+        case .task, .plan:
+            parts.append(part)
+        }
     }
 
     private func appendMarkdown(_ text: String) {
