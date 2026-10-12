@@ -33,6 +33,7 @@ actor AgentResponder {
     private let logger: Logger
     private let lifecycle = CodeChannelLifecycle()
     nonisolated let routingAttempts = RoutingAttempts()
+    private var knownCodeChannels: [String: ChannelClassifier.Kind] = [:]
     private var running: [SessionKey: RunningTurn] = [:]
     private var titledSessions: Set<SessionKey> = []
     /// Sessions the person renamed, whose title the agent leaves alone.
@@ -45,6 +46,16 @@ actor AgentResponder {
         self.backend = backend
         self.questions = questions
         self.logger = logger
+    }
+
+    func knownCodeChannel(in channel: String) async -> ChannelClassifier.Kind? {
+        if let known = knownCodeChannels[channel] {
+            return known
+        }
+        if let origin = await lifecycle.origin(of: channel) {
+            return .codeChannel(origin: origin)
+        }
+        return nil
     }
 
     func setIdentity(_ identity: BotIdentity) {
@@ -85,6 +96,9 @@ actor AgentResponder {
         // a second message in the same session must find it busy, and an early stop must find the turn.
         let (parts, continuation) = AsyncThrowingStream.makeStream(of: StreamingMessage.Part.self)
         let producer = TurnProducer()
+        if case .codeChannel = session {
+            knownCodeChannels[session.channel] = .codeChannel(origin: turn.origin)
+        }
         running[session] = RunningTurn(replyThreadTs: turn.replyThreadTs, producer: producer, parts: continuation)
         defer { running[session] = nil }
         let tools = SlackAgentTools(

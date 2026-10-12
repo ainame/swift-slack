@@ -44,6 +44,8 @@ enum AgentEvent: Sendable, Equatable {
 /// Slack actions an agent can take during a turn, offered to it as tools. Each turn gets its own,
 /// scoped to the turn's session and the person it answers.
 protocol AgentTools: Sendable {
+    /// The Code channel this turn is already working in, if any.
+    var currentCodeChannel: String? { get }
     func startCodeChannel(name: String) async throws -> String
     func publishView(_ view: CodeChannel.View) async throws
     func archiveCodeChannel(summary: String) async throws
@@ -71,6 +73,10 @@ enum AgentApproval: Sendable, Equatable {
 }
 
 extension AgentTools {
+    var currentCodeChannel: String? {
+        nil
+    }
+
     func startCodeChannel(name _: String) async throws -> String {
         throw AgentToolError(description: "Code channels are unavailable in this backend.")
     }

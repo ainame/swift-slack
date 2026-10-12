@@ -30,6 +30,20 @@ struct NotificationTranslatorTests {
         #expect(translator.events(turnID: "other", payload: delta("x", in: "m1")).isEmpty)
     }
 
+    @Test
+    func `failed tools show their error in the Slack task details`() {
+        var translator = NotificationTranslator(turnID: "turn")
+        let item = ThreadItem.dynamicToolCall(.init(
+            arguments: ["title": "Bug fix"],
+            contentItems: [.inputText(.init(text: "agents.sessions.rename failed: invalid_name", type: .inputText))],
+            id: "rename", status: .completed, success: false, tool: "set_title", type: .dynamicToolCall,
+        ))
+        #expect(translator.events(turnID: "turn", payload: completed(item)) == [.task(.init(
+            id: "rename", title: "Rename the conversation", status: .error,
+            details: "agents.sessions.rename failed: invalid_name",
+        ))])
+    }
+
     private func delta(_ text: String, in itemID: String) -> CodexNotificationPayload {
         .agentMessageDelta(.init(delta: text, itemId: itemID, threadId: "thread", turnId: "turn"))
     }

@@ -22,6 +22,18 @@ struct AgentToolsetTests {
     }
 
     @Test
+    func `code channel threads cannot start another code channel`() {
+        let names = AgentToolset.specs(for: .codeChannel(channel: "CODE")).compactMap { spec -> String? in
+            guard case let .function(function) = spec else { return nil }
+            return function.name
+        }
+        #expect(!names.contains("start_code_channel"))
+        #expect(names.contains("publish_code_view"))
+        #expect(names.contains("archive_code_channel"))
+        #expect(names.contains("set_title"))
+    }
+
+    @Test
     func `checks show_cards arguments and tells the agent what to fix`() async {
         let tools = FakeTools()
         #expect(await handle("show_cards", ["cards": [["title": "A"]]], tools).success)
