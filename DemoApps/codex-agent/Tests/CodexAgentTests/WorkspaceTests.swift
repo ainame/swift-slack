@@ -7,7 +7,8 @@ struct WorkspaceTests {
     func `allows the app directory and its parent without dotenv`(useParent: Bool) throws {
         try withDirectories { root, app in
             let workspace = useParent ? root : app
-            #expect(try CodexAgentApp.checkedWorkspace(workspace.path, appDirectory: app) == workspace.path)
+            let checked = try CodexAgentApp.checkedWorkspace(workspace.path, appDirectory: app)
+            #expect(checked == workspace.path)
         }
     }
 
@@ -40,7 +41,8 @@ struct WorkspaceTests {
             try Data().write(to: app.appending(path: ".env"))
             let workspace = root.appending(path: "app")
             try FileManager.default.createDirectory(at: workspace, withIntermediateDirectories: true)
-            #expect(try CodexAgentApp.checkedWorkspace(workspace.path, appDirectory: app) == workspace.path)
+            let checked = try CodexAgentApp.checkedWorkspace(workspace.path, appDirectory: app)
+            #expect(checked == workspace.path)
         }
     }
 
@@ -55,7 +57,8 @@ struct WorkspaceTests {
                     try CodexAgentApp.checkedWorkspace(link.path, appDirectory: app)
                 }
             } else {
-                #expect(try CodexAgentApp.checkedWorkspace(link.path, appDirectory: app) == app.path)
+                let checked = try CodexAgentApp.checkedWorkspace(link.path, appDirectory: app)
+                #expect(checked == app.path)
             }
         }
     }
