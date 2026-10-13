@@ -28,6 +28,67 @@ struct StreamingMessageSenderTests {
     }
 
     @Test
+    func `large finished input preserves text while bounding every request`() async throws {
+        let transport = FakeTransport()
+        let value = String(repeating: "abc", count: 20000)
+        try await sender(transport).send(AsyncStream { continuation in
+            continuation.yield(.markdown(value))
+            continuation.finish()
+        })
+        let calls = await transport.calls
+        #expect(text(calls) == value)
+        #expect(calls.last?.method == "stop")
+        for call in calls {
+            let count = call.chunks.reduce(0) { total, part in
+                if case let .markdown(value) = part {
+                    total + value.count
+                } else {
+                    total
+                }
+            }
+            #expect(count <= 12000)
+        }
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `local cancellation flushes a large buffer with bounded requests`() async throws {
+        let transport = FakeTransport()
+        let input = ManualInput()
+        let (sleeps, continuation) = AsyncStream.makeStream(of: Duration.self)
+        let waits = ClosingWaitCounter()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await sender(transport, minimumInterval: .milliseconds(10)) { duration in
+                continuation.yield(duration)
+                if await waits.isFirst() {
+                    try await Task.sleep(for: .seconds(3600))
+                }
+            }.send(input)
+        }
+        _ = await sleeps.first { _ in true }
+        let value = String(repeating: "x", count: 30000)
+        await input.yield(.markdown(value))
+        await input.waitForReads(3)
+        sending.cancel()
+        // The closing path also waits between appends; allow those waits to finish immediately.
+        continuation.finish()
+        await input.finish()
+        _ = try await sending.value
+        let calls = await transport.calls
+        #expect(text(calls) == "first" + value)
+        #expect(calls.last?.method == "stop")
+        #expect(calls.allSatisfy { call in
+            call.chunks.reduce(0) { total, part in
+                if case let .markdown(value) = part {
+                    total + value.count
+                } else {
+                    total
+                }
+            } <= 12000
+        })
+    }
+
+    @Test
     func `starts and stops a message when the input is empty`() async throws {
         let transport = FakeTransport()
 
@@ -505,5 +566,13 @@ actor FakeTransport: StreamingMessageTransport {
         if call.method == failingMethod {
             throw StreamingMessage.Error(method: "chat.\(call.method)Stream", code: "rate_limited")
         }
+    }
+}
+
+private actor ClosingWaitCounter {
+    var count = 0
+    func isFirst() -> Bool {
+        defer { count += 1 }
+        return count == 0
     }
 }

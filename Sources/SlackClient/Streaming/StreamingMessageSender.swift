@@ -151,7 +151,8 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
                     // Slack rejected the last call as rate limited, so wait out its Retry-After first.
                     try await stopSignal.sleep(for: ContinuousClock.now.duration(to: retryAt))
                 }
-                var chunks = ending.parts
+                var batches = PartBuffer.requestBatches(ending.parts)
+                var chunks = batches.removeFirst()
                 let messageTs: String
                 if let ts {
                     messageTs = ts
@@ -163,6 +164,15 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
                         stopSignal: stopSignal,
                     )
                     chunks = []
+                }
+                // Flush bounded requests even when cancellation accumulated a large final buffer.
+                for next in batches {
+                    if !chunks.isEmpty {
+                        try await stopSignal.check()
+                        try await transport.append(ts: messageTs, chunks: chunks, stopSignal: stopSignal)
+                        try await stopSignal.sleep(for: minimumInterval)
+                    }
+                    chunks = next
                 }
                 try await stopSignal.check()
                 try await transport.stop(ts: messageTs, chunks: chunks, blocks: blocks, stopSignal: stopSignal)
@@ -298,7 +308,7 @@ actor SessionStopSignal {
 /// Collects parts while a call is in flight so the next call sends them together.
 ///
 /// A producer can yield a part per token, but the streaming methods are rate limited, so the sender takes
-/// everything buffered between calls. Adjacent markdown and adjacent blocks merge up to Slack's limits.
+/// bounded batches from what accumulated between calls. Adjacent markdown and adjacent blocks merge up to Slack's limits.
 actor PartBuffer {
     struct Batch: Sendable {
         var parts: [StreamingMessage.Part]
@@ -347,11 +357,11 @@ actor PartBuffer {
         for part in taken + buffered {
             add(part)
         }
-        return take(isFinal: true)
+        return take(isFinal: true, bounded: false)
     }
 
-    /// Waits until parts are available, the input has ended, or the sender is cancelled, then takes everything
-    /// buffered.
+    /// Waits until parts are available, the input has ended, or the sender is cancelled, then takes one
+    /// bounded request. A finished input is final only when its remaining parts have been drained.
     func next() async -> Batch {
         while parts.isEmpty, !isFinished, !Task.isCancelled {
             await withTaskCancellationHandler {
@@ -368,9 +378,46 @@ actor PartBuffer {
         return take(isFinal: isFinished)
     }
 
-    private func take(isFinal: Bool) -> Batch {
-        defer { parts = [] }
-        return Batch(parts: parts, isFinal: isFinal, failure: isFinal ? failure : nil)
+    private func take(isFinal: Bool, bounded: Bool = true) -> Batch {
+        let taken = bounded ? Self.requestBatches(parts)[0] : parts
+        parts.removeFirst(taken.count)
+        let final = isFinal && parts.isEmpty
+        return Batch(parts: taken, isFinal: final, failure: final ? failure : nil)
+    }
+
+    /// Limits the aggregate markdown and blocks in each request, including non-adjacent chunks.
+    /// Input parts have already been split to the individual chunk limits by `add`.
+    static func requestBatches(_ parts: [StreamingMessage.Part]) -> [[StreamingMessage.Part]] {
+        var batches: [[StreamingMessage.Part]] = []
+        var batch: [StreamingMessage.Part] = []
+        var markdown = 0
+        var blocks = 0
+        for part in parts {
+            let textCount: Int
+            let blockCount: Int
+            switch part {
+            case let .markdown(text):
+                textCount = text.utf16.count
+                blockCount = 0
+            case let .blocks(values):
+                textCount = 0
+                blockCount = values.count
+            case .task, .plan:
+                textCount = 0
+                blockCount = 0
+            }
+            if !batch.isEmpty, markdown + textCount > markdownLimit || blocks + blockCount > blocksLimit {
+                batches.append(batch)
+                batch = []
+                markdown = 0
+                blocks = 0
+            }
+            batch.append(part)
+            markdown += textCount
+            blocks += blockCount
+        }
+        batches.append(batch)
+        return batches
     }
 
     private func add(_ part: StreamingMessage.Part) {
@@ -385,15 +432,28 @@ actor PartBuffer {
     }
 
     private func appendMarkdown(_ text: String) {
-        var text = Substring(text)
-        if case let .markdown(previous)? = parts.last, previous.count < Self.markdownLimit {
-            let head = text.prefix(Self.markdownLimit - previous.count)
-            parts[parts.count - 1] = .markdown(previous + head)
-            text = text.dropFirst(head.count)
+        guard !text.isEmpty else { return }
+        // Count UTF-16 units conservatively: Swift's Character count treats an emoji sequence as
+        // one character, while Slack can count its individual code points or UTF-16 units.
+        var chunk = ""
+        var count = 0
+        if case let .markdown(previous)? = parts.last, previous.utf16.count < Self.markdownLimit {
+            parts.removeLast()
+            chunk = previous
+            count = previous.utf16.count
         }
-        while !text.isEmpty {
-            parts.append(.markdown(String(text.prefix(Self.markdownLimit))))
-            text = text.dropFirst(Self.markdownLimit)
+        for scalar in text.unicodeScalars {
+            let width = scalar.value > 0xFFFF ? 2 : 1
+            if count + width > Self.markdownLimit {
+                parts.append(.markdown(chunk))
+                chunk = ""
+                count = 0
+            }
+            chunk.unicodeScalars.append(scalar)
+            count += width
+        }
+        if !chunk.isEmpty {
+            parts.append(.markdown(chunk))
         }
     }
 

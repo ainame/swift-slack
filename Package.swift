@@ -143,6 +143,8 @@ let package = Package(
                 "SlackClient",
                 "SlackBlockKit",
                 .product(name: "NIOCore", package: "swift-nio"),
+                .product(name: "NIOEmbedded", package: "swift-nio"),
+                .product(name: "NIOWebSocket", package: "swift-nio"),
             ],
         ),
         .target(

@@ -132,7 +132,7 @@ extension SlackApp {
         let logger = await slack.logger
         let runtimeLogger = appLogger ?? logger
 
-        let ws = WebSocketClient(url: url, logger: logger) { inbound, outbound, context in
+        let ws = WebSocketClient(url: url, configuration: Self.socketModeConfiguration, logger: logger) { inbound, outbound, context in
             context.logger.info("SocketMode client connected")
 
             try await withThrowingDiscardingTaskGroup { group in
@@ -230,6 +230,12 @@ extension SlackApp {
         case let .unsupported(type):
             .unsupported(type)
         }
+    }
+
+    /// Slack envelopes can include complete messages and Block Kit payloads. WSClient's 16 KiB
+    /// default rejects ordinary large events; retain a finite 1 MiB bound for incoming frames.
+    static var socketModeConfiguration: WebSocketClientConfiguration {
+        .init(maxFrameSize: 1 << 20)
     }
 
     static func shouldReconnectSocketMode(after error: any Error) -> Bool {

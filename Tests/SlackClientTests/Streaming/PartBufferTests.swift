@@ -26,9 +26,23 @@ struct PartBufferTests {
 
         #expect(await buffer.next().parts == [
             .markdown(String(repeating: "a", count: 7000) + String(repeating: "b", count: 5000)),
-            .markdown(String(repeating: "b", count: 12000)),
-            .markdown(String(repeating: "b", count: 1000)),
         ])
+        #expect(await buffer.next().parts == [.markdown(String(repeating: "b", count: 12000))])
+        #expect(await buffer.next().parts == [.markdown(String(repeating: "b", count: 1000))])
+    }
+
+    @Test
+    func `counts emoji conservatively without losing unicode scalars`() async {
+        let buffer = PartBuffer()
+        let text = String(repeating: "😀", count: 8000)
+        await buffer.append(.markdown(text))
+        await buffer.finish(throwing: nil)
+        let first = await buffer.next()
+        let last = await buffer.next()
+        #expect(first.parts == [.markdown(String(repeating: "😀", count: 6000))])
+        #expect(last.parts == [.markdown(String(repeating: "😀", count: 2000))])
+        #expect(!first.isFinal)
+        #expect(last.isFinal)
     }
 
     @Test
@@ -40,8 +54,23 @@ struct PartBufferTests {
 
         #expect(await buffer.next().parts == [
             .blocks(Array(repeating: divider, count: 50)),
-            .blocks(Array(repeating: divider, count: 10)),
         ])
+        #expect(await buffer.next().parts == [.blocks(Array(repeating: divider, count: 10))])
+    }
+
+    @Test
+    func `bounds non-adjacent markdown and only marks the last request final`() async {
+        let buffer = PartBuffer()
+        await buffer.append(.markdown(String(repeating: "a", count: 8000)))
+        await buffer.append(.task(task))
+        await buffer.append(.markdown(String(repeating: "b", count: 8000)))
+        await buffer.finish(throwing: nil)
+        let first = await buffer.next()
+        #expect(first.parts == [.markdown(String(repeating: "a", count: 8000)), .task(task)])
+        #expect(!first.isFinal)
+        let last = await buffer.next()
+        #expect(last.parts == [.markdown(String(repeating: "b", count: 8000))])
+        #expect(last.isFinal)
     }
 
     @Test

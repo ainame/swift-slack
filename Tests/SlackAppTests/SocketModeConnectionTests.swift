@@ -1,12 +1,35 @@
 #if SocketMode
 import Foundation
 import HTTPTypes
+import NIOCore
+import NIOEmbedded
+import NIOWebSocket
 import OpenAPIRuntime
 @testable import SlackApp
 import SlackClient
 import Testing
 
 struct SocketModeConnectionTests {
+    @Test
+    func `Socket Mode accepts frames larger than the websocket default`() throws {
+        let payload = String(repeating: "x", count: 64000)
+        let channel = EmbeddedChannel()
+        defer { _ = try? channel.finish() }
+        try channel.pipeline.syncOperations.addHandler(ByteToMessageHandler(
+            WebSocketFrameDecoder(maxFrameSize: SlackApp.socketModeConfiguration.maxFrameSize),
+        ))
+        // An unmasked text frame sent by the server, with a 16-bit extended length.
+        var bytes = channel.allocator.buffer(capacity: payload.utf8.count + 4)
+        bytes.writeInteger(UInt8(0x81))
+        bytes.writeInteger(UInt8(126))
+        bytes.writeInteger(UInt16(payload.utf8.count))
+        bytes.writeString(payload)
+        try channel.writeInbound(bytes)
+        let frame = try #require(try channel.readInbound(as: WebSocketFrame.self))
+        #expect(frame.opcode == .text)
+        #expect(frame.data.getString(at: frame.data.readerIndex, length: frame.data.readableBytes) == payload)
+    }
+
     @Test(arguments: ["invalid_auth", "missing_scope", "not_allowed_token_type"])
     func `Slack failures preserve the API error and restore bot authentication`(code: String) async throws {
         let transport = ConnectionTransport(response: "{\"ok\":false,\"error\":\"\(code)\"}")
