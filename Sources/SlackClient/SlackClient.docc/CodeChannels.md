@@ -19,12 +19,18 @@ Each returns Slack's response, including its `warning`, and throws ``CodeChannel
 Create, archive, and title the channel with the generated methods. When to create or archive a channel is up to your app.
 
 ```swift
-let created = try await client.agentsConversationsCreate(body: .json(.init(
+let output = try await client.agentsConversationsCreate(body: .json(.init(
     name: "fix-login-bug",
     originChannelId: event.channel,
     originMessageTs: event.ts,
-))).ok.body.json
-guard created.ok, let channelId = created.channelId else { return }
+)))
+
+// Select the HTTP 200 response. This throws for an unexpected HTTP status.
+let httpResponse = try output.ok
+
+// Extract the decoded Slack response. HTTP 200 does not guarantee Slack accepted the request.
+let response = try httpResponse.body.json
+guard response.ok, let channelId = response.channelId else { return }
 
 try await client.agentsSessionsRename(body: .json(.init(channelId: channelId, title: "Fix the login bug")))
 try await client.agentsSessionsSetStatus(body: .json(.init(channelId: channelId, status: "active")))
