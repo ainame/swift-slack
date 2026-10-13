@@ -70,7 +70,7 @@ struct AgentResponderTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func `a stop from Slack ends the turn without another Slack call`() async {
+    func `a stop cancels the turn and clears processing without sending more stream content`() async {
         let client = await slack.client()
         let stopped = turn(.codeChannel(channel: "C1"), replyThreadTs: nil)
 
@@ -85,7 +85,8 @@ struct AgentResponderTests {
 
         await backend.probe.waitFor("cancelled", in: stopped.session)
         let after = await slack.requests.dropFirst(before)
-        #expect(after.map(\.method) == [])
+        #expect(after.map(\.method) == ["agentsSessionsSetStatus"])
+        #expect(after.first?["status"] == "active")
         #expect(await slack.requests.allSatisfy { $0["chunks"]?.contains("Stopped") != true })
 
         // The session is free again.
@@ -108,11 +109,11 @@ struct AgentResponderTests {
 
         #expect(await slack.requests("chatStartStream").isEmpty)
         #expect(await slack.requests("chatStopStream").isEmpty)
-        #expect(await slack.requests("agentsSessionsSetStatus").allSatisfy { $0["status"] == "processing" })
+        #expect(await slack.requests("agentsSessionsSetStatus").last?["status"] == "active")
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func `a stop ends a waiting question without updating Slack`() async {
+    func `a stop ends a waiting question and clears session status without updating the question`() async {
         let test = AgentResponderTests(asksQuestion: true)
         let client = await test.slack.client()
         let session = SessionKey.codeChannel(channel: "C1")
@@ -132,7 +133,8 @@ struct AgentResponderTests {
         await handling.value
 
         let after = await test.slack.requests.dropFirst(before)
-        #expect(after.map(\.method) == [])
+        #expect(after.map(\.method) == ["agentsSessionsSetStatus"])
+        #expect(after.first?["status"] == "active")
         #expect(await test.slack.requests("agentsSessionsSetStatus").allSatisfy { $0["thread_ts"] == nil })
     }
 

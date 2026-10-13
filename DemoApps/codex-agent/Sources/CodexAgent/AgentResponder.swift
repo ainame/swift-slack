@@ -26,6 +26,7 @@ actor AgentResponder {
         let replyThreadTs: String?
         let producer: TurnProducer
         let parts: AsyncThrowingStream<StreamingMessage.Part, any Error>.Continuation
+        var resetStatusAfterStop = true
     }
 
     private let backend: any AgentBackend
@@ -126,7 +127,7 @@ actor AgentResponder {
                     ), client: client, attempt: attempt, parent: producer)
                 }
             },
-            endSession: { [weak self] in await self?.stop(channel: session.channel, threadTs: nil) },
+            endSession: { [weak self] in await self?.stop(channel: session.channel, threadTs: nil, resetStatus: false) },
         )
 
         var deliveryFailed = false
@@ -157,6 +158,8 @@ actor AgentResponder {
                 )
             } catch is StreamingMessage.SessionStopped {
                 logger.info("Slack stopped the session", metadata: ["session": "\(session)"])
+                producer.stopSession()
+                await questions.cancel(session)
             } catch {
                 logger.info("Could not finish the stream", metadata: ["session": "\(session)", "error": "\(error)"])
                 deliveryFailed = true
@@ -164,34 +167,46 @@ actor AgentResponder {
                 producer.cancel()
             }
         }
-        // A failed delivery leaves the session `processing`, which spins for an hour, so set it back. Slack has
-        // already ended a stopped session.
-        if deliveryFailed, !producer.isSessionStopped {
+        // Slack stops streams but does not transition the session status. Restore it after producer
+        // cleanup, so an in-flight processing/suspended request cannot overwrite this transition.
+        if (deliveryFailed && !producer.isSessionStopped) || (producer.isSessionStopped && running[session]?.resetStatusAfterStop != false) {
             await setActive(session, client: client)
         }
     }
 
     /// Handles Slack's `agent_session_stopped`. Without `threadTs`, every turn in the channel stops, including
-    /// the thread sessions in it. With `threadTs`, the turn of that thread's session stops, or the turn replying
-    /// in that thread of a code channel.
-    func stop(channel: String, threadTs: String?) async {
-        routingAttempts.cancel(channel: channel, threadTs: threadTs)
+    /// the thread sessions in it. Code channel stops always cover the channel; ordinary thread stops keep
+    /// their thread scope. Archiving uses `resetStatus: false` so cleanup never reactivates a closed channel.
+    func stop(channel: String, threadTs: String?, client: (any APIProtocol)? = nil, resetStatus: Bool = true) async {
+        let scope = knownCodeChannels[channel] != nil ? nil : threadTs.flatMap { $0.isEmpty ? nil : $0 }
+        routingAttempts.cancel(channel: channel, threadTs: scope)
         let stopped = running.filter { session, turn in
             guard session.channel == channel else { return false }
-            guard let threadTs else { return true }
+            guard let threadTs = scope else { return true }
             return session.threadTs == threadTs || turn.replyThreadTs == threadTs
         }
         for (session, turn) in stopped {
             logger.info("Stopping turn", metadata: ["session": "\(session)"])
+            running[session]?.resetStatusAfterStop = resetStatus
             // Slack has ended the stream: streamMessage drops what it has not sent and makes no more calls.
             turn.parts.finish(throwing: StreamingMessage.SessionStopped())
             // Cancelling the producer ends its iteration of the backend's stream, which stops the turn. The
             // tools see the stop before their question ends below, so they leave Slack alone.
             turn.producer.stopSession()
+            // Do not wait for the stream iterator to observe cancellation: it may be publishing a view
+            // or blocked in a Slack HTTP request while Codex continues executing commands.
+            backend.stop(in: session)
         }
         // A question waiting for a click holds Codex's message loop, so end it to let the interrupt through.
         for session in stopped.keys {
             await questions.cancel(session)
+        }
+        if stopped.isEmpty {
+            logger.info("No running turn matched the stop event", metadata: ["channel": "\(channel)", "thread_ts": "\(scope ?? "none")"])
+            if let client, resetStatus {
+                let session: SessionKey = scope.map { .thread(channel: channel, threadTs: $0) } ?? .codeChannel(channel: channel)
+                await setActive(session, client: client)
+            }
         }
     }
 
