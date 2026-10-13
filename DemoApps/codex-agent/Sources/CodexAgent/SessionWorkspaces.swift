@@ -1,11 +1,47 @@
+#if canImport(Darwin)
+import Darwin
+#else
+import Glibc
+#endif
 import Foundation
 
-/// Clones committed repository content without hardlinks or a shared .git directory. Resumed sessions keep
-/// their checkout; the source checkout (including its uncommitted files) is never used as a writable cwd.
+/// Persistent Code channel worktrees. Records live outside the writable checkout; never remove old clones.
 actor SessionWorkspaces {
+    struct Workspace: Codable, Sendable, Equatable {
+        let version: Int
+        let channel: String
+        let repository: String
+        let commonDirectory: String
+        let path: String
+        let branch: String
+        var gitDirectory: String?
+        var conversationID: String?
+        var conversationReady = false
+
+        enum CodingKeys: String, CodingKey {
+            case version, channel, repository, path, branch
+            case commonDirectory = "common_directory"
+            case gitDirectory = "git_directory"
+            case conversationID = "conversation_id"
+            case conversationReady = "conversation_ready"
+        }
+
+        /// Git's shared config, hooks, main index and unrelated refs remain outside writable roots.
+        var gitWritableRoots: [String] {
+            guard let gitDirectory else { return [] }
+            let common = URL(filePath: commonDirectory)
+            let namespace = branch.split(separator: "/").dropLast().joined(separator: "/")
+            return [
+                gitDirectory,
+                common.appending(path: "objects").path,
+                common.appending(path: "refs/heads/" + namespace).path,
+                common.appending(path: "logs/refs/heads/" + namespace).path,
+            ]
+        }
+    }
+
     private let source: URL
     private let root: URL
-    private var allocated: [SessionKey: String] = [:]
 
     init(source: String, root: String) throws {
         self.source = URL(filePath: source).standardizedFileURL.resolvingSymlinksInPath()
@@ -16,67 +52,146 @@ actor SessionWorkspaces {
     }
 
     func workspace(for key: SessionKey) throws -> String {
-        if let existing = allocated[key] {
-            try validate(URL(filePath: existing))
-            return existing
-        }
-        try Task.checkCancellation()
-        try FileManager.default.createDirectory(
-            at: root,
-            withIntermediateDirectories: true,
-            attributes: [.posixPermissions: 0o700],
-        )
-        guard root.resolvingSymlinksInPath() == root else {
-            throw AgentToolError(description: "The session workspace root became a symlink.")
-        }
-        // Each process owns its allocations; never trust a pre-existing checkout after an app restart.
-        let destination = root.appending(path: Self.name(for: key) + "-" + UUID().uuidString)
-        let process = Process()
-        process.executableURL = URL(filePath: "/usr/bin/git")
-        process.arguments = ["clone", "--no-local", "--no-hardlinks", "--", source.path, destination.path]
-        process.environment = [
-            "PATH": "/usr/bin:/bin",
-            "GIT_CONFIG_NOSYSTEM": "1",
-            "GIT_CONFIG_GLOBAL": "/dev/null",
-            "GIT_TERMINAL_PROMPT": "0",
-        ]
-        process.standardOutput = FileHandle.nullDevice
-        process.standardError = FileHandle.nullDevice
-        try process.run()
-        process.waitUntilExit()
-        guard process.terminationStatus == 0 else {
-            try? FileManager.default.removeItem(at: destination)
-            throw AgentToolError(description: "CODEX_WORKSPACE must be a local Git repository that can be cloned.")
-        }
-        do {
-            // The clone's local origin would otherwise make an accidental push target the developer's repo.
-            let removeOrigin = Process()
-            removeOrigin.executableURL = process.executableURL
-            removeOrigin.arguments = ["-C", destination.path, "remote", "remove", "origin"]
-            removeOrigin.environment = process.environment
-            removeOrigin.standardOutput = FileHandle.nullDevice
-            removeOrigin.standardError = FileHandle.nullDevice
-            try removeOrigin.run()
-            removeOrigin.waitUntilExit()
-            guard removeOrigin.terminationStatus == 0 else {
-                throw AgentToolError(description: "Cannot detach the session checkout from its local origin.")
-            }
-            try validate(destination)
-            try Task.checkCancellation()
-        } catch {
-            try? FileManager.default.removeItem(at: destination)
-            throw error
-        }
-        allocated[key] = destination.path
-        return destination.path
+        try allocation(for: key).path
     }
 
-    private func validate(_ directory: URL) throws {
-        guard root.resolvingSymlinksInPath() == root, directory.resolvingSymlinksInPath() == directory,
-              Self.contains(root, path: directory), directory != root else {
-            throw AgentToolError(description: "The session checkout must stay inside its workspace root.")
+    func allocation(for key: SessionKey) throws -> Workspace {
+        let channel = try channelID(key)
+        return try locked {
+            do {
+                if let record = try read(channel) {
+                    guard record.channel == channel else { throw AgentToolError(description: "Session record belongs to a different channel.") }
+                    try validate(record)
+                    return record
+                }
+                try Task.checkCancellation()
+                let common = try gitPath(["rev-parse", "--path-format=absolute", "--git-common-dir"], in: source)
+                let destination = root.appending(path: "code-" + channel)
+                let branch = "slack-code/" + channel + "/work"
+                guard !FileManager.default.fileExists(atPath: destination.path) else {
+                    throw AgentToolError(description: "An unrecorded checkout already exists at \(destination.path). Preserve it and restore its session record before retrying.")
+                }
+                // Record intent first. A crash or failed allocation must never cause a second checkout.
+                var record = Workspace(
+                    version: 1,
+                    channel: channel,
+                    repository: source.path,
+                    commonDirectory: common,
+                    path: destination.path,
+                    branch: branch,
+                )
+                try write(record)
+                _ = try git(["worktree", "add", "-b", branch, "--", destination.path, "HEAD"], in: source)
+                record.gitDirectory = try gitPath(["rev-parse", "--absolute-git-dir"], in: destination)
+                try write(record)
+                try validate(record)
+                // These directories permit a commit without granting all shared Git metadata write access.
+                for path in record.gitWritableRoots {
+                    try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
+                }
+                return record
+            } catch {
+                throw recovery(channel: channel, error: error)
+            }
         }
-        // A tracked symlink must not expose the developer's checkout or another session to a coding turn.
+    }
+
+    func saveConversation(_ id: String, for key: SessionKey) throws {
+        let channel = try channelID(key)
+        try locked {
+            do {
+                guard var record = try read(channel), !id.isEmpty else {
+                    throw AgentToolError(description: "Missing session record or Codex conversation ID.")
+                }
+                guard record.channel == channel else { throw AgentToolError(description: "Session record belongs to a different channel.") }
+                try validate(record)
+                guard record.conversationID == nil || record.conversationID == id else {
+                    throw AgentToolError(description: "Another Codex conversation is already recorded for this channel.")
+                }
+                record.conversationID = id
+                record.conversationReady = true
+                try write(record)
+            } catch { throw recovery(channel: channel, error: error) }
+        }
+    }
+
+    private func channelID(_ key: SessionKey) throws -> String {
+        guard case let .codeChannel(channel) = key, !channel.isEmpty,
+              channel.utf8.allSatisfy({ (65 ... 90).contains($0) || (48 ... 57).contains($0) }) else {
+            throw AgentToolError(description: "Writable worktrees require a Code channel with an uppercase alphanumeric Slack channel ID.")
+        }
+        return channel
+    }
+
+    private func recordURL(_ channel: String) -> URL {
+        root.appending(path: ".sessions/" + channel + ".json")
+    }
+
+    private func read(_ channel: String) throws -> Workspace? {
+        let url = recordURL(channel)
+        guard url.resolvingSymlinksInPath() == url else {
+            throw AgentToolError(description: "The session record became a symlink.")
+        }
+        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+        return try JSONDecoder().decode(Workspace.self, from: Data(contentsOf: url))
+    }
+
+    private func write(_ record: Workspace) throws {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        try encoder.encode(record).write(to: recordURL(record.channel), options: .atomic)
+        try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: recordURL(record.channel).path)
+    }
+
+    private func locked<T>(_ body: () throws -> T) throws -> T {
+        let state = root.appending(path: ".sessions")
+        guard root.resolvingSymlinksInPath() == root, state.resolvingSymlinksInPath() == state else {
+            throw AgentToolError(description: "The workspace root or session state directory became a symlink. Restore CODEX_SESSION_WORKSPACES before retrying.")
+        }
+        try FileManager.default.createDirectory(at: state, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
+        let fd = open(state.appending(path: "allocation.lock").path, O_CREAT | O_RDWR | O_NOFOLLOW, 0o600)
+        guard fd >= 0 else { throw AgentToolError(description: "Cannot open the workspace allocation lock.") }
+        defer { close(fd) }
+        guard flock(fd, LOCK_EX) == 0 else { throw AgentToolError(description: "Cannot lock workspace state.") }
+        defer { flock(fd, LOCK_UN) }
+        return try body()
+    }
+
+    private func validate(_ record: Workspace) throws {
+        let directory = URL(filePath: record.path)
+        guard record.conversationReady == (record.conversationID != nil), record.conversationID != "" else {
+            throw AgentToolError(description: "Recorded Codex conversation state is incomplete or invalid.")
+        }
+        guard record.version == 1, record.repository == source.path,
+              record.path == root.appending(path: "code-" + record.channel).path,
+              record.branch == "slack-code/" + record.channel + "/work",
+              directory.resolvingSymlinksInPath() == directory,
+              FileManager.default.fileExists(atPath: directory.path),
+              let gitDirectory = record.gitDirectory else {
+            throw AgentToolError(description: "Session state is incomplete, changed, or its worktree is missing.")
+        }
+        let common = try gitPath(["rev-parse", "--path-format=absolute", "--git-common-dir"], in: source)
+        guard common == record.commonDirectory,
+              try gitPath(["rev-parse", "--path-format=absolute", "--git-common-dir"], in: directory) == common,
+              try gitPath(["rev-parse", "--absolute-git-dir"], in: directory) == gitDirectory,
+              URL(filePath: gitDirectory).resolvingSymlinksInPath().path == gitDirectory,
+              Self.contains(URL(filePath: common).appending(path: "worktrees"), path: URL(filePath: gitDirectory)),
+              try gitPath(["rev-parse", "--show-toplevel"], in: directory) == directory.path,
+              try git(["symbolic-ref", "--short", "HEAD"], in: directory) == record.branch else {
+            throw AgentToolError(description: "Worktree Git metadata, repository, or topic branch no longer matches its session record.")
+        }
+        let list = try git(["worktree", "list", "--porcelain", "-z"], in: source)
+        guard list.components(separatedBy: "\0\0").contains(where: {
+            $0.components(separatedBy: "\0").contains(where: { line in
+                line.hasPrefix("worktree ") && URL(filePath: String(line.dropFirst(9))).resolvingSymlinksInPath() == directory
+            })
+                && $0.components(separatedBy: "\0").contains("branch refs/heads/" + record.branch)
+        }) else { throw AgentToolError(description: "Git no longer registers this worktree.") }
+        for path in record.gitWritableRoots {
+            guard URL(filePath: path).resolvingSymlinksInPath().path == path else {
+                throw AgentToolError(description: "A writable Git metadata path became a symlink.")
+            }
+        }
         guard let entries = FileManager.default.enumerator(at: directory, includingPropertiesForKeys: [.isSymbolicLinkKey]) else {
             throw AgentToolError(description: "Cannot inspect the session checkout.")
         }
@@ -91,17 +206,34 @@ actor SessionWorkspaces {
         }
     }
 
-    private static func contains(_ directory: URL, path: URL) -> Bool {
-        path.path == directory.path || path.path.hasPrefix(directory.path + "/")
+    private func recovery(channel: String, error: any Error) -> AgentToolError {
+        AgentToolError(
+            description: "Cannot resume Code channel \(channel): \(error). Preserve all checkouts and commits. Inspect git worktree list --porcelain in CODEX_WORKSPACE and \(recordURL(channel).path); restore the recorded path/branch and use git worktree repair if moved. See README workspace recovery. No replacement was allocated.",
+        )
     }
 
-    private static func name(for key: SessionKey) -> String {
-        func hex(_ value: String) -> String {
-            value.utf8.map { String(format: "%02x", $0) }.joined()
+    private func gitPath(_ arguments: [String], in directory: URL) throws -> String {
+        try URL(filePath: git(arguments, in: directory)).standardizedFileURL.resolvingSymlinksInPath().path
+    }
+
+    private func git(_ arguments: [String], in directory: URL) throws -> String {
+        let process = Process()
+        process.executableURL = URL(filePath: "/usr/bin/git")
+        process.arguments = ["-C", directory.path] + arguments
+        process.environment = ["PATH": "/usr/bin:/bin", "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_TERMINAL_PROMPT": "0"]
+        let output = Pipe()
+        process.standardOutput = output
+        process.standardError = FileHandle.nullDevice
+        try process.run()
+        let data = output.fileHandleForReading.readDataToEndOfFile()
+        process.waitUntilExit()
+        guard process.terminationStatus == 0 else {
+            throw AgentToolError(description: "git \(arguments.prefix(2).joined(separator: " ")) failed (exit \(process.terminationStatus)).")
         }
-        switch key {
-        case let .codeChannel(channel): return "code-" + hex(channel)
-        case let .thread(channel, ts): return "thread-" + hex(channel) + "-" + hex(ts)
-        }
+        return String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static func contains(_ directory: URL, path: URL) -> Bool {
+        path.path == directory.path || path.path.hasPrefix(directory.path + "/")
     }
 }
