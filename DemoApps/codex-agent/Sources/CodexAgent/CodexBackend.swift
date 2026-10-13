@@ -523,7 +523,7 @@ final class ToolRouter: Sendable {
         guard let tools else {
             return AgentToolset.reply("No turn is running.", success: false)
         }
-        return await AgentToolset.handle(call, tools: tools)
+        return await AgentToolset.handle(call, tools: tools, workspace: writeWorkspace)
     }
 }
 
@@ -540,6 +540,7 @@ enum AgentToolset {
     static let startCodeChannel = "start_code_channel"
     static let publishCodeView = "publish_code_view"
     static let archiveCodeChannel = "archive_code_channel"
+    static let uploadFile = "upload_file"
 
     static let specs: [DynamicToolSpec] = [
         function(
@@ -617,13 +618,21 @@ enum AgentToolset {
 
     /// Answers a tool call. `show_cards` only checks its arguments: the cards are read from the completed
     /// tool call item.
-    static func handle(_ call: DynamicToolCallParams, tools: any AgentTools) async -> DynamicToolCallResponse {
+    static func handle(_ call: DynamicToolCallParams, tools: any AgentTools, workspace: String? = nil) async -> DynamicToolCallResponse {
         guard call.namespace == nil else {
             return reply("There is no tool named \(call.tool).", success: false)
         }
         do {
             let arguments = try JSONEncoder().encode(call.arguments)
             switch call.tool {
+            case uploadFile:
+                guard tools.currentCodeChannel != nil, let workspace else {
+                    throw AgentToolError(description: "Uploads require a writable Code channel worktree.")
+                }
+                let args = try decode(UploadArguments.self, from: arguments)
+                let file = try WorkspaceUpload.read(path: args.path, workspace: workspace)
+                let result = try await tools.uploadFile(file, title: args.title)
+                return try reply(String(decoding: JSONEncoder().encode(result), as: UTF8.self), success: true)
             case startCodeChannel:
                 let args = try decode(StartCodeChannelArguments.self, from: arguments)
                 guard !args.name.isEmpty else { throw AgentToolError(description: "Pass a channel name.") }
@@ -676,6 +685,11 @@ enum AgentToolset {
 
     private struct SetTitleArguments: Decodable {
         var title: String
+    }
+
+    private struct UploadArguments: Decodable {
+        let path: String
+        let title: String?
     }
 
     private struct ReadSlackArguments: Decodable {

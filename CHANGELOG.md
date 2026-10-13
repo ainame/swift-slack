@@ -23,7 +23,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Maintenance
 
-* The Codex agent demo creates and reuses Code channels, publishes artifacts and diffs, and shares archive summaries with linked origin threads. Persistent Git worktrees and topic branches now restore the same checkout and Codex conversation after restart, validate recovery state, and show repository, branch and checkout context. Scoped Git permissions permit topic commits, with Slack approvals for additional permissions; old independent clones are preserved with migration and cleanup guidance. The demo also restores conversation context, avoids repeated handoffs after naming/setup failures, deduplicates events and stops pending work when Slack ends a session - #255
+* The Codex agent demo creates and reuses Code channels, publishes artifacts and diffs, uploads worktree files into the current channel with image references for Block Kit views, and shares archive summaries with linked origin threads. Persistent Git worktrees and topic branches now restore the same checkout and Codex conversation after restart, validate recovery state, and show repository, branch and checkout context. Scoped Git permissions permit topic commits, with Slack approvals for additional permissions; old independent clones are preserved with migration and cleanup guidance. The demo also restores conversation context, avoids repeated handoffs after naming/setup failures, deduplicates events and stops pending work when Slack ends a session - #255
 
 ## [2027.1.0-beta.2] - 2026-10-12
 

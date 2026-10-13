@@ -22,6 +22,7 @@ let package = Package(
                 "WebAPI_Auth",
                 "WebAPI_Chat",
                 "WebAPI_Conversations",
+                "WebAPI_Files",
             ],
         ),
         .package(url: "https://github.com/ainame/swift-codex.git", from: "0.162.1"),
@@ -40,6 +41,7 @@ let package = Package(
                 .product(name: "Logging", package: "swift-log"),
                 .product(name: "Configuration", package: "swift-configuration"),
                 .product(name: "SystemPackage", package: "swift-system"),
+                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
             ],
         ),
         .testTarget(

@@ -44,6 +44,7 @@ enum AgentEvent: Sendable, Equatable {
 /// Slack actions an agent can take during a turn, offered to it as tools. Each turn gets its own,
 /// scoped to the turn's session and the person it answers.
 protocol AgentTools: Sendable {
+    func uploadFile(_ file: WorkspaceUpload, title: String?) async throws -> UploadedFile
     func showWorkspace(_ workspace: SessionWorkspaces.Workspace) async throws
     /// The Code channel this turn is already working in, if any.
     var currentCodeChannel: String? { get }
@@ -74,6 +75,10 @@ enum AgentApproval: Sendable, Equatable {
 }
 
 extension AgentTools {
+    func uploadFile(_: WorkspaceUpload, title _: String?) async throws -> UploadedFile {
+        throw AgentToolError(description: "File uploads are unavailable in this session.")
+    }
+
     func showWorkspace(_: SessionWorkspaces.Workspace) async throws {}
     var currentCodeChannel: String? {
         nil

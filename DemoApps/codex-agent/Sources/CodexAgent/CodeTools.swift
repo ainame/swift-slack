@@ -4,7 +4,12 @@ import SlackKit
 
 extension AgentToolset {
     static func specs(for session: SessionKey) -> [DynamicToolSpec] {
-        guard case .codeChannel = session else { return specs }
+        guard case .codeChannel = session else {
+            return specs.filter { spec in
+                guard case let .function(function) = spec else { return true }
+                return function.name != uploadFile
+            }
+        }
         return specs.filter { spec in
             guard case let .function(function) = spec else { return true }
             return function.name != startCodeChannel
@@ -39,6 +44,13 @@ extension AgentToolset {
     }
 
     static let codeSpecs: [DynamicToolSpec] = [
+        function(uploadFile, description: """
+        Upload a local file from this Code channel's writable worktree and share it in this channel.
+        Pass a relative or absolute path and an optional title. Regular files only, up to 20 MiB;
+        symlinks and .git/.env files cannot be uploaded. Returns file_id, permalink and slack_file.
+        For an image artifact, use the returned slack_file in a Block Kit image block with alt_text,
+        then call publish_code_view with type block_kit. Never use a local path as an image URL.
+        """, properties: ["path": ["type": "string", "minLength": 1], "title": ["type": "string", "maxLength": 200]], required: ["path"]),
         function(startCodeChannel, description: """
         Start a Slack Code channel for substantial work that needs editing, running commands or showing artifacts.
         Reuses an existing channel for this conversation. The original task automatically continues there;
