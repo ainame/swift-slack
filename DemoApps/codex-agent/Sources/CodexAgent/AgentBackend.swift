@@ -44,6 +44,7 @@ enum AgentEvent: Sendable, Equatable {
 /// Slack actions an agent can take during a turn, offered to it as tools. Each turn gets its own,
 /// scoped to the turn's session and the person it answers.
 protocol AgentTools: Sendable {
+    func showWorkspace(_ workspace: SessionWorkspaces.Workspace) async throws
     /// The Code channel this turn is already working in, if any.
     var currentCodeChannel: String? { get }
     func startCodeChannel(name: String) async throws -> String
@@ -73,6 +74,7 @@ enum AgentApproval: Sendable, Equatable {
 }
 
 extension AgentTools {
+    func showWorkspace(_: SessionWorkspaces.Workspace) async throws {}
     var currentCodeChannel: String? {
         nil
     }

@@ -14,6 +14,21 @@ struct SlackAgentTools: AgentTools {
         "ask_user_choice_\(index)"
     }
 
+    func showWorkspace(_ workspace: SessionWorkspaces.Workspace) async throws {
+        try checkCodeChannel()
+        let result = try await client.setCodeChannelProperties(
+            channelId: session.channel,
+            properties: .init(contextBarItems: [
+                .init(key: "repository", label: URL(filePath: workspace.repository).lastPathComponent, icon: .folder, itemType: .info),
+                .init(key: "branch", label: workspace.branch, icon: .branch, itemType: .info),
+                .init(key: "checkout", label: workspace.path, icon: .terminal, itemType: .info),
+            ]),
+        )
+        if let warning = result.warning {
+            logger.warning("Workspace context: \(warning)")
+        }
+    }
+
     let client: any APIProtocol
     let session: SessionKey
     /// The thread the turn replies in, or `nil` for a top-level reply in a code channel.

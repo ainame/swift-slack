@@ -18,6 +18,8 @@ actor CodexBackend: AgentBackend {
         var workspace: String
         var sessionWorkspaces: String?
         var writable = false
+        var gitWritableRoots: [String] = []
+        var sourceRepository: String?
         var idleTimeout: Duration = .seconds(600)
     }
 
@@ -75,16 +77,35 @@ actor CodexBackend: AgentBackend {
     ) async throws {
         guard !control.isCancelled else { return }
         idleTimers.removeValue(forKey: key)?.cancel()
+        var scoped = settings
+        var conversationID = threadIDs[key]
+        if case .codeChannel = key, let workspaces {
+            // Revalidate every turn, even when the app-server is still alive.
+            let workspace = try await workspaces.allocation(for: key)
+            scoped.workspace = workspace.path
+            scoped.writable = true
+            scoped.gitWritableRoots = workspace.gitWritableRoots
+            scoped.sourceRepository = workspace.repository
+            conversationID = workspace.conversationID
+            do { try await tools.showWorkspace(workspace) }
+            catch { logger.warning("Could not show workspace context", metadata: ["session": "\(key)", "error": "\(error)"]) }
+        }
         let session: CodexSession
         if let existing = sessions[key] {
             session = existing
         } else {
-            var scoped = settings
-            if case .codeChannel = key, let workspaces {
-                scoped.workspace = try await workspaces.workspace(for: key)
-                scoped.writable = true
-            }
-            session = CodexSession(settings: scoped, session: key, threadID: threadIDs[key], logger: logger)
+            let store = workspaces
+            session = CodexSession(
+                settings: scoped,
+                session: key,
+                threadID: conversationID,
+                logger: logger,
+                saveConversation: { id in
+                    if case .codeChannel = key {
+                        try await store?.saveConversation(id, for: key)
+                    }
+                },
+            )
         }
         sessions[key] = session
         defer { scheduleIdleClose(key, session: session) }
@@ -150,6 +171,7 @@ private actor CodexSession {
     private let session: SessionKey
     private let toolRouter: ToolRouter
     private let logger: Logger
+    private let saveConversation: @Sendable (String) async throws -> Void
     private var codex: Codex?
     private var thread: CodexThread?
     private var threadID: String?
@@ -157,11 +179,18 @@ private actor CodexSession {
     private var lastTurn: Task<Void, any Error>?
     private(set) var isRunning = false
 
-    init(settings: CodexBackend.Settings, session: SessionKey, threadID: String?, logger: Logger) {
+    init(
+        settings: CodexBackend.Settings,
+        session: SessionKey,
+        threadID: String?,
+        logger: Logger,
+        saveConversation: @escaping @Sendable (String) async throws -> Void,
+    ) {
         self.settings = settings
         self.session = session
         self.threadID = threadID
         self.logger = logger
+        self.saveConversation = saveConversation
         toolRouter = ToolRouter(writeWorkspace: settings.writable ? settings.workspace : nil)
     }
 
@@ -224,7 +253,14 @@ private actor CodexSession {
     private static func childEnvironment() -> [String: String] {
         let names = ["PATH", "HOME", "USER", "LOGNAME", "SHELL", "TMPDIR", "LANG", "LC_ALL", "TERM", "CODEX_HOME"]
         let environment = ProcessInfo.processInfo.environment
-        return environment.filter { names.contains($0.key) }
+        var child = environment.filter { names.contains($0.key) }
+        // Commit housekeeping must not try to rewrite shared packed refs or prune other sessions.
+        child["GIT_CONFIG_COUNT"] = "2"
+        child["GIT_CONFIG_KEY_0"] = "gc.auto"
+        child["GIT_CONFIG_VALUE_0"] = "0"
+        child["GIT_CONFIG_KEY_1"] = "maintenance.auto"
+        child["GIT_CONFIG_VALUE_1"] = "false"
+        return child
     }
 
     private func prepareThread() async throws -> CodexThread {
@@ -234,6 +270,12 @@ private actor CodexSession {
         let codex = try await Codex(
             config: CodexConfig(
                 codexPathOverride: settings.codexPath,
+                launchArgsOverride: WorkspaceSandbox.launchArguments(
+                    codexPath: settings.codexPath, workspace: settings.workspace, repository: settings.sourceRepository,
+                    stateRoot: settings.sessionWorkspaces.map { URL(filePath: $0).resolvingSymlinksInPath().path },
+                    gitRoots: settings.gitWritableRoots, writable: settings.writable,
+                ),
+                workingDirectory: settings.workspace,
                 environment: Self.childEnvironment(),
                 clientName: "swift-slack-codex-agent",
                 dynamicToolCallHandler: { [toolRouter] call in await toolRouter.handle(call) },
@@ -261,22 +303,33 @@ private actor CodexSession {
 
             Renaming is optional. If it fails, keep the existing title and continue the task.
             Never create a new channel to recover from a naming failure.
+            Keep the current topic branch. Never switch to or commit directly to main/master, modify other
+            checkouts, change shared Git config/hooks, or manage worktrees or session state. Git metadata
+            outside this worktree's authorized roots requires approval; do not widen permissions yourself.
 
             \(AgentToolset.sessionInstructions(for: session, writable: settings.writable, writableCodeSessions: settings.sessionWorkspaces != nil))
             """,
             model: settings.model,
-            sandboxPreset: settings.writable ? .workspaceWrite : .readOnly,
+            // The process-local named profile carries the narrower Git metadata grants.
+            // A legacy sandbox preset/policy would replace it, making .git read-only again.
         )
         let thread: CodexThread
         if let threadID {
             // A resumed thread keeps the tools it started with and rejects new definitions.
-            thread = try await codex.resumeThread(id: threadID, options: options)
+            do { thread = try await codex.resumeThread(id: threadID, options: options) }
+            catch {
+                throw AgentToolError(
+                    description: "Cannot resume recorded Codex conversation \(threadID): \(error). Restore the original Codex login/CODEX_HOME and conversation history, then retry. Preserve the worktree and session record; no replacement conversation was started.",
+                )
+            }
         } else {
             options.dynamicTools = AgentToolset.specs(for: session)
             thread = try await codex.startThread(options: options)
         }
-        self.thread = thread
         threadID = thread.id
+        // Persist before the first turn: idle close is too late for a process crash or restart.
+        try await saveConversation(thread.id)
+        self.thread = thread
         return thread
     }
 }

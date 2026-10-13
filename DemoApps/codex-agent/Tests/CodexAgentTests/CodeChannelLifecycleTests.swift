@@ -7,6 +7,22 @@ import Testing
 
 struct CodeChannelLifecycleTests {
     @Test
+    func `workspace context bar shows repository topic branch and local checkout`() async throws {
+        let slack = FakeSlack()
+        let tools = await tools(slack)
+        try await tools.showWorkspace(.init(
+            version: 1, channel: "CODE", repository: "/repositories/swift-slack", commonDirectory: "/repositories/swift-slack/.git",
+            path: "/sessions/code-CODE", branch: "slack-code/CODE/work",
+        ))
+        let request = try #require(await slack.requests("agentsConversationsSetProperties").first)
+        let code = try #require(request["code_channel"])
+        let json = try #require(JSONSerialization.jsonObject(with: Data(code.utf8)) as? [String: Any])
+        let items = try #require(json["context_bar_items"] as? [[String: Any]])
+        #expect(items.compactMap { $0["label"] as? String } == ["swift-slack", "slack-code/CODE/work", "/sessions/code-CODE"])
+        #expect(items.allSatisfy { $0["item_type"] as? String == "info" })
+    }
+
+    @Test
     func `promotion is idempotent and configures commands without slashes`() async throws {
         let slack = FakeSlack()
         await slack.reply(to: "agentsConversationsCreate", with: .json(#"{"ok":true,"channel_id":"CODE"}"#))
