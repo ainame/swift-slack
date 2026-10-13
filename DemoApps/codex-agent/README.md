@@ -124,6 +124,7 @@ oauth_config:
       - channels:read
       - chat:write
       - code_channels:manage
+      - files:write
       - groups:history
       - groups:read
       - im:history
@@ -163,6 +164,16 @@ Each channel gets a Git worktree registered with `CODEX_WORKSPACE`, for example 
 The private `$CODEX_SESSION_WORKSPACES/.sessions/C012ABC.json` record stores the canonical source, worktree path, branch, Git metadata and Codex conversation ID. Keep this directory backed up alongside the repository and the agent's original `CODEX_HOME`. The record is written atomically, under an allocation lock, and the conversation is saved before its first turn. An app restart or idle-process restart reuses the same worktree and conversation after validating the record and Git registration. Changing the source repository or session root is not an automatic migration. Use separate session roots for different repositories; run one agent instance per session root (the allocation lock does not serialize Codex turns across multiple app processes).
 
 Use a Codex CLI that supports named permission profiles (`--permission-profile` in `codex sandbox --help`). Writable sessions use a process-local profile extending `:workspace`, with `on-request` approvals, equivalent to Auto within the granted paths. Legacy `sandbox_mode` is set to read-only as a fallback; an older CLI cannot use the worktree's Git grants until upgraded. Ordinary commands and edits run automatically; requests for additional permissions appear as Slack approval buttons. The writable session profile grants only the checkout, its own Git administrative directory, the shared object store, and the session branch's refs/reflogs namespace. The main checkout, its index, shared Git config/hooks, other worktree indexes and unrelated refs are not additional writable roots. Git `add` and `commit` can update the topic branch; global operations such as garbage collection, shared config changes or updating other branches may require approval and should be managed outside the agent. Network access remains disabled in the session sandbox; automatic Git maintenance is disabled so a commit does not rewrite shared packed refs or prune other sessions. Outside-checkout working directories and grant roots are refused; absent handlers, timeout, cancellation and session stop deny requests. The source repository should contain only material the agent is allowed to read: `.env` files and escaping symlinks cause allocation/reuse to fail.
+
+#### Uploading images and other files
+
+The agent's `upload_file(path, title)` tool uploads a regular file from the current writable Code channel worktree and shares it in that channel. Paths may be relative to the worktree or absolute within it. The demo limits uploads to non-empty files up to 20 MiB, refuses symlinks, outside paths, Git metadata and `.env` files, and stops unfinished uploads when the session is stopped. Ordinary Slack threads cannot use this tool.
+
+Add the `files:write` bot scope shown in the manifest and reinstall the Slack app before using uploads. The host app requests a signed upload URL, sends the bytes, then calls `files.completeUploadExternal` with the current channel. Slack tokens stay in the app process; the Codex process does not need Slack CLI credentials or extra network access. A failure is returned to the agent as a tool error. A stop cancels byte transfer and prevents subsequent steps; a finalization request already sent may still complete, and existing files are not deleted.
+
+The result includes `file_id`, an optional `permalink`, and `slack_file: {"id":"F..."}`. To show an uploaded image as an artifact, the agent can pass an image block to `publish_code_view` with `type: "block_kit"`, a stable key, and content such as `[{"type":"image","alt_text":"Screenshot","slack_file":{"id":"F..."}}]`. The upload shares a file in the channel; publishing the view is a separate tool call. This does not add image download/vision input handling for files posted by users.
+
+Codex persists tool definitions with its conversation. A conversation created before `upload_file` existed will keep its previous tools after restart. Create a new Code channel to get the new tool, or deliberately reset only the existing channel's Codex conversation: stop the app, back up its `.sessions/<channel>.json` and retain the old `conversation_id`, remove that field and set `conversation_ready` to `false`, then restart. This keeps the worktree and branch but starts a fresh Codex conversation; the previous conversation remains in Codex history.
 
 #### Workspace recovery and cleanup
 

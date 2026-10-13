@@ -1,11 +1,45 @@
 import Foundation
 import Logging
+import OpenAPIRuntime
 import SlackKit
 
 /// ``AgentTools`` for one turn, acting in the turn's session for the person it answers.
 ///
 /// Once Slack has stopped the session, the tools fail without calling Slack.
 struct SlackAgentTools: AgentTools {
+    var transferFile: @Sendable (URL, Data) async throws -> Void = { try await SlackFileTransfer.send(to: $0, data: $1) }
+
+    func uploadFile(_ file: WorkspaceUpload, title: String?) async throws -> UploadedFile {
+        try checkCodeChannel()
+        guard !file.data.isEmpty, file.data.count <= WorkspaceUpload.maximumBytes, (title?.count ?? 0) <= 200 else {
+            throw AgentToolError(description: "Upload a file of at most 20 MiB with a title of at most 200 characters.")
+        }
+        let upload = try await client.filesGetUploadURLExternal(body: .json(.init(
+            length: file.data.count, filename: file.filename,
+        ))).ok.body.json.checked("files.getUploadURLExternal")
+        try checkSession()
+        guard let id = upload.fileId, !id.isEmpty, let address = upload.uploadUrl, let url = URL(string: address) else {
+            throw AgentToolError(description: "Slack did not return the upload destination and file ID.")
+        }
+        try SlackFileTransfer.validate(url)
+        let transfer = Task { try await transferFile(url, file.data) }
+        let stop = Task {
+            await producer.waitForStop()
+            guard !Task.isCancelled else { return }
+            transfer.cancel()
+        }
+        defer { stop.cancel() }
+        try await withTaskCancellationHandler { try await transfer.value } onCancel: { transfer.cancel() }
+        try checkSession()
+        let result = try await client.filesCompleteUploadExternal(body: .json(.init(
+            files: OpenAPIArrayContainer(unvalidatedValue: [["id": id, "title": title ?? file.filename]]),
+            channelId: session.channel,
+        ))).ok.body.json.checked("files.completeUploadExternal")
+        try checkSession()
+        logger.info("Uploaded Code channel file", metadata: ["channel": "\(session.channel)", "file_id": "\(id)"])
+        return UploadedFile(fileID: id, permalink: result.files?.first(where: { $0.id == id })?.permalink)
+    }
+
     /// The `ask_user` tool's schema allows two to five options.
     static let maxOptions = 5
 
@@ -349,3 +383,5 @@ actor PendingQuestions {
 }
 
 extension Components.Schemas.AgentsSessionsRenameResponse: SlackResponse {}
+extension Components.Schemas.FilesGetUploadURLExternalResponse: SlackResponse {}
+extension Components.Schemas.FilesCompleteUploadExternalResponse: SlackResponse {}

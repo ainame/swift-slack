@@ -15,6 +15,7 @@ struct AgentToolsetTests {
             "set_title",
             "read_slack",
             "ask_user",
+            "upload_file",
             "start_code_channel",
             "publish_code_view",
             "archive_code_channel",
