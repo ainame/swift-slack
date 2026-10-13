@@ -134,9 +134,16 @@ actor TurnRouter {
 
     /// Handles Slack's `agent_session_stopped`: discards the messages still being routed in the stopped channel
     /// or thread, then stops the turns already running there.
-    func stop(channel: String, threadTs: String?) async {
-        attempts.cancel(channel: channel, threadTs: threadTs)
-        await responder.stop(channel: channel, threadTs: threadTs)
+    func stop(channel: String, threadTs: String?, client: (any APIProtocol)? = nil) async {
+        let suppliedThread = threadTs.flatMap { $0.isEmpty ? nil : $0 }
+        // Code channels have one shared session, even when Slack reports the clicked message's thread.
+        let scope: String? = if case .codeChannel? = await responder.knownCodeChannel(in: channel) {
+            nil
+        } else {
+            suppliedThread
+        }
+        attempts.cancel(channel: channel, threadTs: scope)
+        await responder.stop(channel: channel, threadTs: scope, client: client)
     }
 
     /// Returns what to do with `message`, or `nil` to ignore it or when a stop discarded `attempt`. It may look

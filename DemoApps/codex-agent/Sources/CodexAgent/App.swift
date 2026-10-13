@@ -131,9 +131,13 @@ struct CodexAgentApp {
         // Subscribing to agent_session_stopped is what makes Slack show the stop button. A code channel's
         // session has no thread, and stopping it stops every turn in the channel, including messages still
         // being routed there.
-        router.onEvent(AgentSessionStoppedEvent.self) { _, _, event in
-            guard let channel = event.channel else { return }
-            await turns.stop(channel: channel, threadTs: event.threadTs)
+        router.onEvent(AgentSessionStoppedEvent.self) { context, _, event in
+            guard let channel = event.channel else {
+                logger.warning("Stop event has no channel")
+                return
+            }
+            logger.info("Received agent stop event", metadata: ["channel": "\(channel)", "thread_ts": "\(event.threadTs ?? "none")"])
+            await turns.stop(channel: channel, threadTs: event.threadTs, client: context.client)
         }
 
         router.onEvent(AgentSessionTitleChangedEvent.self) { _, _, event in

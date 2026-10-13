@@ -26,6 +26,7 @@ actor CodexBackend: AgentBackend {
     private let settings: Settings
     private let logger: Logger
     private let workspaces: SessionWorkspaces?
+    private nonisolated let controls = Mutex<[SessionKey: TurnControl]>([:])
     private var sessions: [SessionKey: CodexSession] = [:]
     /// Threads of closed sessions, resumed when the session continues.
     private var threadIDs: [SessionKey: String] = [:]
@@ -43,10 +44,18 @@ actor CodexBackend: AgentBackend {
         tools: any AgentTools,
     ) -> AsyncThrowingStream<AgentEvent, any Error> {
         AsyncThrowingStream { continuation in
-            let control = TurnControl()
+            let control = TurnControl(session: session.description)
+            controls.withLock { $0[session] = control }
             // The turn runs in its own task so that stopping it can interrupt Codex and still read the turn
             // to its end. Otherwise its remaining notifications would reach the session's next turn.
             Task {
+                defer {
+                    controls.withLock { controls in
+                        if controls[session] === control {
+                            controls[session] = nil
+                        }
+                    }
+                }
                 do {
                     try await self.run(
                         prompt: prompt,
@@ -66,6 +75,10 @@ actor CodexBackend: AgentBackend {
                 }
             }
         }
+    }
+
+    nonisolated func stop(in session: SessionKey) {
+        controls.withLock { $0[session] }?.cancel()
     }
 
     private func run(
@@ -111,6 +124,7 @@ actor CodexBackend: AgentBackend {
         defer { scheduleIdleClose(key, session: session) }
         guard !control.isCancelled else { return }
         try await session.run(prompt: prompt, tools: tools, control: control, continuation: continuation)
+        await control.waitForInterruption()
     }
 
     private func scheduleIdleClose(_ key: SessionKey, session: CodexSession) {
@@ -132,36 +146,62 @@ actor CodexBackend: AgentBackend {
 }
 
 /// Connects a stopped Slack turn to the Codex turn it started, whichever happens first.
-private final class TurnControl: Sendable {
+final class TurnControl: Sendable {
     private struct State {
         var isCancelled = false
-        var handle: CodexTurnHandle?
+        var interrupt: (@Sendable () async throws -> Void)?
+        var request: Task<Void, Never>?
     }
 
     private let state = Mutex(State())
+    private let logger: Logger
+
+    init(session: String? = nil) {
+        var logger = Logger(label: "codex-agent.stop")
+        if let session {
+            logger[metadataKey: "session"] = "\(session)"
+        }
+        self.logger = logger
+    }
 
     var isCancelled: Bool {
         state.withLock(\.isCancelled)
     }
 
     func cancel() {
-        let handle = state.withLock { state in
+        state.withLock { state in
             state.isCancelled = true
-            return state.handle
-        }
-        if let handle {
-            Task { _ = try? await handle.interrupt() }
+            requestIfNeeded(&state)
         }
     }
 
-    /// Records the started turn and interrupts it if the Slack turn was already stopped.
     func attach(_ handle: CodexTurnHandle) {
-        let isCancelled = state.withLock { state in
-            state.handle = handle
-            return state.isCancelled
+        attachInterruption { _ = try await handle.interrupt() }
+    }
+
+    /// Registration and cancellation share a lock: stopping before turn/start returns still interrupts it.
+    func attachInterruption(_ operation: @escaping @Sendable () async throws -> Void) {
+        state.withLock { state in
+            state.interrupt = operation
+            requestIfNeeded(&state)
         }
-        if isCancelled {
-            Task { _ = try? await handle.interrupt() }
+    }
+
+    func waitForInterruption() async {
+        await state.withLock { $0.request }?.value
+    }
+
+    private func requestIfNeeded(_ state: inout State) {
+        guard state.isCancelled, state.request == nil, let interrupt = state.interrupt else { return }
+        let logger = logger
+        state.request = Task {
+            logger.info("Requesting Codex interruption")
+            do {
+                try await interrupt()
+                logger.info("Codex interruption acknowledged")
+            } catch {
+                logger.error("Codex interruption failed", metadata: ["error": "\(error)"])
+            }
         }
     }
 }

@@ -113,6 +113,8 @@ struct AgentToolError: Error, CustomStringConvertible {
 
 /// Produces the agent's side of a turn. The Slack layer turns the events into streamed messages.
 protocol AgentBackend: Sendable {
+    /// Interrupt work immediately, even while the output consumer is waiting on Slack delivery.
+    func stop(in session: SessionKey)
     /// Runs one turn for `prompt`, continuing the conversation already held for `session`.
     ///
     /// Cancelling the task that iterates the stream stops the turn.
@@ -121,4 +123,8 @@ protocol AgentBackend: Sendable {
         in session: SessionKey,
         tools: any AgentTools,
     ) -> AsyncThrowingStream<AgentEvent, any Error>
+}
+
+extension AgentBackend {
+    func stop(in _: SessionKey) {}
 }
