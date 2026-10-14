@@ -233,42 +233,10 @@ actor AgentResponder {
         userTitledSessions.contains(session)
     }
 
-    /// Codex keeps a session's conversation, but not one it has not seen: a mention in the middle of
-    /// a thread, a code channel with earlier messages, or a conversation from before a restart. Then the prompt
-    /// starts with the conversation so far.
     private func prompt(for turn: Turn, client: any APIProtocol) async -> String {
-        guard engagedSessions.insert(turn.session).inserted else {
-            return turn.prompt
-        }
-        if case let .thread(_, threadTs) = turn.session, turn.messageTs == threadTs {
-            return turn.prompt
-        }
-        do {
-            let messages = try await ConversationHistory.messages(in: turn.session, client: client)
-            let origin = await originMessage(turn.origin, client: client)
-            let transcript = ConversationHistory.transcript(
-                of: messages,
-                before: turn.isCommand ? nil : turn.messageTs,
-                in: turn.session,
-                origin: origin,
-                identity: identity,
-            )
-            return (transcript ?? "") + turn.prompt
-        } catch {
-            logger.warning("Failed to read the conversation", metadata: ["session": "\(turn.session)", "error": "\(error)"])
-            return turn.prompt
-        }
-    }
-
-    private func originMessage(_ link: MessageLink?, client: any APIProtocol) async -> Message? {
-        guard let link else { return nil }
-        do {
-            return try await ConversationHistory.message(at: link, client: client)
-        } catch {
-            // The app may not be able to read the channel the code channel was started from.
-            logger.info("Could not read the code channel's origin", metadata: ["error": "\(error)"])
-            return nil
-        }
+        // Reserve first-turn context before awaiting history; later turns already have Codex context.
+        guard engagedSessions.insert(turn.session).inserted else { return turn.prompt }
+        return await PromptBuilder.prepare(turn, client: client, identity: identity, logger: logger)
     }
 
     /// Streams Codex events and finishes with the cards the agent asked for.
