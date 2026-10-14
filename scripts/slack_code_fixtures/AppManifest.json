@@ -1,0 +1,8 @@
+{
+  "features": {
+    "code_channels": {
+      "enabled": true,
+      "slash_command_url": "https://example.com/slack/code-channel-commands"
+    }
+  }
+}

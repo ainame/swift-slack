@@ -2,13 +2,13 @@ import Foundation
 @testable import SlackApp
 import Testing
 
-/// Set by scripts/check_fixtures.rb, which preprocesses the upstream java-slack-sdk fixtures.
+/// Set by scripts/check_fixtures.rb, which preprocesses upstream fixtures and the synthetic Slack Code action regression.
 private let fixturesDirectory = ProcessInfo.processInfo.environment["SLACK_FIXTURES_DIR"]
 
-@Suite(.enabled(if: fixturesDirectory != nil, "Run scripts/check_fixtures.rb to decode the upstream fixtures"))
+@Suite(.enabled(if: fixturesDirectory != nil, "Run scripts/check_fixtures.rb to decode the selected fixtures"))
 struct FixtureDecodingTests {
     /// Each fixture is named after the event type it must decode to, e.g. MessageChangedEvent.json.
-    @Test func `every generated event decodes its upstream fixture`() throws {
+    @Test func `every generated event decodes its selected fixture`() throws {
         let directory = try URL(fileURLWithPath: #require(fixturesDirectory)).appendingPathComponent("events")
         let names = try FileManager.default.contentsOfDirectory(atPath: directory.path)
             .filter { $0.hasSuffix(".json") }

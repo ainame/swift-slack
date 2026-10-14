@@ -8,6 +8,22 @@ import SlackClient
 import Testing
 
 struct AppRouterTests {
+    @Test func `Code channel action reaches its registered event handler`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onEvent(CodeChannelActionEvent.self) { _, _, event in
+            #expect(event.additionalProperties.value.count == 1)
+            await tracker.set(event._type)
+        }
+        // Synthetic payload: no documented action field names are assumed.
+        let data = Data(#"{"team_id":"T123","api_app_id":"A123","event":{"type":"code_channel_action","synthetic_value":42},"type":"event_callback","event_id":"Ev123","event_time":123}"#.utf8)
+        let envelope = try JSONDecoder().decode(EventsApiEnvelope<Event>.self, from: data)
+        try await Router.FixedRouter(from: router).dispatch(
+            context: .event(makeEventContext()), request: .event(envelope),
+        )
+        #expect(await tracker.value == "code_channel_action")
+    }
+
     @Test func `approval button with null team reaches action handler`() async throws {
         let tracker = ValueTracker()
         let router = Router()

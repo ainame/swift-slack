@@ -4,10 +4,11 @@
 #
 #   * Paths and request bodies come from the upstream slack-api-ref method docs.
 #   * Response schemas and event schemas come from the upstream java-slack-sdk Java classes
-#     (scripts/lib/java_openapi.rb), with the explicit exceptions in scripts/java_type_overrides.yml.
-#   * Only methods and events with an upstream java-slack-sdk fixture are generated, so every generated type
-#     is checked against a recorded payload (scripts/check_fixtures.rb). Events that java-slack-sdk models
-#     but has not recorded use the payload of their upstream unit test instead (scripts/event_fixtures.yml).
+#     (scripts/lib/java_openapi.rb), with explicit fixture-backed exceptions in scripts/java_type_overrides.yml
+#     and the narrow official-contract Slack Code supplement in scripts/slack_code_schemas.yml.
+#   * Methods and events are selected by upstream fixtures (scripts/check_fixtures.rb). Unrecorded Java
+#     events use upstream unit-test payloads (scripts/event_fixtures.yml). The opaque Slack Code action
+#     event uses an explicitly synthetic downstream regression payload instead.
 
 require 'fileutils'
 require 'json'
@@ -15,6 +16,7 @@ require 'yaml'
 require_relative './lib/helpers'
 require_relative './lib/event_fixtures'
 require_relative './lib/java_openapi'
+require_relative './lib/slack_code_schemas'
 
 # Repository sources are UTF-8; do not depend on the caller's locale.
 Encoding.default_external = Encoding::UTF_8
@@ -117,19 +119,28 @@ end
 # which is only meaningful for a full generation.
 def build_openapi(api_ref_paths, methods_with_fixtures, event_fixture_paths, sdk_dir: SDK_DIR, check_unused: false)
   index = JavaOpenAPI.load_index(sdk_dir)
+  slack_code_schemas = SlackCodeSchemas.load
+  slack_code_schemas.validate!(index)
   GsonAdapters.validate!(sdk_dir)
   type_overrides = TypeOverrides.load(TYPE_OVERRIDES_PATH)
   type_overrides.validate!(index)
   builder = SchemaBuilder.new(index, type_overrides: type_overrides,
                                      handwritten_schemas: YAML.safe_load_file(HANDWRITTEN_SCHEMAS_PATH),
-                                     block_kit_types: JavaOpenAPI.swift_public_types(BLOCK_KIT_DIR))
+                                     block_kit_types: JavaOpenAPI.swift_public_types(BLOCK_KIT_DIR),
+                                     slack_code_schemas: slack_code_schemas)
 
   openapi = JSON.parse(File.read(File.join(__dir__, 'lib/base_openapi.json')))
   openapi['paths'] = build_paths(api_ref_paths, methods_with_fixtures, index, builder)
   add_events(openapi, event_fixture_paths, index, builder)
   check_unused_entries(type_overrides, builder) if check_unused
 
+  slack_code_schemas.check_used! if check_unused
   openapi['components']['schemas'] = builder.components
+  name = SlackCodeSchemas::EVENT_NAME
+  raise "Slack Code event schema collision: #{name}" if openapi['components']['schemas'].key?(name)
+  openapi['components']['schemas'][name] = slack_code_schemas.event_schema
+  openapi['x-slack-events'][name] = { 'type' => SlackCodeSchemas::EVENT_TYPE }
+  openapi['x-slack-events'] = openapi['x-slack-events'].sort.to_h
   [openapi, builder]
 end
 

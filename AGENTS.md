@@ -56,6 +56,12 @@ Keep exceptions explicit, one per field or type, and backed by upstream java-sla
 - `scripts/handwritten_schemas.yml` holds OpenAPI schemas for shapes that a Java declaration cannot describe, such as Gson adapter types with several JSON shapes. Use `oneOf` with `x-swift-accessors` for read access and `x-java-class` to reuse a Java class. Do not hand-write Swift for Web API or event models.
 - Fixture preprocessing in `scripts/lib/java_openapi/fixture_placeholders.rb` only removes the recorder's placeholders for the decode check. Never change library types to tolerate fixture placeholders.
 
+### Slack Code Supplement
+
+- The narrow downstream exception in `scripts/slack_code_schemas.yml` adds Slack Code fields from Slack's official schema contracts while upstream java-slack-sdk lacks declarations and recorded fixtures. Keep source URLs and downstream provenance explicit; do not use this file for unrelated coverage or documentation examples.
+- `scripts/lib/slack_code_schemas.rb` fails when upstream adopts a supplemented field or models `code_channel_action`. Remove that exception and use upstream models/fixtures then. Full generation also fails on unused entries.
+- Slack documents `code_channel_action` but publishes no payload schema. Generate only its `type` and preserve arbitrary JSON fields in `additionalProperties`; do not guess a typed payload. Regression payloads in `scripts/slack_code_fixtures/` are synthetic, kept separate from upstream recorded fixtures, and do not establish live-service behavior.
+
 ### Web API Coverage
 
 - A Web API method is generated only when java-slack-sdk has a response fixture for it (`vendor/java-slack-sdk/json-logs/samples/api/<method>.json`), and an event only when it has an event fixture (`json-logs/samples/events/<Name>Payload.json`). An event that java-slack-sdk models but has not recorded may instead use the payload its upstream unit test deserializes, copied verbatim into `scripts/event_fixtures/` with an entry in `scripts/event_fixtures.yml`; generation fails once upstream records it, so delete the copy then. slack-api-ref supplies the method list and request arguments, not response types; do not generate response types from its documentation examples.

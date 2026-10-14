@@ -3,6 +3,46 @@
 The submodule gitlinks are the generation inputs. Review coverage applies to the
 selected delta, not complete historical parity or live Slack service behavior.
 
+## Slack Code supplement review on 2026-10-14
+
+Both upstream remote HEADs still match the recorded generation pins:
+java-slack-sdk `9894c9331565ec8484fa07e4b292bf719a67fcba` and
+slack-api-ref `0fcbcec7c842b5b3880fa7c0d7fb3d66fe1de711`. No vendor
+snapshot was advanced. This review is based on `release-2027-01`.
+
+Downstream swift-slack adds the narrow, approved exception in
+`scripts/slack_code_schemas.yml`, using Slack's official
+[code channel properties contract](https://docs.slack.dev/ai/slack-code/code-channel-properties/)
+and [manifest configuration](https://docs.slack.dev/ai/slack-code/agent-slash-commands/):
+
+- Preserve `summary_message`, `agent_session_views` (including `name` and `type`),
+  and context bar `item_type` when decoding/re-encoding channel properties.
+- Encode/decode `AppManifest.features.code_channels.enabled` and
+  `slash_command_url`.
+- Route `code_channel_action` through SlackApp while retaining arbitrary JSON.
+  Slack documents its existence but publishes no payload schema. Only `type`
+  is modeled; the synthetic regression payload does not establish a typed or
+  live-verified event contract.
+
+These are downstream supplements, not additions to upstream java-slack-sdk or
+fields observed in its recorded fixtures. Generation fails when upstream declares
+an added field or models the action event, requiring adoption of upstream models
+and fixtures. Synthetic regression payloads stay separate in
+`scripts/slack_code_fixtures/`.
+
+The [listViews method reference](https://docs.slack.dev/reference/methods/agents.conversations.listViews/)
+still specifies `label`, matching upstream java-slack-sdk. No `name` or `type`
+was added to that response based on the different channel-properties contract.
+Adding `Event.codeChannelAction` breaks exhaustive switches; consumers must handle
+that new case. No unrelated schema coverage was changed.
+
+Verification: `bundle install`, two full `make generate` passes (all 397 generated
+file and manifest hashes matched), `make test-scripts` (143 tests, 460 assertions),
+`make check-fixtures` (zero unexplained mismatches and all generated fixtures decoded),
+and `swift test` with fixture checks enabled (228 tests) passed with Swift 6.4.0
+and Ruby 4.0.7. Swift tests used the native build system with index-store and debug
+symbols disabled. `git diff --check` passed. Live Slack integration was not run.
+
 ## Review on 2026-10-11
 
 Sync PR: #243.

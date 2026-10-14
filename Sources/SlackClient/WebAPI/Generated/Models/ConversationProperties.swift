@@ -484,6 +484,10 @@ extension Components.Schemas {
                 public var url: Swift.String?
                 /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/ContextBarItemsPayload/bot_user_id`.
                 public var botUserId: Swift.String?
+                /// Downstream swift-slack Slack Code supplement; not yet declared by upstream java-slack-sdk. Source: https://docs.slack.dev/ai/slack-code/code-channel-properties/
+                ///
+                /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/ContextBarItemsPayload/item_type`.
+                public var itemType: Swift.String?
                 /// Creates a new `ContextBarItemsPayloadPayload`.
                 ///
                 /// - Parameters:
@@ -492,18 +496,21 @@ extension Components.Schemas {
                 ///   - icon:
                 ///   - url:
                 ///   - botUserId:
+                ///   - itemType: Downstream swift-slack Slack Code supplement; not yet declared by upstream java-slack-sdk. Source: https://docs.slack.dev/ai/slack-code/code-channel-properties/
                 public init(
                     key: Swift.String? = nil,
                     label: Swift.String? = nil,
                     icon: Swift.String? = nil,
                     url: Swift.String? = nil,
                     botUserId: Swift.String? = nil,
+                    itemType: Swift.String? = nil,
                 ) {
                     self.key = key
                     self.label = label
                     self.icon = icon
                     self.url = url
                     self.botUserId = botUserId
+                    self.itemType = itemType
                 }
 
                 public enum CodingKeys: String, CodingKey {
@@ -512,6 +519,7 @@ extension Components.Schemas {
                     case icon
                     case url
                     case botUserId = "bot_user_id"
+                    case itemType = "item_type"
                 }
             }
 
@@ -519,16 +527,120 @@ extension Components.Schemas {
             public typealias ContextBarItemsPayload = [Components.Schemas.ConversationProperties.CodeChannelPayload.ContextBarItemsPayloadPayload]
             /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/context_bar_items`.
             public var contextBarItems: Components.Schemas.ConversationProperties.CodeChannelPayload.ContextBarItemsPayload?
+            /// Downstream swift-slack Slack Code supplement; not yet declared by upstream java-slack-sdk. Source: https://docs.slack.dev/ai/slack-code/code-channel-properties/
+            ///
+            /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/summary_message`.
+            public struct SummaryMessagePayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/summary_message/message_ts`.
+                public var messageTs: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/summary_message/thread_ts`.
+                public var threadTs: Swift.String?
+                /// Creates a new `SummaryMessagePayload`.
+                ///
+                /// - Parameters:
+                ///   - messageTs:
+                ///   - threadTs:
+                public init(
+                    messageTs: Swift.String? = nil,
+                    threadTs: Swift.String? = nil,
+                ) {
+                    self.messageTs = messageTs
+                    self.threadTs = threadTs
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case messageTs = "message_ts"
+                    case threadTs = "thread_ts"
+                }
+            }
+
+            /// Downstream swift-slack Slack Code supplement; not yet declared by upstream java-slack-sdk. Source: https://docs.slack.dev/ai/slack-code/code-channel-properties/
+            ///
+            /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/summary_message`.
+            public var summaryMessage: Components.Schemas.ConversationProperties.CodeChannelPayload.SummaryMessagePayload?
+            /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/AgentSessionViewsPayload`.
+            public struct AgentSessionViewsPayloadPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/AgentSessionViewsPayload/view_id`.
+                public var viewId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/AgentSessionViewsPayload/type`.
+                public var _type: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/AgentSessionViewsPayload/file_id`.
+                public var fileId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/AgentSessionViewsPayload/view_key`.
+                public var viewKey: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/AgentSessionViewsPayload/name`.
+                public var name: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/AgentSessionViewsPayload/date_added`.
+                public var dateAdded: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/AgentSessionViewsPayload/content_version`.
+                public var contentVersion: Swift.Int?
+                /// Creates a new `AgentSessionViewsPayloadPayload`.
+                ///
+                /// - Parameters:
+                ///   - viewId:
+                ///   - _type:
+                ///   - fileId:
+                ///   - viewKey:
+                ///   - name:
+                ///   - dateAdded:
+                ///   - contentVersion:
+                public init(
+                    viewId: Swift.String? = nil,
+                    _type: Swift.String? = nil,
+                    fileId: Swift.String? = nil,
+                    viewKey: Swift.String? = nil,
+                    name: Swift.String? = nil,
+                    dateAdded: Swift.Int? = nil,
+                    contentVersion: Swift.Int? = nil,
+                ) {
+                    self.viewId = viewId
+                    self._type = _type
+                    self.fileId = fileId
+                    self.viewKey = viewKey
+                    self.name = name
+                    self.dateAdded = dateAdded
+                    self.contentVersion = contentVersion
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case viewId = "view_id"
+                    case _type = "type"
+                    case fileId = "file_id"
+                    case viewKey = "view_key"
+                    case name
+                    case dateAdded = "date_added"
+                    case contentVersion = "content_version"
+                }
+            }
+
+            /// Downstream swift-slack Slack Code supplement; not yet declared by upstream java-slack-sdk. Source: https://docs.slack.dev/ai/slack-code/code-channel-properties/
+            ///
+            /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/agent_session_views`.
+            public typealias AgentSessionViewsPayload = [Components.Schemas.ConversationProperties.CodeChannelPayload.AgentSessionViewsPayloadPayload]
+            /// Downstream swift-slack Slack Code supplement; not yet declared by upstream java-slack-sdk. Source: https://docs.slack.dev/ai/slack-code/code-channel-properties/
+            ///
+            /// - Remark: Generated from `#/components/schemas/ConversationProperties/code_channel/agent_session_views`.
+            public var agentSessionViews: Components.Schemas.ConversationProperties.CodeChannelPayload.AgentSessionViewsPayload?
             /// Creates a new `CodeChannelPayload`.
             ///
             /// - Parameters:
             ///   - contextBarItems:
-            public init(contextBarItems: Components.Schemas.ConversationProperties.CodeChannelPayload.ContextBarItemsPayload? = nil) {
+            ///   - summaryMessage: Downstream swift-slack Slack Code supplement; not yet declared by upstream java-slack-sdk. Source: https://docs.slack.dev/ai/slack-code/code-channel-properties/
+            ///   - agentSessionViews: Downstream swift-slack Slack Code supplement; not yet declared by upstream java-slack-sdk. Source: https://docs.slack.dev/ai/slack-code/code-channel-properties/
+            public init(
+                contextBarItems: Components.Schemas.ConversationProperties.CodeChannelPayload.ContextBarItemsPayload? = nil,
+                summaryMessage: Components.Schemas.ConversationProperties.CodeChannelPayload.SummaryMessagePayload? = nil,
+                agentSessionViews: Components.Schemas.ConversationProperties.CodeChannelPayload.AgentSessionViewsPayload? = nil,
+            ) {
                 self.contextBarItems = contextBarItems
+                self.summaryMessage = summaryMessage
+                self.agentSessionViews = agentSessionViews
             }
 
             public enum CodingKeys: String, CodingKey {
                 case contextBarItems = "context_bar_items"
+                case summaryMessage = "summary_message"
+                case agentSessionViews = "agent_session_views"
             }
         }
 

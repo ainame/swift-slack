@@ -1,0 +1,5 @@
+{
+  "type": "code_channel_action",
+  "synthetic_text": "preserved",
+  "synthetic_object": {"items": [true, null, 42, "value"]}
+}

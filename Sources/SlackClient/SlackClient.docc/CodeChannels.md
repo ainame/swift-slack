@@ -4,7 +4,7 @@ Show an agent's work in a Slack Code channel with typed properties, commands, an
 
 ## Overview
 
-A Slack Code channel is a channel where the whole channel is one agent session. Enable the `WebAPI_Agents` package trait (see <doc:Traits>) and give the app the `code_channels:manage` scope. In the app manifest, set `features.code_channels.enabled` to `true`; with signed HTTP requests, also set `slash_command_url`, which Socket Mode apps leave out. The generated `AppManifest` does not model `features.code_channels` yet, so edit the YAML or JSON manifest directly.
+A Slack Code channel is a channel where the whole channel is one agent session. Enable the `WebAPI_Agents` package trait (see <doc:Traits>) and give the app the `code_channels:manage` scope. In the app manifest, set `features.code_channels.enabled` to `true`; with signed HTTP requests, also set `slash_command_url`, which Socket Mode apps leave out. The generated `AppManifest.FeaturesPayload.codeChannels` models `enabled` and `slashCommandUrl`, so these settings can also be encoded from Swift.
 
 The typed helpers on your Slack client cover the calls that take structured arguments:
 
@@ -94,13 +94,37 @@ Calls with the same `key` update the same view; a diff view is one per channel, 
 
 Slack enforces these limits. The helpers do not check them, so a request beyond a limit fails with Slack's error code or succeeds with a `warning`.
 
-### Known limitations
+### Read channel properties and receive actions
 
-swift-slack's Web API and event models come from upstream java-slack-sdk, which does not yet model all of Slack Code:
+`conversationsInfo` returns the code channel's `summaryMessage`, `agentSessionViews`, and
+context bar `itemType` under `channel.properties.codeChannel`. The canonical channel
+view entries expose `name` and `type`; `agentsConversationsListViews` keeps `label`,
+as specified by that method's reference. Recognize code channels using
+`channel.properties.recordChannel.recordType == "agent_channel"`.
 
-- Responses do not include the code channel's summary message, views, or context bar item types when read back, and `agentsConversationsListViews` reports a view's legacy `label`.
-- There is no `code_channel_action` event, so swift-slack cannot receive clicks on ``CodeChannel/ContextBarItem/ItemType/action`` items yet. Use `info` items until it can.
-- The generated `AppManifest` has no `features.code_channels`.
+SlackApp routes context-bar clicks through `CodeChannelActionEvent`:
+
+```swift
+router.onEvent(CodeChannelActionEvent.self) { context, envelope, event in
+    // Slack has not published a field schema for this event. Inspect the arbitrary
+    // JSON fields in event.additionalProperties.value for your app's payload.
+}
+```
+
+### Schema provenance and remaining limits
+
+Upstream java-slack-sdk does not yet declare these additional response fields or
+`features.code_channels`. Downstream swift-slack generates them from the narrow
+Slack Code supplement in `scripts/slack_code_schemas.yml`, sourced from
+[Slack's channel properties contract](https://docs.slack.dev/ai/slack-code/code-channel-properties/)
+and [manifest configuration](https://docs.slack.dev/ai/slack-code/agent-slash-commands/).
+The generator fails when upstream adopts a supplemented field or the action event,
+so that upstream models and fixtures can replace the exception.
+
+Slack documents `code_channel_action` but does not publish its payload schema.
+`CodeChannelActionEvent` therefore models only `type` and preserves every other
+JSON field in `additionalProperties`. Its regression payload is synthetic; it
+establishes lossless decoding and routing, not a typed or live-verified action contract.
 
 ## Topics
 

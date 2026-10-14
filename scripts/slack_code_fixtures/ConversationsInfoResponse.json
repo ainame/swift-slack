@@ -1,0 +1,44 @@
+{
+  "ok": true,
+  "channel": {
+    "id": "C_SYNTHETIC",
+    "properties": {
+      "record_channel": {
+        "record_type": "agent_channel"
+      },
+      "code_channel": {
+        "summary_message": {
+          "message_ts": "123.456",
+          "thread_ts": "123.000"
+        },
+        "context_bar_items": [
+          {
+            "key": "review",
+            "label": "Review",
+            "item_type": "action",
+            "bot_user_id": "U_SYNTHETIC"
+          }
+        ],
+        "agent_session_views": [
+          {
+            "view_id": "V_SYNTHETIC",
+            "type": "diff",
+            "file_id": "F_SYNTHETIC",
+            "name": "Changes",
+            "date_added": 1717171717,
+            "content_version": 3
+          },
+          {
+            "view_id": "V_HTML",
+            "type": "html",
+            "file_id": "F_HTML",
+            "view_key": "report.html",
+            "name": "Report",
+            "date_added": 1717171800,
+            "content_version": 1
+          }
+        ]
+      }
+    }
+  }
+}

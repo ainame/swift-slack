@@ -4,7 +4,8 @@
 # Decodes the fixture of every generated Web API method and event with the real
 # generated types, and fails unless all of them decode.
 #
-#   1. Preprocesses the fixtures (scripts/lib/java_openapi/fixture_placeholders.rb) into .tmp/Fixtures/
+#   1. Preprocesses the upstream fixtures and the explicitly synthetic Slack Code action regression
+#      (scripts/lib/java_openapi/fixture_placeholders.rb) into .tmp/Fixtures/
 #      api/<method>.json and events/<EventSchema>.json, using .tmp/WebAPI/openapi.json from `make generate`.
 #   2. Runs the Swift tests that read them: FixtureDecodingTests in SlackClientTests (responses) and
 #      SlackAppTests (events). Without SLACK_FIXTURES_DIR those tests are skipped.
@@ -14,6 +15,7 @@
 require 'fileutils'
 require 'json'
 require_relative 'lib/event_fixtures'
+require_relative 'lib/slack_code_schemas'
 require_relative 'lib/java_openapi/fixture_placeholders'
 
 Encoding.default_external = Encoding::UTF_8
@@ -34,6 +36,8 @@ end
 
 # The fixture file of an event schema: IMCloseEvent => ImClosePayload.json (names differ only in case).
 def event_fixture_path(schema_name)
+  return SlackCodeSchemas::EVENT_FIXTURE if schema_name == SlackCodeSchemas::EVENT_NAME
+
   wanted = "#{schema_name.delete_suffix('Event')}Payload.json".downcase
   EventFixtures.paths.find { |path| File.basename(path).downcase == wanted } or
     raise "no event fixture for #{schema_name}"

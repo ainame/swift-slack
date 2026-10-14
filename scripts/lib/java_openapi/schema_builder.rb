@@ -45,8 +45,9 @@ class SchemaBuilder
 
   # `handwritten_schemas`: name => schema from scripts/handwritten_schemas.yml.
   # `block_kit_types`: public type names of downstream swift-slack's SlackBlockKit module.
-  def initialize(index, type_overrides:, handwritten_schemas:, block_kit_types:)
+  def initialize(index, type_overrides:, handwritten_schemas:, block_kit_types:, slack_code_schemas: nil)
     @index = index
+    @slack_code_schemas = slack_code_schemas
     @type_overrides = type_overrides
     @handwritten_schemas = handwritten_schemas
     @block_kit_types = block_kit_types.to_set
@@ -169,6 +170,7 @@ def ref(name)
     @type_overrides.additions_for(java_class).each do |key, schema|
       properties[key] = expand_handwritten(schema, "#{java_class.fqn}##{key}")
     end
+    properties.merge!(@slack_code_schemas.additions_for(java_class)) if @slack_code_schemas
     { 'type' => 'object', 'properties' => properties }
   end
 

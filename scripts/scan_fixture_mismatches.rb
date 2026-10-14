@@ -19,6 +19,7 @@
 require 'json'
 require 'set'
 require_relative 'lib/event_fixtures'
+require_relative 'lib/slack_code_schemas'
 require_relative 'lib/java_openapi/fixture_placeholders'
 
 Encoding.default_external = Encoding::UTF_8
@@ -169,13 +170,15 @@ fixtures = response_schemas.map do |method, schema|
   [method, read_json(File.join(SAMPLES_DIR, "api/#{method}.json")), schema]
 end
 event_files = EventFixtures.paths.to_h { |path| [File.basename(path).downcase, path] }
-fixtures += document.fetch('x-slack-events').keys.map do |name|
+fixtures += document.fetch('x-slack-events').keys.reject { |name| name == SlackCodeSchemas::EVENT_NAME }.map do |name|
   json = read_json(event_files.fetch("#{name.delete_suffix('Event')}Payload.json".downcase))
   json = json['event'] if json.key?('token') && json.key?('event')
   [name, json, ref(name)]
 end
 fixture_findings = scanner.scan(fixtures)
 report('java-slack-sdk fixtures (unexplained mismatches)', fixture_findings)
+supplement_findings = scanner.scan([[SlackCodeSchemas::EVENT_NAME, read_json(SlackCodeSchemas::EVENT_FIXTURE), ref(SlackCodeSchemas::EVENT_NAME)]])
+report('downstream swift-slack synthetic Slack Code regression fixture', supplement_findings)
 
 # Only successful (`ok: true`) examples count; a malformed docs file is skipped.
 examples = Dir.glob(File.join(ROOT_DIR, 'vendor/slack-api-ref/methods/*/*.json')).flat_map do |path|
@@ -191,7 +194,7 @@ end
 docs_findings = scanner.scan(examples)
 report('slack-api-ref examples (information only)', docs_findings, limit: DOCS_LINE_LIMIT)
 
-unexplained = fixture_findings.mismatches.size
+unexplained = fixture_findings.mismatches.size + supplement_findings.mismatches.size
 puts "== summary: #{fixture_findings.explained.size} fixture mismatches explained by java_type_overrides.yml " \
      "(plus #{fixture_findings.placeholders.size} Java-typed placeholder values at overridden fields), " \
      "#{unexplained} unexplained, #{docs_findings.mismatches.size} docs-example mismatches (information only)"

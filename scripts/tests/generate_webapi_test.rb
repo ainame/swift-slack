@@ -48,7 +48,8 @@ class GenerateWebapiTest < Minitest::Test
   def test_events_are_marked_with_their_type_and_subtype
     openapi, = build([], events: %w[ImClose MessageBot])
 
-    assert_equal({ 'IMCloseEvent' => { 'type' => 'im_close' },
+    assert_equal({ 'CodeChannelActionEvent' => { 'type' => 'code_channel_action' },
+                   'IMCloseEvent' => { 'type' => 'im_close' },
                    'MessageBotEvent' => { 'type' => 'message', 'subtype' => 'bot_message' } },
                  openapi['x-slack-events'])
     assert_equal %w[type], openapi.dig('components', 'schemas', 'IMCloseEvent', 'required')
@@ -66,6 +67,24 @@ class GenerateWebapiTest < Minitest::Test
     assert_equal 'integer', file.dig('original_w', 'type')
     assert_equal 'string', file.dig('original_w', 'x-java-type')
     assert_match(/declared `String`, but recorded responses send integers/, file.dig('original_w', 'description'))
+  end
+
+  def test_slack_code_supplements_apply_to_the_owning_shared_models
+    openapi, = build(%w[conversations.info apps.manifest.export agents.conversations.listViews])
+    schemas = openapi.dig('components', 'schemas')
+    code = schemas.dig('ConversationProperties', 'properties', 'code_channel', 'properties')
+    assert_equal 'string', code.dig('summary_message', 'properties', 'message_ts', 'type')
+    views = code.dig('agent_session_views', 'items', 'properties')
+    assert_equal 'string', views.dig('type', 'type')
+    assert_equal 'string', views.dig('name', 'type')
+    assert_equal 'integer', views.dig('date_added', 'type')
+    assert_equal 'string', code.dig('context_bar_items', 'items', 'properties', 'item_type', 'type')
+    manifest = schemas.dig('AppManifest', 'properties', 'features', 'properties', 'code_channels', 'properties')
+    assert_equal 'boolean', manifest.dig('enabled', 'type')
+    assert_equal 'string', manifest.dig('slash_command_url', 'type')
+    listed = schemas.dig('AgentsConversationsListViewsResponse', 'properties', 'views', 'items', 'properties')
+    assert listed.key?('label')
+    refute listed.key?('name'), 'listViews has a different contract from the channel property view list'
   end
 
   def test_reads_utf8_sources_under_a_non_utf8_locale

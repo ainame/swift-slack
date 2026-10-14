@@ -21,6 +21,7 @@ public enum Event: Decodable, Hashable, Sendable {
     case channelShared(ChannelSharedEvent)
     case channelUnarchive(ChannelUnarchiveEvent)
     case channelUnshared(ChannelUnsharedEvent)
+    case codeChannelAction(CodeChannelActionEvent)
     case dndUpdated(DndUpdatedEvent)
     case dndUpdatedUser(DndUpdatedUserEvent)
     case emailDomainChanged(EmailDomainChangedEvent)
@@ -143,6 +144,7 @@ public enum Event: Decodable, Hashable, Sendable {
         "channel_shared": { try .channelShared(ChannelSharedEvent(from: $0)) },
         "channel_unarchive": { try .channelUnarchive(ChannelUnarchiveEvent(from: $0)) },
         "channel_unshared": { try .channelUnshared(ChannelUnsharedEvent(from: $0)) },
+        "code_channel_action": { try .codeChannelAction(CodeChannelActionEvent(from: $0)) },
         "dnd_updated": { try .dndUpdated(DndUpdatedEvent(from: $0)) },
         "dnd_updated_user": { try .dndUpdatedUser(DndUpdatedUserEvent(from: $0)) },
         "email_domain_changed": { try .emailDomainChanged(EmailDomainChangedEvent(from: $0)) },
@@ -264,6 +266,8 @@ public enum Event: Decodable, Hashable, Sendable {
         case let .channelUnarchive(event):
             event
         case let .channelUnshared(event):
+            event
+        case let .codeChannelAction(event):
             event
         case let .dndUpdated(event):
             event

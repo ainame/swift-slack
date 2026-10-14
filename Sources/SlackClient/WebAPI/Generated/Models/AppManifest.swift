@@ -381,6 +381,37 @@ extension Components.Schemas {
             public var slashCommands: Components.Schemas.AppManifest.FeaturesPayload.SlashCommandsPayload?
             /// - Remark: Generated from `#/components/schemas/AppManifest/features/unfurl_domains`.
             public var unfurlDomains: [Swift.String]?
+            /// Downstream swift-slack Slack Code supplement; not yet declared by upstream java-slack-sdk. Source: https://docs.slack.dev/ai/slack-code/agent-slash-commands/
+            ///
+            /// - Remark: Generated from `#/components/schemas/AppManifest/features/code_channels`.
+            public struct CodeChannelsPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AppManifest/features/code_channels/enabled`.
+                public var enabled: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/AppManifest/features/code_channels/slash_command_url`.
+                public var slashCommandUrl: Swift.String?
+                /// Creates a new `CodeChannelsPayload`.
+                ///
+                /// - Parameters:
+                ///   - enabled:
+                ///   - slashCommandUrl:
+                public init(
+                    enabled: Swift.Bool? = nil,
+                    slashCommandUrl: Swift.String? = nil,
+                ) {
+                    self.enabled = enabled
+                    self.slashCommandUrl = slashCommandUrl
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case enabled
+                    case slashCommandUrl = "slash_command_url"
+                }
+            }
+
+            /// Downstream swift-slack Slack Code supplement; not yet declared by upstream java-slack-sdk. Source: https://docs.slack.dev/ai/slack-code/agent-slash-commands/
+            ///
+            /// - Remark: Generated from `#/components/schemas/AppManifest/features/code_channels`.
+            public var codeChannels: Components.Schemas.AppManifest.FeaturesPayload.CodeChannelsPayload?
             /// Creates a new `FeaturesPayload`.
             ///
             /// - Parameters:
@@ -389,18 +420,21 @@ extension Components.Schemas {
             ///   - shortcuts:
             ///   - slashCommands:
             ///   - unfurlDomains:
+            ///   - codeChannels: Downstream swift-slack Slack Code supplement; not yet declared by upstream java-slack-sdk. Source: https://docs.slack.dev/ai/slack-code/agent-slash-commands/
             public init(
                 appHome: Components.Schemas.AppManifest.FeaturesPayload.AppHomePayload? = nil,
                 botUser: Components.Schemas.AppManifest.FeaturesPayload.BotUserPayload? = nil,
                 shortcuts: Components.Schemas.AppManifest.FeaturesPayload.ShortcutsPayload? = nil,
                 slashCommands: Components.Schemas.AppManifest.FeaturesPayload.SlashCommandsPayload? = nil,
                 unfurlDomains: [Swift.String]? = nil,
+                codeChannels: Components.Schemas.AppManifest.FeaturesPayload.CodeChannelsPayload? = nil,
             ) {
                 self.appHome = appHome
                 self.botUser = botUser
                 self.shortcuts = shortcuts
                 self.slashCommands = slashCommands
                 self.unfurlDomains = unfurlDomains
+                self.codeChannels = codeChannels
             }
 
             public enum CodingKeys: String, CodingKey {
@@ -409,6 +443,7 @@ extension Components.Schemas {
                 case shortcuts
                 case slashCommands = "slash_commands"
                 case unfurlDomains = "unfurl_domains"
+                case codeChannels = "code_channels"
             }
         }
 

@@ -1,0 +1,37 @@
+# Downstream swift-slack exception for Slack Code only, approved on 2026-10-14.
+# These fields come from Slack's official contracts, not upstream java-slack-sdk
+# recorded responses. Synthetic regression payloads are kept in slack_code_fixtures/.
+# All added fields remain optional for older payloads. Generation fails when the
+# upstream Java declaration adopts a field; delete that supplement then.
+com.slack.api.model.ConversationProperties.CodeChannel:
+  source: https://docs.slack.dev/ai/slack-code/code-channel-properties/
+  properties:
+    summary_message:
+      type: object
+      properties:
+        message_ts: {type: string}
+        thread_ts: {type: string}
+    agent_session_views:
+      type: array
+      items:
+        type: object
+        properties:
+          view_id: {type: string}
+          type: {type: string}
+          file_id: {type: string}
+          view_key: {type: string}
+          name: {type: string}
+          date_added: {type: integer}
+          content_version: {type: integer}
+com.slack.api.model.ConversationProperties.ContextBarItem:
+  source: https://docs.slack.dev/ai/slack-code/code-channel-properties/
+  properties:
+    item_type: {type: string}
+com.slack.api.model.manifest.AppManifest.Features:
+  source: https://docs.slack.dev/ai/slack-code/agent-slash-commands/
+  properties:
+    code_channels:
+      type: object
+      properties:
+        enabled: {type: boolean}
+        slash_command_url: {type: string}

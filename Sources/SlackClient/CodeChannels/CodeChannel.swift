@@ -76,8 +76,8 @@ public enum CodeChannel {
         public enum ItemType: String, Encodable, Sendable, Hashable {
             /// The item shows information, opening ``ContextBarItem/url`` if set.
             case info
-            /// Clicking the item sends the app a `code_channel_action` event. swift-slack does not model that
-            /// event yet.
+            /// Clicking the item sends the app a `code_channel_action` event, routed by SlackApp as
+            /// `CodeChannelActionEvent`. Its arbitrary JSON fields are preserved in `additionalProperties`.
             case action
         }
     }
