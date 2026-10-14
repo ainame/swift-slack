@@ -33,6 +33,16 @@ extension SlackResponse {
     }
 }
 
-extension Components.Schemas.ChatPostEphemeralResponse: SlackResponse {}
+extension Components.Schemas.AgentsConversationsArchiveResponse: SlackResponse {}
+extension Components.Schemas.AgentsConversationsCreateResponse: SlackResponse {}
+extension Components.Schemas.AgentsSessionsRenameResponse: SlackResponse {}
 extension Components.Schemas.AgentsSessionsSetStatusResponse: SlackResponse {}
 extension Components.Schemas.AssistantThreadsSetSuggestedPromptsResponse: SlackResponse {}
+extension Components.Schemas.AuthTestResponse: SlackResponse {}
+extension Components.Schemas.ChatPostEphemeralResponse: SlackResponse {}
+extension Components.Schemas.ChatPostMessageResponse: SlackResponse {}
+extension Components.Schemas.ConversationsHistoryResponse: SlackResponse {}
+extension Components.Schemas.ConversationsInfoResponse: SlackResponse {}
+extension Components.Schemas.ConversationsRepliesResponse: SlackResponse {}
+extension Components.Schemas.FilesCompleteUploadExternalResponse: SlackResponse {}
+extension Components.Schemas.FilesGetUploadURLExternalResponse: SlackResponse {}

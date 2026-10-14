@@ -399,5 +399,3 @@ struct RecentKeys {
         return true
     }
 }
-
-extension Components.Schemas.ConversationsInfoResponse: SlackResponse {}

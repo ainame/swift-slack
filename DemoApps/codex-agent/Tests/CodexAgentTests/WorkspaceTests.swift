@@ -7,7 +7,7 @@ struct WorkspaceTests {
     func `allows the app directory and its parent without dotenv`(useParent: Bool) throws {
         try withDirectories { root, app in
             let workspace = useParent ? root : app
-            let checked = try CodexAgentApp.checkedWorkspace(workspace.path, appDirectory: app)
+            let checked = try AgentConfiguration.checkedWorkspace(workspace.path, appDirectory: app)
             #expect(checked == workspace.path)
         }
     }
@@ -17,8 +17,8 @@ struct WorkspaceTests {
         try withDirectories { root, app in
             try Data().write(to: app.appending(path: ".env"))
             let workspace = useParent ? root : app
-            #expect(throws: CodexAgentApp.ConfigurationError.self) {
-                try CodexAgentApp.checkedWorkspace(workspace.path, appDirectory: app)
+            #expect(throws: AgentConfiguration.Error.self) {
+                try AgentConfiguration.checkedWorkspace(workspace.path, appDirectory: app)
             }
         }
     }
@@ -29,8 +29,8 @@ struct WorkspaceTests {
             let workspace = root.appending(path: "repository")
             try FileManager.default.createDirectory(at: workspace, withIntermediateDirectories: true)
             try Data().write(to: workspace.appending(path: ".env"))
-            #expect(throws: CodexAgentApp.ConfigurationError.self) {
-                try CodexAgentApp.checkedWorkspace(workspace.path, appDirectory: app)
+            #expect(throws: AgentConfiguration.Error.self) {
+                try AgentConfiguration.checkedWorkspace(workspace.path, appDirectory: app)
             }
         }
     }
@@ -41,7 +41,7 @@ struct WorkspaceTests {
             try Data().write(to: app.appending(path: ".env"))
             let workspace = root.appending(path: "app")
             try FileManager.default.createDirectory(at: workspace, withIntermediateDirectories: true)
-            let checked = try CodexAgentApp.checkedWorkspace(workspace.path, appDirectory: app)
+            let checked = try AgentConfiguration.checkedWorkspace(workspace.path, appDirectory: app)
             #expect(checked == workspace.path)
         }
     }
@@ -53,11 +53,11 @@ struct WorkspaceTests {
             try FileManager.default.createSymbolicLink(at: link, withDestinationURL: app)
             if hasDotenv {
                 try Data().write(to: app.appending(path: ".env"))
-                #expect(throws: CodexAgentApp.ConfigurationError.self) {
-                    try CodexAgentApp.checkedWorkspace(link.path, appDirectory: app)
+                #expect(throws: AgentConfiguration.Error.self) {
+                    try AgentConfiguration.checkedWorkspace(link.path, appDirectory: app)
                 }
             } else {
-                let checked = try CodexAgentApp.checkedWorkspace(link.path, appDirectory: app)
+                let checked = try AgentConfiguration.checkedWorkspace(link.path, appDirectory: app)
                 #expect(checked == app.path)
             }
         }

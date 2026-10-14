@@ -116,8 +116,3 @@ enum ConversationHistory {
         return "\(author): \(text)"
     }
 }
-
-extension Components.Schemas.ConversationsRepliesResponse: SlackResponse {}
-extension Components.Schemas.ConversationsHistoryResponse: SlackResponse {}
-extension Components.Schemas.AuthTestResponse: SlackResponse {}
-extension Components.Schemas.ChatPostMessageResponse: SlackResponse {}
