@@ -3,7 +3,7 @@ import Foundation
 import Logging
 
 actor CodexSession {
-    private let settings: CodexBackend.Settings
+    private let settings: CodexRuntime.Settings
     private let session: SessionKey
     private let toolRouter: ToolRouter
     private let logger: Logger
@@ -16,7 +16,7 @@ actor CodexSession {
     private(set) var isRunning = false
 
     init(
-        settings: CodexBackend.Settings,
+        settings: CodexRuntime.Settings,
         session: SessionKey,
         threadID: String?,
         logger: Logger,
@@ -32,7 +32,7 @@ actor CodexSession {
 
     func run(
         prompt: String,
-        tools: any AgentTools,
+        tools: SlackAgentTools,
         control: TurnControl,
         continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
     ) async throws {
@@ -55,7 +55,7 @@ actor CodexSession {
 
     private func execute(
         prompt: String,
-        tools: any AgentTools,
+        tools: SlackAgentTools,
         control: TurnControl,
         continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
     ) async throws {

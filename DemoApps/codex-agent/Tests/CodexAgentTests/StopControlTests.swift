@@ -24,8 +24,8 @@ struct StopControlTests {
     func `stop directly interrupts blocked output and only native stops reactivate the session`(resetStatus: Bool) async {
         let slack = FakeSlack()
         await slack.hold("agentsConversationsSetView")
-        let backend = BlockedOutputBackend()
-        let responder = AgentResponder(backend: backend, questions: .init(), logger: .init(label: "test"))
+        let codex = BlockedOutputCodex()
+        let responder = AgentResponder(events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) }, interrupt: { [codex] in codex.stop(in: $0) }, questions: .init(), logger: .init(label: "test"))
         let client = await slack.client()
         let task = Task {
             await responder.handle(.init(
@@ -39,7 +39,7 @@ struct StopControlTests {
         }
         await slack.waitFor("agentsConversationsSetView")
         await responder.stop(channel: "C1", threadTs: nil, resetStatus: resetStatus)
-        #expect(backend.stopped.withLock { $0 })
+        #expect(codex.stopped.withLock { $0 })
         await task.value
         #expect(await slack.requests("agentsSessionsSetStatus").last?["status"] == (resetStatus ? "active" : "processing"))
         #expect(await slack.requests("chatAppendStream").isEmpty)
@@ -52,10 +52,10 @@ struct StopControlTests {
         let router = setup.router()
         let client = await setup.slack.client()
         let task = router.start(setup.message("E1", ts: "1.0"), client: client)
-        await setup.backend.probe.waitForStart(of: .codeChannel(channel: "C1"))
+        await setup.codex.probe.waitForStart(of: .codeChannel(channel: "C1"))
         await router.stop(channel: "C1", threadTs: threadTs, client: client)
         await task.value
-        await setup.backend.probe.waitFor("cancelled", in: .codeChannel(channel: "C1"))
+        await setup.codex.probe.waitFor("cancelled", in: .codeChannel(channel: "C1"))
         let active = await setup.slack.requests("agentsSessionsSetStatus").last
         #expect(active?["status"] == "active")
         #expect(active?["thread_ts"] == nil)
@@ -92,13 +92,13 @@ struct StopControlTests {
     }
 }
 
-private final class BlockedOutputBackend: AgentBackend {
+private final class BlockedOutputCodex: Sendable {
     let stopped = Mutex(false)
     func stop(in _: SessionKey) {
         stopped.withLock { $0 = true }
     }
 
-    func respond(to _: String, in _: SessionKey, tools _: any AgentTools) -> AsyncThrowingStream<AgentEvent, any Error> {
+    func respond(to _: String, in _: SessionKey, tools _: SlackAgentTools) -> AsyncThrowingStream<AgentEvent, any Error> {
         AsyncThrowingStream { continuation in
             continuation.yield(.diff("diff --git a/file b/file"))
             // The consumer is held in publishView. Do not couple command cancellation to stream termination.

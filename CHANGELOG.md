@@ -14,6 +14,10 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * Added typed `CodeChannel` request values and helpers for properties, commands and HTML, diff, Block Kit, canvas and pull-request views, returning Slack warnings and throwing on unsuccessful responses - #255
 * `streamMessage` supports top-level replies by omitting `threadTs`, and `StreamingMessage.SessionStopped` lets apps abandon buffered content and retries when Slack ends the session - #255
 
+### Removed
+
+* **BREAKING**: Removed runtime mock mode and the `AGENT_BACKEND` selector from the Codex agent demo. The app now requires Codex; scripted output remains available in tests - #258
+
 ### Fixed
 
 * **BREAKING**: Accepted `team: null` in Block Kit button interactions from organization-installed apps, allowing approval and other action handlers to run. `BlockActionsPayload.team` is now optional; use optional chaining or unwrap it before accessing workspace information - #255
@@ -23,7 +27,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Maintenance
 
-* Simplified the Codex agent demo by separating startup settings and Codex runtime components, naming its Git permission roots, and sharing Code channel identity and stop scopes so stops in classified Code channels cancel queued messages before the first turn registers - #258
+* Simplified the Codex agent demo with focused startup and runtime files, concrete Slack tool handlers, named Git permission roots, and shared Code channel identity and stop scopes so stops in classified Code channels cancel queued messages before the first turn registers - #258
 * The Codex agent demo creates and reuses Code channels, publishes artifacts and diffs, uploads worktree files into the current channel with image references for Block Kit views, and shares archive summaries with linked origin threads. Persistent Git worktrees and topic branches now restore the same checkout and Codex conversation after restart, validate recovery state, and show repository, branch and checkout context. Scoped Git permissions permit topic commits, with Slack approvals for additional permissions; old independent clones are preserved with migration and cleanup guidance. The demo also restores conversation context, avoids repeated handoffs after naming/setup failures, deduplicates events, interrupts Codex directly on channel-wide Stop even during blocked output, and clears processing status after cleanup while preserving archived sessions - #255
 
 ## [2027.1.0-beta.2] - 2026-10-12

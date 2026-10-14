@@ -4,6 +4,7 @@ import HTTPTypes
 import OpenAPIRuntime
 import SlackKit
 import Synchronization
+import Testing
 
 /// Answers Web API calls like Slack and records the form-encoded requests.
 actor FakeSlack: ClientTransport {
@@ -135,16 +136,16 @@ actor FakeSlack: ClientTransport {
     }
 }
 
-/// A backend whose turns the test drives. Each turn yields a line of text, optionally asks a question, and
+/// A codex whose turns the test drives. Each turn yields a line of text, optionally asks a question, and
 /// then waits until the test releases its session or the turn is stopped.
-struct ScriptedBackend: AgentBackend {
-    let probe = BackendProbe()
+struct ScriptedCodex: Sendable {
+    let probe = TurnProbe()
     var asksQuestion = false
 
     func respond(
         to prompt: String,
         in session: SessionKey,
-        tools: any AgentTools,
+        tools: SlackAgentTools,
     ) -> AsyncThrowingStream<AgentEvent, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task { [probe, asksQuestion] in
@@ -171,11 +172,11 @@ struct ScriptedBackend: AgentBackend {
     }
 }
 
-actor BackendProbe {
+actor TurnProbe {
     private(set) var prompts: [SessionKey: [String]] = [:]
     private(set) var events: [SessionKey: [String]] = [:]
     private var releases: [SessionKey: AsyncStream<Void>.Continuation] = [:]
-    private var waiters: [(predicate: @Sendable (BackendProbe.Snapshot) -> Bool, continuation: CheckedContinuation<Void, Never>)] = []
+    private var waiters: [(predicate: @Sendable (TurnProbe.Snapshot) -> Bool, continuation: CheckedContinuation<Void, Never>)] = []
 
     struct Snapshot {
         var prompts: [SessionKey: [String]]
@@ -225,4 +226,16 @@ actor BackendProbe {
             waiter.continuation.resume()
         }
     }
+}
+
+/// Wait for the question's continuation registration, not just its preceding Slack status request.
+func pendingQuestionID(in slack: FakeSlack, questions: PendingQuestions) async throws -> String {
+    let blocks = try #require(await slack.requests("chatPostMessage").last?["blocks"])
+    let json = try JSONSerialization.jsonObject(with: Data(blocks.utf8)) as? [[String: Any]]
+    let id = try #require(json?.last?["block_id"] as? String)
+    while await !questions.isWaiting(id: id) {
+        try Task.checkCancellation()
+        await Task.yield()
+    }
+    return id
 }

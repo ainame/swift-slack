@@ -3,10 +3,10 @@ import Logging
 import OpenAPIRuntime
 import SlackKit
 
-/// ``AgentTools`` for one turn, acting in the turn's session for the person it answers.
+/// Concrete Slack tool handlers for one Codex turn, scoped to its session and the person it answers.
 ///
 /// Once Slack has stopped the session, the tools fail without calling Slack.
-struct SlackAgentTools: AgentTools {
+struct SlackAgentTools: Sendable {
     var transferFile: @Sendable (URL, Data) async throws -> Void = { try await SlackFileTransfer.send(to: $0, data: $1) }
 
     func uploadFile(_ file: WorkspaceUpload, title: String?) async throws -> UploadedFile {

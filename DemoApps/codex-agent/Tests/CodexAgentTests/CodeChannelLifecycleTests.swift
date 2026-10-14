@@ -134,7 +134,7 @@ struct CodeChannelLifecycleTests {
     @Test
     func `Codex diff notifications become code channel view updates`() async {
         let slack = FakeSlack()
-        let responder = AgentResponder(backend: DiffBackend(), questions: PendingQuestions(), logger: .init(label: "test"))
+        let responder = AgentResponder(events: { DiffCodex().respond(to: $0, in: $1, tools: $2) }, interrupt: { _ in }, questions: PendingQuestions(), logger: .init(label: "test"))
         let client = await slack.client()
         await responder.handle(.init(
             session: .codeChannel(channel: "CODE"),
@@ -186,19 +186,19 @@ struct CodeChannelLifecycleTests {
         let slack = FakeSlack()
         await slack.reply(to: "agentsConversationsCreate", with: .json(#"{"ok":true,"channel_id":"CODE"}"#))
         await slack.reply(to: "agentsSessionsRename", with: .json(#"{"ok":false,"error":"invalid_name"}"#))
-        let backend = PromotionBackend()
-        let responder = AgentResponder(backend: backend, questions: PendingQuestions(), logger: .init(label: "test"))
+        let codex = PromotionCodex()
+        let responder = AgentResponder(events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) }, interrupt: { _ in }, questions: PendingQuestions(), logger: .init(label: "test"))
         let origin = SessionKey.thread(channel: "C1", threadTs: "1.0")
         let client = await slack.client()
         await responder.handle(.init(
             session: origin, replyThreadTs: "1.0", messageTs: "1.0",
             prompt: "Fix the bug", userId: "U1", teamId: "T1",
         ), client: client)
-        await backend.probe.waitFor("continued", in: .codeChannel(channel: "CODE"))
+        await codex.probe.waitFor("continued", in: .codeChannel(channel: "CODE"))
         await slack.waitFor("chatStopStream", where: { $0["channel"] == "CODE" })
         #expect(await slack.requests("agentsConversationsCreate").count == 1)
-        #expect(await backend.probe.prompts[.codeChannel(channel: "CODE")]?.count == 1)
-        #expect(await backend.probe.events[.codeChannel(channel: "CODE")]?.contains("rename failed") == true)
+        #expect(await codex.probe.prompts[.codeChannel(channel: "CODE")]?.count == 1)
+        #expect(await codex.probe.events[.codeChannel(channel: "CODE")]?.contains("rename failed") == true)
         let chunks = await slack.requests.filter { $0["channel"] == "CODE" }.compactMap { $0["chunks"] }.joined()
         #expect(chunks.contains("Working here"))
     }
@@ -222,8 +222,8 @@ struct CodeChannelLifecycleTests {
     }
 }
 
-private struct DiffBackend: AgentBackend {
-    func respond(to _: String, in _: SessionKey, tools _: any AgentTools) -> AsyncThrowingStream<AgentEvent, any Error> {
+private struct DiffCodex: Sendable {
+    func respond(to _: String, in _: SessionKey, tools _: SlackAgentTools) -> AsyncThrowingStream<AgentEvent, any Error> {
         var translator = NotificationTranslator(turnID: "turn")
         let events = translator.events(turnID: "turn", payload: .turnDiffUpdated(.init(diff: "+fixed", threadId: "thread", turnId: "turn")))
         return AsyncThrowingStream { continuation in
@@ -243,10 +243,10 @@ private actor Launches {
     }
 }
 
-private struct PromotionBackend: AgentBackend {
-    let probe = BackendProbe()
+private struct PromotionCodex: Sendable {
+    let probe = TurnProbe()
 
-    func respond(to prompt: String, in session: SessionKey, tools: any AgentTools) -> AsyncThrowingStream<AgentEvent, any Error> {
+    func respond(to prompt: String, in session: SessionKey, tools: SlackAgentTools) -> AsyncThrowingStream<AgentEvent, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
                 _ = await probe.start(session, prompt: prompt)

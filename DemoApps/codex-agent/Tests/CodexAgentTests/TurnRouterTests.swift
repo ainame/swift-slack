@@ -5,11 +5,11 @@ import Testing
 
 struct TurnRouterTests {
     let slack = FakeSlack()
-    let backend = ScriptedBackend()
+    let codex = ScriptedCodex()
     let responder: AgentResponder
 
     init() {
-        responder = AgentResponder(backend: backend, questions: PendingQuestions(), logger: Logger(label: "test"))
+        responder = AgentResponder(events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) }, interrupt: { _ in }, questions: PendingQuestions(), logger: Logger(label: "test"))
     }
 
     @Test
@@ -37,10 +37,10 @@ struct TurnRouterTests {
         let client = await slack.client()
         let handling = router().start(message(command, source: .command, ts: "13345224609.738474920.8088930838d88f008e0"), client: client)
         let session = SessionKey.codeChannel(channel: "C1")
-        await backend.probe.waitForStart(of: session)
-        await backend.probe.release(session)
+        await codex.probe.waitForStart(of: session)
+        await codex.probe.release(session)
         await handling.value
-        let prompt = await backend.probe.prompts[session]?.first ?? ""
+        let prompt = await codex.probe.prompts[session]?.first ?? ""
         #expect(prompt.contains("Earlier requirements"))
         #expect(prompt.hasSuffix("Hi"))
     }
@@ -55,7 +55,7 @@ struct TurnRouterTests {
                 userId: "U1", teamId: "T1", origin: .init(channel: "C0", ts: "0.5"),
             ), client: client)
         }
-        await backend.probe.waitForStart(of: session)
+        await codex.probe.waitForStart(of: session)
         await slack.reply(to: "conversationsInfo", with: .json(#"{"ok":false,"error":"missing_scope"}"#))
         let decision = await router().route(message("E2", ts: "2.0", threadTs: "1.5"), client: client)
         guard case let .answer(turn)? = decision else { Issue.record("Lost the Code channel session"); return }
@@ -63,7 +63,7 @@ struct TurnRouterTests {
         #expect(turn.replyThreadTs == "1.5")
         #expect(turn.origin == .init(channel: "C0", ts: "0.5"))
         #expect(await slack.requests("conversationsInfo").isEmpty)
-        await backend.probe.release(session)
+        await codex.probe.release(session)
         await handling.value
     }
 
@@ -301,15 +301,15 @@ struct RoutingStopTests {
             userId: "U1", teamId: "T1",
         ), client: routing.slack.client(), attempt: attempt, parent: TurnProducer())
         #expect(await routing.slack.requests.isEmpty)
-        #expect(await routing.backend.probe.prompts.isEmpty)
+        #expect(await routing.codex.probe.prompts.isEmpty)
     }
 
     var slack: FakeSlack {
         routing.slack
     }
 
-    var probe: BackendProbe {
-        routing.backend.probe
+    var probe: TurnProbe {
+        routing.codex.probe
     }
 
     @Test(.timeLimit(.minutes(1)))
