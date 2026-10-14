@@ -20,12 +20,6 @@ actor CodexRuntime {
         var idleTimeout: Duration = .seconds(600)
     }
 
-    typealias SessionRunner = @Sendable (
-        CodexSession, String, SlackAgentTools, TurnControl, AsyncThrowingStream<AgentEvent, any Error>.Continuation,
-    ) async throws -> Void
-
-    private let runSession: SessionRunner
-    private let closeSession: @Sendable (CodexSession) async -> String?
     // Includes queued and draining runs, even when a newer run replaced their interruption control.
     private(set) var activeRuns: [SessionKey: Int] = [:]
     private let settings: Settings
@@ -38,17 +32,7 @@ actor CodexRuntime {
     private var closing: [SessionKey: Task<Void, Never>] = [:]
     private(set) var idleTimers: [SessionKey: Task<Void, Never>] = [:]
 
-    /// Tests supply lifecycle functions without replacing the concrete Codex session implementation.
-    init(
-        settings: Settings,
-        logger: Logger,
-        runSession: @escaping SessionRunner = { session, prompt, tools, control, continuation in
-            try await session.run(prompt: prompt, tools: tools, control: control, continuation: continuation)
-        },
-        closeSession: @escaping @Sendable (CodexSession) async -> String? = { await $0.close() },
-    ) throws {
-        self.runSession = runSession
-        self.closeSession = closeSession
+    init(settings: Settings, logger: Logger) throws {
         self.settings = settings
         self.logger = logger
         workspaces = try settings.sessionWorkspaces.map { try SessionWorkspaces(source: settings.workspace, root: $0) }
@@ -156,7 +140,7 @@ actor CodexRuntime {
         }
         sessions[key] = session
         guard !control.isCancelled, tools.producer.reason == nil else { return }
-        try await runSession(session, prompt, tools, control, continuation)
+        try await session.run(prompt: prompt, tools: tools, control: control, continuation: continuation)
         await control.waitForInterruption()
     }
 
@@ -177,7 +161,7 @@ actor CodexRuntime {
         sessions[key] = nil
         idleTimers[key] = nil
         closing[key] = Task {
-            threadIDs[key] = await closeSession(session)
+            threadIDs[key] = await session.close()
             closing[key] = nil
             logger.info("Closed idle Codex session", metadata: ["session": "\(key)"])
         }

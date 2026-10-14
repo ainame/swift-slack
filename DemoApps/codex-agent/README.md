@@ -250,4 +250,4 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 - `Sources/CodexAgent/SlackAgentTools.swift`: the tools' Slack side
 - `Sources/CodexAgent/PendingQuestions.swift`: question ownership, timeout and cancellation while waiting for a click
 
-Run the tests with `swift test`.
+Run the tests with `swift test`. Lifecycle tests also require `python3` on `PATH`: they launch a local fake app-server through the real Codex session and stdio transport, without a Codex login or network access.
