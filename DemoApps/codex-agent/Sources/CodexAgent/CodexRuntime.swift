@@ -27,6 +27,7 @@ actor CodexRuntime {
     private var sessions: [SessionKey: CodexSession] = [:]
     /// Threads of closed sessions, resumed when the session continues.
     private var threadIDs: [SessionKey: String] = [:]
+    private var closing: [SessionKey: Task<Void, Never>] = [:]
     private var idleTimers: [SessionKey: Task<Void, Never>] = [:]
 
     init(settings: Settings, logger: Logger) throws {
@@ -91,6 +92,9 @@ actor CodexRuntime {
     ) async throws {
         guard !control.isCancelled, tools.producer.reason == nil else { return }
         idleTimers.removeValue(forKey: key)?.cancel()
+        // Shutdown publishes the thread ID before completing; a new turn must wait before resuming it.
+        await closing[key]?.value
+        guard !control.isCancelled, tools.producer.reason == nil else { return }
         var scoped = settings
         var conversationID = threadIDs[key]
         if case .codeChannel = key, let workspaces {
@@ -133,15 +137,20 @@ actor CodexRuntime {
         idleTimers[key] = Task {
             try? await Task.sleep(for: settings.idleTimeout)
             guard !Task.isCancelled else { return }
-            await self.close(key, session: session)
+            self.close(key, session: session)
         }
     }
 
-    private func close(_ key: SessionKey, session: CodexSession) async {
-        guard sessions[key] === session, await !session.isRunning else { return }
+    private func close(_ key: SessionKey, session: CodexSession) {
+        // Controls include registered/queued turns, not just the session's currently executing turn.
+        // Reserve closing without an actor hop so a new turn cannot reuse a process being shut down.
+        guard !Task.isCancelled, sessions[key] === session, controls[key] == nil else { return }
         sessions[key] = nil
         idleTimers[key] = nil
-        threadIDs[key] = await session.close()
-        logger.info("Closed idle Codex session", metadata: ["session": "\(key)"])
+        closing[key] = Task {
+            threadIDs[key] = await session.close()
+            closing[key] = nil
+            logger.info("Closed idle Codex session", metadata: ["session": "\(key)"])
+        }
     }
 }

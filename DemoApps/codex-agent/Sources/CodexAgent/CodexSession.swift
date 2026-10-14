@@ -13,7 +13,6 @@ actor CodexSession {
     private var threadID: String?
     /// The previous turn. Turns run one at a time, including the rest of an interrupted one.
     private var lastTurn: Task<Void, any Error>?
-    private(set) var isRunning = false
 
     init(
         settings: CodexRuntime.Settings,
@@ -59,8 +58,6 @@ actor CodexSession {
         control: TurnControl,
         continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
     ) async throws {
-        isRunning = true
-        defer { isRunning = false }
         await toolRouter.install(tools)
         do {
             try await executeTurn(control: control, continuation: continuation, prompt: prompt)
