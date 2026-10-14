@@ -59,7 +59,7 @@ actor TurnRouter {
 
     nonisolated let attempts: RoutingAttempts
     private let responder: AgentResponder
-    private let channels: ChannelClassifier
+    private let channels: ChannelRegistry
     private let isAllowed: @Sendable (String) -> Bool
     private let logger: Logger
     private var recentEvents = RecentKeys(capacity: 1000)
@@ -67,13 +67,12 @@ actor TurnRouter {
 
     init(
         responder: AgentResponder,
-        channels: ChannelClassifier,
         isAllowed: @escaping @Sendable (String) -> Bool,
         logger: Logger,
     ) {
         self.responder = responder
         attempts = responder.routingAttempts
-        self.channels = channels
+        channels = responder.channels
         self.isAllowed = isAllowed
         self.logger = logger
     }
@@ -134,16 +133,8 @@ actor TurnRouter {
 
     /// Handles Slack's `agent_session_stopped`: discards the messages still being routed in the stopped channel
     /// or thread, then stops the turns already running there.
-    func stop(channel: String, threadTs: String?, client: (any APIProtocol)? = nil) async {
-        let suppliedThread = threadTs.flatMap { $0.isEmpty ? nil : $0 }
-        // Code channels have one shared session, even when Slack reports the clicked message's thread.
-        let scope: String? = if case .codeChannel? = await responder.knownCodeChannel(in: channel) {
-            nil
-        } else {
-            suppliedThread
-        }
-        attempts.cancel(channel: channel, threadTs: scope)
-        await responder.stop(channel: channel, threadTs: scope, client: client)
+    nonisolated func stop(channel: String, threadTs: String?, client: (any APIProtocol)? = nil) async {
+        await responder.stop(channel: channel, threadTs: threadTs, client: client)
     }
 
     /// Returns what to do with `message`, or `nil` to ignore it or when a stop discarded `attempt`. It may look
@@ -166,7 +157,7 @@ actor TurnRouter {
             if message.source == .message, identity?.isMentioned(in: message.text) == true {
                 return nil
             }
-            let kind = await kind(of: message.channel, client: client)
+            let kind = await channels.kind(of: message.channel, client: client)
             guard attempt?.isCancelled != true else { return nil }
             switch kind {
             case let .codeChannel(origin):
@@ -207,18 +198,11 @@ actor TurnRouter {
         messageTs: String,
         client: any APIProtocol,
     ) async -> (session: SessionKey, replyThreadTs: String?, origin: MessageLink?) {
-        if case let .codeChannel(origin) = await kind(of: channel, client: client) {
+        if case let .codeChannel(origin) = await channels.kind(of: channel, client: client) {
             return (.codeChannel(channel: channel), threadTs, origin)
         }
         let threadTs = threadTs ?? messageTs
         return (.thread(channel: channel, threadTs: threadTs), threadTs, nil)
-    }
-
-    private func kind(of channel: String, client: any APIProtocol) async -> ChannelClassifier.Kind? {
-        if let known = await responder.knownCodeChannel(in: channel) {
-            return known
-        }
-        return await channels.kind(of: channel, client: client)
     }
 
     private func postNotAllowed(
@@ -313,69 +297,6 @@ final class RoutingAttempts: Sendable {
 
     var isEmpty: Bool {
         attempts.withLock(\.isEmpty)
-    }
-}
-
-/// Tells Slack Code channels from other channels with `conversations.info`.
-///
-/// A code channel's `properties.record_channel.record_type` is `agent_channel`. The answer is cached: for good
-/// when the channel is a code channel, and for `negativeLifetime` when it is not. A failed lookup is not
-/// cached, so the next message tries again.
-actor ChannelClassifier {
-    enum Kind: Sendable, Equatable {
-        /// A code channel, with the message it was started from when Slack reports one.
-        case codeChannel(origin: MessageLink?)
-        case other
-    }
-
-    private let negativeLifetime: Duration
-    private let logger: Logger
-    private var known: [String: (kind: Kind, expiry: ContinuousClock.Instant?)] = [:]
-    /// Lookups in progress, which concurrent messages in the same channel share.
-    private var lookups: [String: Task<Kind?, Never>] = [:]
-
-    init(negativeLifetime: Duration = .seconds(600), logger: Logger) {
-        self.negativeLifetime = negativeLifetime
-        self.logger = logger
-    }
-
-    /// The channel's kind, or `nil` when Slack could not tell.
-    func kind(of channel: String, client: any APIProtocol) async -> Kind? {
-        if let entry = known[channel], entry.expiry.map({ ContinuousClock.now < $0 }) ?? true {
-            return entry.kind
-        }
-        if let lookup = lookups[channel] {
-            return await lookup.value
-        }
-        let lookup = Task { [logger] () -> Kind? in
-            do {
-                let response = try await client.conversationsInfo(body: .json(.init(channel: channel)))
-                    .ok.body.json.checked("conversations.info")
-                return Self.kind(of: response.channel)
-            } catch {
-                logger.warning("Failed to look up the channel", metadata: ["channel": "\(channel)", "error": "\(error)"])
-                return nil
-            }
-        }
-        lookups[channel] = lookup
-        let kind = await lookup.value
-        lookups[channel] = nil
-        if let kind {
-            known[channel] = (kind, kind == .other ? ContinuousClock.now + negativeLifetime : nil)
-        }
-        return kind
-    }
-
-    static func kind(of conversation: Conversation?) -> Kind {
-        guard let properties = conversation?.properties,
-              properties.recordChannel?.recordType == "agent_channel" else {
-            return .other
-        }
-        let link = properties.agentSession?.originLink
-        let origin = link.flatMap { link in
-            link.channelId.flatMap { channel in link.ts.map { MessageLink(channel: channel, ts: $0) } }
-        }
-        return .codeChannel(origin: origin)
     }
 }
 

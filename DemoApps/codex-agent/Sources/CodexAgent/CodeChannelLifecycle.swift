@@ -3,9 +3,13 @@ import SlackKit
 
 /// Remembers promotions in this process. Slack's stable session_id also makes retries and restarts idempotent.
 actor CodeChannelLifecycle {
-    private var channels: [SessionKey: String] = [:]
-    private var origins: [String: MessageLink] = [:]
+    nonisolated let channels: ChannelRegistry
+    private var promotions: [SessionKey: String] = [:]
     private var launched: Set<SessionKey> = []
+
+    init(channels: ChannelRegistry = ChannelRegistry(logger: Logger(label: "codex-agent.channels"))) {
+        self.channels = channels
+    }
 
     func create(
         name: String,
@@ -19,12 +23,12 @@ actor CodeChannelLifecycle {
         if case .codeChannel = session {
             return (session.channel, false)
         }
-        if origins[session.channel] != nil {
+        if channels.isCodeChannel(session.channel) {
             return (session.channel, false)
         }
         try check(producer)
         let channel: String
-        if let existing = channels[session] {
+        if let existing = promotions[session] {
             channel = existing
         } else {
             let result = try await client.agentsConversationsCreate(body: .json(.init(
@@ -36,8 +40,8 @@ actor CodeChannelLifecycle {
             guard let id = result.channelId else {
                 throw AgentToolError(description: "Slack did not return a code channel ID.")
             }
-            channels[session] = id
-            origins[id] = .init(channel: session.channel, ts: messageTs)
+            promotions[session] = id
+            channels.rememberCodeChannel(id, origin: .init(channel: session.channel, ts: messageTs))
             logger.info("Created Code channel", metadata: ["origin": "\(session)", "channel": "\(id)"])
             channel = id
         }
@@ -70,14 +74,6 @@ actor CodeChannelLifecycle {
         }
         try check(producer)
         return (channel, launched.insert(session).inserted)
-    }
-
-    func origin(of channel: String) -> MessageLink? {
-        origins[channel]
-    }
-
-    func hasOrigin(channel: String) -> Bool {
-        channels.values.contains(channel)
     }
 
     private func check(_ producer: TurnProducer) throws {

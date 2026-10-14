@@ -32,9 +32,9 @@ actor AgentResponder {
     private let backend: any AgentBackend
     private let questions: PendingQuestions
     private let logger: Logger
-    private let lifecycle = CodeChannelLifecycle()
+    private let lifecycle: CodeChannelLifecycle
+    nonisolated let channels: ChannelRegistry
     nonisolated let routingAttempts = RoutingAttempts()
-    private var knownCodeChannels: [String: ChannelClassifier.Kind] = [:]
     private var running: [SessionKey: RunningTurn] = [:]
     private var titledSessions: Set<SessionKey> = []
     /// Sessions the person renamed, whose title the agent leaves alone.
@@ -43,20 +43,13 @@ actor AgentResponder {
     private var engagedSessions: Set<SessionKey> = []
     private(set) var identity: BotIdentity?
 
-    init(backend: any AgentBackend, questions: PendingQuestions, logger: Logger) {
+    init(backend: any AgentBackend, questions: PendingQuestions, logger: Logger, channels: ChannelRegistry? = nil) {
         self.backend = backend
         self.questions = questions
         self.logger = logger
-    }
-
-    func knownCodeChannel(in channel: String) async -> ChannelClassifier.Kind? {
-        if let known = knownCodeChannels[channel] {
-            return known
-        }
-        if let origin = await lifecycle.origin(of: channel) {
-            return .codeChannel(origin: origin)
-        }
-        return nil
+        let channels = channels ?? ChannelRegistry(logger: logger)
+        self.channels = channels
+        lifecycle = CodeChannelLifecycle(channels: channels)
     }
 
     func setIdentity(_ identity: BotIdentity) {
@@ -98,7 +91,7 @@ actor AgentResponder {
         let (parts, continuation) = AsyncThrowingStream.makeStream(of: StreamingMessage.Part.self)
         let producer = TurnProducer()
         if case .codeChannel = session {
-            knownCodeChannels[session.channel] = .codeChannel(origin: turn.origin)
+            channels.rememberCodeChannel(session.channel, origin: turn.origin)
         }
         running[session] = RunningTurn(replyThreadTs: turn.replyThreadTs, producer: producer, parts: continuation)
         defer { running[session] = nil }
@@ -177,12 +170,19 @@ actor AgentResponder {
     /// Handles Slack's `agent_session_stopped`. Without `threadTs`, every turn in the channel stops, including
     /// the thread sessions in it. Code channel stops always cover the channel; ordinary thread stops keep
     /// their thread scope. Archiving uses `resetStatus: false` so cleanup never reactivates a closed channel.
-    func stop(channel: String, threadTs: String?, client: (any APIProtocol)? = nil, resetStatus: Bool = true) async {
-        let scope = knownCodeChannels[channel] != nil ? nil : threadTs.flatMap { $0.isEmpty ? nil : $0 }
-        routingAttempts.cancel(channel: channel, threadTs: scope)
+    nonisolated func stop(channel: String, threadTs: String?, client: (any APIProtocol)? = nil, resetStatus: Bool = true) async {
+        let scope = channels.stopScope(channel: channel, threadTs: threadTs)
+        // Cancel routing before hopping to the responder actor, so already queued turns cannot start.
+        routingAttempts.cancel(channel: scope.channel, threadTs: scope.threadTs)
+        await stop(scope, client: client, resetStatus: resetStatus)
+    }
+
+    private func stop(_ scope: ChannelRegistry.StopScope, client: (any APIProtocol)?, resetStatus: Bool) async {
+        let channel = scope.channel
+        let threadTs = scope.threadTs
         let stopped = running.filter { session, turn in
             guard session.channel == channel else { return false }
-            guard let threadTs = scope else { return true }
+            guard let threadTs else { return true }
             return session.threadTs == threadTs || turn.replyThreadTs == threadTs
         }
         for (session, turn) in stopped {
@@ -202,9 +202,9 @@ actor AgentResponder {
             await questions.cancel(session)
         }
         if stopped.isEmpty {
-            logger.info("No running turn matched the stop event", metadata: ["channel": "\(channel)", "thread_ts": "\(scope ?? "none")"])
+            logger.info("No running turn matched the stop event", metadata: ["channel": "\(channel)", "thread_ts": "\(threadTs ?? "none")"])
             if let client, resetStatus {
-                let session: SessionKey = scope.map { .thread(channel: channel, threadTs: $0) } ?? .codeChannel(channel: channel)
+                let session: SessionKey = threadTs.map { .thread(channel: channel, threadTs: $0) } ?? .codeChannel(channel: channel)
                 await setActive(session, client: client)
             }
         }

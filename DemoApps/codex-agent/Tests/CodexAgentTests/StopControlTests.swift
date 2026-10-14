@@ -62,6 +62,29 @@ struct StopControlTests {
     }
 
     @Test
+    func `a classified Code channel stops all queued routing before its first turn registers`() async {
+        let setup = TurnRouterTests()
+        await setup.slack.channel(recordType: "agent_channel")
+        let router = setup.router()
+        let client = await setup.slack.client()
+        // Classification has completed, but responder.handle has not registered a turn.
+        let decision = await router.route(setup.message("E1", ts: "1.0"), client: client)
+        guard case .answer? = decision else { Issue.record("Expected a Code channel turn"); return }
+        let first = router.attempts.begin(channel: "C1", threadTs: "1.0", ts: "1.1")
+        let otherThread = router.attempts.begin(channel: "C1", threadTs: "2.0", ts: "2.1")
+        defer {
+            router.attempts.end(first)
+            router.attempts.end(otherThread)
+        }
+        await router.stop(channel: "C1", threadTs: "1.0", client: client)
+        #expect(first.isCancelled && otherThread.isCancelled)
+        #expect(await setup.slack.requests("conversationsInfo").count == 1)
+        let active = await setup.slack.requests("agentsSessionsSetStatus").last
+        #expect(active?["status"] == "active")
+        #expect(active?["thread_ts"] == nil)
+    }
+
+    @Test
     func `a stop with no running turn still clears stale Slack processing status`() async {
         let setup = TurnRouterTests()
         await setup.router().stop(channel: "C1", threadTs: nil, client: setup.slack.client())
