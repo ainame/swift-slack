@@ -9,7 +9,7 @@ struct TurnRouterTests {
     let responder: AgentResponder
 
     init() {
-        responder = AgentResponder(events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) }, interrupt: { _ in }, questions: PendingQuestions(), logger: Logger(label: "test"))
+        responder = AgentResponder(events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) }, interrupt: { _, _ in }, questions: PendingQuestions(), logger: Logger(label: "test"))
     }
 
     @Test

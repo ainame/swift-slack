@@ -29,8 +29,8 @@ actor AgentResponder {
         var resetStatusAfterStop = true
     }
 
-    private let events: @Sendable (String, SessionKey, SlackAgentTools) -> AsyncThrowingStream<AgentEvent, any Error>
-    private let interrupt: @Sendable (SessionKey) -> Void
+    private let events: @Sendable (String, SessionKey, SlackAgentTools) async -> AsyncThrowingStream<AgentEvent, any Error>
+    private let interrupt: @Sendable (SessionKey, TurnProducer) async -> Void
     private let questions: PendingQuestions
     private let logger: Logger
     private let lifecycle: CodeChannelLifecycle
@@ -46,16 +46,16 @@ actor AgentResponder {
 
     init(codex: CodexRuntime, questions: PendingQuestions, logger: Logger, channels: ChannelRegistry? = nil) {
         self.init(
-            events: { codex.respond(to: $0, in: $1, tools: $2) },
-            interrupt: { codex.stop(in: $0) },
+            events: { await codex.respond(to: $0, in: $1, tools: $2) },
+            interrupt: { await codex.stop(in: $0, producer: $1) },
             questions: questions, logger: logger, channels: channels,
         )
     }
 
     /// Tests supply scripted Codex output and interruption without launching an app-server process.
     init(
-        events: @escaping @Sendable (String, SessionKey, SlackAgentTools) -> AsyncThrowingStream<AgentEvent, any Error>,
-        interrupt: @escaping @Sendable (SessionKey) -> Void,
+        events: @escaping @Sendable (String, SessionKey, SlackAgentTools) async -> AsyncThrowingStream<AgentEvent, any Error>,
+        interrupt: @escaping @Sendable (SessionKey, TurnProducer) async -> Void,
         questions: PendingQuestions,
         logger: Logger,
         channels: ChannelRegistry? = nil,
@@ -206,9 +206,11 @@ actor AgentResponder {
             // Cancelling the producer ends its iteration of Codex's stream, which stops the turn. The
             // tools see the stop before their question ends below, so they leave Slack alone.
             turn.producer.stopSession()
-            // Do not wait for the stream iterator to observe cancellation: it may be publishing a view
-            // or blocked in a Slack HTTP request while Codex continues executing commands.
-            interrupt(session)
+        }
+        // Mark every matching producer stopped before awaiting another actor. Interrupt Codex directly;
+        // stream iteration may be blocked while publishing a view or waiting for a Slack HTTP request.
+        for (session, turn) in stopped {
+            await interrupt(session, turn.producer)
         }
         // A question waiting for a click holds Codex's message loop, so end it to let the interrupt through.
         for session in stopped.keys {
@@ -258,7 +260,7 @@ actor AgentResponder {
             try Task.checkCancellation()
             // Remembering channel identity is an actor hop; a stop during it must not start Codex work.
             guard !producer.isSessionStopped else { return }
-            for try await event in events(prompt, turn.session, tools) {
+            for try await event in await events(prompt, turn.session, tools) {
                 switch event {
                 case let .diff(diff):
                     if case .codeChannel = turn.session, !producer.isSessionStopped {
