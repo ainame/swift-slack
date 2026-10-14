@@ -70,6 +70,27 @@ struct AgentResponderTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
+    func `concurrent first messages reserve one Code channel turn before awaiting its registry`() async {
+        let client = await slack.client()
+        let session = SessionKey.codeChannel(channel: "C1")
+        let first = turn(session, replyThreadTs: nil, messageTs: "1.0")
+        let second = turn(session, replyThreadTs: "1.0", messageTs: "1.1", userId: "U2")
+        let firstReply = Task { await responder.handle(first, client: client) }
+        let secondReply = Task { await responder.handle(second, client: client) }
+        defer {
+            firstReply.cancel()
+            secondReply.cancel()
+        }
+        await codex.probe.waitForStart(of: session)
+        await slack.waitFor("chatPostEphemeral")
+        #expect(await codex.probe.prompts[session]?.count == 1)
+        #expect(await slack.requests("chatPostEphemeral").count == 1)
+        await codex.probe.release(session)
+        await firstReply.value
+        await secondReply.value
+    }
+
+    @Test(.timeLimit(.minutes(1)))
     func `a stop cancels the turn and clears processing without sending more stream content`() async {
         let client = await slack.client()
         let stopped = turn(.codeChannel(channel: "C1"), replyThreadTs: nil)

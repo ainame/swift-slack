@@ -232,7 +232,7 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 - `Sources/CodexAgent/App.swift`: the entry point and Slack event, action and command handlers
 - `Sources/CodexAgent/AgentConfiguration.swift`: environment loading, transport settings and workspace validation
 - `Sources/CodexAgent/TurnRouter.swift`: which messages become turns, in which session, and where the reply goes; duplicate filtering
-- `Sources/CodexAgent/ChannelRegistry.swift`: shared channel identity, origin links, lookup caching and stop scopes
+- `Sources/CodexAgent/ChannelRegistry.swift`: actor-isolated channel identity, origin links, lookup caching and stop scopes
 - `Sources/CodexAgent/AgentResponder.swift`: the response loop for one message, busy sessions, and the stop button
 - `Sources/CodexAgent/TurnProducer.swift`: the stop control for a turn's producer, telling a local cancellation from a session Slack stopped
 - `Sources/CodexAgent/ConversationHistory.swift`: reading a thread or a code channel for the prompt and the tools

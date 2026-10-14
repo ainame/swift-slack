@@ -129,7 +129,7 @@ struct SlackAgentTools: Sendable {
             logger.warning("Code channel summary: \(warning)")
         }
         try checkSession()
-        let createdWithOrigin = lifecycle.channels.origin(of: session.channel) != nil
+        let createdWithOrigin = await lifecycle.channels.origin(of: session.channel) != nil
         try checkSession()
         _ = try await client.agentsConversationsArchive(body: .json(.init(
             channelId: session.channel,
