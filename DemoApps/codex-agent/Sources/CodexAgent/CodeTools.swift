@@ -44,19 +44,19 @@ extension AgentToolset {
     }
 
     static let codeSpecs: [DynamicToolSpec] = [
-        function(uploadFile, description: """
+        makeToolSpec(uploadFile, description: """
         Upload a local file from this Code channel's writable worktree and share it in this channel.
         Pass a relative or absolute path and an optional title. Regular files only, up to 20 MiB;
         symlinks and .git/.env files cannot be uploaded. Returns file_id, permalink and slack_file.
         For an image artifact, use the returned slack_file in a Block Kit image block with alt_text,
         then call publish_code_view with type block_kit. Never use a local path as an image URL.
         """, properties: ["path": ["type": "string", "minLength": 1], "title": ["type": "string", "maxLength": 200]], required: ["path"]),
-        function(startCodeChannel, description: """
+        makeToolSpec(startCodeChannel, description: """
         Start a Slack Code channel for substantial work that needs editing, running commands or showing artifacts.
         Reuses an existing channel for this conversation. The original task automatically continues there;
         tell the person where it went and do not execute it again here. Already in a code channel, reuse it.
         """, properties: ["name": ["type": "string", "minLength": 1]], required: ["name"]),
-        function(publishCodeView, description: """
+        makeToolSpec(publishCodeView, description: """
         Publish a view in the current code channel. HTML content is a self-contained document; diff is unified
         diff; block_kit content is a JSON array of Block Kit blocks. Canvas uses an existing canvas_id;
         pull_request uses a URL. html, block_kit and canvas require a stable key. Only use HTTPS resource domains.
@@ -67,7 +67,7 @@ extension AgentToolset {
             "access_level": ["type": "string", "enum": ["read", "write", "comment"]],
             "resource_domains": ["type": "array", "items": ["type": "string"]],
         ], required: ["type"]),
-        function(archiveCodeChannel, description: """
+        makeToolSpec(archiveCodeChannel, description: """
         Post a final summary, attach it to this code channel, and archive the channel. Only call when the person
         asks to end or archive this task; completing a turn alone does not archive it.
         """, properties: ["summary": ["type": "string", "minLength": 1]], required: ["summary"]),

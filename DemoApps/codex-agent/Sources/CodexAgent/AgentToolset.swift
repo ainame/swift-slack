@@ -17,7 +17,7 @@ enum AgentToolset {
     static let uploadFile = "upload_file"
 
     static let specs: [DynamicToolSpec] = [
-        function(
+        makeToolSpec(
             SlackUI.toolName,
             description: """
             Show cards under your answer in Slack, one per item worth highlighting. Each card may link to an \
@@ -43,13 +43,13 @@ enum AgentToolset {
             ],
             required: ["cards"],
         ),
-        function(
+        makeToolSpec(
             setTitle,
             description: "Rename this Slack conversation to a short title that says what it is about, once the topic is clear.",
             properties: ["title": ["type": "string", "minLength": 1, "maxLength": 200]],
             required: ["title"],
         ),
-        function(
+        makeToolSpec(
             readSlack,
             description: """
             Read recent messages from this Slack conversation: the current thread, or the channel it is in. \
@@ -61,7 +61,7 @@ enum AgentToolset {
             ],
             required: ["scope"],
         ),
-        function(
+        makeToolSpec(
             askUser,
             description: """
             Ask the person to choose between a few options and wait for their answer. Use it before acting on \
@@ -197,7 +197,8 @@ enum AgentToolset {
         DynamicToolCallResponse(contentItems: [.inputText(.init(text: text, type: .inputText))], success: success)
     }
 
-    static func function(
+    /// Builds a Codex function tool specification with an object argument schema.
+    static func makeToolSpec(
         _ name: String,
         description: String,
         properties: JSONObject,
