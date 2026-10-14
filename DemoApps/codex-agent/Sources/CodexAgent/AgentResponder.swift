@@ -107,11 +107,11 @@ actor AgentResponder {
         // a second message in the same session must find it busy, and an early stop must find the turn.
         let (parts, continuation) = AsyncThrowingStream.makeStream(of: StreamingMessage.Part.self)
         let producer = TurnProducer()
-        if case .codeChannel = session {
-            channels.rememberCodeChannel(session.channel, origin: turn.origin)
-        }
         running[session] = RunningTurn(replyThreadTs: turn.replyThreadTs, producer: producer, parts: continuation)
         defer { running[session] = nil }
+        if case .codeChannel = session {
+            await channels.rememberCodeChannel(session.channel, origin: turn.origin)
+        }
         let tools = SlackAgentTools(
             client: client,
             session: session,
@@ -187,15 +187,11 @@ actor AgentResponder {
     /// Handles Slack's `agent_session_stopped`. Without `threadTs`, every turn in the channel stops, including
     /// the thread sessions in it. Code channel stops always cover the channel; ordinary thread stops keep
     /// their thread scope. Archiving uses `resetStatus: false` so cleanup never reactivates a closed channel.
-    nonisolated func stop(channel: String, threadTs: String?, client: (any APIProtocol)? = nil, resetStatus: Bool = true) async {
-        let scope = channels.stopScope(channel: channel, threadTs: threadTs)
-        // Cancel routing before hopping to the responder actor, so already queued turns cannot start.
+    func stop(channel: String, threadTs: String?, client: (any APIProtocol)? = nil, resetStatus: Bool = true) async {
+        // A registered Code channel turn is already channel-scoped even while it awaits the registry write.
+        let requestedThreadTs = running[.codeChannel(channel: channel)] != nil ? nil : threadTs
+        let scope = await channels.stopScope(channel: channel, threadTs: requestedThreadTs)
         routingAttempts.cancel(channel: scope.channel, threadTs: scope.threadTs)
-        await stop(scope, client: client, resetStatus: resetStatus)
-    }
-
-    private func stop(_ scope: ChannelRegistry.StopScope, client: (any APIProtocol)?, resetStatus: Bool) async {
-        let channel = scope.channel
         let threadTs = scope.threadTs
         let stopped = running.filter { session, turn in
             guard session.channel == channel else { return false }
@@ -292,6 +288,8 @@ actor AgentResponder {
         }
         do {
             try Task.checkCancellation()
+            // Remembering channel identity is an actor hop; a stop during it must not start Codex work.
+            guard !producer.isSessionStopped else { return }
             for try await event in events(prompt, turn.session, tools) {
                 switch event {
                 case let .diff(diff):

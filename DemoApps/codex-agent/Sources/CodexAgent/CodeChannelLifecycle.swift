@@ -23,7 +23,7 @@ actor CodeChannelLifecycle {
         if case .codeChannel = session {
             return (session.channel, false)
         }
-        if channels.isCodeChannel(session.channel) {
+        if await channels.isCodeChannel(session.channel) {
             return (session.channel, false)
         }
         try check(producer)
@@ -41,7 +41,7 @@ actor CodeChannelLifecycle {
                 throw AgentToolError(description: "Slack did not return a code channel ID.")
             }
             promotions[session] = id
-            channels.rememberCodeChannel(id, origin: .init(channel: session.channel, ts: messageTs))
+            await channels.rememberCodeChannel(id, origin: .init(channel: session.channel, ts: messageTs))
             logger.info("Created Code channel", metadata: ["origin": "\(session)", "channel": "\(id)"])
             channel = id
         }

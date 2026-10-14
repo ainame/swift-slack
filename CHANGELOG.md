@@ -27,7 +27,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Maintenance
 
-* Simplified the Codex agent demo with focused startup and runtime files, concrete Slack tool handlers, named Git permission roots, and shared Code channel identity and stop scopes so stops in classified Code channels cancel queued messages before the first turn registers - #258
+* Simplified the Codex agent demo with focused startup and runtime files, concrete Slack tool handlers, named Git permission roots, and actor-isolated Code channel identity and stop scopes so stops in classified Code channels cancel queued messages before the first turn registers - #258
 * The Codex agent demo creates and reuses Code channels, publishes artifacts and diffs, uploads worktree files into the current channel with image references for Block Kit views, and shares archive summaries with linked origin threads. Persistent Git worktrees and topic branches now restore the same checkout and Codex conversation after restart, validate recovery state, and show repository, branch and checkout context. Scoped Git permissions permit topic commits, with Slack approvals for additional permissions; old independent clones are preserved with migration and cleanup guidance. The demo also restores conversation context, avoids repeated handoffs after naming/setup failures, deduplicates events, interrupts Codex directly on channel-wide Stop even during blocked output, and clears processing status after cleanup while preserving archived sessions - #255
 
 ## [2027.1.0-beta.2] - 2026-10-12

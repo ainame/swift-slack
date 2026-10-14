@@ -51,7 +51,7 @@ struct CodeChannelLifecycleTests {
     func `a known Code channel without an origin is reused even with an ordinary session key`() async throws {
         let slack = FakeSlack()
         let channels = ChannelRegistry(logger: .init(label: "test"))
-        channels.rememberCodeChannel("CODE", origin: nil)
+        await channels.rememberCodeChannel("CODE", origin: nil)
         let lifecycle = CodeChannelLifecycle(channels: channels)
         let created = try await lifecycle.create(
             name: "ignored", from: .thread(channel: "CODE", threadTs: "1.0"), messageTs: "1.1",

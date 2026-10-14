@@ -40,33 +40,33 @@ struct ChannelRegistryTests {
         let lookup = Task { await channels.kind(of: "C1", client: client) }
         await slack.waitFor("conversationsInfo")
         let origin = MessageLink(channel: "C0", ts: "1.0")
-        channels.rememberCodeChannel("C1", origin: origin)
+        await channels.rememberCodeChannel("C1", origin: origin)
         await slack.release("conversationsInfo")
         #expect(await lookup.value == .codeChannel(origin: origin))
         #expect(await channels.kind(of: "C1", client: client) == .codeChannel(origin: origin))
-        #expect(channels.origin(of: "C1") == origin)
+        #expect(await channels.origin(of: "C1") == origin)
         #expect(await slack.requests("conversationsInfo").count == 1)
     }
 
     @Test
-    func `turns without an origin retain the link and an explicit link replaces it`() {
+    func `turns without an origin retain the link and an explicit link replaces it`() async {
         let channels = ChannelRegistry(logger: .init(label: "test"))
         let first = MessageLink(channel: "C0", ts: "1.0")
         let updated = MessageLink(channel: "C2", ts: "2.0")
-        channels.rememberCodeChannel("C1", origin: first)
-        channels.rememberCodeChannel("C1", origin: nil)
-        #expect(channels.origin(of: "C1") == first)
-        channels.rememberCodeChannel("C1", origin: updated)
-        #expect(channels.origin(of: "C1") == updated)
-        #expect(channels.stopScope(channel: "C1", threadTs: "1.0").threadTs == nil)
+        await channels.rememberCodeChannel("C1", origin: first)
+        await channels.rememberCodeChannel("C1", origin: nil)
+        #expect(await channels.origin(of: "C1") == first)
+        await channels.rememberCodeChannel("C1", origin: updated)
+        #expect(await channels.origin(of: "C1") == updated)
+        #expect(await channels.stopScope(channel: "C1", threadTs: "1.0").threadTs == nil)
     }
 
     @Test
-    func `unknown channel stops retain thread scope without looking up Slack`() {
+    func `unknown channel stops retain thread scope without looking up Slack`() async {
         let channels = ChannelRegistry(logger: .init(label: "test"))
-        #expect(channels.stopScope(channel: "C1", threadTs: "1.0").threadTs == "1.0")
-        #expect(channels.stopScope(channel: "C1", threadTs: "").threadTs == nil)
-        #expect(channels.stopScope(channel: "C1", threadTs: nil).threadTs == nil)
-        #expect(!channels.isCodeChannel("C1"))
+        #expect(await channels.stopScope(channel: "C1", threadTs: "1.0").threadTs == "1.0")
+        #expect(await channels.stopScope(channel: "C1", threadTs: "").threadTs == nil)
+        #expect(await channels.stopScope(channel: "C1", threadTs: nil).threadTs == nil)
+        #expect(await !channels.isCodeChannel("C1"))
     }
 }
