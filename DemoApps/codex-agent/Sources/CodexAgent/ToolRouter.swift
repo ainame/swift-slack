@@ -1,11 +1,10 @@
 import Codex
 import Foundation
-import Synchronization
 
 /// Routes Codex's tool calls to the running turn's ``SlackAgentTools``. Codex calls the handler registered when
 /// the app-server starts, and a session runs one turn at a time, so the current turn's tools are set here.
-final class ToolRouter: Sendable {
-    private let current = Mutex<SlackAgentTools?>(nil)
+actor ToolRouter {
+    private var tools: SlackAgentTools?
     private let writeWorkspace: String?
 
     init(writeWorkspace: String? = nil) {
@@ -35,9 +34,12 @@ final class ToolRouter: Sendable {
         return await tools.approve(.files(details)) ? .approve : .deny
     }
 
-    var tools: SlackAgentTools? {
-        get { current.withLock { $0 } }
-        set { current.withLock { $0 = newValue } }
+    func install(_ tools: SlackAgentTools) {
+        self.tools = tools
+    }
+
+    func clear() {
+        tools = nil
     }
 
     func handle(_ call: DynamicToolCallParams) async -> DynamicToolCallResponse {
