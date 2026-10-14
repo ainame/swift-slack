@@ -3,10 +3,18 @@ import Darwin
 #else
 import Glibc
 #endif
+import Dispatch
 import Foundation
 
 /// Persistent Code channel worktrees. Records live outside the writable checkout; never remove old clones.
 actor SessionWorkspaces {
+    // Git waits and cross-process flock are blocking. Keep them on a dedicated queue, while retaining
+    // actor serialization and the file lock that coordinates separate app processes.
+    private nonisolated let executor = WorkspaceExecutor()
+    nonisolated var unownedExecutor: UnownedSerialExecutor {
+        executor.asUnownedSerialExecutor()
+    }
+
     struct Workspace: Codable, Sendable, Equatable {
         let version: Int
         let channel: String
@@ -235,5 +243,15 @@ actor SessionWorkspaces {
 
     private static func contains(_ directory: URL, path: URL) -> Bool {
         path.path == directory.path || path.path.hasPrefix(directory.path + "/")
+    }
+}
+
+private final class WorkspaceExecutor: SerialExecutor {
+    private let queue = DispatchQueue(label: "codex-agent.workspaces")
+
+    func enqueue(_ job: consuming ExecutorJob) {
+        let job = UnownedJob(job)
+        let executor = asUnownedSerialExecutor()
+        queue.async { job.runSynchronously(on: executor) }
     }
 }

@@ -4,6 +4,21 @@ import Testing
 
 struct SessionWorkspacesTests {
     @Test
+    func `concurrent workspace managers allocate one checkout for a channel`() async throws {
+        try await withRepository { source, root in
+            let first = try SessionWorkspaces(source: source.path, root: root.path)
+            let second = try SessionWorkspaces(source: source.path, root: root.path)
+            let key = SessionKey.codeChannel(channel: "C1")
+            async let a = first.allocation(for: key)
+            async let b = second.allocation(for: key)
+            let (left, right) = try await (a, b)
+            #expect(left == right)
+            let list = try gitOutput(["worktree", "list", "--porcelain"], in: source)
+            #expect(list.components(separatedBy: "branch refs/heads/slack-code/C1/work").count == 2)
+        }
+    }
+
+    @Test
     func `registered topic worktrees preserve the original checkout and other sessions`() async throws {
         try await withRepository { source, root in
             let originalHEAD = try gitOutput(["rev-parse", "HEAD"], in: source)
