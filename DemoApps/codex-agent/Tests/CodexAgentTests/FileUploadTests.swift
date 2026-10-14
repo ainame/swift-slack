@@ -49,7 +49,7 @@ struct FileUploadTests {
             }; return false
         })
         let router = ToolRouter()
-        router.tools = await SlackAgentTools(
+        await router.install(SlackAgentTools(
             client: FakeSlack().client(),
             session: .codeChannel(channel: "C1"),
             replyThreadTs: nil,
@@ -58,8 +58,20 @@ struct FileUploadTests {
             questions: .init(),
             isTitledByUser: { false },
             producer: .init(),
-        )
+        ))
         #expect(await !router.handle(call()).success)
+    }
+
+    @Test
+    func `cleared tool router refuses calls without contacting Slack`() async throws {
+        try await withUpload { slack, router, _ in
+            await router.clear()
+            let result = await router.handle(call())
+            #expect(!result.success)
+            let text = try resultText(result)
+            #expect(text == "No turn is running.")
+            #expect(await slack.requests("filesGetUploadURLExternal").isEmpty)
+        }
     }
 
     @Test
@@ -158,7 +170,7 @@ struct FileUploadTests {
         )
         tools.transferFile = { _, data in try await transfer.send(data) }
         let router = ToolRouter(writeWorkspace: root.path)
-        router.tools = tools
+        await router.install(tools)
         try await body(slack, router, transfer)
     }
 }

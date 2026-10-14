@@ -11,7 +11,7 @@ struct CodingApprovalTests {
         let questions = PendingQuestions()
         let producer = TurnProducer()
         let router = ToolRouter(writeWorkspace: "/tmp/code")
-        router.tools = await tools(slack, questions: questions, producer: producer)
+        await router.install(tools(slack, questions: questions, producer: producer))
         let outcome = ApprovalOutcome()
         let production = Task {
             await producer.run {
@@ -39,12 +39,12 @@ struct CodingApprovalTests {
         let questions = PendingQuestions()
         let tools = await tools(slack, questions: questions)
         let readonly = ToolRouter()
-        readonly.tools = tools
+        await readonly.install(tools)
         let command = CommandApprovalRequest(threadID: "t", turnID: "v", itemID: "i", command: "swift test", workingDirectory: "/tmp/code")
         #expect(await readonly.approveCommand(command) == .deny)
         #expect(await readonly.approveFiles(.init(threadID: "t", turnID: "v", itemID: "i")) == .deny)
         let writable = ToolRouter(writeWorkspace: "/tmp/code")
-        writable.tools = tools
+        await writable.install(tools)
         let commandDecision = Task { await writable.approveCommand(command) }
         defer { commandDecision.cancel() }
         await slack.waitFor("agentsSessionsSetStatus") { $0["status"] == "suspended" }
@@ -66,7 +66,7 @@ struct CodingApprovalTests {
         outside.workingDirectory = "/tmp/code"
         #expect(await writable.approveCommand(outside) == .deny)
         #expect(await slack.requests("chatPostMessage").count == 2)
-        writable.tools = nil
+        await writable.clear()
         #expect(await writable.approveCommand(command) == .deny)
     }
 

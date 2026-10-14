@@ -60,11 +60,23 @@ actor CodexSession {
         continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
     ) async throws {
         isRunning = true
-        toolRouter.tools = tools
-        defer {
-            isRunning = false
-            toolRouter.tools = nil
+        defer { isRunning = false }
+        await toolRouter.install(tools)
+        do {
+            try await executeTurn(control: control, continuation: continuation, prompt: prompt)
+        } catch {
+            await toolRouter.clear()
+            throw error
         }
+        // Join cleanup before this turn completes; the next turn must not inherit or lose its tools.
+        await toolRouter.clear()
+    }
+
+    private func executeTurn(
+        control: TurnControl,
+        continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
+        prompt: String,
+    ) async throws {
         guard !control.isCancelled else { return }
         let thread = try await prepareThread()
         guard !control.isCancelled else { return }
