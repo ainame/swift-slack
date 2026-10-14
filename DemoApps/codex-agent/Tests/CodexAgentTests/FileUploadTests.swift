@@ -119,15 +119,20 @@ struct FileUploadTests {
         }
     }
 
-    @Test(.timeLimit(.minutes(1)))
-    func `stopping a session cancels byte transfer and prevents completion`() async throws {
+    @Test(.timeLimit(.minutes(1)), arguments: [true, false])
+    func `stopping a session cancels and joins byte transfer before returning`(nativeStop: Bool) async throws {
         let producer = TurnProducer()
         try await withUpload(producer: producer) { slack, router, transfer in
             await transfer.hold()
             let upload = Task { await router.handle(call()) }
             await transfer.waitUntilStarted()
-            producer.stopSession()
+            if nativeStop {
+                producer.stopSession()
+            } else {
+                upload.cancel()
+            }
             #expect(await !upload.value.success)
+            #expect(await transfer.finished)
             #expect(await slack.requests("filesCompleteUploadExternal").isEmpty)
         }
     }
@@ -177,6 +182,7 @@ struct FileUploadTests {
 
 private actor TransferProbe {
     private(set) var data: Data?
+    private(set) var finished = false
     private var failing = false
     private var held = false
     private var started: [CheckedContinuation<Void, Never>] = []
@@ -194,6 +200,7 @@ private actor TransferProbe {
     }
 
     func send(_ data: Data) async throws {
+        defer { finished = true }
         self.data = data
         started.forEach { $0.resume() }
         started.removeAll()
