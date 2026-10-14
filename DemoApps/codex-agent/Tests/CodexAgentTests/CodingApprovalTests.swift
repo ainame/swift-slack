@@ -33,9 +33,11 @@ struct CodingApprovalTests {
         #expect(producer.reason == nil)
     }
 
-    @Test
-    func `both Codex approval handlers deny by default and reject outside roots`() async {
-        let tools = AcceptingTools()
+    @Test(.timeLimit(.minutes(1)))
+    func `both Codex approval handlers deny by default and reject outside roots`() async throws {
+        let slack = FakeSlack()
+        let questions = PendingQuestions()
+        let tools = await tools(slack, questions: questions)
         let readonly = ToolRouter()
         readonly.tools = tools
         let command = CommandApprovalRequest(threadID: "t", turnID: "v", itemID: "i", command: "swift test", workingDirectory: "/tmp/code")
@@ -43,8 +45,19 @@ struct CodingApprovalTests {
         #expect(await readonly.approveFiles(.init(threadID: "t", turnID: "v", itemID: "i")) == .deny)
         let writable = ToolRouter(writeWorkspace: "/tmp/code")
         writable.tools = tools
-        #expect(await writable.approveCommand(command) == .approve)
-        #expect(await writable.approveFiles(.init(threadID: "t", turnID: "v", itemID: "i", grantRoot: "/tmp/code")) == .approve)
+        let commandDecision = Task { await writable.approveCommand(command) }
+        defer { commandDecision.cancel() }
+        await slack.waitFor("agentsSessionsSetStatus") { $0["status"] == "suspended" }
+        let commandQuestion = try await pendingQuestionID(in: slack, questions: questions)
+        #expect(await questions.answer(id: commandQuestion, index: 0, userId: "U1") == .accepted("Approve"))
+        #expect(await commandDecision.value == .approve)
+
+        let fileDecision = Task { await writable.approveFiles(.init(threadID: "t", turnID: "v", itemID: "i", grantRoot: "/tmp/code")) }
+        defer { fileDecision.cancel() }
+        await slack.wait { $0.filter { $0.method == "chatPostMessage" }.count == 2 }
+        let fileQuestion = try await pendingQuestionID(in: slack, questions: questions)
+        #expect(await questions.answer(id: fileQuestion, index: 0, userId: "U1") == .accepted("Approve"))
+        #expect(await fileDecision.value == .approve)
         #expect(await writable.approveFiles(.init(threadID: "t", turnID: "v", itemID: "i", grantRoot: "/tmp/other")) == .deny)
         var outside = command
         outside.workingDirectory = "/tmp/code/../other"
@@ -52,7 +65,7 @@ struct CodingApprovalTests {
         outside.command = nil
         outside.workingDirectory = "/tmp/code"
         #expect(await writable.approveCommand(outside) == .deny)
-        #expect(await tools.requests.count == 2)
+        #expect(await slack.requests("chatPostMessage").count == 2)
         writable.tools = nil
         #expect(await writable.approveCommand(command) == .deny)
     }
@@ -129,22 +142,11 @@ private actor ApprovalOutcome {
     private(set) var decision: ApprovalDecision?
     private(set) var cancelled: Bool?
 
-    func record(decision: ApprovalDecision) { self.decision = decision }
-    func record(cancelled: Bool) { self.cancelled = cancelled }
-}
-
-private actor AcceptingTools: AgentTools {
-    var requests: [AgentApproval] = []
-    func setTitle(_: String) async throws {}
-    func readSlack(_: SlackReadScope, limit _: Int) async throws -> String {
-        ""
+    func record(decision: ApprovalDecision) {
+        self.decision = decision
     }
 
-    func askUser(_: String, options _: [String]) async throws -> String {
-        "Approve"
-    }
-
-    func approve(_ request: AgentApproval) async -> Bool {
-        requests.append(request); return true
+    func record(cancelled: Bool) {
+        self.cancelled = cancelled
     }
 }

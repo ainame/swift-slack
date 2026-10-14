@@ -5,7 +5,7 @@ import Testing
 
 struct AgentResponderTests {
     let slack = FakeSlack()
-    let backend: ScriptedBackend
+    let codex: ScriptedCodex
     let questions = PendingQuestions()
     let responder: AgentResponder
 
@@ -14,8 +14,8 @@ struct AgentResponderTests {
     }
 
     private init(asksQuestion: Bool) {
-        backend = ScriptedBackend(asksQuestion: asksQuestion)
-        responder = AgentResponder(backend: backend, questions: questions, logger: Logger(label: "test"))
+        codex = ScriptedCodex(asksQuestion: asksQuestion)
+        responder = AgentResponder(events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) }, interrupt: { _ in }, questions: questions, logger: Logger(label: "test"))
     }
 
     @Test(.timeLimit(.minutes(1)))
@@ -26,10 +26,10 @@ struct AgentResponderTests {
 
         async let channelReply: Void = responder.handle(channelTurn, client: client)
         async let threadReply: Void = responder.handle(threadTurn, client: client)
-        await backend.probe.waitForStart(of: channelTurn.session)
-        await backend.probe.waitForStart(of: threadTurn.session)
-        await backend.probe.release(channelTurn.session)
-        await backend.probe.release(threadTurn.session)
+        await codex.probe.waitForStart(of: channelTurn.session)
+        await codex.probe.waitForStart(of: threadTurn.session)
+        await codex.probe.release(channelTurn.session)
+        await codex.probe.release(threadTurn.session)
         _ = await (channelReply, threadReply)
 
         let starts = await slack.requests("chatStartStream")
@@ -47,9 +47,9 @@ struct AgentResponderTests {
         let elsewhere = turn(.thread(channel: "C2", threadTs: "2.0"), replyThreadTs: "2.0", messageTs: "2.0")
 
         async let firstReply: Void = responder.handle(first, client: client)
-        await backend.probe.waitForStart(of: first.session)
+        await codex.probe.waitForStart(of: first.session)
         async let elsewhereReply: Void = responder.handle(elsewhere, client: client)
-        await backend.probe.waitForStart(of: elsewhere.session)
+        await codex.probe.waitForStart(of: elsewhere.session)
 
         // Another person replies in a thread of the code channel while its session is busy.
         await responder.handle(
@@ -62,10 +62,10 @@ struct AgentResponderTests {
         #expect(notices.first?["thread_ts"] == "1.5")
         #expect(notices.first?["user"] == "U2")
         #expect(notices.first?["text"]?.contains("earlier message in this channel") == true)
-        #expect(await backend.probe.prompts[first.session]?.count == 1)
+        #expect(await codex.probe.prompts[first.session]?.count == 1)
 
-        await backend.probe.release(first.session)
-        await backend.probe.release(elsewhere.session)
+        await codex.probe.release(first.session)
+        await codex.probe.release(elsewhere.session)
         _ = await (firstReply, elsewhereReply)
     }
 
@@ -75,7 +75,7 @@ struct AgentResponderTests {
         let stopped = turn(.codeChannel(channel: "C1"), replyThreadTs: nil)
 
         let handling = Task { await responder.handle(stopped, client: client) }
-        await backend.probe.waitForStart(of: stopped.session)
+        await codex.probe.waitForStart(of: stopped.session)
         await slack.waitFor("chatStartStream")
         await slack.waitFor("agentsSessionsSetStatus")
         let before = await slack.requests.count
@@ -83,7 +83,7 @@ struct AgentResponderTests {
         await responder.stop(channel: "C1", threadTs: nil)
         await handling.value
 
-        await backend.probe.waitFor("cancelled", in: stopped.session)
+        await codex.probe.waitFor("cancelled", in: stopped.session)
         let after = await slack.requests.dropFirst(before)
         #expect(after.map(\.method) == ["agentsSessionsSetStatus"])
         #expect(after.first?["status"] == "active")
@@ -91,8 +91,8 @@ struct AgentResponderTests {
 
         // The session is free again.
         let next = Task { await responder.handle(stopped, client: client) }
-        await backend.probe.waitForStart(of: stopped.session, count: 2)
-        await backend.probe.release(stopped.session)
+        await codex.probe.waitForStart(of: stopped.session, count: 2)
+        await codex.probe.release(stopped.session)
         await next.value
     }
 
@@ -129,7 +129,7 @@ struct AgentResponderTests {
         let before = await test.slack.requests.count
 
         await test.responder.stop(channel: "C1", threadTs: "1.5")
-        await test.backend.probe.waitFor("question ended", in: session)
+        await test.codex.probe.waitFor("question ended", in: session)
         await handling.value
 
         let after = await test.slack.requests.dropFirst(before)
@@ -148,7 +148,7 @@ struct AgentResponderTests {
             Task { await responder.handle(turn, client: client) }
         }
         for turn in [first, second, elsewhere] {
-            await backend.probe.waitForStart(of: turn.session)
+            await codex.probe.waitForStart(of: turn.session)
         }
 
         await responder.stop(channel: "C1", threadTs: "2.0")
@@ -162,7 +162,7 @@ struct AgentResponderTests {
         await responder.handle(elsewhere, client: client)
         #expect(await slack.requests("chatPostEphemeral").map { $0["thread_ts"] } == ["1.0", "3.0"])
 
-        await backend.probe.release(elsewhere.session)
+        await codex.probe.release(elsewhere.session)
         await handlings[2].value
         #expect(await slack.requests("chatStopStream").map { $0["channel"] } == ["C2"])
     }
@@ -175,7 +175,7 @@ struct AgentResponderTests {
 
         let handling = Task { await responder.handle(failing, client: client) }
         await slack.waitFor("chatStartStream")
-        // Delivery failure cancels the paused input and joins production without another backend event.
+        // Delivery failure cancels the paused input and joins production without another codex event.
         await handling.value
 
         let active = await slack.requests("agentsSessionsSetStatus").filter { $0["status"] == "active" }
@@ -199,11 +199,11 @@ struct AgentResponderTests {
         first.origin = MessageLink(channel: "C0", ts: "0.5")
 
         let handling = Task { await responder.handle(first, client: client) }
-        await backend.probe.waitForStart(of: first.session)
-        await backend.probe.release(first.session)
+        await codex.probe.waitForStart(of: first.session)
+        await codex.probe.release(first.session)
         await handling.value
 
-        let prompt = await backend.probe.prompts[first.session]?.first ?? ""
+        let prompt = await codex.probe.prompts[first.session]?.first ?? ""
         #expect(prompt.contains("<@U3>: Fix the build"))
         let firstIndex = prompt.range(of: "<@U1>: first")?.lowerBound
         let secondIndex = prompt.range(of: "<@U2>: second")?.lowerBound
@@ -236,10 +236,10 @@ struct AgentResponderTests {
         let first = turn(.codeChannel(channel: "C1"), replyThreadTs: "1.0", messageTs: "5.0")
         let client = await slack.client()
         let handling = Task { await responder.handle(first, client: client) }
-        await backend.probe.waitForStart(of: first.session)
-        await backend.probe.release(first.session)
+        await codex.probe.waitForStart(of: first.session)
+        await codex.probe.release(first.session)
         await handling.value
-        let prompt = await backend.probe.prompts[first.session]?.first ?? ""
+        let prompt = await codex.probe.prompts[first.session]?.first ?? ""
         let expected = ["thread parent", "first decision", "latest top-level", "final decision"]
         let positions = expected.compactMap { prompt.range(of: $0)?.lowerBound }
         #expect(positions.count == expected.count)

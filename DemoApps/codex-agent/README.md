@@ -20,7 +20,7 @@ It follows the agent response loop from [Developing an agent](https://docs.slack
 
 ## Cards from the agent's answer
 
-The agent never writes Block Kit. The codex backend registers a `show_cards` tool with Codex, using swift-codex's experimental client-defined tools (`ThreadOptions.dynamicTools`). Each card has an optional title, subtitle, body, `https` link, and follow-up question, and Codex calls the tool when a few items deserve to stand out:
+The agent never writes Block Kit. The Codex runtime registers a `show_cards` tool with Codex, using swift-codex's experimental client-defined tools (`ThreadOptions.dynamicTools`). Each card has an optional title, subtitle, body, `https` link, and follow-up question, and Codex calls the tool when a few items deserve to stand out:
 
 ```json
 {"cards": [{"title": "Agent sessions", "body": "How Slack shows the stop button.", "url": "https://docs.slack.dev/ai/agent-sessions", "ask": "How does the stop button work?"}]}
@@ -32,11 +32,9 @@ The agent never writes Block Kit. The codex backend registers a `show_cards` too
 - When the answer finishes, the producer yields the cards as a `StreamingMessage.Part.blocks` chunk. Feedback buttons are passed separately to `streamMessage` as the closing message's `blocks`.
 - Tools are registered when a Codex thread starts. A thread resumed after an idle close keeps them.
 
-The mock backend sends two cards the same way, so `AGENT_BACKEND=mock` shows them without Codex.
-
 ## Tools that act in Slack
 
-Besides `show_cards`, the Codex backend registers conversation and Code channel tools. Each turn gets a `SlackAgentTools` scoped to its session, the thread its reply goes into, and the person it answers, and the mock backend calls the same tools, so `AGENT_BACKEND=mock` shows them too.
+Besides `show_cards`, the Codex runtime registers conversation and Code channel tools. Each turn gets a `SlackAgentTools` scoped to its session, the thread its reply goes into, and the person it answers.
 
 | Tool | What it does |
 | --- | --- |
@@ -224,7 +222,7 @@ cp .env.example .env   # then fill in the tokens
 swift run codex-agent
 ```
 
-To try the Slack side without Codex, set `AGENT_BACKEND=mock` to replay a scripted turn.
+The app requires the Codex CLI. Its tests use scripted Codex output and a fake Slack transport, so they run without Codex credentials or a live Slack workspace.
 
 To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_SECRET`, point the manifest's request URLs at the server, and run `swift run --traits HummingbirdHTTPAdapter codex-agent`.
 
@@ -232,7 +230,7 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 
 - `Sources/CodexAgent/SlackResponse.swift`: the demo's `checked(_:)` helper for non-streaming Web API responses with `"ok": false`; streaming uses the library's `StreamingMessage.Error`
 - `Sources/CodexAgent/App.swift`: the entry point and Slack event, action and command handlers
-- `Sources/CodexAgent/AgentConfiguration.swift`: environment loading, backend selection, transport settings and workspace validation
+- `Sources/CodexAgent/AgentConfiguration.swift`: environment loading, transport settings and workspace validation
 - `Sources/CodexAgent/TurnRouter.swift`: which messages become turns, in which session, and where the reply goes; duplicate filtering
 - `Sources/CodexAgent/ChannelRegistry.swift`: shared channel identity, origin links, lookup caching and stop scopes
 - `Sources/CodexAgent/AgentResponder.swift`: the response loop for one message, busy sessions, and the stop button
@@ -242,11 +240,10 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 - `Sources/CodexAgent/SessionWorkspaces.swift`: persistent writable worktrees and conversation records
 - `Sources/CodexAgent/WorktreeGitRoots.swift` and `WorkspaceSandbox.swift`: named Git metadata grants and the process-local permission profile
 - `Sources/CodexAgent/CodeTools.swift`: Code channel tool schemas and typed view arguments
-- `Sources/CodexAgent/CodexBackend.swift` and `CodexSession.swift`: per-session Codex processes, conversation resume and idle cleanup
+- `Sources/CodexAgent/CodexRuntime.swift` and `CodexSession.swift`: per-session Codex processes, conversation resume and idle cleanup
 - `Sources/CodexAgent/TurnControl.swift`: interrupting Codex even when Slack delivery is blocked
 - `Sources/CodexAgent/NotificationTranslator.swift`: Codex notifications mapped to tasks, text, cards and diffs
 - `Sources/CodexAgent/ToolRouter.swift`, `AgentToolset.swift` and `CodeTools.swift`: Codex tool registration, dispatch and approval handlers
-- `Sources/CodexAgent/MockBackend.swift`: a scripted backend for trying the app without Codex
 - `Sources/CodexAgent/Feedback.swift`: the feedback buttons and their action handler
 - `Sources/CodexAgent/SlackUI.swift`: the card vocabulary and its conversion to Block Kit
 - `Sources/CodexAgent/SlackAgentTools.swift`: the tools' Slack side

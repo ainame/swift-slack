@@ -4,11 +4,10 @@ import Logging
 import SlackKit
 import SystemPackage
 
-/// Startup settings, backend selection and workspace validation.
+/// Startup settings and workspace validation.
 struct AgentConfiguration {
     enum Error: Swift.Error {
         case missingEnvironmentVariable(String)
-        case unknownBackend(String)
         case unsafeWorkspace(String)
     }
 
@@ -17,7 +16,6 @@ struct AgentConfiguration {
     let signingSecret: String?
     let host: String
     let port: Int
-    let backend: String
     let codexPath: String?
     let codexModel: String?
     let workspace: String?
@@ -25,31 +23,24 @@ struct AgentConfiguration {
     /// The users the agent answers, or everyone when empty.
     let allowedUserIds: Set<String>
 
-    static func makeBackend(from environment: Self, logger: Logger) throws -> any AgentBackend {
-        switch environment.backend {
-        case "codex":
-            if environment.sessionWorkspaces != nil, environment.workspace == nil {
-                throw Error.missingEnvironmentVariable("CODEX_WORKSPACE")
-            }
-            // Codex can read the whole disk, even in its read-only sandbox, and its answers go to Slack.
-            // Keep the app's own secrets out of its working directory, and warn when anyone can ask.
-            if environment.allowedUserIds.isEmpty {
-                logger.warning("ALLOWED_USER_IDS is not set: anyone who can message the app can make Codex read files")
-            }
-            return try CodexBackend(
-                settings: .init(
-                    codexPath: environment.codexPath,
-                    model: environment.codexModel,
-                    workspace: environment.workspace.map { try checkedWorkspace($0) } ?? emptyWorkspace(logger: logger),
-                    sessionWorkspaces: environment.sessionWorkspaces,
-                ),
-                logger: logger,
-            )
-        case "mock":
-            return MockBackend()
-        default:
-            throw Error.unknownBackend(environment.backend)
+    static func makeCodex(from environment: Self, logger: Logger) throws -> CodexRuntime {
+        if environment.sessionWorkspaces != nil, environment.workspace == nil {
+            throw Error.missingEnvironmentVariable("CODEX_WORKSPACE")
         }
+        // Codex can read the whole disk, even in its read-only sandbox, and its answers go to Slack.
+        // Keep the app's own secrets out of its working directory, and warn when anyone can ask.
+        if environment.allowedUserIds.isEmpty {
+            logger.warning("ALLOWED_USER_IDS is not set: anyone who can message the app can make Codex read files")
+        }
+        return try CodexRuntime(
+            settings: .init(
+                codexPath: environment.codexPath,
+                model: environment.codexModel,
+                workspace: environment.workspace.map { try checkedWorkspace($0) } ?? emptyWorkspace(logger: logger),
+                sessionWorkspaces: environment.sessionWorkspaces,
+            ),
+            logger: logger,
+        )
     }
 
     /// An empty directory for Codex to work in when `CODEX_WORKSPACE` is not set. The app's own directory
@@ -103,7 +94,6 @@ struct AgentConfiguration {
             signingSecret: normalized(configuration.string(forKey: "SLACK_SIGNING_SECRET", isSecret: true)),
             host: normalized(configuration.string(forKey: "HOST")) ?? "0.0.0.0",
             port: configuration.int(forKey: "PORT", default: 8080),
-            backend: normalized(configuration.string(forKey: "AGENT_BACKEND")) ?? "codex",
             codexPath: normalized(configuration.string(forKey: "CODEX_PATH")),
             codexModel: normalized(configuration.string(forKey: "CODEX_MODEL")),
             workspace: normalized(configuration.string(forKey: "CODEX_WORKSPACE")),

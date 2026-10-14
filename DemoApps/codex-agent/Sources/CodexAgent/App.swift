@@ -35,12 +35,12 @@ struct CodexAgentApp {
 
     private static func run() async throws {
         let environment = try await AgentConfiguration.load()
-        let backend = try AgentConfiguration.makeBackend(from: environment, logger: logger)
+        let codex = try AgentConfiguration.makeCodex(from: environment, logger: logger)
         let isAllowed: @Sendable (String) -> Bool = { user in
             environment.allowedUserIds.isEmpty || environment.allowedUserIds.contains(user)
         }
         let questions = PendingQuestions()
-        let responder = AgentResponder(backend: backend, questions: questions, logger: logger)
+        let responder = AgentResponder(codex: codex, questions: questions, logger: logger)
         let turns = TurnRouter(
             responder: responder,
             isAllowed: isAllowed,
@@ -203,7 +203,7 @@ struct CodexAgentApp {
             router: router,
             mode: AgentConfiguration.runtimeMode(from: environment),
         )
-        logger.info("Starting Codex agent", metadata: ["backend": "\(environment.backend)"])
+        logger.info("Starting Codex agent")
         try await app.run { slack in
             let response = try await slack.client.authTest().ok.body.json.checked("auth.test")
             guard let userId = response.userId else {

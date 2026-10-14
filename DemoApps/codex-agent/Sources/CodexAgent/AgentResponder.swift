@@ -29,7 +29,8 @@ actor AgentResponder {
         var resetStatusAfterStop = true
     }
 
-    private let backend: any AgentBackend
+    private let events: @Sendable (String, SessionKey, SlackAgentTools) -> AsyncThrowingStream<AgentEvent, any Error>
+    private let interrupt: @Sendable (SessionKey) -> Void
     private let questions: PendingQuestions
     private let logger: Logger
     private let lifecycle: CodeChannelLifecycle
@@ -39,12 +40,28 @@ actor AgentResponder {
     private var titledSessions: Set<SessionKey> = []
     /// Sessions the person renamed, whose title the agent leaves alone.
     private var userTitledSessions: Set<SessionKey> = []
-    /// Sessions this process has answered in, whose backend already holds the conversation.
+    /// Sessions this process has answered in, whose Codex conversation already holds the context.
     private var engagedSessions: Set<SessionKey> = []
     private(set) var identity: BotIdentity?
 
-    init(backend: any AgentBackend, questions: PendingQuestions, logger: Logger, channels: ChannelRegistry? = nil) {
-        self.backend = backend
+    init(codex: CodexRuntime, questions: PendingQuestions, logger: Logger, channels: ChannelRegistry? = nil) {
+        self.init(
+            events: { codex.respond(to: $0, in: $1, tools: $2) },
+            interrupt: { codex.stop(in: $0) },
+            questions: questions, logger: logger, channels: channels,
+        )
+    }
+
+    /// Tests supply scripted Codex output and interruption without launching an app-server process.
+    init(
+        events: @escaping @Sendable (String, SessionKey, SlackAgentTools) -> AsyncThrowingStream<AgentEvent, any Error>,
+        interrupt: @escaping @Sendable (SessionKey) -> Void,
+        questions: PendingQuestions,
+        logger: Logger,
+        channels: ChannelRegistry? = nil,
+    ) {
+        self.events = events
+        self.interrupt = interrupt
         self.questions = questions
         self.logger = logger
         let channels = channels ?? ChannelRegistry(logger: logger)
@@ -190,12 +207,12 @@ actor AgentResponder {
             running[session]?.resetStatusAfterStop = resetStatus
             // Slack has ended the stream: streamMessage drops what it has not sent and makes no more calls.
             turn.parts.finish(throwing: StreamingMessage.SessionStopped())
-            // Cancelling the producer ends its iteration of the backend's stream, which stops the turn. The
+            // Cancelling the producer ends its iteration of Codex's stream, which stops the turn. The
             // tools see the stop before their question ends below, so they leave Slack alone.
             turn.producer.stopSession()
             // Do not wait for the stream iterator to observe cancellation: it may be publishing a view
             // or blocked in a Slack HTTP request while Codex continues executing commands.
-            backend.stop(in: session)
+            interrupt(session)
         }
         // A question waiting for a click holds Codex's message loop, so end it to let the interrupt through.
         for session in stopped.keys {
@@ -220,7 +237,7 @@ actor AgentResponder {
         userTitledSessions.contains(session)
     }
 
-    /// The backend keeps a session's conversation, but not one it has not seen: a mention in the middle of
+    /// Codex keeps a session's conversation, but not one it has not seen: a mention in the middle of
     /// a thread, a code channel with earlier messages, or a conversation from before a restart. Then the prompt
     /// starts with the conversation so far.
     private func prompt(for turn: Turn, client: any APIProtocol) async -> String {
@@ -258,11 +275,11 @@ actor AgentResponder {
         }
     }
 
-    /// Streams the backend's events and finishes with the cards the agent asked for.
+    /// Streams Codex events and finishes with the cards the agent asked for.
     private nonisolated func produce(
         _ turn: Turn,
         prompt: String,
-        tools: any AgentTools,
+        tools: SlackAgentTools,
         producer: TurnProducer,
         into continuation: AsyncThrowingStream<StreamingMessage.Part, any Error>.Continuation,
     ) async {
@@ -275,7 +292,7 @@ actor AgentResponder {
         }
         do {
             try Task.checkCancellation()
-            for try await event in backend.respond(to: prompt, in: turn.session, tools: tools) {
+            for try await event in events(prompt, turn.session, tools) {
                 switch event {
                 case let .diff(diff):
                     if case .codeChannel = turn.session, !producer.isSessionStopped {
@@ -300,7 +317,7 @@ actor AgentResponder {
                 continuation.yield(.markdown("\n\n:warning: Something went wrong: \(error)"))
             }
         }
-        // Cancellation can end iteration normally or throw from the backend. A message the app stops itself
+        // Cancellation can end iteration normally or throw from Codex. A message the app stops itself
         // says so; a session that Slack stopped takes nothing more.
         if Task.isCancelled, !producer.isSessionStopped {
             continuation.yield(.markdown("\n\n_Stopped._"))

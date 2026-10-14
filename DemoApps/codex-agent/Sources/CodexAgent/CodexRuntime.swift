@@ -9,7 +9,7 @@ import Synchronization
 /// swift-codex allows one active turn per `Codex` instance, so every session gets its own instance and
 /// app-server process. A session idle for `idleTimeout` closes its process and keeps the thread ID, so the
 /// next message resumes the conversation in a new process.
-actor CodexBackend: AgentBackend {
+actor CodexRuntime {
     struct Settings: Sendable {
         var codexPath: String?
         var model: String?
@@ -39,7 +39,7 @@ actor CodexBackend: AgentBackend {
     nonisolated func respond(
         to prompt: String,
         in session: SessionKey,
-        tools: any AgentTools,
+        tools: SlackAgentTools,
     ) -> AsyncThrowingStream<AgentEvent, any Error> {
         AsyncThrowingStream { continuation in
             let control = TurnControl(session: session.description)
@@ -82,7 +82,7 @@ actor CodexBackend: AgentBackend {
     private func run(
         prompt: String,
         in key: SessionKey,
-        tools: any AgentTools,
+        tools: SlackAgentTools,
         control: TurnControl,
         continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
     ) async throws {

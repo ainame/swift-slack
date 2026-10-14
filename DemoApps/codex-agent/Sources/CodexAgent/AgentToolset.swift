@@ -2,7 +2,7 @@ import Codex
 import Foundation
 
 /// The tools registered with Codex. `show_cards` carries ``SlackUI`` cards; the others act through
-/// ``AgentTools``.
+/// ``SlackAgentTools``.
 ///
 /// swift-codex runs a handler while it reads the app-server's messages, so a handler that waits, as
 /// `ask_user` does for a click, holds every other message until it returns. Stopping a turn resolves the
@@ -92,7 +92,7 @@ enum AgentToolset {
 
     /// Answers a tool call. `show_cards` only checks its arguments: the cards are read from the completed
     /// tool call item.
-    static func handle(_ call: DynamicToolCallParams, tools: any AgentTools, workspace: String? = nil) async -> DynamicToolCallResponse {
+    static func handle(_ call: DynamicToolCallParams, tools: SlackAgentTools, workspace: String? = nil) async -> DynamicToolCallResponse {
         guard call.namespace == nil else {
             return reply("There is no tool named \(call.tool).", success: false)
         }
