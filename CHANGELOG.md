@@ -11,11 +11,14 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Added
 
+* **BREAKING**: Added `CodeChannelActionEvent` and `Event.codeChannelAction` for Slack Code context-bar clicks, preserving arbitrary JSON fields in `additionalProperties` because Slack has not published a payload schema. Exhaustive `Event` switches must handle the new case or add `default` - #260
+* Added generated `AppManifest.features.codeChannels` configuration for Slack Code enablement and runtime command delivery - #260
 * Added typed `CodeChannel` request values and helpers for properties, commands and HTML, diff, Block Kit, canvas and pull-request views, returning Slack warnings and throwing on unsuccessful responses - #255
 * `streamMessage` supports top-level replies by omitting `threadTs`, and `StreamingMessage.SessionStopped` lets apps abandon buffered content and retries when Slack ends the session - #255
 
 ### Fixed
 
+* Preserved Slack Code summary messages, canonical channel view metadata and context-bar item types when reading and re-encoding conversation properties, using explicitly attributed downstream swift-slack supplements to the upstream java-slack-sdk models - #260
 * **BREAKING**: Accepted `team: null` in Block Kit button interactions from organization-installed apps, allowing approval and other action handlers to run. `BlockActionsPayload.team` is now optional; use optional chaining or unwrap it before accessing workspace information - #255
 * Reported Slack's Socket Mode connection error instead of hiding it behind a missing-URL error, restored bot authentication after failed connection requests, and accepted Socket Mode frames up to 1 MiB instead of rejecting large events at 16 KiB - #255
 * Cancelled cooperative Sendable streaming inputs immediately on delivery failure, allowing apps to stop idle producers and pending questions - #255
@@ -23,6 +26,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Maintenance
 
+* Added a narrow official-contract Slack Code generator supplement with separate synthetic regression payloads and checks that require removing exceptions when upstream java-slack-sdk adopts their fields or event - #260
 * The Codex agent demo creates and reuses Code channels, publishes artifacts and diffs, uploads worktree files into the current channel with image references for Block Kit views, and shares archive summaries with linked origin threads. Persistent Git worktrees and topic branches now restore the same checkout and Codex conversation after restart, validate recovery state, and show repository, branch and checkout context. Scoped Git permissions permit topic commits, with Slack approvals for additional permissions; old independent clones are preserved with migration and cleanup guidance. The demo also restores conversation context, avoids repeated handoffs after naming/setup failures, deduplicates events, interrupts Codex directly on channel-wide Stop even during blocked output, and clears processing status after cleanup while preserving archived sessions - #255
 
 ## [2027.1.0-beta.2] - 2026-10-12

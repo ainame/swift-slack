@@ -5,6 +5,8 @@ selected delta, not complete historical parity or live Slack service behavior.
 
 ## Slack Code supplement review on 2026-10-14
 
+Supplement PR: #260.
+
 Both upstream remote HEADs still match the recorded generation pins:
 java-slack-sdk `9894c9331565ec8484fa07e4b292bf719a67fcba` and
 slack-api-ref `0fcbcec7c842b5b3880fa7c0d7fb3d66fe1de711`. No vendor
