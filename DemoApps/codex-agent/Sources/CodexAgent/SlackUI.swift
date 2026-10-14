@@ -76,3 +76,35 @@ extension SlackUI {
         let message: String
     }
 }
+
+extension SlackUI {
+    /// The `ask_user` tool's schema allows two to five options.
+    static let maxOptions = 5
+
+    /// The button for option `index`. Slack rejects a block whose elements share an `action_id`.
+    static func choiceActionId(_ index: Int) -> String {
+        "ask_user_choice_\(index)"
+    }
+
+    /// The question and one button per option, each with its own `action_id` and the question's ID as
+    /// its value.
+    static func questionBlocks(id: String, question: String, options: [String], userId: String) -> [Block] {
+        [
+            .section(SectionBlock(text: TextObject(type: .mrkdwn, text: "<@\(userId)> \(question)"))),
+            .actions(ActionsBlock(
+                elements: options.prefix(maxOptions).enumerated().map { index, option in
+                    .button(ButtonElement(
+                        text: TextObject(type: .plainText, text: String(option.prefix(75))),
+                        actionId: choiceActionId(index),
+                        value: id,
+                    ))
+                },
+                blockId: id,
+            )),
+        ]
+    }
+
+    static func questionResultBlocks(question: String, summary: String) -> [Block] {
+        [.section(SectionBlock(text: TextObject(type: .mrkdwn, text: "\(question)\n\(summary)")))]
+    }
+}

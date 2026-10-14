@@ -142,8 +142,8 @@ struct CodexAgentApp {
         }
 
         // Answers to the agent's ask_user tool, one action_id per option. Only the person asked can answer.
-        for index in 0 ..< SlackAgentTools.maxOptions {
-            let actionId = SlackAgentTools.choiceActionId(index)
+        for index in 0 ..< SlackUI.maxOptions {
+            let actionId = SlackUI.choiceActionId(index)
             router.onAction(actionId) { context, payload in
                 try await context.ack()
                 guard let id = payload.blockActions.first(where: { $0.actionId == actionId })?.value,
