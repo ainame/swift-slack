@@ -22,14 +22,21 @@ struct SlackAgentTools: Sendable {
             throw AgentToolError(description: "Slack did not return the upload destination and file ID.")
         }
         try SlackFileTransfer.validate(url)
-        let transfer = Task { try await transferFile(url, file.data) }
-        let stop = Task {
-            await producer.waitForStop()
-            guard !Task.isCancelled else { return }
-            transfer.cancel()
+        try await withThrowingTaskGroup(of: Bool.self) { group in
+            group.addTask {
+                try await transferFile(url, file.data)
+                return true
+            }
+            group.addTask {
+                await producer.waitForStop()
+                try Task.checkCancellation()
+                return false
+            }
+            defer { group.cancelAll() }
+            guard try await group.next() == true else {
+                throw CancellationError()
+            }
         }
-        defer { stop.cancel() }
-        try await withTaskCancellationHandler { try await transfer.value } onCancel: { transfer.cancel() }
         try checkSession()
         let result = try await client.filesCompleteUploadExternal(body: .json(.init(
             files: OpenAPIArrayContainer(unvalidatedValue: [["id": id, "title": title ?? file.filename]]),
