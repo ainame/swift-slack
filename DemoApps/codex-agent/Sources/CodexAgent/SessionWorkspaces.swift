@@ -27,16 +27,16 @@ actor SessionWorkspaces {
         }
 
         /// Git's shared config, hooks, main index and unrelated refs remain outside writable roots.
-        var gitWritableRoots: [String] {
-            guard let gitDirectory else { return [] }
+        var gitWritableRoots: WorktreeGitRoots? {
+            guard let gitDirectory else { return nil }
             let common = URL(filePath: commonDirectory)
             let namespace = branch.split(separator: "/").dropLast().joined(separator: "/")
-            return [
-                gitDirectory,
-                common.appending(path: "objects").path,
-                common.appending(path: "refs/heads/" + namespace).path,
-                common.appending(path: "logs/refs/heads/" + namespace).path,
-            ]
+            return WorktreeGitRoots(
+                worktreeDirectory: gitDirectory,
+                objectsDirectory: common.appending(path: "objects").path,
+                branchRefs: common.appending(path: "refs/heads/" + namespace).path,
+                branchLogs: common.appending(path: "logs/refs/heads/" + namespace).path,
+            )
         }
     }
 
@@ -86,7 +86,7 @@ actor SessionWorkspaces {
                 try write(record)
                 try validate(record)
                 // These directories permit a commit without granting all shared Git metadata write access.
-                for path in record.gitWritableRoots {
+                for path in record.gitWritableRoots?.paths ?? [] {
                     try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
                 }
                 return record
@@ -187,7 +187,7 @@ actor SessionWorkspaces {
             })
                 && $0.components(separatedBy: "\0").contains("branch refs/heads/" + record.branch)
         }) else { throw AgentToolError(description: "Git no longer registers this worktree.") }
-        for path in record.gitWritableRoots {
+        for path in record.gitWritableRoots?.paths ?? [] {
             guard URL(filePath: path).resolvingSymlinksInPath().path == path else {
                 throw AgentToolError(description: "A writable Git metadata path became a symlink.")
             }

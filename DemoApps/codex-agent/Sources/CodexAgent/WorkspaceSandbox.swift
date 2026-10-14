@@ -3,18 +3,18 @@ import Foundation
 /// Process-local permission profile. Inline TOML preserves absolute path keys (including dots/spaces).
 /// Do not grant the common Git directory: it contains shared hooks/config and the original index.
 enum WorkspaceSandbox {
-    static func launchArguments(codexPath: String?, workspace: String, repository: String?, stateRoot: String?, gitRoots: [String], writable: Bool) throws -> [String] {
+    static func launchArguments(codexPath: String?, workspace: String, repository: String?, stateRoot: String?, gitRoots: WorktreeGitRoots?, writable: Bool) throws -> [String] {
         // Older CLIs that do not recognize permission profiles fall back to read-only, never full access.
         var arguments = [codexPath ?? "codex", "app-server", "--listen", "stdio://", "--config", "sandbox_mode=\"read-only\""]
         guard writable else {
             return arguments + ["--config", "default_permissions=\":read-only\""]
         }
-        guard let repository, let stateRoot, gitRoots.count == 4 else {
+        guard let repository, let stateRoot, let gitRoots else {
             throw AgentToolError(description: "Writable Code sessions require validated worktree Git metadata.")
         }
         var permissions = [repository: "read", stateRoot: "read", workspace: "write"]
-        permissions[URL(filePath: gitRoots[1]).deletingLastPathComponent().path] = "read"
-        for root in gitRoots {
+        permissions[URL(filePath: gitRoots.objectsDirectory).deletingLastPathComponent().path] = "read"
+        for root in gitRoots.paths {
             permissions[root] = "write"
         }
         let encoder = JSONEncoder()

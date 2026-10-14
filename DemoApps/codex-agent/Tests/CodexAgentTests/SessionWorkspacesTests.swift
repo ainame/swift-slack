@@ -103,10 +103,15 @@ struct SessionWorkspacesTests {
         try await withRepository { source, root in
             let manager = try SessionWorkspaces(source: source.path, root: root.path)
             let record = try await manager.allocation(for: .codeChannel(channel: "C1"))
-            #expect(record.gitWritableRoots.count == 4)
-            #expect(!record.gitWritableRoots.contains(record.commonDirectory))
-            #expect(record.gitWritableRoots.contains(record.commonDirectory + "/refs/heads/slack-code/C1"))
-            #expect(!record.gitWritableRoots.contains(source.path))
+            let roots = try #require(record.gitWritableRoots)
+            #expect(roots.worktreeDirectory == record.gitDirectory)
+            #expect(roots.objectsDirectory == record.commonDirectory + "/objects")
+            #expect(roots.branchRefs == record.commonDirectory + "/refs/heads/slack-code/C1")
+            #expect(roots.branchLogs == record.commonDirectory + "/logs/refs/heads/slack-code/C1")
+            #expect(roots.paths.count == 4)
+            #expect(!roots.paths.contains(record.commonDirectory))
+            #expect(roots.paths.contains(record.commonDirectory + "/refs/heads/slack-code/C1"))
+            #expect(!roots.paths.contains(source.path))
         }
     }
 

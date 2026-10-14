@@ -16,7 +16,7 @@ actor CodexBackend: AgentBackend {
         var workspace: String
         var sessionWorkspaces: String?
         var writable = false
-        var gitWritableRoots: [String] = []
+        var gitWritableRoots: WorktreeGitRoots?
         var sourceRepository: String?
         var idleTimeout: Duration = .seconds(600)
     }
