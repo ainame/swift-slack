@@ -1,4 +1,3 @@
-import Foundation
 import Logging
 import SlackKit
 
@@ -6,12 +5,6 @@ import SlackKit
 actor CodeChannelLifecycle {
     nonisolated let channels: ChannelRegistry
     private var promotions: [SessionKey: String] = [:]
-    private struct Preparation {
-        let id = UUID()
-        let task: Task<String, any Error>
-    }
-
-    private var preparing: [SessionKey: Preparation] = [:]
     private var configured: Set<SessionKey> = []
     private var launched: Set<SessionKey> = []
 
@@ -35,32 +28,10 @@ actor CodeChannelLifecycle {
             return (session.channel, false)
         }
         try check(producer)
-        let preparation: Preparation
-        if let pending = preparing[session] {
-            preparation = pending
-        } else {
-            preparation = Preparation(task: Task {
-                try await prepare(name: name, session: session, messageTs: messageTs, client: client, producer: producer, logger: logger)
-            })
-            preparing[session] = preparation
-        }
-        defer {
-            if preparing[session]?.id == preparation.id {
-                preparing[session] = nil
-            }
-        }
-        let channel = try await preparation.task.value
-        try check(producer)
-        return (channel, launched.insert(session).inserted)
-    }
-
-    private func prepare(
-        name: String, session: SessionKey, messageTs: String, client: any APIProtocol,
-        producer: TurnProducer, logger: Logger,
-    ) async throws -> String {
-        try check(producer)
+        // Responder turns and Codex tool calls are serialized per origin session. Keep creation in the
+        // caller's task so cancellation reaches Slack instead of leaving shared preparation running.
         if configured.contains(session), let channel = promotions[session] {
-            return channel
+            return (channel, launched.insert(session).inserted)
         }
         let channel: String
         if let existing = promotions[session] {
@@ -114,7 +85,7 @@ actor CodeChannelLifecycle {
         if setupSucceeded {
             configured.insert(session)
         }
-        return channel
+        return (channel, launched.insert(session).inserted)
     }
 
     private func check(_ producer: TurnProducer) throws {
