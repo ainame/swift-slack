@@ -40,14 +40,6 @@ struct SlackAgentTools: Sendable {
         return UploadedFile(fileID: id, permalink: result.files?.first(where: { $0.id == id })?.permalink)
     }
 
-    /// The `ask_user` tool's schema allows two to five options.
-    static let maxOptions = 5
-
-    /// The button for option `index`. Slack rejects a block whose elements share an `action_id`.
-    static func choiceActionId(_ index: Int) -> String {
-        "ask_user_choice_\(index)"
-    }
-
     func showWorkspace(_ workspace: SessionWorkspaces.Workspace) async throws {
         try checkCodeChannel()
         let result = try await client.setCodeChannelProperties(
@@ -204,7 +196,7 @@ struct SlackAgentTools: Sendable {
         try checkSession()
         let id = UUID().uuidString
         let posted = try await client.chatPostMessage(body: .json(.init(
-            blocks: Self.questionBlocks(id: id, question: question, options: options, userId: userId),
+            blocks: SlackUI.questionBlocks(id: id, question: question, options: options, userId: userId),
             channel: session.channel,
             text: question,
             threadTs: replyThreadTs,
@@ -248,31 +240,13 @@ struct SlackAgentTools: Sendable {
             case .failure: "_No answer._"
             }
             _ = try? await client.chatUpdate(body: .json(.init(
-                blocks: [.section(SectionBlock(text: TextObject(type: .mrkdwn, text: "\(question)\n\(summary)")))],
+                blocks: SlackUI.questionResultBlocks(question: question, summary: summary),
                 channel: session.channel,
                 text: "\(question) \(summary)",
                 ts: ts,
             )))
         }
         return try outcome.get()
-    }
-
-    /// The question and one button per option, each with its own `action_id` and the question's ID as
-    /// its value.
-    static func questionBlocks(id: String, question: String, options: [String], userId: String) -> [Block] {
-        [
-            .section(SectionBlock(text: TextObject(type: .mrkdwn, text: "<@\(userId)> \(question)"))),
-            .actions(ActionsBlock(
-                elements: options.prefix(maxOptions).enumerated().map { index, option in
-                    .button(ButtonElement(
-                        text: TextObject(type: .plainText, text: String(option.prefix(75))),
-                        actionId: choiceActionId(index),
-                        value: id,
-                    ))
-                },
-                blockId: id,
-            )),
-        ]
     }
 
     private func checkSession() throws {

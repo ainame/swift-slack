@@ -235,6 +235,7 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 - `Sources/CodexAgent/ChannelRegistry.swift`: actor-isolated channel identity, origin links, lookup caching and stop scopes
 - `Sources/CodexAgent/AgentResponder.swift`: the response loop for one message, busy sessions, and the stop button
 - `Sources/CodexAgent/TurnProducer.swift`: the stop control for a turn's producer, telling a local cancellation from a session Slack stopped
+- `Sources/CodexAgent/PromptBuilder.swift`: first-turn Slack history and origin context for Codex
 - `Sources/CodexAgent/ConversationHistory.swift`: reading a thread or a code channel for the prompt and the tools
 - `Sources/CodexAgent/CodeChannelLifecycle.swift`: channel creation, idempotency and initial properties/commands
 - `Sources/CodexAgent/SessionWorkspaces.swift`: persistent writable worktrees and conversation records
@@ -243,9 +244,9 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 - `Sources/CodexAgent/CodexRuntime.swift` and `CodexSession.swift`: per-session Codex processes, conversation resume and idle cleanup
 - `Sources/CodexAgent/TurnControl.swift`: interrupting Codex even when Slack delivery is blocked
 - `Sources/CodexAgent/NotificationTranslator.swift`: Codex notifications mapped to tasks, text, cards and diffs
-- `Sources/CodexAgent/ToolRouter.swift`, `AgentToolset.swift` and `CodeTools.swift`: Codex tool registration, dispatch and approval handlers
+- `Sources/CodexAgent/ToolRouter.swift`, `AgentToolset.swift` and `CodeTools.swift`: Codex tool registration, actor-isolated dispatch and approval handlers
 - `Sources/CodexAgent/Feedback.swift`: the feedback buttons and their action handler
-- `Sources/CodexAgent/SlackUI.swift`: the card vocabulary and its conversion to Block Kit
+- `Sources/CodexAgent/SlackUI.swift`: the card vocabulary and Block Kit construction for cards and questions
 - `Sources/CodexAgent/SlackAgentTools.swift`: the tools' Slack side
 - `Sources/CodexAgent/PendingQuestions.swift`: question ownership, timeout and cancellation while waiting for a click
 

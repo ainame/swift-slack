@@ -74,3 +74,21 @@ struct SlackUIBlocksTests {
         return card
     }
 }
+
+struct QuestionBlocksTests {
+    @Test
+    func `gives every option button its own action_id`() {
+        let blocks = SlackUI.questionBlocks(id: "q", question: "Which?", options: ["A", "B", "C"], userId: "U1")
+        guard case let .actions(actions)? = blocks.last else {
+            Issue.record("expected an actions block")
+            return
+        }
+        let buttons = actions.elements.compactMap { element -> ButtonElement? in
+            guard case let .button(button) = element else { return nil }
+            return button
+        }
+        #expect(buttons.map(\.actionId) == ["ask_user_choice_0", "ask_user_choice_1", "ask_user_choice_2"])
+        #expect(Set(buttons.compactMap(\.actionId)).count == buttons.count)
+        #expect(buttons.allSatisfy { $0.value == "q" })
+    }
+}
