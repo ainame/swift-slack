@@ -154,7 +154,7 @@ struct SessionWorkspacesTests {
         #expect(throws: AgentToolError.self) { try SessionWorkspaces(source: "/tmp/sessions/source", root: "/tmp/sessions") }
     }
 
-    private func withRepository(_ body: (URL, URL) async throws -> Void) async throws {
+    func withRepository(_ body: (URL, URL) async throws -> Void) async throws {
         let temporary = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString).resolvingSymlinksInPath()
         let source = temporary.appending(path: "source")
         try FileManager.default.createDirectory(at: source, withIntermediateDirectories: true)
