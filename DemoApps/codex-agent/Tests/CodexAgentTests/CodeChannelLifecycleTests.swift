@@ -134,7 +134,7 @@ struct CodeChannelLifecycleTests {
     @Test
     func `Codex diff notifications become code channel view updates`() async {
         let slack = FakeSlack()
-        let responder = AgentResponder(events: { DiffCodex().respond(to: $0, in: $1, tools: $2) }, interrupt: { _ in }, questions: PendingQuestions(), logger: .init(label: "test"))
+        let responder = AgentResponder(events: { DiffCodex().respond(to: $0, in: $1, tools: $2) }, interrupt: { _, _ in }, questions: PendingQuestions(), logger: .init(label: "test"))
         let client = await slack.client()
         await responder.handle(.init(
             session: .codeChannel(channel: "CODE"),
@@ -187,7 +187,7 @@ struct CodeChannelLifecycleTests {
         await slack.reply(to: "agentsConversationsCreate", with: .json(#"{"ok":true,"channel_id":"CODE"}"#))
         await slack.reply(to: "agentsSessionsRename", with: .json(#"{"ok":false,"error":"invalid_name"}"#))
         let codex = PromotionCodex()
-        let responder = AgentResponder(events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) }, interrupt: { _ in }, questions: PendingQuestions(), logger: .init(label: "test"))
+        let responder = AgentResponder(events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) }, interrupt: { _, _ in }, questions: PendingQuestions(), logger: .init(label: "test"))
         let origin = SessionKey.thread(channel: "C1", threadTs: "1.0")
         let client = await slack.client()
         await responder.handle(.init(

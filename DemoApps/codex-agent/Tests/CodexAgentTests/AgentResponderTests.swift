@@ -15,7 +15,7 @@ struct AgentResponderTests {
 
     private init(asksQuestion: Bool) {
         codex = ScriptedCodex(asksQuestion: asksQuestion)
-        responder = AgentResponder(events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) }, interrupt: { _ in }, questions: questions, logger: Logger(label: "test"))
+        responder = AgentResponder(events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) }, interrupt: { _, _ in }, questions: questions, logger: Logger(label: "test"))
     }
 
     @Test(.timeLimit(.minutes(1)))

@@ -1,6 +1,5 @@
 import Foundation
 import Logging
-import Synchronization
 
 /// Runs each Slack agent session as a Codex thread, through the `codex app-server` that swift-codex launches.
 /// Sessions are keyed by ``SessionKey``, so a Slack thread or DM thread gets its own Codex thread, and so does
@@ -24,7 +23,7 @@ actor CodexRuntime {
     private let settings: Settings
     private let logger: Logger
     private let workspaces: SessionWorkspaces?
-    private nonisolated let controls = Mutex<[SessionKey: TurnControl]>([:])
+    private var controls: [SessionKey: (producer: TurnProducer, control: TurnControl)] = [:]
     private var sessions: [SessionKey: CodexSession] = [:]
     /// Threads of closed sessions, resumed when the session continues.
     private var threadIDs: [SessionKey: String] = [:]
@@ -36,47 +35,51 @@ actor CodexRuntime {
         workspaces = try settings.sessionWorkspaces.map { try SessionWorkspaces(source: settings.workspace, root: $0) }
     }
 
-    nonisolated func respond(
+    func respond(
         to prompt: String,
         in session: SessionKey,
         tools: SlackAgentTools,
     ) -> AsyncThrowingStream<AgentEvent, any Error> {
-        AsyncThrowingStream { continuation in
-            let control = TurnControl(session: session.description)
-            controls.withLock { $0[session] = control }
-            // The turn runs in its own task so that stopping it can interrupt Codex and still read the turn
-            // to its end. Otherwise its remaining notifications would reach the session's next turn.
-            Task {
-                defer {
-                    controls.withLock { controls in
-                        if controls[session] === control {
-                            controls[session] = nil
-                        }
-                    }
-                }
-                do {
-                    try await self.run(
-                        prompt: prompt,
-                        in: session,
-                        tools: tools,
-                        control: control,
-                        continuation: continuation,
-                    )
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
-            }
-            continuation.onTermination = { termination in
-                if case .cancelled = termination {
-                    control.cancel()
-                }
+        let (stream, continuation) = AsyncThrowingStream<AgentEvent, any Error>.makeStream()
+        // The caller may have stopped while awaiting this actor. Do not register or launch that turn.
+        guard tools.producer.reason == nil, !Task.isCancelled else {
+            continuation.finish()
+            return stream
+        }
+        let control = TurnControl(session: session.description)
+        controls[session] = (tools.producer, control)
+        continuation.onTermination = { termination in
+            if case .cancelled = termination {
+                control.cancel()
             }
         }
+        // Register before scheduling work. Stop can interrupt Codex while this task awaits its output;
+        // keep reading the interrupted turn to its end so notifications cannot reach the next turn.
+        Task {
+            defer {
+                if controls[session]?.control === control {
+                    controls[session] = nil
+                }
+            }
+            do {
+                try await run(
+                    prompt: prompt,
+                    in: session,
+                    tools: tools,
+                    control: control,
+                    continuation: continuation,
+                )
+                continuation.finish()
+            } catch {
+                continuation.finish(throwing: error)
+            }
+        }
+        return stream
     }
 
-    nonisolated func stop(in session: SessionKey) {
-        controls.withLock { $0[session] }?.cancel()
+    func stop(in session: SessionKey, producer: TurnProducer) {
+        guard let registered = controls[session], registered.producer.isSameTurn(as: producer) else { return }
+        registered.control.cancel()
     }
 
     private func run(
@@ -86,7 +89,7 @@ actor CodexRuntime {
         control: TurnControl,
         continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
     ) async throws {
-        guard !control.isCancelled else { return }
+        guard !control.isCancelled, tools.producer.reason == nil else { return }
         idleTimers.removeValue(forKey: key)?.cancel()
         var scoped = settings
         var conversationID = threadIDs[key]
@@ -120,7 +123,7 @@ actor CodexRuntime {
         }
         sessions[key] = session
         defer { scheduleIdleClose(key, session: session) }
-        guard !control.isCancelled else { return }
+        guard !control.isCancelled, tools.producer.reason == nil else { return }
         try await session.run(prompt: prompt, tools: tools, control: control, continuation: continuation)
         await control.waitForInterruption()
     }

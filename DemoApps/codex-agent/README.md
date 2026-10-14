@@ -241,7 +241,7 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 - `Sources/CodexAgent/SessionWorkspaces.swift`: persistent writable worktrees and conversation records
 - `Sources/CodexAgent/WorktreeGitRoots.swift` and `WorkspaceSandbox.swift`: named Git metadata grants and the process-local permission profile
 - `Sources/CodexAgent/CodeTools.swift`: Code channel tool schemas and typed view arguments
-- `Sources/CodexAgent/CodexRuntime.swift` and `CodexSession.swift`: per-session Codex processes, conversation resume and idle cleanup
+- `Sources/CodexAgent/CodexRuntime.swift` and `CodexSession.swift`: actor-owned turn controls, per-session Codex processes, conversation resume and idle cleanup
 - `Sources/CodexAgent/TurnControl.swift`: interrupting Codex even when Slack delivery is blocked
 - `Sources/CodexAgent/NotificationTranslator.swift`: Codex notifications mapped to tasks, text, cards and diffs
 - `Sources/CodexAgent/ToolRouter.swift`, `AgentToolset.swift` and `CodeTools.swift`: Codex tool registration, actor-isolated dispatch and approval handlers

@@ -25,7 +25,12 @@ struct StopControlTests {
         let slack = FakeSlack()
         await slack.hold("agentsConversationsSetView")
         let codex = BlockedOutputCodex()
-        let responder = AgentResponder(events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) }, interrupt: { [codex] in codex.stop(in: $0) }, questions: .init(), logger: .init(label: "test"))
+        let responder = AgentResponder(
+            events: { [codex] in codex.respond(to: $0, in: $1, tools: $2) },
+            interrupt: { [codex] session, _ in codex.stop(in: session) },
+            questions: .init(),
+            logger: .init(label: "test"),
+        )
         let client = await slack.client()
         let task = Task {
             await responder.handle(.init(

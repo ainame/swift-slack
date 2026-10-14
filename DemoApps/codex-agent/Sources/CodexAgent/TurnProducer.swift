@@ -19,6 +19,7 @@ struct TurnProducer: Sendable {
             var reason: Reason?
             var waiters: [UUID: AsyncStream<Void>.Continuation] = [:]
         }
+
         let state = Mutex(State())
 
         func stop(_ reason: Reason) {
@@ -30,11 +31,18 @@ struct TurnProducer: Sendable {
                 state.waiters.removeAll()
                 return waiters
             }
-            for waiter in waiters { waiter.finish() }
+            for waiter in waiters {
+                waiter.finish()
+            }
         }
     }
 
     private let signal = Signal()
+
+    /// Copies of this producer identify the same turn; a later turn has a different signal.
+    func isSameTurn(as other: TurnProducer) -> Bool {
+        signal === other.signal
+    }
 
     /// Why the turn stopped, or `nil` while it runs. A session stop replaces an earlier local cancellation.
     var reason: Reason? {
@@ -65,7 +73,9 @@ struct TurnProducer: Sendable {
             state.waiters[id] = continuation
             return false
         }
-        if alreadyStopped { continuation.finish() }
+        if alreadyStopped {
+            continuation.finish()
+        }
         defer {
             _ = signal.state.withLock { $0.waiters.removeValue(forKey: id) }
             continuation.finish()
