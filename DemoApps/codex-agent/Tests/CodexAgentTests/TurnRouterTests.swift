@@ -17,8 +17,11 @@ struct TurnRouterTests {
         let client = await slack.client()
         await slack.channel(recordType: nil)
         #expect(await router().route(message("command-1", source: .command, ts: "trigger-1"), client: client) == nil)
-        await slack.channel(recordType: "agent_channel")
-        let decision = await router().route(message("command-2", source: .command, ts: "trigger-2"), client: client)
+        // Channel identity is shared with the responder for this process. Exercise the Code channel
+        // in a separate app instance, rather than changing cached metadata in the first instance.
+        let coding = TurnRouterTests()
+        await coding.slack.channel(recordType: "agent_channel")
+        let decision = await coding.router().route(coding.message("command-2", source: .command, ts: "trigger-2"), client: coding.slack.client())
         guard case let .answer(turn)? = decision else { Issue.record("Command was not routed"); return }
         #expect(turn.session == .codeChannel(channel: "C1"))
         #expect(turn.replyThreadTs == nil)
@@ -253,7 +256,6 @@ struct TurnRouterTests {
     func router(allowed: Set<String> = []) -> TurnRouter {
         TurnRouter(
             responder: responder,
-            channels: ChannelClassifier(logger: Logger(label: "test")),
             isAllowed: { allowed.isEmpty || allowed.contains($0) },
             logger: Logger(label: "test"),
         )

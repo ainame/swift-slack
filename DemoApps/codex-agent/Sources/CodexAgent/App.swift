@@ -43,7 +43,6 @@ struct CodexAgentApp {
         let responder = AgentResponder(backend: backend, questions: questions, logger: logger)
         let turns = TurnRouter(
             responder: responder,
-            channels: ChannelClassifier(logger: logger),
             isAllowed: isAllowed,
             logger: logger,
         )
