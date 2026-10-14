@@ -39,6 +39,33 @@ struct CodeChannelLifecycleTests {
         #expect(json?.compactMap { $0["name"] as? String } == ["review", "run"])
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func `concurrent promotions share creation setup and one launch`() async throws {
+        let slack = FakeSlack()
+        await slack.hold("agentsConversationsCreate")
+        await slack.reply(to: "agentsConversationsCreate", with: .json(#"{"ok":true,"channel_id":"CODE"}"#))
+        let lifecycle = CodeChannelLifecycle()
+        let client = await slack.client()
+        let session = SessionKey.thread(channel: "C1", threadTs: "1.0")
+        let producer = TurnProducer()
+        let first = Task {
+            try await lifecycle.create(name: "fix", from: session, messageTs: "1.0", client: client, producer: producer, logger: .init(label: "test"))
+        }
+        await slack.waitFor("agentsConversationsCreate")
+        let second = Task {
+            try await lifecycle.create(name: "fix", from: session, messageTs: "1.0", client: client, producer: producer, logger: .init(label: "test"))
+        }
+        defer { first.cancel(); second.cancel() }
+        await slack.release("agentsConversationsCreate")
+        let a = try await first.value
+        let b = try await second.value
+        #expect(a.channel == "CODE" && b.channel == "CODE")
+        #expect(a.shouldLaunch != b.shouldLaunch)
+        #expect(await slack.requests("agentsConversationsCreate").count == 1)
+        #expect(await slack.requests("agentsConversationsSetProperties").count == 1)
+        #expect(await slack.requests("agentsConversationsSetCommands").count == 1)
+    }
+
     @Test
     func `existing code channels do not create another channel`() async throws {
         let slack = FakeSlack()
@@ -170,6 +197,7 @@ struct CodeChannelLifecycleTests {
         #expect(try await tools.startCodeChannel(name: "fix") == "CODE")
         #expect(try await tools.startCodeChannel(name: "fix") == "CODE")
         #expect(await launches.channels == ["CODE"])
+        #expect(await slack.requests(method).count == 2)
         #expect(await slack.requests("agentsConversationsCreate").count == 1)
         // Even if a later lookup incorrectly routes a created Code channel as a thread, never nest it.
         let nested = try await tools.lifecycle.create(
