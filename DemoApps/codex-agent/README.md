@@ -237,11 +237,11 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 - `Sources/CodexAgent/TurnProducer.swift`: the stop control for a turn's producer, telling a local cancellation from a session Slack stopped
 - `Sources/CodexAgent/PromptBuilder.swift`: first-turn Slack history and origin context for Codex
 - `Sources/CodexAgent/ConversationHistory.swift`: reading a thread or a code channel for the prompt and the tools
-- `Sources/CodexAgent/CodeChannelLifecycle.swift`: channel creation, idempotency and initial properties/commands
-- `Sources/CodexAgent/SessionWorkspaces.swift`: persistent writable worktrees and conversation records
+- `Sources/CodexAgent/CodeChannelLifecycle.swift`: coalesced channel creation and setup, idempotency and initial properties/commands
+- `Sources/CodexAgent/SessionWorkspaces.swift`: persistent writable worktrees and conversation records on a dedicated serial executor; a file lock coordinates separate app processes
 - `Sources/CodexAgent/WorktreeGitRoots.swift` and `WorkspaceSandbox.swift`: named Git metadata grants and the process-local permission profile
 - `Sources/CodexAgent/CodeTools.swift`: Code channel tool schemas and typed view arguments
-- `Sources/CodexAgent/CodexRuntime.swift` and `CodexSession.swift`: actor-owned turn controls, per-session Codex processes, conversation resume and idle cleanup
+- `Sources/CodexAgent/CodexRuntime.swift` and `CodexSession.swift`: actor-owned turn controls, per-session Codex processes, conversation resume and coordinated idle shutdown
 - `Sources/CodexAgent/TurnControl.swift`: interrupting Codex even when Slack delivery is blocked
 - `Sources/CodexAgent/NotificationTranslator.swift`: Codex notifications mapped to tasks, text, cards and diffs
 - `Sources/CodexAgent/ToolRouter.swift`, `AgentToolset.swift` and `CodeTools.swift`: Codex tool registration, actor-isolated dispatch and approval handlers
