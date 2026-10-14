@@ -60,6 +60,7 @@ Keep exceptions explicit, one per field or type, and backed by upstream java-sla
 
 - The narrow downstream exception in `scripts/slack_code_schemas.yml` adds Slack Code fields from Slack's official schema contracts while upstream java-slack-sdk lacks declarations and recorded fixtures. Keep source URLs and downstream provenance explicit; do not use this file for unrelated coverage or documentation examples.
 - `scripts/lib/slack_code_schemas.rb` fails when upstream adopts a supplemented field or models `code_channel_action`. Remove that exception and use upstream models/fixtures then. Full generation also fails on unused entries.
+- Treat the Slack Code supplement as temporary. On upstream adoption, compare the Java declarations and eligible upstream fixtures with the downstream wire shapes and generated Swift APIs; remove only the adopted exceptions and retain decode/re-encode and routing regression coverage. Preserve source compatibility where possible and explicitly document required API changes in the changelog rather than silently replacing the downstream contract.
 - Slack documents `code_channel_action` but publishes no payload schema. Generate only its `type` and preserve arbitrary JSON fields in `additionalProperties`; do not guess a typed payload. Regression payloads in `scripts/slack_code_fixtures/` are synthetic, kept separate from upstream recorded fixtures, and do not establish live-service behavior.
 
 ### Web API Coverage

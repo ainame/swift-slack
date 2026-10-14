@@ -121,6 +121,15 @@ and [manifest configuration](https://docs.slack.dev/ai/slack-code/agent-slash-co
 The generator fails when upstream adopts a supplemented field or the action event,
 so that upstream models and fixtures can replace the exception.
 
+This supplement is temporary. When upstream java-slack-sdk officially models
+these fields and events, swift-slack will migrate the corresponding generation
+inputs to those declarations and their upstream fixtures, removing each adopted
+exception. The migration will retain the decode/re-encode and event-routing
+regression coverage, compare wire shapes and generated Swift APIs, and preserve
+source compatibility where possible. Any required public API changes will be
+explicitly documented in the changelog; upstream adoption will not silently
+replace the downstream contract.
+
 Slack documents `code_channel_action` but does not publish its payload schema.
 `CodeChannelActionEvent` therefore models only `type` and preserves every other
 JSON field in `additionalProperties`. Its regression payload is synthetic; it
