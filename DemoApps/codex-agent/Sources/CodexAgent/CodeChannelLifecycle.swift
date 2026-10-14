@@ -84,6 +84,3 @@ actor CodeChannelLifecycle {
         guard producer.reason == nil else { throw CancellationError() }
     }
 }
-
-extension Components.Schemas.AgentsConversationsCreateResponse: SlackResponse {}
-extension Components.Schemas.AgentsConversationsArchiveResponse: SlackResponse {}

@@ -231,7 +231,8 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 ## Layout
 
 - `Sources/CodexAgent/SlackResponse.swift`: the demo's `checked(_:)` helper for non-streaming Web API responses with `"ok": false`; streaming uses the library's `StreamingMessage.Error`
-- `Sources/CodexAgent/App.swift`: configuration and event handlers
+- `Sources/CodexAgent/App.swift`: the entry point and Slack event, action and command handlers
+- `Sources/CodexAgent/AgentConfiguration.swift`: environment loading, backend selection, transport settings and workspace validation
 - `Sources/CodexAgent/TurnRouter.swift`: which messages become turns, in which session, and where the reply goes; code channel detection and duplicate filtering
 - `Sources/CodexAgent/AgentResponder.swift`: the response loop for one message, busy sessions, and the stop button
 - `Sources/CodexAgent/TurnProducer.swift`: the stop control for a turn's producer, telling a local cancellation from a session Slack stopped
@@ -239,10 +240,14 @@ To use the Hummingbird HTTP adapter instead of Socket Mode, set `SLACK_SIGNING_S
 - `Sources/CodexAgent/CodeChannelLifecycle.swift`: channel creation, idempotency and initial properties/commands
 - `Sources/CodexAgent/SessionWorkspaces.swift`: independent writable checkouts
 - `Sources/CodexAgent/CodeTools.swift`: Code channel tool schemas and typed view arguments
-- `Sources/CodexAgent/CodexBackend.swift`: one Codex thread per session, with notifications mapped to tasks and text
+- `Sources/CodexAgent/CodexBackend.swift` and `CodexSession.swift`: per-session Codex processes, conversation resume and idle cleanup
+- `Sources/CodexAgent/TurnControl.swift`: interrupting Codex even when Slack delivery is blocked
+- `Sources/CodexAgent/NotificationTranslator.swift`: Codex notifications mapped to tasks, text, cards and diffs
+- `Sources/CodexAgent/ToolRouter.swift`, `AgentToolset.swift` and `CodeTools.swift`: Codex tool registration, dispatch and approval handlers
 - `Sources/CodexAgent/MockBackend.swift`: a scripted backend for trying the app without Codex
 - `Sources/CodexAgent/Feedback.swift`: the feedback buttons and their action handler
 - `Sources/CodexAgent/SlackUI.swift`: the card vocabulary and its conversion to Block Kit
-- `Sources/CodexAgent/SlackAgentTools.swift`: the tools' Slack side, and the questions waiting for a click; `AgentToolset` in `CodexBackend.swift` registers the tools with Codex
+- `Sources/CodexAgent/SlackAgentTools.swift`: the tools' Slack side
+- `Sources/CodexAgent/PendingQuestions.swift`: question ownership, timeout and cancellation while waiting for a click
 
 Run the tests with `swift test`.
