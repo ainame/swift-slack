@@ -10,7 +10,7 @@ actor CodexSession {
     private let saveConversation: @Sendable (String) async throws -> Void
     private var codex: Codex?
     private var thread: CodexThread?
-    private var threadID: String?
+    private(set) var threadID: String?
     /// The previous turn. Turns run one at a time, including the rest of an interrupted one.
     private var lastTurn: Task<Void, any Error>?
 

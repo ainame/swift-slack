@@ -20,6 +20,14 @@ actor CodexRuntime {
         var idleTimeout: Duration = .seconds(600)
     }
 
+    typealias SessionRunner = @Sendable (
+        CodexSession, String, SlackAgentTools, TurnControl, AsyncThrowingStream<AgentEvent, any Error>.Continuation,
+    ) async throws -> Void
+
+    private let runSession: SessionRunner
+    private let closeSession: @Sendable (CodexSession) async -> String?
+    // Includes queued and draining runs, even when a newer run replaced their interruption control.
+    private(set) var activeRuns: [SessionKey: Int] = [:]
     private let settings: Settings
     private let logger: Logger
     private let workspaces: SessionWorkspaces?
@@ -28,9 +36,19 @@ actor CodexRuntime {
     /// Threads of closed sessions, resumed when the session continues.
     private var threadIDs: [SessionKey: String] = [:]
     private var closing: [SessionKey: Task<Void, Never>] = [:]
-    private var idleTimers: [SessionKey: Task<Void, Never>] = [:]
+    private(set) var idleTimers: [SessionKey: Task<Void, Never>] = [:]
 
-    init(settings: Settings, logger: Logger) throws {
+    /// Tests supply lifecycle functions without replacing the concrete Codex session implementation.
+    init(
+        settings: Settings,
+        logger: Logger,
+        runSession: @escaping SessionRunner = { session, prompt, tools, control, continuation in
+            try await session.run(prompt: prompt, tools: tools, control: control, continuation: continuation)
+        },
+        closeSession: @escaping @Sendable (CodexSession) async -> String? = { await $0.close() },
+    ) throws {
+        self.runSession = runSession
+        self.closeSession = closeSession
         self.settings = settings
         self.logger = logger
         workspaces = try settings.sessionWorkspaces.map { try SessionWorkspaces(source: settings.workspace, root: $0) }
@@ -49,6 +67,8 @@ actor CodexRuntime {
         }
         let control = TurnControl(session: session.description)
         controls[session] = (tools.producer, control)
+        activeRuns[session, default: 0] += 1
+        idleTimers.removeValue(forKey: session)?.cancel()
         continuation.onTermination = { termination in
             if case .cancelled = termination {
                 control.cancel()
@@ -60,6 +80,16 @@ actor CodexRuntime {
             defer {
                 if controls[session]?.control === control {
                     controls[session] = nil
+                }
+                let remaining = activeRuns[session, default: 1] - 1
+                if remaining == 0 {
+                    activeRuns[session] = nil
+                    // Include preflight failures and stopped queued turns in the same cleanup path.
+                    if let current = sessions[session] {
+                        scheduleIdleClose(session, session: current)
+                    }
+                } else {
+                    activeRuns[session] = remaining
                 }
             }
             do {
@@ -91,7 +121,6 @@ actor CodexRuntime {
         continuation: AsyncThrowingStream<AgentEvent, any Error>.Continuation,
     ) async throws {
         guard !control.isCancelled, tools.producer.reason == nil else { return }
-        idleTimers.removeValue(forKey: key)?.cancel()
         // Shutdown publishes the thread ID before completing; a new turn must wait before resuming it.
         await closing[key]?.value
         guard !control.isCancelled, tools.producer.reason == nil else { return }
@@ -126,13 +155,13 @@ actor CodexRuntime {
             )
         }
         sessions[key] = session
-        defer { scheduleIdleClose(key, session: session) }
         guard !control.isCancelled, tools.producer.reason == nil else { return }
-        try await session.run(prompt: prompt, tools: tools, control: control, continuation: continuation)
+        try await runSession(session, prompt, tools, control, continuation)
         await control.waitForInterruption()
     }
 
     private func scheduleIdleClose(_ key: SessionKey, session: CodexSession) {
+        guard activeRuns[key] == nil, sessions[key] === session else { return }
         idleTimers[key]?.cancel()
         idleTimers[key] = Task {
             try? await Task.sleep(for: settings.idleTimeout)
@@ -142,13 +171,13 @@ actor CodexRuntime {
     }
 
     private func close(_ key: SessionKey, session: CodexSession) {
-        // Controls include registered/queued turns, not just the session's currently executing turn.
+        // The newest control alone cannot account for older runs still draining.
         // Reserve closing without an actor hop so a new turn cannot reuse a process being shut down.
-        guard !Task.isCancelled, sessions[key] === session, controls[key] == nil else { return }
+        guard !Task.isCancelled, sessions[key] === session, activeRuns[key] == nil else { return }
         sessions[key] = nil
         idleTimers[key] = nil
         closing[key] = Task {
-            threadIDs[key] = await session.close()
+            threadIDs[key] = await closeSession(session)
             closing[key] = nil
             logger.info("Closed idle Codex session", metadata: ["session": "\(key)"])
         }
