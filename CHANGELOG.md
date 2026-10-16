@@ -9,6 +9,20 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+## [2027.1.0-beta.3] - 2026-10-16
+
+This beta adds typed Slack Code channel helpers, top-level message streaming and more resilient streaming and Socket Mode delivery. It builds on beta.1's Java-derived models and Block Kit additions and beta.2's agent APIs and streaming; APIs may still change before the January 2027 release.
+
+### Summary
+
+* **Slack Code channels.** Typed helpers configure properties, commands and HTML, diff, Block Kit, canvas and pull-request views. The Codex agent demo uses persistent worktrees, restores Codex conversations, uploads files and publishes artifacts with scoped Git permissions and Slack approvals - #255
+* **More resilient delivery.** Streaming supports top-level messages, preserves buffered content on local cancellation, bounds request sizes and stops when Slack ends the session. Socket Mode reports connection errors and accepts larger events - #255
+
+> [!WARNING]
+> **Upgrading from beta.2:** `BlockActionsPayload.team` is now optional so organization-installed apps can handle button interactions with `team: null`. Use optional chaining or unwrap it before accessing workspace information - #255
+>
+> Upgrading from earlier versions also requires the migration described in the beta.1 and beta.2 notes below and [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md).
+
 ### Added
 
 * Added typed `CodeChannel` request values and helpers for properties, commands and HTML, diff, Block Kit, canvas and pull-request views, returning Slack warnings and throwing on unsuccessful responses - #255
