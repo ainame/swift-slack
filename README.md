@@ -17,20 +17,21 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
 > [!TIP]
-> **Try [2027.1.0-beta.2](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.2), especially if you're starting a new app.** The two betas bring these improvements over 2026.x:
+> **Try [2027.1.0-beta.3](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.3), especially if you're starting a new app.** The betas bring these improvements over 2026.x:
 >
 > * **More reliable, complete models.** Web API responses and events are generated from upstream [java-slack-sdk](https://github.com/slackapi/java-slack-sdk) model classes. The pipeline checks decoding against its recorded payloads and resolves failures and dropped fields found in the [2026.x audit (#177)](https://github.com/ainame/swift-slack/issues/177), including missing pagination cursors and Slack Lists rows that failed to decode.
 > * **New Block Kit blocks and elements.** Cards, carousels, alerts, context actions, workflow buttons and URL inputs are supported.
 > * **Agent APIs and events.** Nine `agents.conversations.*` methods manage agent conversation views, canvases, commands and properties, and typed `setCodeChannelProperties`, `setCodeChannelCommands` and `setCodeChannelView` helpers set up Slack Code channels. Handlers can receive session stop and title-change events and inspect event installation metadata and retry information.
-> * **Message streaming.** `streamMessage` sends an `AsyncSequence` of markdown, task updates, plans and ordered Block Kit chunks into a thread, or as a top-level message in a Slack Code channel, with batching, rate-limit retries and closing blocks. The [Codex agent demo](DemoApps/codex-agent) combines streaming with tools for cards, session titles, Slack context and questions with buttons.
+> * **Message streaming.** `streamMessage` sends an `AsyncSequence` of markdown, task updates, plans and ordered Block Kit chunks into a thread, or as a top-level message in a Slack Code channel, with batching, rate-limit retries and closing blocks. The [Codex agent demo](DemoApps/codex-agent) combines streaming with persistent Code channel worktrees, artifact and diff views, file uploads, scoped Git permissions and Slack approvals.
+> * **More resilient Slack connections and streaming.** Socket Mode reports connection errors and accepts larger events. Streaming preserves buffered content on local cancellation, bounds request sizes and stops delivery when Slack ends the session.
 >
 > Because swift-slack uses calendar versioning, the final release is planned as `2027.1.0` in January 2027. APIs may still change before then. Depend on the beta, which SwiftPM does not pick up from a `2026.x` requirement:
 >
 > ```swift
-> .package(url: "https://github.com/ainame/swift-slack.git", from: "2027.1.0-beta.2")
+> .package(url: "https://github.com/ainame/swift-slack.git", from: "2027.1.0-beta.3")
 > ```
 >
-> The beta is a breaking release. Most bots only replace `import SlackModels` with `import SlackClient` or `import SlackKit`. Existing apps should read [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [changelog for both betas](CHANGELOG.md) for renamed and nested types and removed APIs (`onBlockAction`, `payload.actions` and `ack(responseAction: .clear, view:)`). From beta.1, exhaustive `switch` statements over `Event` need `.agentSessionStopped` and `.agentSessionTitleChanged`, or `default`.
+> The beta is a breaking release. Most bots only replace `import SlackModels` with `import SlackClient` or `import SlackKit`. Existing apps should read [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [changelog for all three betas](CHANGELOG.md) for renamed and nested types and removed APIs (`onBlockAction`, `payload.actions` and `ack(responseAction: .clear, view:)`). From beta.1, exhaustive `switch` statements over `Event` need `.agentSessionStopped` and `.agentSessionTitleChanged`, or `default`. From beta.2, `BlockActionsPayload.team` is optional to support organization-installed apps; use optional chaining or unwrap it before accessing workspace information.
 
 ```swift
 import SlackKit
@@ -113,7 +114,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/ainame/swift-slack.git",
-            from: "2027.1.0-beta.2"
+            from: "2027.1.0-beta.3"
         )
     ],
     targets: [
@@ -262,7 +263,7 @@ The default package traits include the Web API, events, and Socket Mode. For sma
 ```swift
 .package(
     url: "https://github.com/ainame/swift-slack.git",
-    from: "2027.1.0-beta.2",
+    from: "2027.1.0-beta.3",
     traits: ["SocketMode", "Events", "WebAPI_Chat", "WebAPI_Views"]
 )
 ```
