@@ -3,60 +3,84 @@
 The submodule gitlinks are the generation inputs. Review coverage applies to the
 selected delta, not complete historical parity or live Slack service behavior.
 
-## Review on 2026-10-11
+## Review on 2026-10-17
 
-Sync PR: #243.
+Sync PR: pending.
 
 | Source | Previous commit | Reviewed snapshot |
 | --- | --- | --- |
-| [java-slack-sdk](https://github.com/slackapi/java-slack-sdk) | `43fad0e0943e53991d9298d08588915116a7a0aa` | `9894c9331565ec8484fa07e4b292bf719a67fcba` |
-| [slack-api-ref](https://github.com/slack-ruby/slack-api-ref) | `0ae4e986fbdb824fd4af8ca175ca45142377c8c3` | `0fcbcec7c842b5b3880fa7c0d7fb3d66fe1de711` |
+| [java-slack-sdk](https://github.com/slackapi/java-slack-sdk) | `9894c9331565ec8484fa07e4b292bf719a67fcba` | `383dd5f35085b700db5c926add4705a8e8df56ee` |
+| [slack-api-ref](https://github.com/slack-ruby/slack-api-ref) | `0fcbcec7c842b5b3880fa7c0d7fb3d66fe1de711` | `9d12de7552102bcacb8cb72162063a39b7b6d9b9` |
 
-Both branch snapshots were fetched live and are descendants of the previous pins.
-The sync is based on the `release-2027-01` branch rather than `origin/main`; both
-record the same previous pins.
+Both branch heads were fetched live and are descendants of the previous pins.
+The base and PR target are `release-2027-01`, at
+`703a9afc8d3c21117f521d4ae0c533fe44f42820` for this review.
 
 ### Implemented
 
-- Generate the nine `agents.conversations.*` methods (`archive`, `create`,
-  `getCanvas`, `listViews`, `removeView`, `setCanvasContent`, `setCommands`,
-  `setProperties`, `setView`). slack-api-ref now defines their arguments, which
-  closes the gap recorded on 2026-10-03; java-slack-sdk already had their response
-  fixtures and response classes. They join the existing `WebAPI_Agents` trait.
-- Response types match the Java response classes field by field, including the
-  nested `Comment`/`Reply` (`getCanvas`) and `View` (`listViews`) classes. Every
-  fixture key is declared, so no `added` override is needed.
+- Added handwritten downstream swift-slack `AuthProviderBlock`, `Block.authProvider`
+  and DSL `BlockComponent` support, matching upstream java-slack-sdk's Java class,
+  Gson layout-block dispatch and Kotlin builder. All thirteen JSON fields are
+  represented, including the discriminator, accessory and fallback blocks. As in
+  existing handwritten blocks, required fields are nonoptional, text fields use
+  `TextObject`, and URLs use `URL`; callers must supply plain-text objects for this
+  block's text fields.
+- **BREAKING**: exhaustive switches over downstream swift-slack `Block` must handle
+  `.authProvider`. No existing cases or operations are removed. Tests preserve every
+  field through decode/encode for both complete and minimal upstream Java examples,
+  and cover DSL composition and nested fallback blocks.
+- Regenerated request comments from upstream slack-api-ref: the privacy inheritance
+  and explicit override rules for `agents.conversations.create.is_private`, and
+  markdown/task-update chunks for `chat.appendStream`. No request field shapes change.
+  The nine `agents.conversations.*` methods are already generated on this base.
 
 ### Reviewed exclusions and coverage gaps
 
-- Arguments come from slack-api-ref. It declares `title` and `status` for
-  `setProperties` and `label` for `setView`, which java-slack-sdk's request
-  builders do not send yet. `commands`, `code_channel`, `agent_resource` and `csp`
-  are untyped JSON containers, as for other object arguments.
-- `agent_session_stopped` and `agent_session_title_changed` have java-slack-sdk
-  event classes and unit-test payloads but no recorded event fixture under
-  `json-logs/samples/events`. Since #245 they are generated from copies of those
-  unit-test payloads (`scripts/event_fixtures.yml`). For org-level installs, the Slack
-  event reference documents an optional `enterprise_id` in the
-  `agent_session_title_changed` event itself, while java-slack-sdk models it only on
-  the `event_callback` envelope (`AgentSessionTitleChangedPayload`). swift-slack follows
-  the Java event class; which placement Slack sends is unverified.
-- The java-slack-sdk delta changes only release-note configuration, the maintainers
-  guide and documentation links; nothing feeds generation. No Block Kit class,
-  event class or handwritten Bolt runtime behavior changed.
-- The fixture policy still excludes methods without Java response fixtures, such as
-  the `admin.usergroups.*` methods recorded on 2026-10-03.
-
-Coverage applies to the reviewed delta; it is not a claim of full API parity.
-This sync changes no exhaustive-switch cases; #245 later adds two `Event` cases.
+- Upstream java-slack-sdk adds `apps.user.connection.bulkUpdate` and `requestAuth`
+  classes and response fixtures. Upstream slack-api-ref supplies neither method's
+  request definition, so neither operation is generated. No response fixture keys
+  are missing from the corresponding Java classes; no added overrides are needed.
+- Upstream java-slack-sdk changes no Events classes or fixtures in this delta.
+  Handwritten Bolt runtime behavior is unaffected. The two copied agent-session
+  event payloads remain valid; neither has gained a recorded upstream fixture.
+  The previously documented `agent_session_title_changed.enterprise_id` placement
+  gap remains: the Slack reference documents the event field, while java-slack-sdk
+  declares it on the callback envelope. No recorded event payload resolves this.
+- Existing missing-fixture methods remain excluded, including seven
+  `admin.usergroups.*` methods (`addUsers`, `create`, `fetch`, `removeTeams`,
+  `removeUsers`, `update`, `uploadUsers`) and `canvases.getContent`. `user_guest_status_changed` still lacks a Java event model
+  and complete test payload usable for generation.
+- Upstream slack-api-ref adds documentation-only `rich_link_preview_type` to
+  `admin.apps.config.lookup`, `channel_type` to `assistant.search.context` channels,
+  and failed user/channel ID lists to `slackLists.access.delete` examples. The Java
+  lookup and access-delete fixtures do not carry these fields; assistant search
+  has no response fixture. These remain coverage gaps, not added overrides.
+- Upstream slack-api-ref corrects the team object in `admin.teams.settings.info`,
+  user nesting in `admin.users.getExpiration`, and string job ID in
+  `slackLists.download.start`; downstream swift-slack already follows these Java
+  response shapes. Required flags on agent-session output, optional invite links,
+  a misplaced history field, and a generic kick-errors object are documentation
+  response corrections; they do not replace Java-derived response inputs.
+- The remaining slack-api-ref changes are error descriptions, examples (including
+  Slack Lists item creation), rate metadata, analytics descriptions and the method
+  index. The `admin.apps.permissions.set.usergroup_ids` comment concerns a method
+  without a Java response fixture and stays excluded. No SDK rate-tier table needs
+  updating. Upstream Java client wiring, form serialization, rate constants and
+  Kotlin-specific builder mechanics have no further downstream Swift counterpart.
 
 ### Verification
 
-`bundle install`, full `make generate`, `make check-fixtures` (0 unexplained
-java-slack-sdk mismatches; every generated response and event decodes its fixture)
-and `swift test` passed using the recorded Swift and Ruby versions. A second full
-generation pass matched all 532 generated and handwritten Swift file hashes.
-Scripts are unchanged, so `make test-scripts` was not rerun. `git diff --check`
+`bundle install`, full `make generate`, `make check-fixtures` and `swift test`
+passed using Swift 6.4.0 and Ruby 4.0.7. The fixture scan found zero unexplained
+mismatches across 370 payloads; all 277 response and 93 event fixtures decoded.
+The root suite passed 225 tests across 34 suites, including both auth-provider
+payloads, all public fields and DSL composition. The copied test payloads were
+also compared with their upstream Java originals and matched.
+
+A second complete `make generate` produced identical hashes for all 396 generated
+Swift files and the manifest combined. No generated files were added or deleted,
+and the trait list is unchanged. Scripts were not changed, so `make test-scripts`
+was not required. Handwritten changed files were formatted and `git diff --check`
 passed. Live Slack integration was not run.
 
 ## Maintaining this record

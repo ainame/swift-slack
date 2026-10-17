@@ -1117,7 +1117,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/chat.appendStream/POST/requestBody/json/channel`.
                     public var channel: Swift.String
-                    /// Array of streaming chunks.
+                    /// Array of streaming chunks that can contain either markdown text or task updates.
                     ///
                     /// - Remark: Generated from `#/paths/chat.appendStream/POST/requestBody/json/chunks`.
                     public var chunks: OpenAPIRuntime.OpenAPIArrayContainer?
@@ -1133,7 +1133,7 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - channel: An encoded ID that represents a channel, private group, or DM.
-                    ///   - chunks: Array of streaming chunks.
+                    ///   - chunks: Array of streaming chunks that can contain either markdown text or task updates.
                     ///   - ts: The timestamp of the streaming message.
                     ///   - markdownText: Accepts message text formatted in markdown. Limit this field to 12,000 characters. This text is what will be appended to the message received so far.
                     public init(
