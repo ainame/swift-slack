@@ -5,7 +5,7 @@ selected delta, not complete historical parity or live Slack service behavior.
 
 ## Review on 2026-10-17
 
-Sync PR: pending.
+Sync PR: #265.
 
 | Source | Previous commit | Reviewed snapshot |
 | --- | --- | --- |
@@ -77,8 +77,8 @@ The root suite passed 225 tests across 34 suites, including both auth-provider
 payloads, all public fields and DSL composition. The copied test payloads were
 also compared with their upstream Java originals and matched.
 
-A second complete `make generate` produced identical hashes for all 396 generated
-Swift files and the manifest combined. No generated files were added or deleted,
+A second complete `make generate` produced identical hashes for all 395 generated
+Swift files and `Package.swift` (396 hashes total). No generated files were added or deleted,
 and the trait list is unchanged. Scripts were not changed, so `make test-scripts`
 was not required. Handwritten changed files were formatted and `git diff --check`
 passed. Live Slack integration was not run.
