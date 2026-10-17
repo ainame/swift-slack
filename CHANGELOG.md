@@ -9,6 +9,10 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+### Added
+
+* **BREAKING**: Added `AuthProviderBlock` and Block Kit DSL support for authentication provider connections, including account details, menus and fallback blocks. Exhaustive switches on `Block` must handle the new `.authProvider` case - #265
+
 ## [2027.1.0-beta.3] - 2026-10-16
 
 This beta adds typed Slack Code channel helpers, top-level message streaming and more resilient streaming and Socket Mode delivery. It builds on beta.1's Java-derived models and Block Kit additions and beta.2's agent APIs and streaming; APIs may still change before the January 2027 release.
