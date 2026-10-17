@@ -5,6 +5,7 @@ import OpenAPIRuntime
 public enum Block: Codable, Hashable, Sendable {
     case actions(ActionsBlock)
     case alert(AlertBlock)
+    case authProvider(AuthProviderBlock)
     case card(CardBlock)
     case carousel(CarouselBlock)
     case container(ContainerBlock)
@@ -32,6 +33,8 @@ public enum Block: Codable, Hashable, Sendable {
             self = try .actions(container.decode(ActionsBlock.self))
         case "alert":
             self = try .alert(container.decode(AlertBlock.self))
+        case "auth_provider":
+            self = try .authProvider(container.decode(AuthProviderBlock.self))
         case "card":
             self = try .card(container.decode(CardBlock.self))
         case "carousel":
@@ -74,6 +77,8 @@ public enum Block: Codable, Hashable, Sendable {
         case let .actions(block):
             try container.encode(block)
         case let .alert(block):
+            try container.encode(block)
+        case let .authProvider(block):
             try container.encode(block)
         case let .card(block):
             try container.encode(block)

@@ -211,7 +211,8 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.create/POST/requestBody/json/name`.
                     public var name: Swift.String
-                    /// Create a private channel instead of a public one.
+                    /// Whether the code channel is private. When omitted, the channel matches the privacy of origin_channel_id, or is public if no origin is given. An explicit value is always
+                    /// honored, even if it differs from the origin channel's privacy: passing false creates a public channel from a private origin.
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.create/POST/requestBody/json/is_private`.
                     public var isPrivate: Swift.Bool?
@@ -234,7 +235,8 @@ extension Operations {
                     /// creating a new one.
                     ///   - name: A friendly display name for the code channel. Optional when origin_channel_id and origin_message_ts are provided — in that case the channel is named from the origin
                     /// message and re-titled automatically. Required when no origin link is given.
-                    ///   - isPrivate: Create a private channel instead of a public one.
+                    ///   - isPrivate: Whether the code channel is private. When omitted, the channel matches the privacy of origin_channel_id, or is public if no origin is given. An explicit value is
+                    /// always honored, even if it differs from the origin channel's privacy: passing false creates a public channel from a private origin.
                     ///   - originChannelId: The channel ID where the agent session was initiated from. Must be provided together with origin_message_ts. The channel must be accessible to the calling
                     /// user and must not be externally shared (Slack Connect). When team_id is omitted with an org token, the channel is created in the same workspace as this origin channel.
                     ///   - originMessageTs: The message timestamp in the origin channel that started the agent session. Must be provided together with origin_channel_id. The author of this message is
