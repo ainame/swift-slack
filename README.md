@@ -17,7 +17,7 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
 > [!TIP]
-> We recommend [2027.1.0-beta.3](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.3) ahead of the January 2027 release. Changes from 2026.x include:
+> For new apps, we recommend [2027.1.0-beta.3](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.3) ahead of the January 2027 release. Changes from 2026.x include:
 >
 > * Web API response and event models generated from upstream [java-slack-sdk](https://github.com/slackapi/java-slack-sdk), with decoding checked against its recorded payloads.
 > * Additional Block Kit blocks and elements, including cards, carousels and alerts.
@@ -32,7 +32,7 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 > .package(url: "https://github.com/ainame/swift-slack.git", from: "2027.1.0-beta.3")
 > ```
 >
-> Existing apps should read [Migrating to Java-derived models](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.3/MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [changelog](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.3/CHANGELOG.md) for breaking changes. When upgrading from beta.2, note that `BlockActionsPayload.team` is now optional. The quickstart below works with both 2026.x and the beta.
+> Existing apps require migration. Read [Migrating to Java-derived models](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.3/MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [changelog](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.3/CHANGELOG.md) for breaking changes. When upgrading from beta.2, note that `BlockActionsPayload.team` is now optional. The quickstart below works with both 2026.x and the beta.
 
 ```swift
 import SlackKit
