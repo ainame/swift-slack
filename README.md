@@ -17,7 +17,7 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
 > [!TIP]
-> [2027.1.0-beta.3](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.3) is available for testing ahead of the January 2027 release. Changes from 2026.x include:
+> We recommend [2027.1.0-beta.3](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.3) ahead of the January 2027 release. Changes from 2026.x include:
 >
 > * Web API response and event models generated from upstream [java-slack-sdk](https://github.com/slackapi/java-slack-sdk), with decoding checked against its recorded payloads.
 > * Additional Block Kit blocks and elements, including cards, carousels and alerts.
