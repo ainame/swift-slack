@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Bots
 extension Operations {
+    /// Gets information about a bot user.
+    ///
+    /// - Remark: HTTP `POST /bots.info`.
+    /// - Remark: Generated from `#/paths//bots.info/post(botsInfo)`.
     public enum BotsInfo {
         public static let id: Swift.String = "botsInfo"
         public struct Input: Sendable, Hashable {

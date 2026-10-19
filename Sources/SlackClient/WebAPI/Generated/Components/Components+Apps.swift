@@ -9,494 +9,56 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Apps
 extension Components.Schemas {
-    /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse`.
-    public struct AppsConnectionsOpenResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/url`.
-        public var url: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsConnectionsOpenResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AppsConnectionsOpenResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
-        ///   - url:
-        ///   - warning:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            url: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
-            self.url = url
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-            case responseMetadata = "response_metadata"
-            case url
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AppsEventAuthorizationsListResponse`.
-    public struct AppsEventAuthorizationsListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AppsEventAuthorizationsListResponse/authorizations`.
-        public var authorizations: [SlackModels.Authorization]?
-        /// - Remark: Generated from `#/components/schemas/AppsEventAuthorizationsListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsEventAuthorizationsListResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsEventAuthorizationsListResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AppsEventAuthorizationsListResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsEventAuthorizationsListResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AppsEventAuthorizationsListResponse`.
-        ///
-        /// - Parameters:
-        ///   - authorizations:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - warning:
-        public init(
-            authorizations: [SlackModels.Authorization]? = nil,
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.authorizations = authorizations
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case authorizations
-            case error
-            case needed
-            case ok
-            case provided
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse`.
-    public struct AppsManifestCreateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/app_id`.
-        public var appId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/credentials`.
-        public var credentials: SlackModels.Credentials?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/errors`.
-        public var errors: [SlackModels._Error]?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/oauth_authorize_url`.
-        public var oauthAuthorizeUrl: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/team_domain`.
-        public var teamDomain: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/team_id`.
-        public var teamId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestCreateResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AppsManifestCreateResponse`.
-        ///
-        /// - Parameters:
-        ///   - appId:
-        ///   - credentials:
-        ///   - error:
-        ///   - errors:
-        ///   - needed:
-        ///   - oauthAuthorizeUrl:
-        ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
-        ///   - teamDomain:
-        ///   - teamId:
-        ///   - warning:
-        public init(
-            appId: Swift.String? = nil,
-            credentials: SlackModels.Credentials? = nil,
-            error: Swift.String? = nil,
-            errors: [SlackModels._Error]? = nil,
-            needed: Swift.String? = nil,
-            oauthAuthorizeUrl: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            teamDomain: Swift.String? = nil,
-            teamId: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.appId = appId
-            self.credentials = credentials
-            self.error = error
-            self.errors = errors
-            self.needed = needed
-            self.oauthAuthorizeUrl = oauthAuthorizeUrl
-            self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
-            self.teamDomain = teamDomain
-            self.teamId = teamId
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case appId = "app_id"
-            case credentials
-            case error
-            case errors
-            case needed
-            case oauthAuthorizeUrl = "oauth_authorize_url"
-            case ok
-            case provided
-            case responseMetadata = "response_metadata"
-            case teamDomain = "team_domain"
-            case teamId = "team_id"
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AppsManifestDeleteResponse`.
-    public struct AppsManifestDeleteResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AppsManifestDeleteResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestDeleteResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestDeleteResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AppsManifestDeleteResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestDeleteResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AppsManifestDeleteResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - warning:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AppsManifestExportResponse`.
-    public struct AppsManifestExportResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AppsManifestExportResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestExportResponse/manifest`.
-        public var manifest: SlackModels.Manifest?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestExportResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestExportResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AppsManifestExportResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestExportResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AppsManifestExportResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - manifest:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - warning:
-        public init(
-            error: Swift.String? = nil,
-            manifest: SlackModels.Manifest? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.manifest = manifest
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case manifest
-            case needed
-            case ok
-            case provided
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AppsManifestUpdateResponse`.
-    public struct AppsManifestUpdateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AppsManifestUpdateResponse/app_id`.
-        public var appId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestUpdateResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestUpdateResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestUpdateResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AppsManifestUpdateResponse/permissions_updated`.
-        public var permissionsUpdated: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestUpdateResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestUpdateResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AppsManifestUpdateResponse`.
-        ///
-        /// - Parameters:
-        ///   - appId:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - permissionsUpdated:
-        ///   - provided:
-        ///   - warning:
-        public init(
-            appId: Swift.String? = nil,
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            permissionsUpdated: Swift.Bool? = nil,
-            provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.appId = appId
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.permissionsUpdated = permissionsUpdated
-            self.provided = provided
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case appId = "app_id"
-            case error
-            case needed
-            case ok
-            case permissionsUpdated = "permissions_updated"
-            case provided
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AppsManifestValidateResponse`.
-    public struct AppsManifestValidateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AppsManifestValidateResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestValidateResponse/errors`.
-        public var errors: [SlackModels._Error]?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestValidateResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestValidateResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AppsManifestValidateResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestValidateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AppsManifestValidateResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AppsManifestValidateResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - errors:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - responseMetadata:
-        ///   - warning:
-        public init(
-            error: Swift.String? = nil,
-            errors: [SlackModels._Error]? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.errors = errors
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.responseMetadata = responseMetadata
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case errors
-            case needed
-            case ok
-            case provided
-            case responseMetadata = "response_metadata"
-            case warning
-        }
-    }
-
     /// - Remark: Generated from `#/components/schemas/AppsUninstallResponse`.
     public struct AppsUninstallResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AppsUninstallResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AppsUninstallResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AppsUninstallResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AppsUninstallResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsUninstallResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/AppsUninstallResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/AppsUninstallResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/AppsUninstallResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
         /// Creates a new `AppsUninstallResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            warning: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
             case responseMetadata = "response_metadata"
-            case warning
-        }
-    }
-
-    /// - Remark: Generated from `#/components/schemas/AppsUserConnectionUpdateResponse`.
-    public struct AppsUserConnectionUpdateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/AppsUserConnectionUpdateResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsUserConnectionUpdateResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsUserConnectionUpdateResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/AppsUserConnectionUpdateResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/AppsUserConnectionUpdateResponse/warning`.
-        public var warning: Swift.String?
-        /// Creates a new `AppsUserConnectionUpdateResponse`.
-        ///
-        /// - Parameters:
-        ///   - error:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - warning:
-        public init(
-            error: Swift.String? = nil,
-            needed: Swift.String? = nil,
-            ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
-        ) {
-            self.error = error
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.warning = warning
-        }
-
-        public enum CodingKeys: String, CodingKey {
-            case error
-            case needed
-            case ok
-            case provided
-            case warning
         }
     }
 }

@@ -8,6 +8,30 @@ on:
     branches: [ main ]
 
 jobs:
+  # Default traits enable everything, so the test job cannot catch code that is missing its
+  # trait guard. Build the adapters without Events to cover the optional-trait boundaries.
+  build-without-events:
+    runs-on: ubuntu-26.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Update apt package index
+        run: sudo apt-get update
+
+      - name: Read Swift version
+        id: env-info
+        run: echo "swift-version=$(cat .swift-version)" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Swiftly
+        uses: vapor/swiftly-action@v0.2.1
+        with:
+          toolchain: ${{ steps.env-info.outputs.swift-version }}
+
+      - name: Build with SocketMode and HummingbirdHTTPAdapter only
+        run: swift build --disable-default-traits --traits SocketMode,HummingbirdHTTPAdapter
+
   test:
     runs-on: ubuntu-26.04
 
@@ -21,15 +45,6 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: npm
-
-      - name: Install generator dependencies
-        run: npm ci --ignore-scripts
 
       - name: Run script tests
         run: make test-scripts
@@ -74,6 +89,17 @@ jobs:
 
       - name: Run tests
         run: swift test
+
+      # Generated code must match what the committed scripts and vendor snapshots produce; otherwise the
+      # fixture checks below would test a different document than the committed Swift.
+      - name: Check generated code is up to date
+        run: |
+          make generate
+          changes=$(git status --porcelain -- Sources Tests Package.swift)
+          if [ -n "$changes" ]; then echo "$changes"; exit 1; fi
+
+      - name: Decode upstream fixtures
+        run: make check-fixtures
 
       - name: Save Swift build cache
         if: steps.restore-swift-cache.outputs.cache-matched-key != steps.swift-cache-key.outputs.key

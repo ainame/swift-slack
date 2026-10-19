@@ -9,60 +9,81 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Api
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/APITestResponse`.
     public struct APITestResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/APITestResponse/ok`.
+        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/APITestResponse/args`.
-        public var args: SlackModels.APITestArgs?
+        public struct ArgsPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/APITestResponse/args/foo`.
+            public var foo: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/APITestResponse/args/error`.
+            public var error: Swift.String?
+            /// Creates a new `ArgsPayload`.
+            ///
+            /// - Parameters:
+            ///   - foo:
+            ///   - error:
+            public init(
+                foo: Swift.String? = nil,
+                error: Swift.String? = nil,
+            ) {
+                self.foo = foo
+                self.error = error
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case foo
+                case error
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/APITestResponse/args`.
+        public var args: Components.Schemas.APITestResponse.ArgsPayload?
+        /// - Remark: Generated from `#/components/schemas/APITestResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/APITestResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/APITestResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/APITestResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/APITestResponse/provided`.
         public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/APITestResponse/warning`.
-        public var warning: Swift.String?
         /// Creates a new `APITestResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
         ///   - args:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
-        ///   - warning:
         public init(
-            args: SlackModels.APITestArgs? = nil,
+            ok: Swift.Bool,
+            args: Components.Schemas.APITestResponse.ArgsPayload? = nil,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
-            warning: Swift.String? = nil,
         ) {
+            self.ok = ok
             self.args = args
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
-            self.warning = warning
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
             case args
+            case warning
             case error
             case needed
-            case ok
             case provided
-            case warning
         }
     }
 }

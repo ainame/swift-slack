@@ -3,7 +3,6 @@ import Logging
 import OpenAPIRuntime
 import SlackBlockKit
 import SlackClient
-import SlackModels
 
 public struct Say: Sendable {
     private let client: any APIProtocol

@@ -9,8 +9,130 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+### Added
+
+* **BREAKING**: Added `AuthProviderBlock` and Block Kit DSL support for authentication provider connections, including account details, menus and fallback blocks. Exhaustive switches on `Block` must handle the new `.authProvider` case - #265
+
+## [2027.1.0-beta.3] - 2026-10-16
+
+This beta adds typed Slack Code channel helpers, top-level message streaming and more resilient streaming and Socket Mode delivery. It builds on beta.1's Java-derived models and Block Kit additions and beta.2's agent APIs and streaming; APIs may still change before the January 2027 release.
+
+### Summary
+
+* **Slack Code channels.** Typed helpers configure properties, commands and HTML, diff, Block Kit, canvas and pull-request views. The Codex agent demo uses persistent worktrees, restores Codex conversations, uploads files and publishes artifacts with scoped Git permissions and Slack approvals - #255
+* **More resilient delivery.** Streaming supports top-level messages, preserves buffered content on local cancellation, bounds request sizes and stops when Slack ends the session. Socket Mode reports connection errors and accepts larger events - #255
+
+> [!WARNING]
+> **Upgrading from beta.2:** `BlockActionsPayload.team` is now optional so organization-installed apps can handle button interactions with `team: null`. Use optional chaining or unwrap it before accessing workspace information - #255
+>
+> Upgrading from earlier versions also requires the migration described in the beta.1 and beta.2 notes below and [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md).
+
+### Added
+
+* Added typed `CodeChannel` request values and helpers for properties, commands and HTML, diff, Block Kit, canvas and pull-request views, returning Slack warnings and throwing on unsuccessful responses - #255
+* `streamMessage` supports top-level replies by omitting `threadTs`, and `StreamingMessage.SessionStopped` lets apps abandon buffered content and retries when Slack ends the session - #255
+
+### Fixed
+
+* **BREAKING**: Accepted `team: null` in Block Kit button interactions from organization-installed apps, allowing approval and other action handlers to run. `BlockActionsPayload.team` is now optional; use optional chaining or unwrap it before accessing workspace information - #255
+* Reported Slack's Socket Mode connection error instead of hiding it behind a missing-URL error, restored bot authentication after failed connection requests, and accepted Socket Mode frames up to 1 MiB instead of rejecting large events at 16 KiB - #255
+* Cancelled cooperative Sendable streaming inputs immediately on delivery failure, allowing apps to stop idle producers and pending questions - #255
+* Preserved unsent streaming content and closing blocks when local cancellation occurs during batching or a rate-limit delay, and bounded aggregate markdown and blocks per streaming request, including final flushes - #255
+
 ### Maintenance
 
+* The Codex agent demo creates and reuses Code channels, publishes artifacts and diffs, uploads worktree files into the current channel with image references for Block Kit views, and shares archive summaries with linked origin threads. Persistent Git worktrees and topic branches now restore the same checkout and Codex conversation after restart, validate recovery state, and show repository, branch and checkout context. Scoped Git permissions permit topic commits, with Slack approvals for additional permissions; old independent clones are preserved with migration and cleanup guidance. The demo also restores conversation context, avoids repeated handoffs after naming/setup failures, deduplicates events, interrupts Codex directly on channel-wide Stop even during blocked output, and clears processing status after cleanup while preserving archived sessions - #255
+
+## [2027.1.0-beta.2] - 2026-10-12
+
+This beta expands swift-slack's agent APIs and adds a public message streaming API. It builds on beta.1's Java-derived models and new Block Kit blocks; APIs may still change before the January 2027 release.
+
+### Summary
+
+* **Agent APIs and events.** Nine `agents.conversations.*` methods manage agent conversation views, canvases, commands and properties. Handlers can receive session stop and title-change events and inspect event installation metadata and retry information - #243, #245, #246
+* **Message streaming.** `streamMessage` sends any `AsyncSequence` of markdown, task updates, plans and ordered Block Kit chunks into a thread, with batching, rate-limit retries and closing blocks - #250
+* **A working agent example.** `DemoApps/codex-agent` uses the library streaming API and Codex tools to show cards, title sessions, read Slack context and ask users questions through buttons - #248, #249, #250
+
+> [!WARNING]
+> **Upgrading from beta.1:** exhaustive `switch` statements over `Event` need `.agentSessionStopped` and `.agentSessionTitleChanged`, or `default` - #245
+>
+> Upgrading from 2026.x also requires the migration described in the beta.1 notes below and [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md).
+
+### Added
+
+* Added `streamMessage` under `WebAPI_Chat` to stream any `AsyncSequence` of `StreamingMessage.Part` into a thread, with markdown, task updates, plans and ordered Block Kit chunks, batching, rate-limit retries and closing blocks. The Codex agent demo now uses this library API - #250
+* Added `enterpriseId`, `contextTeamId`, `contextEnterpriseId`, `eventContext`, `authorizations` and `isExtSharedChannel` to `EventsApiEnvelope`, so event handlers can tell which organization and installation an event belongs to - #246
+* Added `retryNum` and `retryReason` to `SlackApp.EventContext`, filled from Socket Mode envelopes (`retry_attempt`, `retry_reason`, also on `SocketModeMessageEnvelope`) and the HTTP `X-Slack-Retry-Num` and `X-Slack-Retry-Reason` headers, so handlers can skip events Slack redelivered - #246
+* Added the nine `agents.conversations.*` Web API methods (`archive`, `create`, `getCanvas`, `listViews`, `removeView`, `setCanvasContent`, `setCommands`, `setProperties` and `setView`) to the `WebAPI_Agents` trait, now that slack-api-ref defines their arguments - #243
+* **BREAKING**: Added the `AgentSessionStoppedEvent` and `AgentSessionTitleChangedEvent` events, with `Event` cases `.agentSessionStopped` and `.agentSessionTitleChanged`. Exhaustive `switch` statements over `Event` need the new cases or `default` - #245
+
+### Changed
+
+* Raised the minimum `swift-openapi-runtime` version to 1.13.0, which code from swift-openapi-generator 1.14.0 requires - #241
+
+### Fixed
+
+* Fixed building with the `Events` trait disabled, such as `--disable-default-traits --traits SocketMode`, which failed because event dispatch in the HTTP handler and the Socket Mode receive loop was not guarded by the trait - #247
+
+### Maintenance
+
+* Updated swift-openapi-generator to 1.14.0. `scripts/process_webapi.rb` now reads the types that the generator splits into one file per Swift namespace (`Components`, `Operations`) - #241
+* Updated SwiftFormat to 0.63.1 - #242
+* Sped up `make generate` from about 125 to about 28 seconds by splitting generated Web API files by API namespace, such as `Operations+AdminConversations.swift`, so SwiftFormat no longer spends most of the run on one 16,000-line file - #242
+* CI builds `SlackApp` with `SocketMode` and `HummingbirdHTTPAdapter` but without `Events`, catching code that lacks its trait guard - #247
+* Events that java-slack-sdk models but has not recorded can now be generated from the payload their upstream unit test deserializes, copied into `scripts/event_fixtures/` and listed in `scripts/event_fixtures.yml`. Generation fails when a copy drifts from its unit test and once upstream records the event - #245
+* Added the `DemoApps/codex-agent` demo, a Slack agent that answers with Codex through swift-codex and streams its replies through the library's `streamMessage` API. Codex tools show cards, title sessions, read the current Slack thread or channel, and ask users questions through buttons; the demo also supports stopping a turn - #248, #249, #250
+
+## [2027.1.0-beta.1] - 2026-10-11
+
+This is the first beta of 2027.1.0, a major release that is worth upgrading to. Web API responses and events are now generated from the model classes of java-slack-sdk, Slack's Java SDK, instead of being inferred from single recorded JSON samples.
+
+**Why a beta?** swift-slack uses calendar versioning, so this release can only be tagged `2027.1.0` in January 2027. The beta makes the new models available now. APIs may still change before `2027.1.0` based on feedback, so please [open an issue](https://github.com/ainame/swift-slack/issues) if something decodes incorrectly or the migration is harder than expected.
+
+### Summary
+
+**Why upgrade**
+
+* **Decoding you can rely on.** Every generated response and event type decodes java-slack-sdk's recorded payloads (268 responses and 91 events), and CI checks it on every change. The decoding failures of 2026.x, such as `bots.info`, Slack Lists rows and `File` image sizes, are fixed.
+* **Complete models.** Types declare every field java-slack-sdk knows, adding 469 properties across the Web API responses, including `ResponseMetadata.nextCursor` for cursor pagination.
+* **New Block Kit blocks and elements.** Cards, carousels, alerts, context actions, workflow buttons and URL inputs are now supported.
+
+**What you need to change**
+
+* **Dependency:** require `from: "2027.1.0-beta.1"`. SwiftPM does not resolve a beta or a 2027 release from a `2026.x` requirement.
+* **Imports:** remove the `SlackModels` product and replace `import SlackModels` with `import SlackClient`, or `import SlackKit` in apps. For most bots that call the Web API, read responses through property chains and handle events, this is the only change.
+* **Model types spelled out in your code:** some shared models were renamed, and objects declared inside a response or event are now nested types. See [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md).
+* **Removed APIs:** use `onAction(_:blockId:handler:)` instead of `onBlockAction(_:handler:)`, `payload.blockActions` instead of `payload.actions`, and `ack(responseAction: .clear)` instead of `ack(responseAction: .clear, view:)`.
+* **Exhaustive `switch` statements** over `Block`, `View` or the Block Kit element enums need `.unknown` and the new cases, or `default`.
+
+**What stays the same:** requests, method names, response and event type names, `Event` cases, and typed handlers such as `router.onEvent(AppMentionEvent.self)`.
+
+### Added
+
+* Added Block Kit types `AlertBlock`, `CardBlock`, `CarouselBlock`, `ContextActionsBlock`, `FeedbackButtonsElement`, `IconButtonElement`, `URLInputElement`, `WorkflowButtonElement` and `FeedbackButtonObject`, with matching enum cases, plus `MultiStaticSelectElement.optionGroups` and `TimePickerElement.timezone` - #230
+
+### Changed
+
+* **BREAKING**: Web API response and event types are now generated from upstream java-slack-sdk model classes. They declare every field java-slack-sdk knows, adding 469 top-level properties across the 268 responses, and every property is optional except `ok` on responses and `_type` on events. Objects that java-slack-sdk declares inside a response or event class are now nested `<Property>Payload` types instead of shared models, inferred names map to java-slack-sdk's types (for example `Channel` is now `Conversation`, and `FileElement` and `ItemFile` are now `File`), and memberwise initializer arguments follow java-slack-sdk's field order - #230
+* **BREAKING**: `Block`, `View` and the Block Kit element enums gained `.unknown(type:payload:)` and cases for the new blocks and elements, so exhaustive `switch` statements need new cases or `default`. `MultiStaticSelectElement.options` is now optional - #230
+
+### Removed
+
+* **BREAKING**: Removed the `SlackModels` module. Shared models such as `User`, `Message`, `File` and `Conversation` are now `Components.Schemas` types in `SlackClient` with top-level aliases of the same name. Drop the `SlackModels` product and replace `import SlackModels` with `import SlackClient`, or `import SlackKit` in apps - #230
+* **BREAKING**: Removed `Router.onBlockAction(_:handler:)`, which matched the containing view's `callback_id` instead of the element's `action_id`. Use `onAction(_:blockId:handler:)` for each element, or `onInteractive(_:)` and check `payload.callbackId` for a whole view - #232
+* **BREAKING**: Removed `BlockActionsPayload.actions`, which decoded the interacted elements as Block Kit element definitions without their selected values. Use `BlockActionsPayload.blockActions` - #232
+* **BREAKING**: Removed the misspelled `BlockActionsPaylaod` typealias and `Router.onGlboalShortcut(_:handler:)`. Use `BlockActionsPayload` and `onGlobalShortcut(_:handler:)` - #232
+* **BREAKING**: Removed `Ack.ResponseAction.clear`, so `ack(responseAction: .clear, view:)` no longer compiles. Use `ack(responseAction: .clear)`, which sends `clear` without a view as Slack documents - #233
+
+### Fixed
+
+* Fixed response decoding failures and dropped fields found by auditing the previous generated types (#177), such as the missing `ResponseMetadata.nextCursor` for cursor pagination, `File` image sizes typed as `String` instead of `Int`, and Slack Lists rows decoded as the stars and pins item - #230
+* A block or element type that SlackBlockKit does not model now decodes as `.unknown` instead of failing the whole response or event - #230
+* `ConversationFilterObject`, `TriggerObject` and `DispatchActionConfigurationObject` now encode and decode Slack's snake_case keys; Slack ignored the keys of filters that apps built before - #230
+
+### Maintenance
+
+* Web API and event schemas are generated from java-slack-sdk's Java sources, parsed with tree-sitter, and a method or event is generated only when java-slack-sdk has a recorded fixture for it. `make check-fixtures` decodes every fixture with the generated types and runs in CI. Node.js and quicktype are no longer needed; run `bundle install` before `make generate` - #230
 * Added a `Gemfile` that pins json 2.19.1 or later for the generator scripts, which now run through `bundle exec`, because Ruby 4.0.7's bundled json 2.18.0 has generator GC bugs that intermittently failed script tests on Linux. Run `bundle install` before generating - #172
 * Fixed `make generate` and `make test-scripts` failing with `Encoding::InvalidByteSequenceError` in shells without a UTF-8 locale; the generator scripts now read sources as UTF-8 - #176
 

@@ -7,7 +7,7 @@ Build Slack apps in Swift with one import.
 `SlackKit` is the recommended product for app code. It re-exports:
 
 - `SlackApp`, the runtime for Socket Mode and HTTP apps, with routing, acknowledgements, and Events API payload types
-- `SlackClient`, the Web API client, along with the shared `SlackModels` types
+- `SlackClient`, the Web API client, along with its shared models such as `User` and `Message`
 - `SlackBlockKit`, the Block Kit models for messages, modals, and App Home tabs
 
 ```swift

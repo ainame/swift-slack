@@ -31,12 +31,6 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: npm
-
       - name: Update apt package index
         run: sudo apt-get update
 
@@ -67,9 +61,6 @@ jobs:
             ${{ steps.env-info.outputs.image }}-schema-update-swift-${{ hashFiles('.swift-version', 'Tools/Package.swift', 'Tools/Package.resolved') }}-
             ${{ steps.env-info.outputs.image }}-schema-update-swift-
 
-      - name: Install generator dependencies
-        run: npm ci --ignore-scripts
-
       - name: Update schemas
         id: update
         run: |
@@ -83,7 +74,7 @@ jobs:
           GENERATED_CHANGES=$(git status --porcelain -- \
             Sources/SlackClient/WebAPI/Generated \
             Sources/SlackApp/Events/Generated \
-            Sources/SlackModels/Generated)
+            Tests/SlackClientTests/Generated)
 
           if [[ -n "$GENERATED_CHANGES" ]]; then
             echo "changes=true" >> $GITHUB_OUTPUT
@@ -96,7 +87,9 @@ jobs:
 
       - name: Run tests
         if: steps.update.outputs.changes == 'true'
-        run: swift test
+        run: |
+          swift test
+          make check-fixtures
 
       - name: Resolve Swift package dependencies
         run: swift package resolve
@@ -123,7 +116,7 @@ jobs:
           add-paths: |
             Sources/SlackClient/WebAPI/Generated/
             Sources/SlackApp/Events/Generated/
-            Sources/SlackModels/Generated/
+            Tests/SlackClientTests/Generated/
             vendor/
             Package.swift
           commit-message: |

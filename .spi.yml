@@ -5,6 +5,5 @@ builder:
         - SlackKit
         - SlackClient
         - SlackApp
-        - SlackModels
         - SlackBlockKit
         - SlackBlockKitDSL

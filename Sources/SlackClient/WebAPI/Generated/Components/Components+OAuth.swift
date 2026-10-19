@@ -9,247 +9,515 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_OAuth
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse`.
     public struct OauthV2AccessResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/access_token`.
-        public var accessToken: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/provided`.
+        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/app_id`.
         public var appId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/authed_user`.
-        public var authedUser: SlackModels.AuthedUser?
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/bot_user_id`.
-        public var botUserId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/enterprise`.
-        public var enterprise: SlackModels.Enterprise?
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/expires_in`.
-        public var expiresIn: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/incoming_webhook`.
-        public var incomingWebhook: SlackModels.IncomingWebhook?
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/is_enterprise_install`.
-        public var isEnterpriseInstall: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/refresh_token`.
-        public var refreshToken: Swift.String?
+        public struct AuthedUserPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/authed_user/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/authed_user/scope`.
+            public var scope: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/authed_user/token_type`.
+            public var tokenType: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/authed_user/access_token`.
+            public var accessToken: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/authed_user/refresh_token`.
+            public var refreshToken: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/authed_user/expires_in`.
+            public var expiresIn: Swift.Int?
+            /// Creates a new `AuthedUserPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - scope:
+            ///   - tokenType:
+            ///   - accessToken:
+            ///   - refreshToken:
+            ///   - expiresIn:
+            public init(
+                id: Swift.String? = nil,
+                scope: Swift.String? = nil,
+                tokenType: Swift.String? = nil,
+                accessToken: Swift.String? = nil,
+                refreshToken: Swift.String? = nil,
+                expiresIn: Swift.Int? = nil,
+            ) {
+                self.id = id
+                self.scope = scope
+                self.tokenType = tokenType
+                self.accessToken = accessToken
+                self.refreshToken = refreshToken
+                self.expiresIn = expiresIn
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case scope
+                case tokenType = "token_type"
+                case accessToken = "access_token"
+                case refreshToken = "refresh_token"
+                case expiresIn = "expires_in"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/authed_user`.
+        public var authedUser: Components.Schemas.OauthV2AccessResponse.AuthedUserPayload?
         /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/scope`.
         public var scope: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/team`.
-        public var team: SlackModels.Enterprise?
         /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/token_type`.
         public var tokenType: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/access_token`.
+        public var accessToken: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/refresh_token`.
+        public var refreshToken: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/expires_in`.
+        public var expiresIn: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/bot_user_id`.
+        public var botUserId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/team`.
+        public struct TeamPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/team/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/team/name`.
+            public var name: Swift.String?
+            /// Creates a new `TeamPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - name:
+            public init(
+                id: Swift.String? = nil,
+                name: Swift.String? = nil,
+            ) {
+                self.id = id
+                self.name = name
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case name
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/team`.
+        public var team: Components.Schemas.OauthV2AccessResponse.TeamPayload?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/enterprise`.
+        public struct EnterprisePayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/enterprise/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/enterprise/name`.
+            public var name: Swift.String?
+            /// Creates a new `EnterprisePayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - name:
+            public init(
+                id: Swift.String? = nil,
+                name: Swift.String? = nil,
+            ) {
+                self.id = id
+                self.name = name
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case name
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/enterprise`.
+        public var enterprise: Components.Schemas.OauthV2AccessResponse.EnterprisePayload?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/is_enterprise_install`.
+        public var isEnterpriseInstall: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/incoming_webhook`.
+        public struct IncomingWebhookPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/incoming_webhook/url`.
+            public var url: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/incoming_webhook/channel`.
+            public var channel: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/incoming_webhook/channel_id`.
+            public var channelId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/incoming_webhook/configuration_url`.
+            public var configurationUrl: Swift.String?
+            /// Creates a new `IncomingWebhookPayload`.
+            ///
+            /// - Parameters:
+            ///   - url:
+            ///   - channel:
+            ///   - channelId:
+            ///   - configurationUrl:
+            public init(
+                url: Swift.String? = nil,
+                channel: Swift.String? = nil,
+                channelId: Swift.String? = nil,
+                configurationUrl: Swift.String? = nil,
+            ) {
+                self.url = url
+                self.channel = channel
+                self.channelId = channelId
+                self.configurationUrl = configurationUrl
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case url
+                case channel
+                case channelId = "channel_id"
+                case configurationUrl = "configuration_url"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/OauthV2AccessResponse/incoming_webhook`.
+        public var incomingWebhook: Components.Schemas.OauthV2AccessResponse.IncomingWebhookPayload?
         /// Creates a new `OauthV2AccessResponse`.
         ///
         /// - Parameters:
-        ///   - accessToken:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
         ///   - appId:
         ///   - authedUser:
-        ///   - botUserId:
-        ///   - enterprise:
-        ///   - error:
-        ///   - expiresIn:
-        ///   - incomingWebhook:
-        ///   - isEnterpriseInstall:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - refreshToken:
         ///   - scope:
-        ///   - team:
         ///   - tokenType:
-        ///   - warning:
+        ///   - accessToken:
+        ///   - refreshToken:
+        ///   - expiresIn:
+        ///   - botUserId:
+        ///   - team:
+        ///   - enterprise:
+        ///   - isEnterpriseInstall:
+        ///   - incomingWebhook:
         public init(
-            accessToken: Swift.String? = nil,
-            appId: Swift.String? = nil,
-            authedUser: SlackModels.AuthedUser? = nil,
-            botUserId: Swift.String? = nil,
-            enterprise: SlackModels.Enterprise? = nil,
-            error: Swift.String? = nil,
-            expiresIn: Swift.Int? = nil,
-            incomingWebhook: SlackModels.IncomingWebhook? = nil,
-            isEnterpriseInstall: Swift.Bool? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            refreshToken: Swift.String? = nil,
-            scope: Swift.String? = nil,
-            team: SlackModels.Enterprise? = nil,
-            tokenType: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            appId: Swift.String? = nil,
+            authedUser: Components.Schemas.OauthV2AccessResponse.AuthedUserPayload? = nil,
+            scope: Swift.String? = nil,
+            tokenType: Swift.String? = nil,
+            accessToken: Swift.String? = nil,
+            refreshToken: Swift.String? = nil,
+            expiresIn: Swift.Int? = nil,
+            botUserId: Swift.String? = nil,
+            team: Components.Schemas.OauthV2AccessResponse.TeamPayload? = nil,
+            enterprise: Components.Schemas.OauthV2AccessResponse.EnterprisePayload? = nil,
+            isEnterpriseInstall: Swift.Bool? = nil,
+            incomingWebhook: Components.Schemas.OauthV2AccessResponse.IncomingWebhookPayload? = nil,
         ) {
-            self.accessToken = accessToken
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
             self.appId = appId
             self.authedUser = authedUser
-            self.botUserId = botUserId
-            self.enterprise = enterprise
-            self.error = error
-            self.expiresIn = expiresIn
-            self.incomingWebhook = incomingWebhook
-            self.isEnterpriseInstall = isEnterpriseInstall
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.refreshToken = refreshToken
             self.scope = scope
-            self.team = team
             self.tokenType = tokenType
-            self.warning = warning
+            self.accessToken = accessToken
+            self.refreshToken = refreshToken
+            self.expiresIn = expiresIn
+            self.botUserId = botUserId
+            self.team = team
+            self.enterprise = enterprise
+            self.isEnterpriseInstall = isEnterpriseInstall
+            self.incomingWebhook = incomingWebhook
         }
 
         public enum CodingKeys: String, CodingKey {
-            case accessToken = "access_token"
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
             case appId = "app_id"
             case authedUser = "authed_user"
-            case botUserId = "bot_user_id"
-            case enterprise
-            case error
-            case expiresIn = "expires_in"
-            case incomingWebhook = "incoming_webhook"
-            case isEnterpriseInstall = "is_enterprise_install"
-            case needed
-            case ok
-            case provided
-            case refreshToken = "refresh_token"
             case scope
-            case team
             case tokenType = "token_type"
-            case warning
+            case accessToken = "access_token"
+            case refreshToken = "refresh_token"
+            case expiresIn = "expires_in"
+            case botUserId = "bot_user_id"
+            case team
+            case enterprise
+            case isEnterpriseInstall = "is_enterprise_install"
+            case incomingWebhook = "incoming_webhook"
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse`.
     public struct OauthV2ExchangeResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/access_token`.
-        public var accessToken: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/provided`.
+        public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/app_id`.
         public var appId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/authed_user`.
-        public var authedUser: SlackModels.AuthedUser?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/bot_user_id`.
-        public var botUserId: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/enterprise`.
-        public var enterprise: SlackModels.Enterprise?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/expires_in`.
-        public var expiresIn: Swift.Int?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/incoming_webhook`.
-        public var incomingWebhook: SlackModels.IncomingWebhook?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/is_enterprise_install`.
-        public var isEnterpriseInstall: Swift.Bool?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/needed`.
-        public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/ok`.
-        public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/provided`.
-        public var provided: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/refresh_token`.
-        public var refreshToken: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
+        public struct AuthedUserPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/authed_user/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/authed_user/scope`.
+            public var scope: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/authed_user/token_type`.
+            public var tokenType: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/authed_user/access_token`.
+            public var accessToken: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/authed_user/refresh_token`.
+            public var refreshToken: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/authed_user/expires_in`.
+            public var expiresIn: Swift.Int?
+            /// Creates a new `AuthedUserPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - scope:
+            ///   - tokenType:
+            ///   - accessToken:
+            ///   - refreshToken:
+            ///   - expiresIn:
+            public init(
+                id: Swift.String? = nil,
+                scope: Swift.String? = nil,
+                tokenType: Swift.String? = nil,
+                accessToken: Swift.String? = nil,
+                refreshToken: Swift.String? = nil,
+                expiresIn: Swift.Int? = nil,
+            ) {
+                self.id = id
+                self.scope = scope
+                self.tokenType = tokenType
+                self.accessToken = accessToken
+                self.refreshToken = refreshToken
+                self.expiresIn = expiresIn
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case scope
+                case tokenType = "token_type"
+                case accessToken = "access_token"
+                case refreshToken = "refresh_token"
+                case expiresIn = "expires_in"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/authed_user`.
+        public var authedUser: Components.Schemas.OauthV2ExchangeResponse.AuthedUserPayload?
         /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/scope`.
         public var scope: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/team`.
-        public var team: SlackModels.Enterprise?
         /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/token_type`.
         public var tokenType: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/warning`.
-        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/access_token`.
+        public var accessToken: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/refresh_token`.
+        public var refreshToken: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/expires_in`.
+        public var expiresIn: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/bot_user_id`.
+        public var botUserId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/team`.
+        public struct TeamPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/team/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/team/name`.
+            public var name: Swift.String?
+            /// Creates a new `TeamPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - name:
+            public init(
+                id: Swift.String? = nil,
+                name: Swift.String? = nil,
+            ) {
+                self.id = id
+                self.name = name
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case name
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/team`.
+        public var team: Components.Schemas.OauthV2ExchangeResponse.TeamPayload?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/enterprise`.
+        public struct EnterprisePayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/enterprise/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/enterprise/name`.
+            public var name: Swift.String?
+            /// Creates a new `EnterprisePayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - name:
+            public init(
+                id: Swift.String? = nil,
+                name: Swift.String? = nil,
+            ) {
+                self.id = id
+                self.name = name
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case name
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/enterprise`.
+        public var enterprise: Components.Schemas.OauthV2ExchangeResponse.EnterprisePayload?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/is_enterprise_install`.
+        public var isEnterpriseInstall: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/incoming_webhook`.
+        public struct IncomingWebhookPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/incoming_webhook/url`.
+            public var url: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/incoming_webhook/channel`.
+            public var channel: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/incoming_webhook/channel_id`.
+            public var channelId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/incoming_webhook/configuration_url`.
+            public var configurationUrl: Swift.String?
+            /// Creates a new `IncomingWebhookPayload`.
+            ///
+            /// - Parameters:
+            ///   - url:
+            ///   - channel:
+            ///   - channelId:
+            ///   - configurationUrl:
+            public init(
+                url: Swift.String? = nil,
+                channel: Swift.String? = nil,
+                channelId: Swift.String? = nil,
+                configurationUrl: Swift.String? = nil,
+            ) {
+                self.url = url
+                self.channel = channel
+                self.channelId = channelId
+                self.configurationUrl = configurationUrl
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case url
+                case channel
+                case channelId = "channel_id"
+                case configurationUrl = "configuration_url"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/incoming_webhook`.
+        public var incomingWebhook: Components.Schemas.OauthV2ExchangeResponse.IncomingWebhookPayload?
+        /// - Remark: Generated from `#/components/schemas/OauthV2ExchangeResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ErrorResponseMetadata?
         /// Creates a new `OauthV2ExchangeResponse`.
         ///
         /// - Parameters:
-        ///   - accessToken:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
         ///   - appId:
         ///   - authedUser:
-        ///   - botUserId:
-        ///   - enterprise:
-        ///   - error:
-        ///   - expiresIn:
-        ///   - incomingWebhook:
-        ///   - isEnterpriseInstall:
-        ///   - needed:
-        ///   - ok:
-        ///   - provided:
-        ///   - refreshToken:
-        ///   - responseMetadata:
         ///   - scope:
-        ///   - team:
         ///   - tokenType:
-        ///   - warning:
+        ///   - accessToken:
+        ///   - refreshToken:
+        ///   - expiresIn:
+        ///   - botUserId:
+        ///   - team:
+        ///   - enterprise:
+        ///   - isEnterpriseInstall:
+        ///   - incomingWebhook:
+        ///   - responseMetadata:
         public init(
-            accessToken: Swift.String? = nil,
-            appId: Swift.String? = nil,
-            authedUser: SlackModels.AuthedUser? = nil,
-            botUserId: Swift.String? = nil,
-            enterprise: SlackModels.Enterprise? = nil,
-            error: Swift.String? = nil,
-            expiresIn: Swift.Int? = nil,
-            incomingWebhook: SlackModels.IncomingWebhook? = nil,
-            isEnterpriseInstall: Swift.Bool? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            refreshToken: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
-            scope: Swift.String? = nil,
-            team: SlackModels.Enterprise? = nil,
-            tokenType: Swift.String? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            appId: Swift.String? = nil,
+            authedUser: Components.Schemas.OauthV2ExchangeResponse.AuthedUserPayload? = nil,
+            scope: Swift.String? = nil,
+            tokenType: Swift.String? = nil,
+            accessToken: Swift.String? = nil,
+            refreshToken: Swift.String? = nil,
+            expiresIn: Swift.Int? = nil,
+            botUserId: Swift.String? = nil,
+            team: Components.Schemas.OauthV2ExchangeResponse.TeamPayload? = nil,
+            enterprise: Components.Schemas.OauthV2ExchangeResponse.EnterprisePayload? = nil,
+            isEnterpriseInstall: Swift.Bool? = nil,
+            incomingWebhook: Components.Schemas.OauthV2ExchangeResponse.IncomingWebhookPayload? = nil,
+            responseMetadata: Components.Schemas.ErrorResponseMetadata? = nil,
         ) {
-            self.accessToken = accessToken
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
             self.appId = appId
             self.authedUser = authedUser
-            self.botUserId = botUserId
-            self.enterprise = enterprise
-            self.error = error
-            self.expiresIn = expiresIn
-            self.incomingWebhook = incomingWebhook
-            self.isEnterpriseInstall = isEnterpriseInstall
-            self.needed = needed
-            self.ok = ok
-            self.provided = provided
-            self.refreshToken = refreshToken
-            self.responseMetadata = responseMetadata
             self.scope = scope
-            self.team = team
             self.tokenType = tokenType
-            self.warning = warning
+            self.accessToken = accessToken
+            self.refreshToken = refreshToken
+            self.expiresIn = expiresIn
+            self.botUserId = botUserId
+            self.team = team
+            self.enterprise = enterprise
+            self.isEnterpriseInstall = isEnterpriseInstall
+            self.incomingWebhook = incomingWebhook
+            self.responseMetadata = responseMetadata
         }
 
         public enum CodingKeys: String, CodingKey {
-            case accessToken = "access_token"
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
             case appId = "app_id"
             case authedUser = "authed_user"
-            case botUserId = "bot_user_id"
-            case enterprise
-            case error
-            case expiresIn = "expires_in"
-            case incomingWebhook = "incoming_webhook"
-            case isEnterpriseInstall = "is_enterprise_install"
-            case needed
-            case ok
-            case provided
-            case refreshToken = "refresh_token"
-            case responseMetadata = "response_metadata"
             case scope
-            case team
             case tokenType = "token_type"
-            case warning
+            case accessToken = "access_token"
+            case refreshToken = "refresh_token"
+            case expiresIn = "expires_in"
+            case botUserId = "bot_user_id"
+            case team
+            case enterprise
+            case isEnterpriseInstall = "is_enterprise_install"
+            case incomingWebhook = "incoming_webhook"
+            case responseMetadata = "response_metadata"
         }
     }
 }

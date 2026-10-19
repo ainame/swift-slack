@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Conversations
 extension Operations {
+    /// Accepts an invitation to a Slack Connect channel.
+    ///
+    /// - Remark: HTTP `POST /conversations.acceptSharedInvite`.
+    /// - Remark: Generated from `#/paths//conversations.acceptSharedInvite/post(conversationsAcceptSharedInvite)`.
     public enum ConversationsAcceptSharedInvite {
         public static let id: Swift.String = "conversationsAcceptSharedInvite"
         public struct Input: Sendable, Hashable {
@@ -203,6 +207,10 @@ extension Operations {
         }
     }
 
+    /// Approves an invitation to a Slack Connect channel
+    ///
+    /// - Remark: HTTP `POST /conversations.approveSharedInvite`.
+    /// - Remark: Generated from `#/paths//conversations.approveSharedInvite/post(conversationsApproveSharedInvite)`.
     public enum ConversationsApproveSharedInvite {
         public static let id: Swift.String = "conversationsApproveSharedInvite"
         public struct Input: Sendable, Hashable {
@@ -359,6 +367,10 @@ extension Operations {
         }
     }
 
+    /// Archives a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.archive`.
+    /// - Remark: Generated from `#/paths//conversations.archive/post(conversationsArchive)`.
     public enum ConversationsArchive {
         public static let id: Swift.String = "conversationsArchive"
         public struct Input: Sendable, Hashable {
@@ -505,170 +517,10 @@ extension Operations {
         }
     }
 
-    public enum ConversationsCanvasesCreate {
-        public static let id: Swift.String = "conversationsCanvasesCreate"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/conversations.canvases.create/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ConversationsCanvasesCreate.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ConversationsCanvasesCreate.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.ConversationsCanvasesCreate.Input.Headers
-            /// - Remark: Generated from `#/paths/conversations.canvases.create/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/conversations.canvases.create/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Channel ID of the channel the canvas will be tabbed in.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.canvases.create/POST/requestBody/json/channel_id`.
-                    public var channelId: Swift.String
-                    /// Structure describing the type and value of the content to create. The markdown content is limited to 1 MiB (1,048,576 characters).
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.canvases.create/POST/requestBody/json/document_content`.
-                    public var documentContent: Swift.String?
-                    /// Title of the newly created canvas.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.canvases.create/POST/requestBody/json/title`.
-                    public var title: Swift.String?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - channelId: Channel ID of the channel the canvas will be tabbed in.
-                    ///   - documentContent: Structure describing the type and value of the content to create. The markdown content is limited to 1 MiB (1,048,576 characters).
-                    ///   - title: Title of the newly created canvas.
-                    public init(
-                        channelId: Swift.String,
-                        documentContent: Swift.String? = nil,
-                        title: Swift.String? = nil,
-                    ) {
-                        self.channelId = channelId
-                        self.documentContent = documentContent
-                        self.title = title
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case channelId = "channel_id"
-                        case documentContent = "document_content"
-                        case title
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/conversations.canvases.create/POST/requestBody/content/application\/json`.
-                case json(Operations.ConversationsCanvasesCreate.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.ConversationsCanvasesCreate.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.ConversationsCanvasesCreate.Input.Headers = .init(),
-                body: Operations.ConversationsCanvasesCreate.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/conversations.canvases.create/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/conversations.canvases.create/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.ConversationsCanvasesCreateResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.ConversationsCanvasesCreateResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.ConversationsCanvasesCreate.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.ConversationsCanvasesCreate.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//conversations.canvases.create/post(conversationsCanvasesCreate)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.ConversationsCanvasesCreate.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.ConversationsCanvasesCreate.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
+    /// Closes a direct message or multi-person direct message.
+    ///
+    /// - Remark: HTTP `POST /conversations.close`.
+    /// - Remark: Generated from `#/paths//conversations.close/post(conversationsClose)`.
     public enum ConversationsClose {
         public static let id: Swift.String = "conversationsClose"
         public struct Input: Sendable, Hashable {
@@ -815,6 +667,10 @@ extension Operations {
         }
     }
 
+    /// Initiates a public or private channel-based conversation
+    ///
+    /// - Remark: HTTP `POST /conversations.create`.
+    /// - Remark: Generated from `#/paths//conversations.create/post(conversationsCreate)`.
     public enum ConversationsCreate {
         public static let id: Swift.String = "conversationsCreate"
         public struct Input: Sendable, Hashable {
@@ -979,6 +835,10 @@ extension Operations {
         }
     }
 
+    /// Declines a Slack Connect channel invite.
+    ///
+    /// - Remark: HTTP `POST /conversations.declineSharedInvite`.
+    /// - Remark: Generated from `#/paths//conversations.declineSharedInvite/post(conversationsDeclineSharedInvite)`.
     public enum ConversationsDeclineSharedInvite {
         public static let id: Swift.String = "conversationsDeclineSharedInvite"
         public struct Input: Sendable, Hashable {
@@ -1137,170 +997,10 @@ extension Operations {
         }
     }
 
-    public enum ConversationsExternalInvitePermissionsSet {
-        public static let id: Swift.String = "conversationsExternalInvitePermissionsSet"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/conversations.externalInvitePermissions.set/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ConversationsExternalInvitePermissionsSet.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ConversationsExternalInvitePermissionsSet.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.ConversationsExternalInvitePermissionsSet.Input.Headers
-            /// - Remark: Generated from `#/paths/conversations.externalInvitePermissions.set/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/conversations.externalInvitePermissions.set/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// The channel ID to change external invite permissions for.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.externalInvitePermissions.set/POST/requestBody/json/channel`.
-                    public var channel: Swift.String
-                    /// The encoded team ID of the target team.  Must be in the specified channel.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.externalInvitePermissions.set/POST/requestBody/json/target_team`.
-                    public var targetTeam: Swift.String
-                    /// Type of action to be taken: upgrade or downgrade.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.externalInvitePermissions.set/POST/requestBody/json/action`.
-                    public var action: Swift.String
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - channel: The channel ID to change external invite permissions for.
-                    ///   - targetTeam: The encoded team ID of the target team.  Must be in the specified channel.
-                    ///   - action: Type of action to be taken: upgrade or downgrade.
-                    public init(
-                        channel: Swift.String,
-                        targetTeam: Swift.String,
-                        action: Swift.String,
-                    ) {
-                        self.channel = channel
-                        self.targetTeam = targetTeam
-                        self.action = action
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case channel
-                        case targetTeam = "target_team"
-                        case action
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/conversations.externalInvitePermissions.set/POST/requestBody/content/application\/json`.
-                case json(Operations.ConversationsExternalInvitePermissionsSet.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.ConversationsExternalInvitePermissionsSet.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.ConversationsExternalInvitePermissionsSet.Input.Headers = .init(),
-                body: Operations.ConversationsExternalInvitePermissionsSet.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/conversations.externalInvitePermissions.set/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/conversations.externalInvitePermissions.set/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.ConversationsExternalInvitePermissionsSetResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.ConversationsExternalInvitePermissionsSetResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.ConversationsExternalInvitePermissionsSet.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.ConversationsExternalInvitePermissionsSet.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//conversations.externalInvitePermissions.set/post(conversationsExternalInvitePermissionsSet)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.ConversationsExternalInvitePermissionsSet.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.ConversationsExternalInvitePermissionsSet.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
+    /// Fetches a conversation's history of messages and events.
+    ///
+    /// - Remark: HTTP `POST /conversations.history`.
+    /// - Remark: Generated from `#/paths//conversations.history/post(conversationsHistory)`.
     public enum ConversationsHistory {
         public static let id: Swift.String = "conversationsHistory"
         public struct Input: Sendable, Hashable {
@@ -1501,6 +1201,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve information about a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.info`.
+    /// - Remark: Generated from `#/paths//conversations.info/post(conversationsInfo)`.
     public enum ConversationsInfo {
         public static let id: Swift.String = "conversationsInfo"
         public struct Input: Sendable, Hashable {
@@ -1665,6 +1369,10 @@ extension Operations {
         }
     }
 
+    /// Invites users to a channel.
+    ///
+    /// - Remark: HTTP `POST /conversations.invite`.
+    /// - Remark: Generated from `#/paths//conversations.invite/post(conversationsInvite)`.
     public enum ConversationsInvite {
         public static let id: Swift.String = "conversationsInvite"
         public struct Input: Sendable, Hashable {
@@ -1829,6 +1537,10 @@ extension Operations {
         }
     }
 
+    /// Sends an invitation to a Slack Connect channel
+    ///
+    /// - Remark: HTTP `POST /conversations.inviteShared`.
+    /// - Remark: Generated from `#/paths//conversations.inviteShared/post(conversationsInviteShared)`.
     public enum ConversationsInviteShared {
         public static let id: Swift.String = "conversationsInviteShared"
         public struct Input: Sendable, Hashable {
@@ -2001,6 +1713,10 @@ extension Operations {
         }
     }
 
+    /// Joins an existing conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.join`.
+    /// - Remark: Generated from `#/paths//conversations.join/post(conversationsJoin)`.
     public enum ConversationsJoin {
         public static let id: Swift.String = "conversationsJoin"
         public struct Input: Sendable, Hashable {
@@ -2147,6 +1863,10 @@ extension Operations {
         }
     }
 
+    /// Removes a user from a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.kick`.
+    /// - Remark: Generated from `#/paths//conversations.kick/post(conversationsKick)`.
     public enum ConversationsKick {
         public static let id: Swift.String = "conversationsKick"
         public struct Input: Sendable, Hashable {
@@ -2303,6 +2023,10 @@ extension Operations {
         }
     }
 
+    /// Leaves a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.leave`.
+    /// - Remark: Generated from `#/paths//conversations.leave/post(conversationsLeave)`.
     public enum ConversationsLeave {
         public static let id: Swift.String = "conversationsLeave"
         public struct Input: Sendable, Hashable {
@@ -2449,6 +2173,10 @@ extension Operations {
         }
     }
 
+    /// Lists all channels in a Slack team.
+    ///
+    /// - Remark: HTTP `POST /conversations.list`.
+    /// - Remark: Generated from `#/paths//conversations.list/post(conversationsList)`.
     public enum ConversationsList {
         public static let id: Swift.String = "conversationsList"
         public struct Input: Sendable, Hashable {
@@ -2632,6 +2360,10 @@ extension Operations {
         }
     }
 
+    /// Lists shared channel invites that have been generated or received but have not been approved by all parties
+    ///
+    /// - Remark: HTTP `POST /conversations.listConnectInvites`.
+    /// - Remark: Generated from `#/paths//conversations.listConnectInvites/post(conversationsListConnectInvites)`.
     public enum ConversationsListConnectInvites {
         public static let id: Swift.String = "conversationsListConnectInvites"
         public struct Input: Sendable, Hashable {
@@ -2788,6 +2520,10 @@ extension Operations {
         }
     }
 
+    /// Sets the read cursor in a channel.
+    ///
+    /// - Remark: HTTP `POST /conversations.mark`.
+    /// - Remark: Generated from `#/paths//conversations.mark/post(conversationsMark)`.
     public enum ConversationsMark {
         public static let id: Swift.String = "conversationsMark"
         public struct Input: Sendable, Hashable {
@@ -2944,6 +2680,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve members of a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.members`.
+    /// - Remark: Generated from `#/paths//conversations.members/post(conversationsMembers)`.
     public enum ConversationsMembers {
         public static let id: Swift.String = "conversationsMembers"
         public struct Input: Sendable, Hashable {
@@ -3110,6 +2850,10 @@ extension Operations {
         }
     }
 
+    /// Opens or resumes a direct message or multi-person direct message.
+    ///
+    /// - Remark: HTTP `POST /conversations.open`.
+    /// - Remark: Generated from `#/paths//conversations.open/post(conversationsOpen)`.
     public enum ConversationsOpen {
         public static let id: Swift.String = "conversationsOpen"
         public struct Input: Sendable, Hashable {
@@ -3284,6 +3028,10 @@ extension Operations {
         }
     }
 
+    /// Renames a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.rename`.
+    /// - Remark: Generated from `#/paths//conversations.rename/post(conversationsRename)`.
     public enum ConversationsRename {
         public static let id: Swift.String = "conversationsRename"
         public struct Input: Sendable, Hashable {
@@ -3440,6 +3188,10 @@ extension Operations {
         }
     }
 
+    /// Retrieve a thread of messages posted to a conversation
+    ///
+    /// - Remark: HTTP `POST /conversations.replies`.
+    /// - Remark: Generated from `#/paths//conversations.replies/post(conversationsReplies)`.
     public enum ConversationsReplies {
         public static let id: Swift.String = "conversationsReplies"
         public struct Input: Sendable, Hashable {
@@ -3648,536 +3400,10 @@ extension Operations {
         }
     }
 
-    public enum ConversationsRequestSharedInviteApprove {
-        public static let id: Swift.String = "conversationsRequestSharedInviteApprove"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.approve/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ConversationsRequestSharedInviteApprove.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ConversationsRequestSharedInviteApprove.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.ConversationsRequestSharedInviteApprove.Input.Headers
-            /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.approve/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.approve/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// ID of the requested shared channel invite to approve.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.approve/POST/requestBody/json/invite_id`.
-                    public var inviteId: Swift.String
-                    /// Optional boolean on whether the invited team will have post-only permissions in the channel. Will override the value on the requested invite.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.approve/POST/requestBody/json/is_external_limited`.
-                    public var isExternalLimited: Swift.Bool?
-                    /// Optional channel_id to which external user will be invited to. Will override the value on the requested invite.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.approve/POST/requestBody/json/channel_id`.
-                    public var channelId: Swift.String?
-                    /// Object describing the text to send along with the invite. If this object is specified, both text and is_override are required properties. If is_override is set to true, text
-                    /// will override the original invitation message. Otherwise, text will be appended to the original invitation message. The total length of the message cannot exceed 560
-                    /// characters. If is_override is set to false, the length of text and the user specified message on the invite request in total must be less than 560 characters.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.approve/POST/requestBody/json/message`.
-                    public var message: OpenAPIRuntime.OpenAPIObjectContainer?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - inviteId: ID of the requested shared channel invite to approve.
-                    ///   - isExternalLimited: Optional boolean on whether the invited team will have post-only permissions in the channel. Will override the value on the requested invite.
-                    ///   - channelId: Optional channel_id to which external user will be invited to. Will override the value on the requested invite.
-                    ///   - message: Object describing the text to send along with the invite. If this object is specified, both text and is_override are required properties. If is_override is set to
-                    /// true, text will override the original invitation message. Otherwise, text will be appended to the original invitation message. The total length of the message cannot exceed 560
-                    /// characters. If is_override is set to false, the length of text and the user specified message on the invite request in total must be less than 560 characters.
-                    public init(
-                        inviteId: Swift.String,
-                        isExternalLimited: Swift.Bool? = nil,
-                        channelId: Swift.String? = nil,
-                        message: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
-                    ) {
-                        self.inviteId = inviteId
-                        self.isExternalLimited = isExternalLimited
-                        self.channelId = channelId
-                        self.message = message
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case inviteId = "invite_id"
-                        case isExternalLimited = "is_external_limited"
-                        case channelId = "channel_id"
-                        case message
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.approve/POST/requestBody/content/application\/json`.
-                case json(Operations.ConversationsRequestSharedInviteApprove.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.ConversationsRequestSharedInviteApprove.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.ConversationsRequestSharedInviteApprove.Input.Headers = .init(),
-                body: Operations.ConversationsRequestSharedInviteApprove.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.approve/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.approve/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.ConversationsRequestSharedInviteApproveResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.ConversationsRequestSharedInviteApproveResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.ConversationsRequestSharedInviteApprove.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.ConversationsRequestSharedInviteApprove.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//conversations.requestSharedInvite.approve/post(conversationsRequestSharedInviteApprove)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.ConversationsRequestSharedInviteApprove.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.ConversationsRequestSharedInviteApprove.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum ConversationsRequestSharedInviteDeny {
-        public static let id: Swift.String = "conversationsRequestSharedInviteDeny"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.deny/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ConversationsRequestSharedInviteDeny.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ConversationsRequestSharedInviteDeny.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.ConversationsRequestSharedInviteDeny.Input.Headers
-            /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.deny/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.deny/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// ID of the requested shared channel invite to deny.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.deny/POST/requestBody/json/invite_id`.
-                    public var inviteId: Swift.String
-                    /// Optional message explaining why the request to invite was denied.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.deny/POST/requestBody/json/message`.
-                    public var message: Swift.String?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - inviteId: ID of the requested shared channel invite to deny.
-                    ///   - message: Optional message explaining why the request to invite was denied.
-                    public init(
-                        inviteId: Swift.String,
-                        message: Swift.String? = nil,
-                    ) {
-                        self.inviteId = inviteId
-                        self.message = message
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case inviteId = "invite_id"
-                        case message
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.deny/POST/requestBody/content/application\/json`.
-                case json(Operations.ConversationsRequestSharedInviteDeny.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.ConversationsRequestSharedInviteDeny.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.ConversationsRequestSharedInviteDeny.Input.Headers = .init(),
-                body: Operations.ConversationsRequestSharedInviteDeny.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.deny/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.deny/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.ConversationsRequestSharedInviteDenyResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.ConversationsRequestSharedInviteDenyResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.ConversationsRequestSharedInviteDeny.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.ConversationsRequestSharedInviteDeny.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//conversations.requestSharedInvite.deny/post(conversationsRequestSharedInviteDeny)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.ConversationsRequestSharedInviteDeny.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.ConversationsRequestSharedInviteDeny.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
-    public enum ConversationsRequestSharedInviteList {
-        public static let id: Swift.String = "conversationsRequestSharedInviteList"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ConversationsRequestSharedInviteList.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.ConversationsRequestSharedInviteList.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.ConversationsRequestSharedInviteList.Input.Headers
-            /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Optional filter to return invitation requests for the inviting user.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/requestBody/json/user_id`.
-                    public var userId: Swift.String?
-                    /// When true expired invitation requests will be returned, otherwise they will be excluded.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/requestBody/json/include_expired`.
-                    public var includeExpired: Swift.Bool?
-                    /// When true approved invitation requests will be returned, otherwise they will be excluded.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/requestBody/json/include_approved`.
-                    public var includeApproved: Swift.Bool?
-                    /// When true denied invitation requests will be returned, otherwise they will be excluded.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/requestBody/json/include_denied`.
-                    public var includeDenied: Swift.Bool?
-                    /// An optional list of invitation ids to look up.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/requestBody/json/invite_ids`.
-                    public var inviteIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// The number of items to return. Must be between 1 - 1000 (inclusive).
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/requestBody/json/limit`.
-                    public var limit: Swift.Int?
-                    /// Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata. See pagination for more
-                    /// detail.
-                    ///
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/requestBody/json/cursor`.
-                    public var cursor: Swift.String?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - userId: Optional filter to return invitation requests for the inviting user.
-                    ///   - includeExpired: When true expired invitation requests will be returned, otherwise they will be excluded.
-                    ///   - includeApproved: When true approved invitation requests will be returned, otherwise they will be excluded.
-                    ///   - includeDenied: When true denied invitation requests will be returned, otherwise they will be excluded.
-                    ///   - inviteIds: An optional list of invitation ids to look up.
-                    ///   - limit: The number of items to return. Must be between 1 - 1000 (inclusive).
-                    ///   - cursor: Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata. See pagination
-                    /// for more detail.
-                    public init(
-                        userId: Swift.String? = nil,
-                        includeExpired: Swift.Bool? = nil,
-                        includeApproved: Swift.Bool? = nil,
-                        includeDenied: Swift.Bool? = nil,
-                        inviteIds: OpenAPIRuntime.OpenAPIArrayContainer? = nil,
-                        limit: Swift.Int? = nil,
-                        cursor: Swift.String? = nil,
-                    ) {
-                        self.userId = userId
-                        self.includeExpired = includeExpired
-                        self.includeApproved = includeApproved
-                        self.includeDenied = includeDenied
-                        self.inviteIds = inviteIds
-                        self.limit = limit
-                        self.cursor = cursor
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case userId = "user_id"
-                        case includeExpired = "include_expired"
-                        case includeApproved = "include_approved"
-                        case includeDenied = "include_denied"
-                        case inviteIds = "invite_ids"
-                        case limit
-                        case cursor
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/requestBody/content/application\/json`.
-                case json(Operations.ConversationsRequestSharedInviteList.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.ConversationsRequestSharedInviteList.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.ConversationsRequestSharedInviteList.Input.Headers = .init(),
-                body: Operations.ConversationsRequestSharedInviteList.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/conversations.requestSharedInvite.list/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.ConversationsRequestSharedInviteListResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.ConversationsRequestSharedInviteListResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.ConversationsRequestSharedInviteList.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.ConversationsRequestSharedInviteList.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//conversations.requestSharedInvite.list/post(conversationsRequestSharedInviteList)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.ConversationsRequestSharedInviteList.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.ConversationsRequestSharedInviteList.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
+    /// Sets the channel description.
+    ///
+    /// - Remark: HTTP `POST /conversations.setPurpose`.
+    /// - Remark: Generated from `#/paths//conversations.setPurpose/post(conversationsSetPurpose)`.
     public enum ConversationsSetPurpose {
         public static let id: Swift.String = "conversationsSetPurpose"
         public struct Input: Sendable, Hashable {
@@ -4334,6 +3560,10 @@ extension Operations {
         }
     }
 
+    /// Sets the topic for a conversation.
+    ///
+    /// - Remark: HTTP `POST /conversations.setTopic`.
+    /// - Remark: Generated from `#/paths//conversations.setTopic/post(conversationsSetTopic)`.
     public enum ConversationsSetTopic {
         public static let id: Swift.String = "conversationsSetTopic"
         public struct Input: Sendable, Hashable {
@@ -4490,6 +3720,10 @@ extension Operations {
         }
     }
 
+    /// Reverses conversation archival.
+    ///
+    /// - Remark: HTTP `POST /conversations.unarchive`.
+    /// - Remark: Generated from `#/paths//conversations.unarchive/post(conversationsUnarchive)`.
     public enum ConversationsUnarchive {
         public static let id: Swift.String = "conversationsUnarchive"
         public struct Input: Sendable, Hashable {
