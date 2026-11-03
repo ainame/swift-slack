@@ -1,4 +1,5 @@
 #if WebAPI_Chat
+import Logging
 import SlackBlockKit
 
 extension APIProtocol {
@@ -6,7 +7,7 @@ extension APIProtocol {
     /// ``StreamingMessage/Delivery``'s `send`.
     ///
     /// Use it instead of
-    /// ``streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:isolation:)``
+    /// ``streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:isolation:)``
     /// when the app must be able to tell the message that Slack has ended the session, or read its `ts` before
     /// the message finishes. This method makes no request and starts no task, so the app can register the
     /// delivery, and even stop it, before the message starts:
@@ -26,7 +27,11 @@ extension APIProtocol {
         blocks: [Block]? = nil,
         sessionStatus: String? = nil,
         minimumInterval: Duration = .seconds(1),
+        logger: Logger? = nil,
     ) -> StreamingMessage.Delivery {
+        // A copy keeps the caller's logger unchanged and identifies the channel of this delivery.
+        var logger = logger ?? Logger(label: "Slack")
+        logger[metadataKey: "slack.channel"] = "\(channel)"
         let transport = WebAPIStreamingTransport(
             client: self,
             channel: channel,
@@ -39,6 +44,7 @@ extension APIProtocol {
             transport: transport,
             blocks: blocks,
             minimumInterval: minimumInterval,
+            logger: logger,
         ))
     }
 
@@ -65,11 +71,12 @@ extension APIProtocol {
         blocks: [Block]? = nil,
         sessionStatus: String? = nil,
         minimumInterval: Duration = .seconds(1),
+        logger: Logger? = nil,
         isolation: isolated (any Actor)? = #isolation,
     ) async throws -> String where Parts.Element == StreamingMessage.Part {
         try await makeStreamingMessage(
             channel: channel, threadTs: threadTs, recipient: recipient, taskDisplay: taskDisplay,
-            blocks: blocks, sessionStatus: sessionStatus, minimumInterval: minimumInterval,
+            blocks: blocks, sessionStatus: sessionStatus, minimumInterval: minimumInterval, logger: logger,
         ).send(parts, isolation: isolation)
     }
 
@@ -103,7 +110,7 @@ extension APIProtocol {
     ///   cancelling it, ignores its outcome, and rethrows ``StreamingMessage/SessionStopped``, without the cleanup
     ///   stop described below. To signal a session stop from outside `parts`, including
     ///   after `parts` has finished while the closing calls or their retries remain, create the message with
-    ///   ``makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)``
+    ///   ``makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:)``
     ///   and call ``StreamingMessage/Delivery/notifySessionStopped()``.
     /// - When a call fails, including one of the closing calls, the message is stopped without further content
     ///   once it has a `ts`, and the call's error is rethrown, even if that stop fails too. Slack answering
@@ -122,6 +129,11 @@ extension APIProtocol {
     ///
     /// A message can stay in Slack's streaming state whenever the stop call or the best-effort cleanup stop
     /// fails, or when a cancelled start leaves its `ts` unknown.
+    ///
+    /// A failed cleanup stop does not replace the error the method throws; `logger` reports it as a warning,
+    /// unless delivery has observed a Slack session stop. The warning's metadata names the channel, the message's `ts`, the
+    /// error's type, and Slack's error code or the HTTP status when known. It carries no message content,
+    /// request, or response.
     ///
     /// This overload reads `parts` in the calling task's isolation, so it need not be `Sendable`. Swift picks
     /// it for any sequence whose static type is not `Sendable`, including a sequence in generic code constrained
@@ -150,6 +162,9 @@ extension APIProtocol {
     ///   - sessionStatus: The agent session's status after the stream stops, such as `suspended`. Slack
     ///     defaults to `active`.
     ///   - minimumInterval: The shortest time between two calls. `chat.appendStream` is a Tier 4 method.
+    ///   - logger: The logger for a failed cleanup stop. Pass `nil` to use `Logger(label: "Slack")`, which logs
+    ///     through the backend set with `LoggingSystem.bootstrap`. The logger given to `Slack`'s initializer is
+    ///     not used automatically; in a SlackApp handler, pass `context.logger`.
     ///   - isolation: The caller's actor isolation, inherited by default so the sequence is read in its context.
     /// - Returns: The message's `ts`.
     @discardableResult
@@ -162,11 +177,12 @@ extension APIProtocol {
         blocks: [Block]? = nil,
         sessionStatus: String? = nil,
         minimumInterval: Duration = .seconds(1),
+        logger: Logger? = nil,
         isolation: isolated (any Actor)? = #isolation,
     ) async throws -> String where Parts.Element == StreamingMessage.Part {
         try await makeStreamingMessage(
             channel: channel, threadTs: threadTs, recipient: recipient, taskDisplay: taskDisplay,
-            blocks: blocks, sessionStatus: sessionStatus, minimumInterval: minimumInterval,
+            blocks: blocks, sessionStatus: sessionStatus, minimumInterval: minimumInterval, logger: logger,
         ).send(parts, isolation: isolation)
     }
 }

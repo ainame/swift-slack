@@ -1,8 +1,8 @@
 #if WebAPI_Chat
 import SlackBlockKit
 
-/// Types for ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:isolation:)``
-/// and ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)``,
+/// Types for ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:isolation:)``
+/// and ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:)``,
 /// which streams a message with `chat.startStream`, `chat.appendStream`, and `chat.stopStream`.
 public enum StreamingMessage {
     /// One piece of a streaming message, sent as one of the `chunks` the streaming methods take.

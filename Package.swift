@@ -98,7 +98,10 @@ let package = Package(
         ),
         .testTarget(
             name: "SlackClientTests",
-            dependencies: ["SlackClient"],
+            dependencies: [
+                "SlackClient",
+                .product(name: "Logging", package: "swift-log"),
+            ],
         ),
         .target(
             name: "SlackApp",

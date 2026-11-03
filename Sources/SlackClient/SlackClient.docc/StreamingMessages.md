@@ -4,7 +4,7 @@ Send text, task updates, and Block Kit parts into a message as an asynchronous p
 
 ## Overview
 
-Use ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:isolation:)`` on your Slack client, or ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)`` when your app must stop the message from outside, as described in <doc:StreamingMessages#End-a-reply-that-Slack-has-already-stopped>. Both read any `AsyncSequence` whose element is ``StreamingMessage/Part``; the sequence need not be `Sendable`. Enable the `WebAPI_Chat` package trait to make this API available (see <doc:Traits>).
+Use ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:isolation:)`` on your Slack client, or ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:)`` when your app must stop the message from outside, as described in <doc:StreamingMessages#End-a-reply-that-Slack-has-already-stopped>. Both read any `AsyncSequence` whose element is ``StreamingMessage/Part``; the sequence need not be `Sendable`. Enable the `WebAPI_Chat` package trait to make this API available (see <doc:Traits>).
 
 ### Stream an LLM's tokens
 
@@ -95,7 +95,7 @@ This example assumes the values captured by the producer, including `llm`, are `
 
 ### End a reply that Slack has already stopped
 
-When your app learns that Slack has already ended the session's stream, such as from an `agent_session_stopped` event, sending more parts or a closing `chat.stopStream` serves no purpose. Create the message with ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)``, which takes the options of `streamMessage` and makes no request, register the ``StreamingMessage/Delivery`` it returns where that event's handler finds it before you await anything, and then send the parts with its `send`. The handler calls ``StreamingMessage/Delivery/notifySessionStopped()``:
+When your app learns that Slack has already ended the session's stream, such as from an `agent_session_stopped` event, sending more parts or a closing `chat.stopStream` serves no purpose. Create the message with ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:)``, which takes the options of `streamMessage` and makes no request, register the ``StreamingMessage/Delivery`` it returns where that event's handler finds it before you await anything, and then send the parts with its `send`. The handler calls ``StreamingMessage/Delivery/notifySessionStopped()``:
 
 ```swift
 let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
@@ -149,6 +149,12 @@ When the sequence finishes, buffered parts and the closing `blocks` go out with 
 If the input throws, buffered parts and closing blocks are sent before the input error is rethrown, unless the error is ``StreamingMessage/SessionStopped`` (see <doc:StreamingMessages#End-a-reply-that-Slack-has-already-stopped>). If it throws before producing anything, no message is posted. To end a reply early and still deliver everything, including a closing notice and `blocks`, end the input as shown in <doc:StreamingMessages#Produce-tasks-text-and-blocks>. Only the end of the input decides this: an input that throws `CancellationError` while the task calling `streamMessage` is not cancelled ends gracefully like any other error.
 
 A failed Slack call, including a closing `chat.startStream` or `chat.stopStream`, triggers a best-effort stop without additional chunks or blocks once the message has a `ts`, then rethrows the error, even when that stop fails too. Its parts are not resent: a call that fails in flight, such as on a dropped connection, may already have reached Slack. Slack responses with `"ok": false` throw ``StreamingMessage/Error``, containing the method and error code. The best-effort stop is a single attempt: it is not retried when Slack rate limits it.
+
+When the best-effort stop fails and delivery has not observed a Slack session stop, `logger:` reports a warning that the message may remain streaming. The warning carries the channel, the message `ts`, the error type, and Slack's error code or the HTTP status when known, but no message content, request, or response. Without `logger:`, the library uses `Logger(label: "Slack")`, which follows `LoggingSystem.bootstrap`; it does not pick up the logger passed to `Slack`'s initializer. In a SlackApp handler, pass `context.logger`:
+
+```swift
+try await context.client.streamMessage(parts, channel: channel, threadTs: threadTs, logger: context.logger)
+```
 
 Cancelling the task that calls `streamMessage` ends delivery without a final flush:
 

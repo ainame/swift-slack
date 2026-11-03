@@ -1,3 +1,4 @@
+import Logging
 import SlackBlockKit
 @testable import SlackClient
 import Testing
@@ -6,6 +7,13 @@ struct StreamingMessageSenderTests {
     typealias Part = StreamingMessage.Part
 
     let blocks: [Block] = [.divider(DividerBlock())]
+    /// The metadata of the warning that a failed cleanup stop of `FakeTransport`'s message logs.
+    let cleanupWarning: [String: String] = [
+        "slack.method": "chat.stopStream",
+        "slack.message_ts": FakeTransport.ts,
+        "error.type": "SlackClient.StreamingMessage.Error",
+        "slack.error": "failed",
+    ]
 
     @Test
     func `starts with the first parts, appends the rest, and stops with the blocks`() async throws {
@@ -142,9 +150,10 @@ struct StreamingMessageSenderTests {
     @Test(arguments: [false, true])
     func `stops the message without content and rethrows the error when an append fails`(cleanupFails: Bool) async {
         let transport = FakeTransport(failing: cleanupFails ? ["append", "stopOnce"] : ["append"])
+        let log = LogRecorder()
         let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
         let sending = Task {
-            try await makeDelivery(transport, blocks: blocks).send(parts)
+            try await makeDelivery(transport, blocks: blocks, logger: log.logger).send(parts)
         }
         continuation.yield(.markdown("first"))
         await transport.waitForCalls(1)
@@ -164,6 +173,8 @@ struct StreamingMessageSenderTests {
             .init(method: "append", chunks: [.markdown("second")]),
             .init(method: "stopOnce", chunks: []),
         ])
+        // Only a failed cleanup stop is reported, once.
+        #expect(await warnings(log) == (cleanupFails ? [cleanupWarning] : []))
     }
 
     @Test(arguments: [false, true])
@@ -172,9 +183,10 @@ struct StreamingMessageSenderTests {
     ) async {
         // An empty input reaches the closing calls before any start, so they start the message themselves.
         let transport = FakeTransport(failing: cleanupFails ? ["stop", "stopOnce"] : ["stop"])
+        let log = LogRecorder()
 
         await #expect(throws: StreamingMessage.Error(method: "chat.stopStream", code: "failed")) {
-            try await makeDelivery(transport, blocks: blocks).send(AsyncStream<Part> { $0.finish() })
+            try await makeDelivery(transport, blocks: blocks, logger: log.logger).send(AsyncStream<Part> { $0.finish() })
         }
 
         #expect(await transport.calls == [
@@ -182,6 +194,7 @@ struct StreamingMessageSenderTests {
             .init(method: "stop", chunks: [], blocks: blocks),
             .init(method: "stopOnce", chunks: []),
         ])
+        #expect(await warnings(log) == (cleanupFails ? [cleanupWarning] : []))
     }
 
     @Test
@@ -258,12 +271,19 @@ struct StreamingMessageSenderTests {
                 failing: cleanupFails ? ["append", "stopOnce"] : ["append"],
                 pausing: "append",
             )
+            let log = LogRecorder()
             let input = ManualInput()
             await input.yield(.markdown("first"))
             let sending = Task { () -> (error: (any Error)?, isCancelled: Bool, isShielded: Bool) in
                 var error: (any Error)?
                 do {
-                    _ = try await send(makeDelivery(transport, blocks: blocks, useCancellationShield: useShield), input, through: path)
+                    let delivery = makeDelivery(
+                        transport,
+                        blocks: blocks,
+                        useCancellationShield: useShield,
+                        logger: log.logger,
+                    )
+                    _ = try await send(delivery, input, through: path)
                 } catch let thrown {
                     error = thrown
                 }
@@ -293,6 +313,8 @@ struct StreamingMessageSenderTests {
                 .init(method: "append", isCancelled: false, isShielded: false),
                 .init(method: "stopOnce", isCancelled: false, isShielded: useShield && cancellationShieldAvailable()),
             ])
+            // Both ways of protecting the stop report its failure alike, and nothing when it succeeds.
+            #expect(await warnings(log) == (cleanupFails ? [cleanupWarning] : []))
         }
     }
 
@@ -489,6 +511,31 @@ struct StreamingMessageSenderTests {
 
         #expect(await transport.calls.map(\.method) == ["start", "append", "stopOnce"])
         #expect(await transport.heldCallWasCancelled == false)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: [false, true])
+    func `does not report a cleanup stop that fails after Slack ends the session`(useShield: Bool) async throws {
+        // The cleanup stop is answered with a failure only once Slack has ended the session.
+        let transport = FakeTransport(failing: ["append", "stopOnce"], holding: "stopOnce")
+        let log = LogRecorder()
+        let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
+        let sending = Task {
+            try await makeDelivery(transport, blocks: blocks, useCancellationShield: useShield, logger: log.logger)
+                .send(parts)
+        }
+        continuation.yield(.markdown("first"))
+        await transport.waitForCalls(1)
+        continuation.yield(.markdown("second"))
+        await transport.waitForCalls(3)
+        continuation.finish(throwing: StreamingMessage.SessionStopped())
+
+        // The session stop takes precedence over both the append's error and the cleanup stop's.
+        await #expect(throws: StreamingMessage.SessionStopped()) {
+            try await sending.value
+        }
+
+        #expect(await transport.calls.map(\.method) == ["start", "append", "stopOnce"])
+        #expect(await log.entries().isEmpty)
     }
 
     @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
@@ -929,8 +976,14 @@ struct StreamingMessageSenderTests {
         minimumInterval: Duration = .zero,
         sleep: (@Sendable (Duration) async throws -> Void)? = nil,
         useCancellationShield: Bool = true,
+        logger: Logger = .discarding,
     ) -> StreamingMessage.Delivery {
-        var sender = StreamingMessageSender(transport: transport, blocks: blocks, minimumInterval: minimumInterval)
+        var sender = StreamingMessageSender(
+            transport: transport,
+            blocks: blocks,
+            minimumInterval: minimumInterval,
+            logger: logger,
+        )
         if let sleep {
             sender.sleep = sleep
         }
@@ -957,6 +1010,11 @@ struct StreamingMessageSenderTests {
             return text
         }.joined()
     }
+}
+
+/// The metadata of the warnings `log` recorded.
+private func warnings(_ log: LogRecorder) async -> [[String: String]] {
+    await log.entries().filter { $0.level == .warning }.map(\.metadata)
 }
 
 private func cancellationShieldAvailable() -> Bool {

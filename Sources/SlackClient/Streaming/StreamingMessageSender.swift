@@ -1,4 +1,6 @@
 #if WebAPI_Chat
+import Logging
+import OpenAPIRuntime
 import SlackBlockKit
 
 /// The three Web API calls behind a streaming message. ``StreamingMessageSender`` decides when to make them.
@@ -46,6 +48,8 @@ struct StreamingMessageSender: Sendable {
     let transport: any StreamingMessageTransport
     let blocks: [Block]?
     let minimumInterval: Duration
+    /// Reports a failed cleanup stop, which delivery otherwise does not surface.
+    let logger: Logger
     /// Waits between calls and before retries. Tests replace it to observe the waits.
     var sleep: @Sendable (Duration) async throws -> Void = { try await Task.sleep(for: $0) }
     /// Tests disable the shield to exercise the fallback on a newer OS.
@@ -263,26 +267,64 @@ struct StreamingMessageSender: Sendable {
     /// Once the message has a `ts`, it is stopped with one call that carries no parts or blocks: a call that failed
     /// or was abandoned may already have delivered its parts. The call is protected from cancellation, because
     /// HTTP transports abandon requests made from a cancelled task. On older Apple OS versions, an awaited task
-    /// provides that protection because cancellation shields are unavailable. Its failure is ignored in favor of
-    /// the original error. Once Slack has ended the session, no call is made and ``StreamingMessage/SessionStopped``
-    /// is thrown instead.
+    /// provides that protection because cancellation shields are unavailable. Its failure is logged as a warning
+    /// rather than thrown, so the caller still rethrows the original error. Once Slack has ended the session, no
+    /// call is made and ``StreamingMessage/SessionStopped`` is thrown instead. A failure is not logged if the
+    /// session-stop signal is observed before logging.
     private func abandon(ts: String?, stopSignal: SessionStopSignal) async throws {
         try await stopSignal.check()
         guard let ts else { return }
-        if #available(macOS 27, iOS 27, macCatalyst 27, tvOS 27, watchOS 27, visionOS 27, *),
-           useCancellationShield {
-            try? await withTaskCancellationShield {
-                try await stopSignal.check()
-                try await transport.stopOnce(ts: ts, stopSignal: stopSignal)
+        let failure: (any Error)? = if #available(macOS 27, iOS 27, macCatalyst 27, tvOS 27, watchOS 27, visionOS 27, *),
+                                       useCancellationShield {
+            await withTaskCancellationShield {
+                await Self.cleanupStop(ts: ts, transport: transport, stopSignal: stopSignal)
             }
         } else {
             // A new task does not inherit cancellation; awaiting it keeps cleanup within this operation's lifetime.
-            try? await Task { [transport] in
-                try await stopSignal.check()
-                try await transport.stopOnce(ts: ts, stopSignal: stopSignal)
+            await Task { [transport] in
+                await Self.cleanupStop(ts: ts, transport: transport, stopSignal: stopSignal)
             }.value
         }
+        // A failure is expected once Slack has ended the session, so the session stop takes precedence over it.
         try await stopSignal.check()
+        if let failure {
+            logCleanupFailure(failure, ts: ts)
+        }
+    }
+
+    /// Makes the cleanup stop and returns its error rather than throwing it, so that both ways of protecting it
+    /// from cancellation handle the outcome alike.
+    private static func cleanupStop(
+        ts: String,
+        transport: any StreamingMessageTransport,
+        stopSignal: SessionStopSignal,
+    ) async -> (any Error)? {
+        do {
+            try await stopSignal.check()
+            try await transport.stopOnce(ts: ts, stopSignal: stopSignal)
+            return nil
+        } catch {
+            return error
+        }
+    }
+
+    /// Logs only identifiers and error codes. Error descriptions are left out: a `ClientError` describes the
+    /// request, including its headers and body, and the response.
+    private func logCleanupFailure(_ error: any Error, ts: String) {
+        var metadata: Logger.Metadata = [
+            "slack.method": "chat.stopStream",
+            "slack.message_ts": "\(ts)",
+            "error.type": "\(String(reflecting: type(of: error)))",
+        ]
+        if let error = error as? StreamingMessage.Error {
+            metadata["slack.error"] = "\(error.code)"
+        } else if let error = error as? ClientError, let status = error.response?.status.code {
+            metadata["http.status_code"] = "\(status)"
+        }
+        logger.warning(
+            "Cleanup chat.stopStream failed after delivery failed or was cancelled; the message may remain streaming",
+            metadata: metadata,
+        )
     }
 
     /// Throws once the task is cancelled. When the input ended with an error, that error is thrown instead of
