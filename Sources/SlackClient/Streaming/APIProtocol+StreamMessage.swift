@@ -2,11 +2,51 @@
 import SlackBlockKit
 
 extension APIProtocol {
-    /// Streams a Sendable input with concurrent reading and delivery. A delivery failure, or a session stop
-    /// through `handle`, cancels input iteration immediately, including while it waits for another element. The
-    /// input must cooperate with cancellation; `AsyncStream` and `AsyncThrowingStream` do so. The method returns
-    /// only once the input's iteration ends, so an input that ignores cancellation delays the return after a
-    /// failure, a session stop, or a cancellation of the calling task.
+    /// Creates one streaming message with its channel and options, to send later with
+    /// ``StreamingMessage/Delivery``'s `send`.
+    ///
+    /// Use it instead of
+    /// ``streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:isolation:)``
+    /// when the app must be able to tell the message that Slack has ended the session, or read its `ts` before
+    /// the message finishes. This method makes no request and starts no task, so the app can register the
+    /// delivery, and even stop it, before the message starts:
+    ///
+    /// ```swift
+    /// let delivery = client.makeStreamingMessage(channel: channel, threadTs: threadTs)
+    /// // Register delivery with your agent_session_stopped handler before awaiting.
+    /// let ts = try await delivery.send(parts)
+    /// ```
+    ///
+    /// The parameters are those of `streamMessage`.
+    public func makeStreamingMessage(
+        channel: String,
+        threadTs: String? = nil,
+        recipient: StreamingMessage.Recipient? = nil,
+        taskDisplay: StreamingMessage.TaskDisplay = .timeline,
+        blocks: [Block]? = nil,
+        sessionStatus: String? = nil,
+        minimumInterval: Duration = .seconds(1),
+    ) -> StreamingMessage.Delivery {
+        let transport = WebAPIStreamingTransport(
+            client: self,
+            channel: channel,
+            threadTs: threadTs,
+            recipient: recipient,
+            taskDisplay: taskDisplay,
+            sessionStatus: sessionStatus,
+        )
+        return StreamingMessage.Delivery(sender: StreamingMessageSender(
+            transport: transport,
+            blocks: blocks,
+            minimumInterval: minimumInterval,
+        ))
+    }
+
+    /// Streams a Sendable input with concurrent reading and delivery. A delivery failure cancels input
+    /// iteration immediately, including while it waits for another element. The input must cooperate with
+    /// cancellation; `AsyncStream` and `AsyncThrowingStream` do so. The method returns only once the input's
+    /// iteration ends, so an input that ignores cancellation delays the return after a failure or a
+    /// cancellation of the calling task.
     ///
     /// Swift picks this overload when the argument's static type is `Sendable`. That includes an `AsyncStream`
     /// mapped directly with `map`, because `AsyncMapSequence` is `Sendable` when its base and elements are; the
@@ -25,15 +65,12 @@ extension APIProtocol {
         blocks: [Block]? = nil,
         sessionStatus: String? = nil,
         minimumInterval: Duration = .seconds(1),
-        handle: StreamingMessage.Handle? = nil,
         isolation: isolated (any Actor)? = #isolation,
     ) async throws -> String where Parts.Element == StreamingMessage.Part {
-        let transport = WebAPIStreamingTransport(
-            client: self, channel: channel, threadTs: threadTs, recipient: recipient,
-            taskDisplay: taskDisplay, sessionStatus: sessionStatus,
-        )
-        return try await StreamingMessageSender(transport: transport, blocks: blocks, minimumInterval: minimumInterval)
-            .send(parts, handle: handle, isolation: isolation)
+        try await makeStreamingMessage(
+            channel: channel, threadTs: threadTs, recipient: recipient, taskDisplay: taskDisplay,
+            blocks: blocks, sessionStatus: sessionStatus, minimumInterval: minimumInterval,
+        ).send(parts, isolation: isolation)
     }
 
     /// Streams `parts` into one message, and stops the message once `parts` ends.
@@ -63,11 +100,11 @@ extension APIProtocol {
     /// - When `parts` throws ``StreamingMessage/SessionStopped`` because Slack has already ended the session,
     ///   the parts and `blocks` not yet sent are discarded and no further call is made, not even a retry or
     ///   the stop call. A call already in progress cannot be withdrawn; the method waits for it without
-    ///   cancelling it, ignores its outcome, and rethrows ``StreamingMessage/SessionStopped``.
-    /// - When the app calls ``StreamingMessage/Handle/markSessionStopped()`` on `handle`, the same happens
-    ///   without waiting for `parts`, including after `parts` has finished while the closing calls or their
-    ///   retries remain, and the method throws ``StreamingMessage/SessionStopped``. Neither way of ending the
-    ///   session makes the cleanup stop described below.
+    ///   cancelling it, ignores its outcome, and rethrows ``StreamingMessage/SessionStopped``, without the cleanup
+    ///   stop described below. To signal a session stop from outside `parts`, including
+    ///   after `parts` has finished while the closing calls or their retries remain, create the message with
+    ///   ``makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)``
+    ///   and call ``StreamingMessage/Delivery/markSessionStopped()``.
     /// - When a call fails, including one of the closing calls, the message is stopped without further content
     ///   once it has a `ts`, and the call's error is rethrown, even if that stop fails too. Slack answering
     ///   `"ok": false` throws ``StreamingMessage/Error``. Rate-limited calls (HTTP 429) are retried after their
@@ -91,9 +128,9 @@ extension APIProtocol {
     /// only to `AsyncSequence`; a `Sendable` sequence, such as a directly mapped `AsyncStream`, picks the
     /// overload that reads it in a child task. Because reading and delivery then share the calling task, a
     /// failed call is noticed only when `parts` yields its next element or ends: while `parts` is idle, the
-    /// method does not return, and it does not cancel `parts`. Cancelling the calling task, or a session stop
-    /// through `handle`, stops delivery promptly, but the method still returns only once `parts` yields or
-    /// ends; an input that ignores cancellation keeps it waiting.
+    /// method does not return, and it does not cancel `parts`. Cancelling the calling task stops delivery
+    /// promptly, but the method still returns only once `parts` yields or ends; an input that ignores
+    /// cancellation keeps it waiting.
     ///
     /// To stop a reply early while still finishing it, end `parts` rather than cancelling the calling task, for
     /// example by cancelling the task that yields to an `AsyncStream`; that task can still yield closing parts,
@@ -113,10 +150,6 @@ extension APIProtocol {
     ///   - sessionStatus: The agent session's status after the stream stops, such as `suspended`. Slack
     ///     defaults to `active`.
     ///   - minimumInterval: The shortest time between two calls. `chat.appendStream` is a Tier 4 method.
-    ///   - handle: A new ``StreamingMessage/Handle`` through which the app can end this message's delivery when
-    ///     Slack ends the session, and read its `ts` before the method returns. A handle serves one call: one
-    ///     that another call holds or has used makes this method throw ``StreamingMessage/Handle/AlreadyUsed``
-    ///     before it reads `parts` or calls Slack.
     ///   - isolation: The caller's actor isolation, inherited by default so the sequence is read in its context.
     /// - Returns: The message's `ts`.
     @discardableResult
@@ -129,19 +162,12 @@ extension APIProtocol {
         blocks: [Block]? = nil,
         sessionStatus: String? = nil,
         minimumInterval: Duration = .seconds(1),
-        handle: StreamingMessage.Handle? = nil,
         isolation: isolated (any Actor)? = #isolation,
     ) async throws -> String where Parts.Element == StreamingMessage.Part {
-        let transport = WebAPIStreamingTransport(
-            client: self,
-            channel: channel,
-            threadTs: threadTs,
-            recipient: recipient,
-            taskDisplay: taskDisplay,
-            sessionStatus: sessionStatus,
-        )
-        return try await StreamingMessageSender(transport: transport, blocks: blocks, minimumInterval: minimumInterval)
-            .send(parts, handle: handle, isolation: isolation)
+        try await makeStreamingMessage(
+            channel: channel, threadTs: threadTs, recipient: recipient, taskDisplay: taskDisplay,
+            blocks: blocks, sessionStatus: sessionStatus, minimumInterval: minimumInterval,
+        ).send(parts, isolation: isolation)
     }
 }
 #endif

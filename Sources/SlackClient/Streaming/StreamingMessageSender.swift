@@ -32,15 +32,18 @@ protocol StreamingMessageTransport: Sendable {
 /// with each call. Reading in the caller's task keeps the sequence in the caller's isolation, so it need not be
 /// `Sendable`.
 ///
-/// Every message has a ``StreamingMessage/Handle``, the caller's or a new one, which `send` reserves at its first
-/// suspension. When the sequence throws ``StreamingMessage/SessionStopped``, or the app marks the handle, the
-/// handle raises the message's ``SessionStopSignal``, which every path checks before it starts a call, and after
+/// Every message is a ``StreamingMessage/Delivery``, whose `send` calls `run` and which `run` reserves at its first
+/// suspension. When the sequence throws ``StreamingMessage/SessionStopped``, or the app marks the delivery, the
+/// delivery raises the message's ``SessionStopSignal``, which every path checks before it starts a call, and after
 /// a call before it acts on the outcome, and it wakes delivery waiting for parts.
+///
+/// The sender holds only immutable, `Sendable` values, so a delivery's `send` can use it in the caller's
+/// isolation. The transport is an existential so that a delivery does not depend on its type.
 ///
 /// Cancelling the task ends delivery like a failed call: the parts and blocks not yet sent are discarded, and the
 /// message is stopped without content once it has a `ts`.
-struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
-    let transport: Transport
+struct StreamingMessageSender: Sendable {
+    let transport: any StreamingMessageTransport
     let blocks: [Block]?
     let minimumInterval: Duration
     /// Waits between calls and before retries. Tests replace it to observe the waits.
@@ -48,16 +51,15 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
 
     /// Sendable inputs can be read by a child task. Delivery failures then cancel the reader even while its
     /// next element is suspended, rather than waiting for the producer to yield again.
-    func send<Parts: AsyncSequence & Sendable>(
+    func run<Parts: AsyncSequence & Sendable>(
         _ parts: Parts,
-        handle: StreamingMessage.Handle? = nil,
+        delivery: StreamingMessage.Delivery,
         isolation: isolated (any Actor)? = #isolation,
     ) async throws -> String where Parts.Element == StreamingMessage.Part {
         let buffer = PartBuffer()
         let stopSignal = SessionStopSignal(sleep: sleep)
-        let handle = handle ?? StreamingMessage.Handle()
-        guard try await handle.begin(stopSignal: stopSignal, buffer: buffer) else {
-            _ = await handle.end()
+        guard try await delivery.begin(stopSignal: stopSignal, buffer: buffer) else {
+            _ = await delivery.end()
             throw StreamingMessage.SessionStopped()
         }
         do {
@@ -67,7 +69,7 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
                 isolation: isolation,
             ) { group in
                 group.addTask {
-                    try await deliver(from: buffer, stopSignal: stopSignal, handle: handle)
+                    try await deliver(from: buffer, stopSignal: stopSignal, delivery: delivery)
                 }
                 group.addTask {
                     do {
@@ -76,7 +78,7 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
                         }
                         await buffer.finish(throwing: nil)
                     } catch let stopped as StreamingMessage.SessionStopped {
-                        await handle.markSessionStopped()
+                        await delivery.markSessionStopped()
                         await buffer.finish(throwing: stopped)
                     } catch {
                         await buffer.finish(throwing: error)
@@ -92,28 +94,27 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
                 }
                 preconditionFailure("delivery returns a ts or throws")
             }
-            if await handle.end() {
+            if await delivery.end() {
                 throw StreamingMessage.SessionStopped()
             }
             return ts
         } catch {
-            if await handle.end() {
+            if await delivery.end() {
                 throw StreamingMessage.SessionStopped()
             }
             throw error
         }
     }
 
-    func send<Parts: AsyncSequence>(
+    func run<Parts: AsyncSequence>(
         _ parts: Parts,
-        handle: StreamingMessage.Handle? = nil,
+        delivery: StreamingMessage.Delivery,
         isolation: isolated (any Actor)? = #isolation,
     ) async throws -> String where Parts.Element == StreamingMessage.Part {
         let buffer = PartBuffer()
         let stopSignal = SessionStopSignal(sleep: sleep)
-        let handle = handle ?? StreamingMessage.Handle()
-        guard try await handle.begin(stopSignal: stopSignal, buffer: buffer) else {
-            _ = await handle.end()
+        guard try await delivery.begin(stopSignal: stopSignal, buffer: buffer) else {
+            _ = await delivery.end()
             throw StreamingMessage.SessionStopped()
         }
         do {
@@ -123,19 +124,19 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
                 isolation: isolation,
             ) { group in
                 group.addTask {
-                    try await deliver(from: buffer, stopSignal: stopSignal, handle: handle)
+                    try await deliver(from: buffer, stopSignal: stopSignal, delivery: delivery)
                 }
                 do {
                     for try await part in parts {
                         // The buffer closes when delivery ends early, after a failed call, a cancellation, or a
-                        // session stop through the handle. An idle input is not interrupted.
+                        // session stop through the delivery. An idle input is not interrupted.
                         guard await buffer.append(part) else { break }
                     }
                     await buffer.finish(throwing: nil)
                 } catch let stopped as StreamingMessage.SessionStopped {
                     // The signal is raised before the input finishes, so delivery sees it with the final batch.
                     // It takes effect even when delivery has already closed the buffer after a failed call.
-                    await handle.markSessionStopped()
+                    await delivery.markSessionStopped()
                     await buffer.finish(throwing: stopped)
                     // A call in flight cannot be withdrawn: wait for it without cancelling it, and ignore its
                     // outcome.
@@ -149,12 +150,12 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
                 }
                 return ts
             }
-            if await handle.end() {
+            if await delivery.end() {
                 throw StreamingMessage.SessionStopped()
             }
             return ts
         } catch {
-            if await handle.end() {
+            if await delivery.end() {
                 throw StreamingMessage.SessionStopped()
             }
             throw error
@@ -164,20 +165,20 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
     private func deliver(
         from buffer: PartBuffer,
         stopSignal: SessionStopSignal,
-        handle: StreamingMessage.Handle,
+        delivery: StreamingMessage.Delivery,
     ) async throws -> String {
         var ts: String?
         let ending: PartBuffer.Batch
         let messageTs: String
         do {
-            ending = try await stream(from: buffer, ts: &ts, stopSignal: stopSignal, handle: handle)
+            ending = try await stream(from: buffer, ts: &ts, stopSignal: stopSignal, delivery: delivery)
             // Once Slack has ended the session, the final batch and the closing blocks are discarded.
             try await stopSignal.check()
             if let failure = ending.failure, ts == nil, ending.parts.isEmpty {
                 // The input failed before it produced anything, so there is no message to post.
                 throw failure
             }
-            messageTs = try await close(ts: &ts, ending: ending, stopSignal: stopSignal, handle: handle)
+            messageTs = try await close(ts: &ts, ending: ending, stopSignal: stopSignal, delivery: delivery)
         } catch {
             await buffer.close()
             try await abandon(ts: ts, stopSignal: stopSignal)
@@ -196,11 +197,11 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
         from buffer: PartBuffer,
         ts: inout String?,
         stopSignal: SessionStopSignal,
-        handle: StreamingMessage.Handle,
+        delivery: StreamingMessage.Delivery,
     ) async throws -> PartBuffer.Batch {
         while true {
             // A cancelled task stops waiting here, whether the input is idle or has ended because of the
-            // cancellation. A session stop through the handle also wakes this wait, with an empty final batch.
+            // cancellation. A session stop through the delivery also wakes this wait, with an empty final batch.
             let batch = await buffer.next()
             try Self.checkCancellation(rethrowing: batch.failure)
             if batch.isFinal {
@@ -208,14 +209,14 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
             }
 
             try await stopSignal.check()
-            // `ts` is stored and shown on the handle as soon as a start returns, so a cancellation or session
+            // `ts` is stored and shown on the delivery as soon as a start returns, so a cancellation or session
             // stop noticed later still knows the message.
             if let ts {
                 try await transport.append(ts: ts, chunks: batch.parts, stopSignal: stopSignal)
             } else {
                 let started = try await transport.start(chunks: batch.parts, stopSignal: stopSignal)
                 ts = started
-                await handle.started(ts: started)
+                await delivery.started(ts: started)
             }
             // A cancelled wait returns early, and the next batch throws. The wait throws once Slack has ended the
             // session, including during the call that just finished.
@@ -231,7 +232,7 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
         ts: inout String?,
         ending: PartBuffer.Batch,
         stopSignal: SessionStopSignal,
-        handle: StreamingMessage.Handle,
+        delivery: StreamingMessage.Delivery,
     ) async throws -> String {
         var chunks = ending.parts
         let messageTs: String
@@ -245,7 +246,7 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
                 stopSignal: stopSignal,
             )
             ts = messageTs
-            await handle.started(ts: messageTs)
+            await delivery.started(ts: messageTs)
             chunks = []
             try Self.checkCancellation(rethrowing: ending.failure)
         }
@@ -283,8 +284,8 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
 
 /// Records that Slack has ended a streaming message's session: the one terminal state every request path checks.
 ///
-/// The message's ``StreamingMessage/Handle`` raises it when the input throws ``StreamingMessage/SessionStopped``
-/// or the app marks the handle. Raising it cannot withdraw a call already in progress; it makes ``check()`` throw
+/// The message's ``StreamingMessage/Delivery`` raises it when the input throws ``StreamingMessage/SessionStopped``
+/// or the app marks the delivery. Raising it cannot withdraw a call already in progress; it makes ``check()`` throw
 /// before the next one, and it ends ``sleep(for:)`` waits.
 actor SessionStopSignal {
     private let timer: @Sendable (Duration) async throws -> Void
