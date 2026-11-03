@@ -262,7 +262,7 @@ struct StreamingMessageSenderTests {
         let sending = Task { () -> (error: (any Error)?, isCancelled: Bool, isShielded: Bool) in
             var error: (any Error)?
             do {
-                _ = try await send(sender(transport, blocks: blocks), input, through: path)
+                _ = try await send(makeDelivery(transport, blocks: blocks), input, through: path)
             } catch let thrown {
                 error = thrown
             }
