@@ -12,7 +12,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 ### Added
 
 * **BREAKING**: Added `AuthProviderBlock` and Block Kit DSL support for authentication provider connections, including account details, menus and fallback blocks. Exhaustive switches on `Block` must handle the new `.authProvider` case - #265
-* Added `makeStreamingMessage(channel:...)`, which creates a `StreamingMessage.Delivery` for one message without making a request. Its `send(parts)` streams the message like `streamMessage`, its `markSessionStopped()` ends delivery when Slack ends the session, even after the input has finished or while it is idle, and its `messageTs` exposes the message timestamp as soon as `chat.startStream` succeeds, even when delivery later fails. A delivery sends once; another `send` throws `StreamingMessage.Delivery.AlreadyUsed` - #274
+* Added `makeStreamingMessage(channel:...)`, which creates a `StreamingMessage.Delivery` for one message without making a request. Its `send(parts)` streams the message like `streamMessage`, its `notifySessionStopped()` ends delivery when Slack ends the session, even after the input has finished or while it is idle, and its `messageTs` exposes the message timestamp as soon as `chat.startStream` succeeds, even when delivery later fails. A delivery sends once; another `send` throws `StreamingMessage.Delivery.AlreadyUsed` - #274
 
 ### Changed
 

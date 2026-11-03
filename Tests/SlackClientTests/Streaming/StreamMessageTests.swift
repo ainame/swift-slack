@@ -173,7 +173,7 @@ struct StreamMessageTests {
         #expect(await delivery.state == .ready)
         #expect(await http.requests.isEmpty)
 
-        await delivery.markSessionStopped()
+        await delivery.notifySessionStopped()
         #expect(await http.requests.isEmpty)
         let input = ManualInput()
         await input.yield(.markdown("hi"))
@@ -223,7 +223,7 @@ struct StreamMessageTests {
         // The rate-limited stop means the input has finished and the closing calls wait to retry.
         await http.waitForRequests(2)
 
-        await delivery.markSessionStopped()
+        await delivery.notifySessionStopped()
 
         await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
         #expect(await http.requests.map(\.operationID) == ["chatStartStream", "chatStopStream"])

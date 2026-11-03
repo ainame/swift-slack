@@ -212,7 +212,7 @@ actor AgentResponder {
         // that Slack has ended the stream: it drops what it has not sent and makes no more calls, even when the
         // stream had already finished and only the closing calls or their retries remained.
         for turn in stopped.values {
-            await turn.delivery.markSessionStopped()
+            await turn.delivery.notifySessionStopped()
         }
         // Interrupt Codex directly; stream iteration may be blocked while publishing a view or waiting for a
         // Slack HTTP request.

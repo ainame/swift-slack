@@ -104,7 +104,7 @@ extension APIProtocol {
     ///   stop described below. To signal a session stop from outside `parts`, including
     ///   after `parts` has finished while the closing calls or their retries remain, create the message with
     ///   ``makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)``
-    ///   and call ``StreamingMessage/Delivery/markSessionStopped()``.
+    ///   and call ``StreamingMessage/Delivery/notifySessionStopped()``.
     /// - When a call fails, including one of the closing calls, the message is stopped without further content
     ///   once it has a `ts`, and the call's error is rethrown, even if that stop fails too. Slack answering
     ///   `"ok": false` throws ``StreamingMessage/Error``. Rate-limited calls (HTTP 429) are retried after their

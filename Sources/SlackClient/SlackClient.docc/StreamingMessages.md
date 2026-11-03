@@ -95,7 +95,7 @@ This example assumes the values captured by the producer, including `llm`, are `
 
 ### End a reply that Slack has already stopped
 
-When your app learns that Slack has already ended the session's stream, such as from an `agent_session_stopped` event, sending more parts or a closing `chat.stopStream` serves no purpose. Create the message with ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)``, which takes the options of `streamMessage` and makes no request, register the ``StreamingMessage/Delivery`` it returns where that event's handler finds it before you await anything, and then send the parts with its `send`. The handler calls ``StreamingMessage/Delivery/markSessionStopped()``:
+When your app learns that Slack has already ended the session's stream, such as from an `agent_session_stopped` event, sending more parts or a closing `chat.stopStream` serves no purpose. Create the message with ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)``, which takes the options of `streamMessage` and makes no request, register the ``StreamingMessage/Delivery`` it returns where that event's handler finds it before you await anything, and then send the parts with its `send`. The handler calls ``StreamingMessage/Delivery/notifySessionStopped()``:
 
 ```swift
 let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
@@ -106,7 +106,7 @@ let delivery = client.makeStreamingMessage(
     blocks: feedbackBlocks,
 )
 // Register delivery with your agent_session_stopped handler before awaiting.
-// The handler calls `await delivery.markSessionStopped()`.
+// The handler calls `await delivery.notifySessionStopped()`.
 
 do {
     try await withThrowingTaskGroup(of: Void.self) { group in
