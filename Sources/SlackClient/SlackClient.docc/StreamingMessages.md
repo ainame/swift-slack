@@ -4,7 +4,7 @@ Send text, task updates, and Block Kit parts into a message as an asynchronous p
 
 ## Overview
 
-Use ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:handle:isolation:)`` on your Slack client. It reads any `AsyncSequence` whose element is ``StreamingMessage/Part``; the sequence need not be `Sendable`. Enable the `WebAPI_Chat` package trait to make this API available (see <doc:Traits>).
+Use ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:isolation:)`` on your Slack client, or ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)`` when your app must stop the message from outside, as described in <doc:StreamingMessages#End-a-reply-that-Slack-has-already-stopped>. Both read any `AsyncSequence` whose element is ``StreamingMessage/Part``; the sequence need not be `Sendable`. Enable the `WebAPI_Chat` package trait to make this API available (see <doc:Traits>).
 
 ### Stream an LLM's tokens
 
@@ -95,13 +95,18 @@ This example assumes the values captured by the producer, including `llm`, are `
 
 ### End a reply that Slack has already stopped
 
-When your app learns that Slack has already ended the session's stream, such as from an `agent_session_stopped` event, sending more parts or a closing `chat.stopStream` serves no purpose. Create a ``StreamingMessage/Handle`` for the message, register it where that event's handler finds it before you await anything, and pass it to `streamMessage`. The handler calls ``StreamingMessage/Handle/markSessionStopped()``:
+When your app learns that Slack has already ended the session's stream, such as from an `agent_session_stopped` event, sending more parts or a closing `chat.stopStream` serves no purpose. Create the message with ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)``, which takes the options of `streamMessage` and makes no request, register the ``StreamingMessage/Delivery`` it returns where that event's handler finds it before you await anything, and then send the parts with its `send`. The handler calls ``StreamingMessage/Delivery/markSessionStopped()``:
 
 ```swift
 let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
-let message = StreamingMessage.Handle()
-// Register message with your agent_session_stopped handler before awaiting.
-// The handler calls `await message.markSessionStopped()`.
+let delivery = client.makeStreamingMessage(
+    channel: channel,
+    threadTs: threadTs,
+    recipient: .init(userId: userId, teamId: teamId),
+    blocks: feedbackBlocks,
+)
+// Register delivery with your agent_session_stopped handler before awaiting.
+// The handler calls `await delivery.markSessionStopped()`.
 
 do {
     try await withThrowingTaskGroup(of: Void.self) { group in
@@ -114,29 +119,22 @@ do {
         // Delivery ending also cancels production; the group waits for it before returning.
         defer { group.cancelAll() }
 
-        try await client.streamMessage(
-            parts,
-            channel: channel,
-            threadTs: threadTs,
-            recipient: .init(userId: userId, teamId: teamId),
-            blocks: feedbackBlocks,
-            handle: message,
-        )
+        try await delivery.send(parts)
     }
 } catch is StreamingMessage.SessionStopped {
-    // Slack ended the reply. No ts is returned; message.messageTs has it if the message was started.
+    // Slack ended the reply. No ts is returned; delivery.messageTs has it if the message was started.
 }
 ```
 
-Once delivery observes the marked handle, `streamMessage` discards the parts and closing blocks it has not sent, starts no further call or retry, and stops waiting for `minimumInterval` or a `Retry-After` delay. A request that has already passed the stop check may still begin and cannot be withdrawn: `streamMessage` waits for it without cancelling it, ignores its result or error, and then throws ``StreamingMessage/SessionStopped``. This holds whatever the input is doing, including after it has finished while the closing calls or their `Retry-After` waits remain.
+`send` behaves like `streamMessage`, which is a shorthand for creating a delivery and sending it, and has the same two overloads; the sections below apply to both. Once the message's delivery observes the stop, `send` discards the parts and closing blocks it has not sent, starts no further call or retry, and stops waiting for `minimumInterval` or a `Retry-After` delay. A request that has already passed the stop check may still begin and cannot be withdrawn: `send` waits for it without cancelling it, ignores its result or error, and then throws ``StreamingMessage/SessionStopped``. This holds whatever the input is doing, including after it has finished while the closing calls or their `Retry-After` waits remain.
 
-`streamMessage` throws only once it is done reading the input. It reads a `Sendable` input, such as this `AsyncStream`, in a child task that it cancels, so an input that honors cancellation ends even while it waits for an element; throwing then cancels production in the example's task group. An input read in the caller's isolation, as described in <doc:StreamingMessages#Delivery-failures-while-input-is-idle>, cannot be interrupted: `streamMessage` throws when that input yields its next element or ends, so end it, and stop its producer, from the same handler.
+`send` throws only once it is done reading the input. It reads a `Sendable` input, such as this `AsyncStream`, in a child task that it cancels, so an input that honors cancellation ends even while it waits for an element; throwing then cancels production in the example's task group. An input read in the caller's isolation, as described in <doc:StreamingMessages#Delivery-failures-while-input-is-idle>, cannot be interrupted: `send` throws when that input yields its next element or ends, so end it, and stop its producer, from the same handler.
 
-A handle serves one message. `streamMessage` reserves it before reading the input or calling Slack and holds it until it returns or throws, so its ``StreamingMessage/Handle/state`` goes from `ready` to `streaming` to `ended`. Passing the handle to any other call, at the same time or later, makes that call throw ``StreamingMessage/Handle/AlreadyUsed`` without reading its input or calling Slack, and leaves the message alone. A stop marked before `streamMessage` receives the handle is kept: that call posts nothing and throws ``StreamingMessage/SessionStopped``. A stop marked after the call has ended has no effect.
+A delivery sends one message. Its first `send` reserves it before reading the input or calling Slack and holds it until it returns or throws, so its ``StreamingMessage/Delivery/state`` goes from `ready` to `streaming` to `ended`. Any other `send` on it, at the same time or later, throws ``StreamingMessage/Delivery/AlreadyUsed`` without reading its input or calling Slack, and leaves the message alone. A stop marked before `send` is kept: `send` then posts nothing and throws ``StreamingMessage/SessionStopped``. A stop marked after `send` has ended has no effect.
 
-``StreamingMessage/Handle/messageTs`` holds the message's timestamp as soon as `chat.startStream` succeeds, including a start made with the closing calls. It stays set when a later call fails or Slack ends the session, when `streamMessage` throws instead of returning the timestamp.
+``StreamingMessage/Delivery/messageTs`` holds the message's timestamp as soon as `chat.startStream` succeeds, including a start made with the closing calls. It stays set when a later call fails or Slack ends the session, when `send` throws instead of returning the timestamp.
 
-Without a handle, end the input by throwing ``StreamingMessage/SessionStopped`` from it, for example with `continuation.finish(throwing: StreamingMessage.SessionStopped())` on an `AsyncThrowingStream`, and stop your producer yourself. That has the same effect, but only when `streamMessage` reads it from the sequence, after any parts yielded before it; once the input has finished, it can no longer end the closing calls or their retries.
+With `streamMessage`, which has no delivery to mark, end the input by throwing ``StreamingMessage/SessionStopped`` from it, for example with `continuation.finish(throwing: StreamingMessage.SessionStopped())` on an `AsyncThrowingStream`, and stop your producer yourself. That has the same effect, but only when `streamMessage` reads it from the sequence, after any parts yielded before it; once the input has finished, it can no longer end the closing calls or their retries.
 
 Ending the input with any other error is not this signal: it still sends the parts collected so far and stops the message. Cancelling the task that calls `streamMessage` is not this signal either: it discards unsent parts but still attempts a stop, as described below. Once `streamMessage` reads the signal, even while that attempt is in progress, it throws ``StreamingMessage/SessionStopped`` rather than the cancellation.
 
@@ -170,8 +168,8 @@ The library starts with `chat.startStream`, appends with `chat.appendStream`, an
 
 ### Delivery failures while input is idle
 
-`streamMessage` has two overloads, and Swift picks one from the argument's static type. A `Sendable` input, including `AsyncStream`, `AsyncThrowingStream`, and an `AsyncStream` mapped directly with `map`, is read in a child task concurrently with delivery. A failed Slack call, or a session stop through a ``StreamingMessage/Handle``, cancels iteration immediately, so apps can stop an idle producer or pending question without waiting for another token. The input must cooperate with cancellation: `streamMessage` returns only once iteration ends.
+`streamMessage` and a delivery's `send` each have two overloads, and Swift picks one from the argument's static type. A `Sendable` input, including `AsyncStream`, `AsyncThrowingStream`, and an `AsyncStream` mapped directly with `map`, is read in a child task concurrently with delivery. A failed Slack call, or a session stop through a ``StreamingMessage/Delivery``, cancels iteration immediately, so apps can stop an idle producer or pending question without waiting for another token. The input must cooperate with cancellation: `streamMessage` returns only once iteration ends.
 
-Any other input, including one in generic code whose type is constrained only to `AsyncSequence`, is read in the caller's actor isolation, even when its concrete type is `Sendable`. Reading and delivery then share the calling task, so a failed Slack call is noticed only when the input yields its next element or ends. A session stop through a handle still ends delivery at once, but `streamMessage` throws only then too: while the input is idle, `streamMessage` neither returns nor cancels it. End such an input yourself, for example from the same code that stops its producer, or pass a `Sendable` input when delivery failures must end an idle input.
+Any other input, including one in generic code whose type is constrained only to `AsyncSequence`, is read in the caller's actor isolation, even when its concrete type is `Sendable`. Reading and delivery then share the calling task, so a failed Slack call is noticed only when the input yields its next element or ends. A session stop through a delivery still ends delivery at once, but `send` throws only then too: while the input is idle, `streamMessage` neither returns nor cancels it. End such an input yourself, for example from the same code that stops its producer, or pass a `Sendable` input when delivery failures must end an idle input.
 
 Cancelling the task that calls `streamMessage` reaches the input on both paths, because the input is read in that task or its child. An input such as `AsyncStream` then either ends or throws, and both are handled as the cancellation. Delivery notices the cancellation and attempts its stop even while the input is idle, but an input that ignores cancellation keeps `streamMessage` from returning until it yields or ends.

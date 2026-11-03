@@ -12,7 +12,7 @@ It follows the agent response loop from [Developing an agent](https://docs.slack
 - **Sessions**: each DM or channel thread is an agent session, and so is each code channel. It calls `agents.sessions.setStatus` with `processing` and a title taken from the first message, without `thread_ts` for a code channel, and `chat.stopStream` returns the session to `active`. A session answers one message at a time; a message that arrives meanwhile gets an ephemeral busy notice, which in a code channel can come from someone else's turn.
 - **One turn per message**: a message that mentions the bot arrives both as `message` and as `app_mention`, and Slack retries events it thinks were lost. The app remembers recent event IDs and message timestamps, so each message starts at most one turn, and it ignores its own and other bots' messages. Event handlers return at once and route the message in a task, because in HTTP mode Slack retries an event whose request takes longer than three seconds.
 - **Streaming**: commands, web searches, file edits, and tool calls appear as task cards (`task_update` chunks in `timeline` mode). The answer streams as `markdown_text` chunks through `chat.startStream`, `chat.appendStream`, and `chat.stopStream`.
-- **Stop button**: subscribing to `agent_session_stopped` makes Slack show a stop button while the session is processing. Slack ends the session and its streaming message itself, so the agent marks the reply's `StreamingMessage.Handle`: `streamMessage` drops what it has not sent and stops subsequent calls once it observes the signal, even when Codex has already finished and only the closing call or its retry remains. The agent then interrupts the Codex turn and ends a question waiting for a click, and sends no stopped notice, question update, or rename. After producer cleanup, the app resets the session to `active`; archiving skips that reset so the channel stays closed. An event without `thread_ts` stops every turn in its channel, including thread sessions; one with `thread_ts` stops that thread's ordinary session. A known Code channel always stops its shared session, regardless of the supplied thread timestamp. Messages and card questions still being routed there, such as one waiting for its channel lookup, are discarded too; messages sent after the stop start turns as usual.
+- **Stop button**: subscribing to `agent_session_stopped` makes Slack show a stop button while the session is processing. Slack ends the session and its streaming message itself, so the agent marks the reply's `StreamingMessage.Delivery`, which it registered with the turn before its first await: the delivery drops what it has not sent and stops subsequent calls once it observes the signal, even when Codex has already finished and only the closing call or its retry remains. The agent then interrupts the Codex turn and ends a question waiting for a click, and sends no stopped notice, question update, or rename. After producer cleanup, the app resets the session to `active`; archiving skips that reset so the channel stays closed. An event without `thread_ts` stops every turn in its channel, including thread sessions; one with `thread_ts` stops that thread's ordinary session. A known Code channel always stops its shared session, regardless of the supplied thread timestamp. Messages and card questions still being routed there, such as one waiting for its channel lookup, are discarded too; messages sent after the stop start turns as usual.
 - **Renaming**: after `agent_session_title_changed`, it stops proposing titles for that session, which is the code channel's when the event has no `thread_ts`.
 - **Tools**: Codex can rename the session, read the conversation, and ask the person to choose, through tools that act in Slack. See below.
 - **Cards**: Codex can call a `show_cards` tool, and the answer ends with cards or a carousel with Open and "Ask about this" buttons. See below.
@@ -49,14 +49,19 @@ Tool calls appear as task cards, and failures go back to Codex as messages it ca
 
 ## Streaming with AsyncSequence
 
-The library's `client.streamMessage` takes any `AsyncSequence` of `StreamingMessage.Part`. The demo uses an `AsyncThrowingStream`, a `StreamingMessage.Handle` for the reply, and a demo-local `TurnProducer` stop control. Production runs in a structured child scope, so a stop can cancel it independently of Slack delivery:
+The library streams any `AsyncSequence` of `StreamingMessage.Part`. The demo creates each reply with `client.makeStreamingMessage`, which makes no request and returns a `StreamingMessage.Delivery`, and sends an `AsyncThrowingStream` with it. A demo-local `TurnProducer` stop control runs production in a structured child scope, so a stop can cancel it independently of Slack delivery:
 
 ```swift
 let (parts, continuation) = AsyncThrowingStream.makeStream(of: StreamingMessage.Part.self)
 let producer = TurnProducer()
-let message = StreamingMessage.Handle()
+let delivery = client.makeStreamingMessage(
+    channel: channel,
+    threadTs: replyThreadTs, // nil for a top-level reply in a code channel
+    recipient: .init(userId: userId, teamId: teamId),
+    blocks: feedbackBlocks,
+)
 // Register both before awaiting. When Slack stops the session, the stop handler calls
-// producer.stopSession() and then `await message.markSessionStopped()`.
+// producer.stopSession() and then `await delivery.markSessionStopped()`.
 await withTaskGroup(of: Void.self) { group in
     group.addTask {
         await producer.run {
@@ -76,14 +81,7 @@ await withTaskGroup(of: Void.self) { group in
     defer { group.cancelAll() }
 
     do {
-        try await client.streamMessage(
-            parts,
-            channel: channel,
-            threadTs: replyThreadTs, // nil for a top-level reply in a code channel
-            recipient: .init(userId: userId, teamId: teamId),
-            blocks: feedbackBlocks,
-            handle: message,
-        )
+        try await delivery.send(parts)
     } catch is StreamingMessage.SessionStopped {
         // Slack ended the stream: send no more content or tool updates.
     } catch {
@@ -94,10 +92,10 @@ await withTaskGroup(of: Void.self) { group in
 ```
 
 - `TurnProducer.run` races production against a stop signal and cancels the remaining child. The enclosing group waits for producer cleanup before the demo clears the busy session, including when delivery fails or Slack stops the session.
-- `TurnProducer` records why production stopped. `cancel()` is the app's own graceful stop: the message is still streaming, so the producer can yield a stopped notice and `streamMessage` finishes the message. `stopSession()` records that Slack ended the session, which the tools check before every Slack call.
+- `TurnProducer` records why production stopped. `cancel()` is the app's own graceful stop: the message is still streaming, so the producer can yield a stopped notice and the delivery finishes the message. `stopSession()` records that Slack ended the session, which the tools check before every Slack call.
 - Parts include `.markdown`, `.task`, `.plan(title:)`, and `.blocks`. Blocks are streamed in order with other parts; the `blocks:` argument adds blocks at the bottom of the finished message.
-- `streamMessage` collects parts while requests are in flight, merges adjacent markdown up to 12,000 characters and blocks up to 50, and spaces calls by `minimumInterval` (1 second by default).
-- Finishing the input sends remaining parts and closing blocks with `chat.stopStream`. Marking the reply's `StreamingMessage.Handle` with `markSessionStopped()`, or ending the input with `StreamingMessage.SessionStopped`, discards them and stops subsequent calls once delivery observes the signal. A request that already passed its stop check may still begin. Only the handle also works once the input has finished, while the closing calls or their `Retry-After` waits remain; it also ends delivery while Codex is idle. Neither makes a cleanup stop. Cancelling the task calling `streamMessage` discards unsent content and makes one best-effort empty stop if the timestamp is known.
+- The delivery collects parts while requests are in flight, merges adjacent markdown up to 12,000 characters and blocks up to 50, and spaces calls by `minimumInterval` (1 second by default).
+- Finishing the input sends remaining parts and closing blocks with `chat.stopStream`. Marking the reply's delivery with `markSessionStopped()`, or ending the input with `StreamingMessage.SessionStopped`, discards them and stops subsequent calls once delivery observes the signal. A request that already passed its stop check may still begin. Only the delivery also works once the input has finished, while the closing calls or their `Retry-After` waits remain; it also ends delivery while Codex is idle. Neither makes a cleanup stop. Cancelling the task calling `send` discards unsent content and makes one best-effort empty stop if the timestamp is known.
 - If the input throws, buffered parts and closing blocks are sent before the error is rethrown. If a Slack call fails, the message is stopped without additional chunks or blocks before rethrowing. HTTP 429 responses are retried after `Retry-After`, up to three attempts.
 - The library's streaming tests use fake transports and HTTP responses. The API requires the `WebAPI_Chat` trait, enabled by this demo.
 

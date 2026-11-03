@@ -1,7 +1,8 @@
 #if WebAPI_Chat
 import SlackBlockKit
 
-/// Types for ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:handle:isolation:)``,
+/// Types for ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:isolation:)``
+/// and ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)``,
 /// which streams a message with `chat.startStream`, `chat.appendStream`, and `chat.stopStream`.
 public enum StreamingMessage {
     /// One piece of a streaming message, sent as one of the `chunks` the streaming methods take.
@@ -109,7 +110,7 @@ public enum StreamingMessage {
     /// The signal that Slack has already ended a streaming message's session.
     ///
     /// Throw it from the parts sequence when your app learns that Slack ended the session, for example with
-    /// `AsyncThrowingStream.Continuation.finish(throwing:)`, or call ``Handle/markSessionStopped()``, which also
+    /// `AsyncThrowingStream.Continuation.finish(throwing:)`, or call ``Delivery/markSessionStopped()``, which also
     /// works once the sequence has finished. Once streaming reads it, the parts and blocks not
     /// yet sent are discarded, no further call is started, not even a closing `chat.stopStream` or a retry,
     /// and waits between calls end. A call already in progress cannot be withdrawn, so streaming waits for it
