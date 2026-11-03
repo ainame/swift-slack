@@ -207,6 +207,87 @@ struct StreamMessageTests {
         try await expectRetryAfterWaitedOut(waits)
     }
 
+    @Test(.timeLimit(.minutes(1)), arguments: ["chatStartStream", "chatAppendStream"], InputPath.allCases)
+    func `finishes the request in flight and stops the message when the sending task is cancelled`(
+        method: String,
+        path: InputPath,
+    ) async throws {
+        let http = SlackHTTP(pausing: method)
+        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await streamMessage(client, input, through: path)
+        }
+        await http.waitForRequests(1)
+        var reads = 3
+        if method == "chatAppendStream" {
+            await input.yield(.markdown(" second"))
+            await http.waitForRequests(2)
+            reads += 1
+        }
+        await input.yield(.markdown(" last"))
+        // This read means the sender has buffered the last part.
+        await input.waitForReads(reads)
+        sending.cancel()
+        await http.release()
+        await input.finish()
+
+        #expect(try await sending.value == SlackHTTP.ts)
+        #expect(await http.pausedRequestWasCancelled == false)
+        let requests = await http.requests
+        #expect(requests.map(\.operationID) == (method == "chatStartStream"
+                ? ["chatStartStream", "chatStopStream"] : ["chatStartStream", "chatAppendStream", "chatStopStream"]))
+        #expect(try requests.last?.chunks() == [["type": "markdown_text", "text": " last"]])
+        #expect(requests.last?.fields["blocks"]?.contains("divider") == true)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `waits out Retry-After from a request rate limited after the sending task is cancelled`() async throws {
+        let http = SlackHTTP(rateLimitedOnce: "chatStartStream", retryAfter: "3600", pausing: "chatStartStream")
+        let waits = Waits()
+        let sender = await rateLimitedSender(http, waits: waits)
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await sender.send(input)
+        }
+        await http.waitForRequests(1)
+        await input.yield(.markdown(" second"))
+        await input.waitForReads(3)
+        sending.cancel()
+        await http.release()
+        await input.finish()
+
+        #expect(try await sending.value == SlackHTTP.ts)
+        #expect(await http.pausedRequestWasCancelled == false)
+        let requests = await http.requests
+        #expect(requests.map(\.operationID) == ["chatStartStream", "chatStartStream", "chatStopStream"])
+        #expect(try requests[1].chunks() == [["type": "markdown_text", "text": "first second"]])
+        try await expectRetryAfterWaitedOut(waits)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `does not resend a request that fails in flight and stops the message without content`() async {
+        let http = SlackHTTP(throwing: "chatAppendStream")
+        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+        let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
+        let sending = Task {
+            try await client.streamMessage(parts, channel: "C1", blocks: [.divider(DividerBlock())], minimumInterval: .zero)
+        }
+        continuation.yield(.markdown("first"))
+        await http.waitForRequests(1)
+        continuation.yield(.markdown(" second"))
+
+        await #expect(throws: (any Error).self) { try await sending.value }
+        continuation.finish()
+
+        let requests = await http.requests
+        #expect(requests.map(\.operationID) == ["chatStartStream", "chatAppendStream", "chatStopStream"])
+        #expect(requests[2].fields["chunks"] == nil)
+        #expect(requests[2].fields["blocks"] == nil)
+    }
+
     @Test
     func `throws StreamingMessage.Error when Slack answers ok false`() async throws {
         let http = SlackHTTP(failing: "chatStartStream", code: "not_in_channel")
@@ -230,6 +311,21 @@ struct StreamMessageTests {
             #expect(value.count == 256)
             #expect(value.hasSuffix("…"))
         }
+    }
+}
+
+/// Streams `input` into C1 with a closing divider, through the `streamMessage` overload that `path` names.
+private func streamMessage(
+    _ client: some APIProtocol,
+    _ input: ManualInput,
+    through path: InputPath,
+) async throws -> String {
+    let blocks: [Block] = [.divider(DividerBlock())]
+    switch path {
+    case .sendable:
+        return try await client.streamMessage(input, channel: "C1", blocks: blocks, minimumInterval: .zero)
+    case .callerIsolated:
+        return try await client.streamMessage(NotSendable(input), channel: "C1", blocks: blocks, minimumInterval: .zero)
     }
 }
 
@@ -308,25 +404,47 @@ private actor SlackHTTP: ClientTransport {
     static let ts = "1700000000.000100"
 
     private(set) var requests: [Request] = []
+    /// Whether the paused request's task was cancelled by the time the test released it.
+    private(set) var pausedRequestWasCancelled = false
     private var rateLimitedOnce: String?
     private let retryAfter: String
     private let failing: (operationID: String, code: String)?
+    private let throwing: String?
+    private var pausing: String?
+    private var pausedRequest: CheckedContinuation<Void, Never>?
+    private var isReleased = false
     private var waiters: [(count: Int, continuation: CheckedContinuation<Void, Never>)] = []
 
+    /// Creates a transport that rate limits the first `rateLimitedOnce` request, answers `failing` requests with
+    /// `"ok": false`, and throws for `throwing` requests after recording them, like a connection lost in flight.
+    ///
+    /// The first `pausing` request is answered only once the test calls ``release()``. If its task was cancelled
+    /// by then, it throws `CancellationError` instead, like an HTTP client that abandons the request.
     init(
         rateLimitedOnce: String? = nil,
         retryAfter: String = "0",
         failing operationID: String? = nil,
         code: String = "",
+        throwing throwingOperationID: String? = nil,
+        pausing pausedOperationID: String? = nil,
     ) {
         self.rateLimitedOnce = rateLimitedOnce
         self.retryAfter = retryAfter
         failing = operationID.map { ($0, code) }
+        throwing = throwingOperationID
+        pausing = pausedOperationID
     }
 
     func waitForRequests(_ count: Int) async {
         guard requests.count < count else { return }
         await withCheckedContinuation { waiters.append((count, $0)) }
+    }
+
+    /// Answers the paused request, or the next one if it has not arrived yet.
+    func release() {
+        isReleased = true
+        pausedRequest?.resume()
+        pausedRequest = nil
     }
 
     func send(
@@ -345,6 +463,19 @@ private actor SlackHTTP: ClientTransport {
         }
         waiters.removeAll { $0.count <= requests.count }
 
+        if pausing == operationID {
+            pausing = nil
+            if !isReleased {
+                await withCheckedContinuation { pausedRequest = $0 }
+            }
+            if Task.isCancelled {
+                pausedRequestWasCancelled = true
+                throw CancellationError()
+            }
+        }
+        if throwing == operationID {
+            throw URLError(.networkConnectionLost)
+        }
         if rateLimitedOnce == operationID {
             rateLimitedOnce = nil
             var response = HTTPResponse(status: .tooManyRequests)
