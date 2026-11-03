@@ -48,6 +48,8 @@ struct StreamingMessageSender: Sendable {
     let minimumInterval: Duration
     /// Waits between calls and before retries. Tests replace it to observe the waits.
     var sleep: @Sendable (Duration) async throws -> Void = { try await Task.sleep(for: $0) }
+    /// Tests disable the shield to exercise the fallback on a newer OS.
+    var useCancellationShield = true
 
     /// Sendable inputs can be read by a child task. Delivery failures then cancel the reader even while its
     /// next element is suspended, rather than waiting for the producer to yield again.
@@ -259,16 +261,26 @@ struct StreamingMessageSender: Sendable {
     /// Ends delivery after a failed call or a cancellation, and leaves rethrowing the error to the caller.
     ///
     /// Once the message has a `ts`, it is stopped with one call that carries no parts or blocks: a call that failed
-    /// or was abandoned may already have delivered its parts. That call runs in the caller's task under a
-    /// cancellation shield, because HTTP transports abandon requests made from a cancelled task; the cancellation
-    /// takes effect again once the call returns. Its failure is ignored in favor of the original error. Once Slack
-    /// has ended the session, no call is made and ``StreamingMessage/SessionStopped`` is thrown instead.
+    /// or was abandoned may already have delivered its parts. The call is protected from cancellation, because
+    /// HTTP transports abandon requests made from a cancelled task. On older Apple OS versions, an awaited task
+    /// provides that protection because cancellation shields are unavailable. Its failure is ignored in favor of
+    /// the original error. Once Slack has ended the session, no call is made and ``StreamingMessage/SessionStopped``
+    /// is thrown instead.
     private func abandon(ts: String?, stopSignal: SessionStopSignal) async throws {
         try await stopSignal.check()
         guard let ts else { return }
-        try? await withTaskCancellationShield {
-            try await stopSignal.check()
-            try await transport.stopOnce(ts: ts, stopSignal: stopSignal)
+        if #available(macOS 27, iOS 27, macCatalyst 27, tvOS 27, watchOS 27, visionOS 27, *),
+           useCancellationShield {
+            try? await withTaskCancellationShield {
+                try await stopSignal.check()
+                try await transport.stopOnce(ts: ts, stopSignal: stopSignal)
+            }
+        } else {
+            // A new task does not inherit cancellation; awaiting it keeps cleanup within this operation's lifetime.
+            try? await Task { [transport] in
+                try await stopSignal.check()
+                try await transport.stopOnce(ts: ts, stopSignal: stopSignal)
+            }.value
         }
         try await stopSignal.check()
     }

@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "codex-agent",
-    platforms: [.macOS(.v27)],
+    platforms: [.macOS(.v15)],
     products: [
         .executable(name: "codex-agent", targets: ["CodexAgent"]),
     ],

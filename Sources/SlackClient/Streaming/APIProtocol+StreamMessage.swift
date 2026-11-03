@@ -115,7 +115,7 @@ extension APIProtocol {
     ///   ended with if delivery has already read it, and otherwise throws `CancellationError`. A request in
     ///   progress may be interrupted by cancellation, so whether Slack applied it is unknown, and it is not resent; a
     ///   rate-limited call is not retried. Once the message has a `ts`, the method attempts one
-    ///   `chat.stopStream` without content, shielded from the cancellation in the calling task, without retrying
+    ///   `chat.stopStream` without content, protected from cancellation, without retrying
     ///   it or waiting out a `Retry-After` delay. If the cancellation interrupts `chat.startStream`, Slack may
     ///   have posted a message whose `ts` the method never learns, and that message stays streaming.
     ///   Cancellation ends `parts` only if `parts` honors it, so the method may not return promptly; see below.

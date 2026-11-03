@@ -81,8 +81,7 @@ The Web API client is generated with [swift-openapi-generator](https://github.co
 ## Get started
 
 Build a bot that replies to `/echo` using Socket Mode, without a public HTTP endpoint.
-Requires Swift 6.4+ and macOS 27+ or Linux, plus a Slack workspace where you can install apps.
-The package's minimum deployment target is 27 on every Apple platform it declares: macOS, iOS, Mac Catalyst, tvOS, watchOS, and visionOS.
+Requires Swift 6.4+ and macOS 14+ or Linux, plus a Slack workspace where you can install apps.
 
 Only need Web API calls? Jump to [Use the Web API client](#use-the-web-api-client).
 
@@ -112,7 +111,7 @@ import PackageDescription
 
 let package = Package(
     name: "EchoBot",
-    platforms: [.macOS(.v27)],
+    platforms: [.macOS(.v14)],
     dependencies: [
         .package(
             url: "https://github.com/ainame/swift-slack.git",
