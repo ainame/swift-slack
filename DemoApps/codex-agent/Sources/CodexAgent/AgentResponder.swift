@@ -26,7 +26,7 @@ actor AgentResponder {
         let replyThreadTs: String?
         let producer: TurnProducer
         /// Ends the reply's delivery when Slack stops the session, even after the agent has finished producing.
-        let message: StreamingMessage.Control
+        let message: StreamingMessage.Handle
         var resetStatusAfterStop = true
     }
 
@@ -103,12 +103,12 @@ actor AgentResponder {
 
         // The agent's events go into a stream that streamMessage sends to Slack. A local cancellation stops
         // only the producer scope, so Slack delivery can drain and finish the message. A stop from Slack marks
-        // the message's control instead, and nothing more goes to Slack, even once the stream has finished.
+        // the message's handle instead, and nothing more goes to Slack, even once the stream has finished.
         // The turn is registered before the first `await`: the actor takes other calls while this one waits,
         // a second message in the same session must find it busy, and an early stop must find the turn.
         let (parts, continuation) = AsyncThrowingStream.makeStream(of: StreamingMessage.Part.self)
         let producer = TurnProducer()
-        let message = StreamingMessage.Control()
+        let message = StreamingMessage.Handle()
         running[session] = RunningTurn(replyThreadTs: turn.replyThreadTs, producer: producer, message: message)
         defer { running[session] = nil }
         if case .codeChannel = session {
@@ -167,7 +167,7 @@ actor AgentResponder {
                     threadTs: turn.replyThreadTs,
                     recipient: .init(userId: turn.userId, teamId: turn.teamId),
                     blocks: Feedback.blocks(),
-                    control: message,
+                    handle: message,
                 )
             } catch is StreamingMessage.SessionStopped {
                 logger.info("Slack stopped the session", metadata: ["session": "\(session)"])
@@ -262,7 +262,7 @@ actor AgentResponder {
             if !Task.isCancelled, !cards.isEmpty {
                 continuation.yield(.blocks(SlackUI(cards: cards).blocks()))
             }
-            // `stop` records the session stop before it awaits the message's control, so a stream ending
+            // `stop` records the session stop before it awaits the message's handle, so a stream ending
             // meanwhile must not look finished, or streamMessage would send the closing calls first.
             if producer.isSessionStopped {
                 continuation.finish(throwing: StreamingMessage.SessionStopped())

@@ -2,40 +2,40 @@
 extension StreamingMessage {
     /// Controls one streaming message from outside its parts sequence.
     ///
-    /// Pass a control to one `streamMessage` call, and keep it where the code that learns Slack has ended the
+    /// Pass a handle to one `streamMessage` call, and keep it where the code that learns Slack has ended the
     /// session can reach it, such as an `agent_session_stopped` handler. ``markSessionStopped()`` then ends the
     /// message's delivery whatever the parts sequence is doing, including after it has finished while the
     /// closing calls or their `Retry-After` waits remain. ``messageTs`` shows the message's `ts` as soon as
     /// `chat.startStream` succeeds.
     ///
     /// ```swift
-    /// let message = StreamingMessage.Control()
+    /// let message = StreamingMessage.Handle()
     /// // Register message with your agent_session_stopped handler before awaiting.
     /// // The handler calls `await message.markSessionStopped()`.
-    /// try await client.streamMessage(parts, channel: channel, threadTs: threadTs, control: message)
+    /// try await client.streamMessage(parts, channel: channel, threadTs: threadTs, handle: message)
     /// ```
     ///
-    /// A control serves a single message. The first `streamMessage` call that receives it reserves it before
+    /// A handle serves a single message. The first `streamMessage` call that receives it reserves it before
     /// it reads the parts or calls Slack, and keeps it until it returns or throws; see ``State``. Any other call
     /// that receives it, whether at the same time or later, throws ``AlreadyUsed`` without reading its parts or
-    /// calling Slack, and leaves the control to the call that holds it. Create a new control for every message.
-    public actor Control {
-        /// Where a control is in its single message's lifecycle.
+    /// calling Slack, and leaves the handle to the call that holds it. Create a new handle for every message.
+    public actor Handle {
+        /// Where a handle is in its single message's lifecycle.
         public enum State: Sendable, Hashable {
-            /// No `streamMessage` call has received the control yet.
+            /// No `streamMessage` call has received the handle yet.
             case ready
-            /// A `streamMessage` call holds the control and has not returned or thrown.
+            /// A `streamMessage` call holds the handle and has not returned or thrown.
             case streaming
-            /// Delivery has completed. The control cannot be used again.
+            /// Delivery has completed. The handle cannot be used again.
             case ended
         }
 
-        /// Thrown by `streamMessage` when it receives a control that another call holds or has already used.
+        /// Thrown by `streamMessage` when it receives a handle that another call holds or has already used.
         public struct AlreadyUsed: Swift.Error, Sendable, Hashable {
             public init() {}
         }
 
-        /// The control's lifecycle state.
+        /// The handle's lifecycle state.
         public private(set) var state: State = .ready
         /// The message's `ts`, from the first `chat.startStream` that succeeded, or `nil` before it.
         ///
@@ -60,7 +60,7 @@ extension StreamingMessage {
         /// check may still begin; `streamMessage` waits for it without cancelling it, ignores its outcome, and
         /// throws ``SessionStopped``.
         ///
-        /// Before `streamMessage` receives the control, the stop is kept, and that call throws
+        /// Before `streamMessage` receives the handle, the stop is kept, and that call throws
         /// ``SessionStopped`` without reading its parts or calling Slack. Once the message has ended, this has no
         /// effect.
         ///
@@ -78,10 +78,10 @@ extension StreamingMessage {
             await buffer.discard()
         }
 
-        /// Reserves the control for one message, or throws ``AlreadyUsed``. Returns `false` when Slack ended the
+        /// Reserves the handle for one message, or throws ``AlreadyUsed``. Returns `false` when Slack ended the
         /// session before, so the message must not start.
         ///
-        /// It does not suspend, so of two calls that receive the control at the same time, exactly one takes it.
+        /// It does not suspend, so of two calls that receive the handle at the same time, exactly one takes it.
         func begin(stopSignal: SessionStopSignal, buffer: PartBuffer) throws -> Bool {
             guard state == .ready else { throw AlreadyUsed() }
             state = .streaming
