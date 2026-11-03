@@ -16,6 +16,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Changed
 
+* **BREAKING**: Raised the minimum to Swift 6.4 and version 27 of macOS, iOS, Mac Catalyst, tvOS, watchOS and visionOS. Update client deployment targets when upgrading - #275
 * **BREAKING**: Cancelling the task that calls `streamMessage` no longer sends buffered parts and closing blocks. Requests now honor the cancellation, unsent content is discarded, and a request in progress or a rate-limited request is not resent. Once the message has a `ts`, `streamMessage` attempts one `chat.stopStream` without content, then rethrows the interrupted call's error or `CancellationError`. To finish a reply early with a closing notice and blocks, end the input instead of cancelling the task - #273
 * **BREAKING**: The best-effort `chat.stopStream` after a failed streaming call is made once and is no longer retried after `Retry-After` when Slack rate limits it - #273
 
