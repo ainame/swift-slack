@@ -1,9 +1,9 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.4
 import PackageDescription
 
 let package = Package(
     name: "codex-agent",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v27)],
     products: [
         .executable(name: "codex-agent", targets: ["CodexAgent"]),
     ],

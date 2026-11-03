@@ -14,7 +14,7 @@ A Swift implementation of DeepL for Slack that enables users to translate messag
 
 - DeepL API account (Free or Pro)
 - Slack workspace with app installation permissions
-- Swift 6.0 or later
+- Swift 6.4 or later, and macOS 27 or later when building on macOS
 
 ## Setup
 

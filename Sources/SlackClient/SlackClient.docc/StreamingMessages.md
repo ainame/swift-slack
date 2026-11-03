@@ -154,9 +154,11 @@ Cancelling the task that calls `streamMessage` ends delivery without a final flu
 
 - Parts not yet sent and the closing `blocks` are discarded.
 - Requests run in the calling task and honor its cancellation. A request in progress may already have reached Slack, so its outcome is unknown and its parts are not resent. A call that waits out a `Retry-After` delay is not retried.
-- When the message has a `ts`, `streamMessage` attempts one `chat.stopStream` without content in a task that does not inherit the cancellation, and does not retry it or wait out a `Retry-After` delay for it. When a start completes before the cancellation is noticed, its `ts` is kept for that stop.
+- When the message has a `ts`, `streamMessage` attempts one `chat.stopStream` without content in the calling task, shielded from the cancellation with `withTaskCancellationShield`, and does not retry it or wait out a `Retry-After` delay for it. When a start completes before the cancellation is noticed, its `ts` is kept for that stop.
 - When the cancellation interrupts the first `chat.startStream`, Slack may have posted a message whose `ts` is unknown. No stop is possible, and that message can stay in Slack's streaming state.
 - `streamMessage` then rethrows the error of the call the cancellation interrupted, or the error the input ended with if delivery has already read it, and otherwise throws `CancellationError`. ``StreamingMessage/SessionStopped`` takes precedence, and no stop is attempted after it.
+
+The cancellation also wakes delivery if it is waiting for parts. Cancellation handlers run synchronously, so this wake-up happens in a short-lived task that makes no request and that `streamMessage` does not await.
 
 Cancellation does not guarantee a prompt return or a successful stop. `streamMessage` returns only once it has finished reading the input, and an input that ignores cancellation keeps it waiting (see <doc:StreamingMessages#Delivery-failures-while-input-is-idle>). When a stop call or the best-effort stop fails, or a cancelled start leaves the `ts` unknown, the message can stay in Slack's streaming state.
 

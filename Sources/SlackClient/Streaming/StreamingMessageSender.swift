@@ -259,17 +259,17 @@ struct StreamingMessageSender: Sendable {
     /// Ends delivery after a failed call or a cancellation, and leaves rethrowing the error to the caller.
     ///
     /// Once the message has a `ts`, it is stopped with one call that carries no parts or blocks: a call that failed
-    /// or was abandoned may already have delivered its parts. That call runs in a task that does not inherit the
-    /// caller's cancellation, because HTTP transports abandon requests made from a cancelled task; the caller
-    /// awaits it, so it does not outlive `send`. Its failure is ignored in favor of the original error. Once Slack
+    /// or was abandoned may already have delivered its parts. That call runs in the caller's task under a
+    /// cancellation shield, because HTTP transports abandon requests made from a cancelled task; the cancellation
+    /// takes effect again once the call returns. Its failure is ignored in favor of the original error. Once Slack
     /// has ended the session, no call is made and ``StreamingMessage/SessionStopped`` is thrown instead.
     private func abandon(ts: String?, stopSignal: SessionStopSignal) async throws {
         try await stopSignal.check()
         guard let ts else { return }
-        try? await Task { [transport] in
+        try? await withTaskCancellationShield {
             try await stopSignal.check()
             try await transport.stopOnce(ts: ts, stopSignal: stopSignal)
-        }.value
+        }
         try await stopSignal.check()
     }
 
@@ -418,8 +418,10 @@ actor PartBuffer {
                     waiter = continuation
                 }
             } onCancel: {
-                // The handler cannot reach the actor's state synchronously. If it runs before the sender
-                // suspends, this task waits for the actor and resumes the waiter once it is stored.
+                // The handler is synchronous and cannot reach the actor's state, so it wakes the sender from a
+                // task rather than guarding the waiter with a lock. If it runs before the sender suspends, this
+                // task waits for the actor and resumes the waiter once it is stored. It makes no request and
+                // nothing awaits it.
                 Task { await self.resumeWaiter() }
             }
         }
