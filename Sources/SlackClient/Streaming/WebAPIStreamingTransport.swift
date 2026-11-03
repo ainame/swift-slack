@@ -5,9 +5,12 @@ import SlackBlockKit
 
 /// Streams one message through the generated Web API methods.
 ///
-/// A call that Slack rate limits (HTTP 429) is retried after its `Retry-After` delay, up to three attempts,
-/// unless Slack has ended the session meanwhile. When the task is cancelled during the delay, the call throws
-/// ``RateLimitedCallCancelled`` instead, so the sender sends its parts with the closing calls.
+/// Each HTTP request runs to completion even when the task is cancelled: HTTP transports abandon requests made
+/// from a cancelled task, and an abandoned request may still reach Slack without returning its outcome, such as
+/// the message's `ts`. A call that Slack rate limits (HTTP 429) is retried after its `Retry-After` delay, up to
+/// three attempts, unless Slack has ended the session meanwhile. Only that delay honors cancellation: when the
+/// task is cancelled, the call throws ``RateLimitedCallCancelled`` instead of retrying, so the sender sends its
+/// parts with the closing calls.
 struct WebAPIStreamingTransport: StreamingMessageTransport {
     let client: any APIProtocol
     let channel: String
@@ -89,17 +92,19 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
 
     /// Repeats `call` while `rateLimited` finds a 429 response, waiting the seconds in its `Retry-After`.
     ///
-    /// Once `stopSignal` is raised, the wait ends and no retry starts. When the task is cancelled, the wait ends
-    /// and ``RateLimitedCallCancelled`` is thrown instead of retrying.
-    private func retryingRateLimits<Output>(
+    /// Each attempt runs without the caller's cancellation, so its response arrives; the wait between attempts
+    /// runs in the caller's task. Once `stopSignal` is raised, the wait ends and no retry starts. When the task is
+    /// cancelled, the wait ends and ``RateLimitedCallCancelled`` is thrown instead of retrying. Other failures are
+    /// thrown without a retry, because a request that failed in flight may already have reached Slack.
+    private func retryingRateLimits<Output: Sendable>(
         stopSignal: SessionStopSignal,
-        _ call: () async throws -> Output,
+        _ call: @escaping @Sendable () async throws -> Output,
         rateLimited: (Output) -> UndocumentedPayload?,
     ) async throws -> Output {
         var attempt = 1
         while true {
             try await stopSignal.check()
-            let output = try await call()
+            let output = try await withoutCancellation(call)
             guard let payload = rateLimited(output), attempt < Self.maximumAttempts else {
                 return output
             }

@@ -5,6 +5,10 @@ import SlackBlockKit
 ///
 /// Each call takes the message's ``SessionStopSignal``. A transport that retries checks it before every retry
 /// and waits through it, so that no retry starts once Slack has ended the session.
+///
+/// Cancelling the task must not abandon a request in progress: the sender relies on the outcome, such as the
+/// `ts` of a start that Slack processed, to stop the message. Cancellation may end only the waits between
+/// retries, and a transport that ends one for a rate-limited call throws ``RateLimitedCallCancelled``.
 protocol StreamingMessageTransport: Sendable {
     /// Calls `chat.startStream` and returns the message's `ts`.
     func start(chunks: [StreamingMessage.Part], stopSignal: SessionStopSignal) async throws -> String
@@ -123,16 +127,11 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
             ending = try await stream(from: buffer, ts: &ts, retryAt: &retryAt, stopSignal: stopSignal)
         } catch {
             await buffer.close()
+            if let ts {
+                try await withoutCancellation { try await stopAfterFailure(ts: ts, stopSignal: stopSignal) }
+            }
             // Once Slack has ended the session, the failure no longer matters and the message needs no stop.
             try await stopSignal.check()
-            // Stop the message so it does not stay streaming; the failed call may have carried the last parts.
-            if let ts {
-                try? await Self.uncancellable { [transport] in
-                    try await stopSignal.check()
-                    try await transport.stop(ts: ts, chunks: [], blocks: nil, stopSignal: stopSignal)
-                }
-                try await stopSignal.check()
-            }
             throw error
         }
         // Once Slack has ended the session, the final batch and the closing blocks are discarded.
@@ -143,49 +142,80 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
         }
 
         // The closing calls run even when the caller was cancelled, because cancelling must still stop the
-        // message, and HTTP transports abandon requests made from a cancelled task.
+        // message, and the waits between them and before rate-limit retries would otherwise end early.
         let messageTs: String
         do {
-            messageTs = try await Self.uncancellable { [transport, blocks, ts, retryAt] in
-                if let retryAt {
-                    // Slack rejected the last call as rate limited, so wait out its Retry-After first.
-                    try await stopSignal.sleep(for: ContinuousClock.now.duration(to: retryAt))
-                }
-                var batches = PartBuffer.requestBatches(ending.parts)
-                var chunks = batches.removeFirst()
-                let messageTs: String
-                if let ts {
-                    messageTs = ts
-                } else {
-                    try await stopSignal.check()
-                    // A stream needs content to start; start with a space when nothing else came.
-                    messageTs = try await transport.start(
-                        chunks: chunks.isEmpty ? [.markdown(" ")] : chunks,
-                        stopSignal: stopSignal,
-                    )
-                    chunks = []
-                }
-                // Flush bounded requests even when cancellation accumulated a large final buffer.
-                for next in batches {
-                    if !chunks.isEmpty {
-                        try await stopSignal.check()
-                        try await transport.append(ts: messageTs, chunks: chunks, stopSignal: stopSignal)
-                        try await stopSignal.sleep(for: minimumInterval)
-                    }
-                    chunks = next
-                }
-                try await stopSignal.check()
-                try await transport.stop(ts: messageTs, chunks: chunks, blocks: blocks, stopSignal: stopSignal)
-                return messageTs
+            messageTs = try await withoutCancellation { [ts, retryAt] in
+                try await close(ts: ts, parts: ending.parts, retryAt: retryAt, stopSignal: stopSignal)
             }
         } catch {
             try await stopSignal.check()
             throw error
         }
+        try await stopSignal.check()
         if let failure = ending.failure {
             throw failure
         }
         return messageTs
+    }
+
+    /// Sends the final parts and the closing blocks, starting the message first when it has no `ts` yet.
+    ///
+    /// When a call fails once the message has a `ts`, including one from the start made here, the message is
+    /// stopped without further content and the call's error is rethrown.
+    private func close(
+        ts: String?,
+        parts: [StreamingMessage.Part],
+        retryAt: ContinuousClock.Instant?,
+        stopSignal: SessionStopSignal,
+    ) async throws -> String {
+        if let retryAt {
+            // Slack rejected the last call as rate limited, so wait out its Retry-After first.
+            try await stopSignal.sleep(for: ContinuousClock.now.duration(to: retryAt))
+        }
+        var batches = PartBuffer.requestBatches(parts)
+        var chunks = batches.removeFirst()
+        let messageTs: String
+        if let ts {
+            messageTs = ts
+        } else {
+            try await stopSignal.check()
+            // A stream needs content to start; start with a space when nothing else came.
+            messageTs = try await transport.start(
+                chunks: chunks.isEmpty ? [.markdown(" ")] : chunks,
+                stopSignal: stopSignal,
+            )
+            chunks = []
+        }
+        do {
+            // Flush bounded requests even when cancellation accumulated a large final buffer.
+            for next in batches {
+                if !chunks.isEmpty {
+                    try await stopSignal.check()
+                    try await transport.append(ts: messageTs, chunks: chunks, stopSignal: stopSignal)
+                    try await stopSignal.sleep(for: minimumInterval)
+                }
+                chunks = next
+            }
+            try await stopSignal.check()
+            try await transport.stop(ts: messageTs, chunks: chunks, blocks: blocks, stopSignal: stopSignal)
+        } catch {
+            try await stopAfterFailure(ts: messageTs, stopSignal: stopSignal)
+            throw error
+        }
+        return messageTs
+    }
+
+    /// Stops the message after a failed call so it does not stay streaming, and leaves rethrowing the call's
+    /// error to the caller.
+    ///
+    /// The stop carries no parts or blocks: the failed call may already have delivered its parts. Its own failure
+    /// is ignored in favor of the original error. Once Slack has ended the session, it makes no call and throws
+    /// ``StreamingMessage/SessionStopped`` instead.
+    private func stopAfterFailure(ts: String, stopSignal: SessionStopSignal) async throws {
+        try await stopSignal.check()
+        try? await transport.stop(ts: ts, chunks: [], blocks: nil, stopSignal: stopSignal)
+        try await stopSignal.check()
     }
 
     /// Starts and appends to the message until the input ends, and returns the final batch for the closing calls.
@@ -226,16 +256,17 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
             try await stopSignal.sleep(for: minimumInterval)
         }
     }
+}
 
-    /// Runs `operation` in a new task, which does not inherit the caller's cancellation.
-    ///
-    /// This is the only unstructured task in streaming: the caller still awaits its result, so it does not
-    /// outlive `send`.
-    private static func uncancellable<T: Sendable>(
-        _ operation: @escaping @Sendable () async throws -> T,
-    ) async throws -> T {
-        try await Task { try await operation() }.value
-    }
+/// Runs `operation` in a new task, which does not inherit the caller's cancellation, and returns its result.
+///
+/// Streaming runs its HTTP requests and closing calls this way, because cancellation cannot withdraw a request
+/// that may already have reached Slack. The caller awaits each result, so these tasks do not outlive `send`,
+/// and task-local values and priority carry over.
+func withoutCancellation<T: Sendable>(
+    _ operation: @escaping @Sendable () async throws -> T,
+) async throws -> T {
+    try await Task { try await operation() }.value
 }
 
 /// Records that Slack has ended a streaming message's session: the one terminal state every request path checks.
