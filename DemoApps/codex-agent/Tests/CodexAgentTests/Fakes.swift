@@ -21,6 +21,8 @@ actor FakeSlack: ClientTransport {
         case json(String)
         /// The request fails before Slack answers, as a network error does.
         case transportFailure
+        /// Slack rejects the request as rate limited (HTTP 429), asking to retry after `retryAfter` seconds.
+        case rateLimited(retryAfter: String)
     }
 
     struct TransportFailure: Error {}
@@ -121,6 +123,10 @@ actor FakeSlack: ClientTransport {
             return (response, HTTPBody(body))
         case .transportFailure:
             throw TransportFailure()
+        case let .rateLimited(retryAfter):
+            var response = HTTPResponse(status: .tooManyRequests)
+            response.headerFields[HTTPField.Name("Retry-After")!] = retryAfter
+            return (response, nil)
         }
     }
 

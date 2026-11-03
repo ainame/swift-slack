@@ -118,6 +118,34 @@ struct AgentResponderTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
+    func `a stop after the reply finished producing ends the closing stop's retry wait`() async {
+        // The closing chat.stopStream is rate limited for an hour, so the reply waits to retry it.
+        await slack.reply(to: "chatStopStream", with: .rateLimited(retryAfter: "3600"), .json(#"{"ok":true}"#))
+        let client = await slack.client()
+        let stopped = turn(.codeChannel(channel: "C1"), replyThreadTs: nil)
+        let handling = Task { await responder.handle(stopped, client: client) }
+        await codex.probe.waitForStart(of: stopped.session)
+        await codex.probe.release(stopped.session)
+        // The stop call means the turn's stream has finished and only the closing calls remain.
+        await slack.waitFor("chatStopStream")
+        let before = await slack.requests.count
+
+        await responder.stop(channel: "C1", threadTs: nil)
+        await handling.value
+
+        let after = await slack.requests.dropFirst(before)
+        #expect(after.map(\.method) == ["agentsSessionsSetStatus"])
+        #expect(after.first?["status"] == "active")
+        #expect(await slack.requests("chatStopStream").count == 1)
+
+        // The session is free again.
+        let next = Task { await responder.handle(stopped, client: client) }
+        await codex.probe.waitForStart(of: stopped.session, count: 2)
+        await codex.probe.release(stopped.session)
+        await next.value
+    }
+
+    @Test(.timeLimit(.minutes(1)))
     func `a stop before streaming starts is kept and nothing reaches Slack`() async {
         let client = await slack.client()
         // conversations.history never answers, which holds the turn in its setup until the stop.

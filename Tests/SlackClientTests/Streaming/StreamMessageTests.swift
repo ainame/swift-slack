@@ -162,6 +162,47 @@ struct StreamMessageTests {
         #expect(await http.requests.map(\.operationID) == ["chatStartStream"])
     }
 
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `a session stop through the control ends the closing stop's Retry-After wait after the input finishes`(
+        path: InputPath,
+    ) async throws {
+        let http = SlackHTTP(rateLimitedOnce: "chatStopStream", retryAfter: "3600")
+        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+        let input = ManualInput()
+        await input.yield(.markdown("hi"))
+        await input.finish()
+        let control = StreamingMessage.Control()
+        let sending = Task {
+            try await streamMessage(client, input, through: path, control: control)
+        }
+        // The rate-limited stop means the input has finished and the closing calls wait to retry.
+        await http.waitForRequests(2)
+
+        await control.markSessionStopped()
+
+        await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
+        #expect(await http.requests.map(\.operationID) == ["chatStartStream", "chatStopStream"])
+        #expect(await control.messageTs == SlackHTTP.ts)
+        #expect(await control.state == .ended)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `a reused control throws AlreadyUsed before any request`(path: InputPath) async throws {
+        let http = SlackHTTP()
+        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+        let control = StreamingMessage.Control()
+        let input = ManualInput()
+        await input.yield(.markdown("hi"))
+        await input.finish()
+        #expect(try await streamMessage(client, input, through: path, control: control) == SlackHTTP.ts)
+        let requests = await http.requests.count
+
+        await #expect(throws: StreamingMessage.Control.AlreadyUsed()) {
+            try await streamMessage(client, ManualInput(), through: path, control: control)
+        }
+        #expect(await http.requests.count == requests)
+    }
+
     @Test(.timeLimit(.minutes(1)), arguments: [URLError.Code.networkConnectionLost, .cancelled])
     func `does not resend a request that fails in flight and stops the message without content`(
         code: URLError.Code,
@@ -337,13 +378,18 @@ private func streamMessage(
     _ client: some APIProtocol,
     _ input: ManualInput,
     through path: InputPath,
+    control: StreamingMessage.Control? = nil,
 ) async throws -> String {
     let blocks: [Block] = [.divider(DividerBlock())]
     switch path {
     case .sendable:
-        return try await client.streamMessage(input, channel: "C1", blocks: blocks, minimumInterval: .zero)
+        return try await client.streamMessage(
+            input, channel: "C1", blocks: blocks, minimumInterval: .zero, control: control,
+        )
     case .callerIsolated:
-        return try await client.streamMessage(NotSendable(input), channel: "C1", blocks: blocks, minimumInterval: .zero)
+        return try await client.streamMessage(
+            NotSendable(input), channel: "C1", blocks: blocks, minimumInterval: .zero, control: control,
+        )
     }
 }
 

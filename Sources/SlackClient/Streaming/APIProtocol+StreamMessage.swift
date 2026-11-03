@@ -2,11 +2,11 @@
 import SlackBlockKit
 
 extension APIProtocol {
-    /// Streams a Sendable input with concurrent reading and delivery. A delivery failure cancels input
-    /// iteration immediately, including while it waits for another element. The input must cooperate with
-    /// cancellation; `AsyncStream` and `AsyncThrowingStream` do so. The method returns only once the input's
-    /// iteration ends, so an input that ignores cancellation delays the return after a failure or a
-    /// cancellation of the calling task.
+    /// Streams a Sendable input with concurrent reading and delivery. A delivery failure, or a session stop
+    /// through `control`, cancels input iteration immediately, including while it waits for another element. The
+    /// input must cooperate with cancellation; `AsyncStream` and `AsyncThrowingStream` do so. The method returns
+    /// only once the input's iteration ends, so an input that ignores cancellation delays the return after a
+    /// failure, a session stop, or a cancellation of the calling task.
     ///
     /// Swift picks this overload when the argument's static type is `Sendable`. That includes an `AsyncStream`
     /// mapped directly with `map`, because `AsyncMapSequence` is `Sendable` when its base and elements are; the
@@ -25,6 +25,7 @@ extension APIProtocol {
         blocks: [Block]? = nil,
         sessionStatus: String? = nil,
         minimumInterval: Duration = .seconds(1),
+        control: StreamingMessage.Control? = nil,
         isolation: isolated (any Actor)? = #isolation,
     ) async throws -> String where Parts.Element == StreamingMessage.Part {
         let transport = WebAPIStreamingTransport(
@@ -32,7 +33,7 @@ extension APIProtocol {
             taskDisplay: taskDisplay, sessionStatus: sessionStatus,
         )
         return try await StreamingMessageSender(transport: transport, blocks: blocks, minimumInterval: minimumInterval)
-            .send(parts, isolation: isolation)
+            .send(parts, control: control, isolation: isolation)
     }
 
     /// Streams `parts` into one message, and stops the message once `parts` ends.
@@ -63,6 +64,10 @@ extension APIProtocol {
     ///   the parts and `blocks` not yet sent are discarded and no further call is made, not even a retry or
     ///   the stop call. A call already in progress cannot be withdrawn; the method waits for it without
     ///   cancelling it, ignores its outcome, and rethrows ``StreamingMessage/SessionStopped``.
+    /// - When the app calls ``StreamingMessage/Control/markSessionStopped()`` on `control`, the same happens
+    ///   without waiting for `parts`, including after `parts` has finished while the closing calls or their
+    ///   retries remain, and the method throws ``StreamingMessage/SessionStopped``. Neither way of ending the
+    ///   session makes the cleanup stop described below.
     /// - When a call fails, including one of the closing calls, the message is stopped without further content
     ///   once it has a `ts`, and the call's error is rethrown, even if that stop fails too. Slack answering
     ///   `"ok": false` throws ``StreamingMessage/Error``. Rate-limited calls (HTTP 429) are retried after their
@@ -86,9 +91,9 @@ extension APIProtocol {
     /// only to `AsyncSequence`; a `Sendable` sequence, such as a directly mapped `AsyncStream`, picks the
     /// overload that reads it in a child task. Because reading and delivery then share the calling task, a
     /// failed call is noticed only when `parts` yields its next element or ends: while `parts` is idle, the
-    /// method does not return, and it does not cancel `parts`. Cancelling the calling task stops delivery
-    /// promptly, but the method still returns only once `parts` yields or ends; an input that ignores
-    /// cancellation keeps it waiting.
+    /// method does not return, and it does not cancel `parts`. Cancelling the calling task, or a session stop
+    /// through `control`, stops delivery promptly, but the method still returns only once `parts` yields or
+    /// ends; an input that ignores cancellation keeps it waiting.
     ///
     /// To stop a reply early while still finishing it, end `parts` rather than cancelling the calling task, for
     /// example by cancelling the task that yields to an `AsyncStream`; that task can still yield closing parts,
@@ -108,6 +113,10 @@ extension APIProtocol {
     ///   - sessionStatus: The agent session's status after the stream stops, such as `suspended`. Slack
     ///     defaults to `active`.
     ///   - minimumInterval: The shortest time between two calls. `chat.appendStream` is a Tier 4 method.
+    ///   - control: A new ``StreamingMessage/Control`` through which the app can end this message's delivery when
+    ///     Slack ends the session, and read its `ts` before the method returns. A control serves one call: one
+    ///     that another call holds or has used makes this method throw ``StreamingMessage/Control/AlreadyUsed``
+    ///     before it reads `parts` or calls Slack.
     ///   - isolation: The caller's actor isolation, inherited by default so the sequence is read in its context.
     /// - Returns: The message's `ts`.
     @discardableResult
@@ -120,6 +129,7 @@ extension APIProtocol {
         blocks: [Block]? = nil,
         sessionStatus: String? = nil,
         minimumInterval: Duration = .seconds(1),
+        control: StreamingMessage.Control? = nil,
         isolation: isolated (any Actor)? = #isolation,
     ) async throws -> String where Parts.Element == StreamingMessage.Part {
         let transport = WebAPIStreamingTransport(
@@ -131,7 +141,7 @@ extension APIProtocol {
             sessionStatus: sessionStatus,
         )
         return try await StreamingMessageSender(transport: transport, blocks: blocks, minimumInterval: minimumInterval)
-            .send(parts, isolation: isolation)
+            .send(parts, control: control, isolation: isolation)
     }
 }
 #endif
