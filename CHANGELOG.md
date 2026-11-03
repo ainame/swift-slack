@@ -13,9 +13,14 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 * **BREAKING**: Added `AuthProviderBlock` and Block Kit DSL support for authentication provider connections, including account details, menus and fallback blocks. Exhaustive switches on `Block` must handle the new `.authProvider` case - #265
 
+### Changed
+
+* **BREAKING**: Cancelling the task that calls `streamMessage` no longer sends buffered parts and closing blocks. Requests now honor the cancellation, unsent content is discarded, and a request in progress or a rate-limited request is not resent. Once the message has a `ts`, `streamMessage` attempts one `chat.stopStream` without content, then rethrows the interrupted call's error or `CancellationError`. To finish a reply early with a closing notice and blocks, end the input instead of cancelling the task - #273
+* **BREAKING**: The best-effort `chat.stopStream` after a failed streaming call is made once and is no longer retried after `Retry-After` when Slack rate limits it - #273
+
 ### Fixed
 
-* Preserved streaming content and closing blocks when cancellation occurs during a request, and attempted cleanup when a closing request fails - #273
+* A failed closing `chat.stopStream` in `streamMessage` now also triggers the best-effort stop, and the original error is rethrown even when that stop fails - #273
 
 ## [2027.1.0-beta.3] - 2026-10-16
 

@@ -88,7 +88,7 @@ await withTaskGroup(of: Void.self) { group in
 - `TurnProducer` records why production stopped. `cancel()` is the app's own graceful stop: the message is still streaming, so the producer can yield a stopped notice and `streamMessage` finishes the message. `stopSession()` records that Slack ended the session, which the tools check before every Slack call.
 - Parts include `.markdown`, `.task`, `.plan(title:)`, and `.blocks`. Blocks are streamed in order with other parts; the `blocks:` argument adds blocks at the bottom of the finished message.
 - `streamMessage` collects parts while requests are in flight, merges adjacent markdown up to 12,000 characters and blocks up to 50, and spaces calls by `minimumInterval` (1 second by default).
-- Finishing the input sends remaining parts and closing blocks with `chat.stopStream`. Ending it with `StreamingMessage.SessionStopped` discards them and starts no further call. Cancelling the task calling `streamMessage` also closes the message, using a task that does not inherit cancellation.
+- Finishing the input sends remaining parts and closing blocks with `chat.stopStream`. Ending it with `StreamingMessage.SessionStopped` discards them and starts no further call. Cancelling the task calling `streamMessage` discards unsent content and makes one best-effort empty stop if the timestamp is known.
 - If the input throws, buffered parts and closing blocks are sent before the error is rethrown. If a Slack call fails, the message is stopped without additional chunks or blocks before rethrowing. HTTP 429 responses are retried after `Retry-After`, up to three attempts.
 - The library's streaming tests use fake transports and HTTP responses. The API requires the `WebAPI_Chat` trait, enabled by this demo.
 

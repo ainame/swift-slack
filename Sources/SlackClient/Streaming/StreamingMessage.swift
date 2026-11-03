@@ -115,8 +115,10 @@ public enum StreamingMessage {
     /// without cancelling it and ignores its outcome. Streaming then throws this error instead of returning
     /// the message's `ts`.
     ///
-    /// Throwing it ends only the delivery; stop whatever produces the parts separately. Cancelling the task or
-    /// throwing any other error still sends the parts so far and stops the message.
+    /// Throwing it ends only the delivery; stop whatever produces the parts separately. Throwing any other error
+    /// still sends the parts so far and stops the message. Cancelling the task discards the unsent parts but
+    /// still attempts a stop without content; once this signal has been read, even during that attempt, it
+    /// takes precedence and is thrown instead.
     public struct SessionStopped: Swift.Error, Sendable, Hashable {
         public init() {}
     }

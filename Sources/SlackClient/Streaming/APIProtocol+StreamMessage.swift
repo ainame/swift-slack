@@ -4,7 +4,9 @@ import SlackBlockKit
 extension APIProtocol {
     /// Streams a Sendable input with concurrent reading and delivery. A delivery failure cancels input
     /// iteration immediately, including while it waits for another element. The input must cooperate with
-    /// cancellation; `AsyncStream` and `AsyncThrowingStream` do so.
+    /// cancellation; `AsyncStream` and `AsyncThrowingStream` do so. The method returns only once the input's
+    /// iteration ends, so an input that ignores cancellation delays the return after a failure or a
+    /// cancellation of the calling task.
     ///
     /// Swift picks this overload when the argument's static type is `Sendable`. That includes an `AsyncStream`
     /// mapped directly with `map`, because `AsyncMapSequence` is `Sendable` when its base and elements are; the
@@ -52,7 +54,7 @@ extension APIProtocol {
     /// `minimumInterval` between calls, and sends the parts left when `parts` ends with `chat.stopStream`.
     /// Adjacent markdown merges into one chunk, so a producer can yield one part per token.
     ///
-    /// The message is stopped, so it never stays streaming, unless Slack has already ended it:
+    /// How the message ends depends on how `parts` ends:
     ///
     /// - When `parts` finishes, the remaining parts and `blocks` go out with the stop call.
     /// - When `parts` throws, the parts so far and `blocks` go out, and then the error is rethrown.
@@ -61,28 +63,37 @@ extension APIProtocol {
     ///   the parts and `blocks` not yet sent are discarded and no further call is made, not even a retry or
     ///   the stop call. A call already in progress cannot be withdrawn; the method waits for it without
     ///   cancelling it, ignores its outcome, and rethrows ``StreamingMessage/SessionStopped``.
-    /// - When the calling task is cancelled, the parts so far and `blocks` go out. A request in progress is not
-    ///   abandoned: the method waits for Slack's answer, so a message that a start in progress posts is stopped
-    ///   too. The closing calls run in a task that does not inherit the cancellation. A call that Slack rejected
-    ///   as rate limited is not retried in the cancelled task: its parts go out with the closing calls, after
-    ///   its `Retry-After` delay.
     /// - When a call fails, including one of the closing calls, the message is stopped without further content
-    ///   once it has a `ts`, and the error is rethrown, even if that stop fails too. Slack answering
+    ///   once it has a `ts`, and the call's error is rethrown, even if that stop fails too. Slack answering
     ///   `"ok": false` throws ``StreamingMessage/Error``. Rate-limited calls (HTTP 429) are retried after their
     ///   `Retry-After` delay, up to three attempts. Other failed calls are not resent, because a call that fails
     ///   in flight may already have reached Slack.
+    /// - When the calling task is cancelled, delivery ends and discards the parts and `blocks` not yet sent.
+    ///   The method rethrows the error of the call that the cancellation interrupted, or the error `parts`
+    ///   ended with if delivery has already read it, and otherwise throws `CancellationError`. A request in
+    ///   progress may be interrupted by cancellation, so whether Slack applied it is unknown, and it is not resent; a
+    ///   rate-limited call is not retried. Once the message has a `ts`, the method attempts one
+    ///   `chat.stopStream` without content in a task that does not inherit the cancellation, without retrying
+    ///   it or waiting out a `Retry-After` delay. If the cancellation interrupts `chat.startStream`, Slack may
+    ///   have posted a message whose `ts` the method never learns, and that message stays streaming.
+    ///   Cancellation ends `parts` only if `parts` honors it, so the method may not return promptly; see below.
+    ///
+    /// A message can stay in Slack's streaming state whenever the stop call or the best-effort cleanup stop
+    /// fails, or when a cancelled start leaves its `ts` unknown.
     ///
     /// This overload reads `parts` in the calling task's isolation, so it need not be `Sendable`. Swift picks
     /// it for any sequence whose static type is not `Sendable`, including a sequence in generic code constrained
     /// only to `AsyncSequence`; a `Sendable` sequence, such as a directly mapped `AsyncStream`, picks the
     /// overload that reads it in a child task. Because reading and delivery then share the calling task, a
     /// failed call is noticed only when `parts` yields its next element or ends: while `parts` is idle, the
-    /// method does not return, and it does not cancel `parts`.
+    /// method does not return, and it does not cancel `parts`. Cancelling the calling task stops delivery
+    /// promptly, but the method still returns only once `parts` yields or ends; an input that ignores
+    /// cancellation keeps it waiting.
     ///
-    /// To stop a reply early while still finishing it, end `parts`, for example by cancelling the task that
-    /// yields to an `AsyncStream`; that task can still yield closing parts, such as a note that the reply was
-    /// stopped. Ending `parts`, with any error, does not stop whatever produces them; stop the producer
-    /// separately.
+    /// To stop a reply early while still finishing it, end `parts` rather than cancelling the calling task, for
+    /// example by cancelling the task that yields to an `AsyncStream`; that task can still yield closing parts,
+    /// such as a note that the reply was stopped, and they go out with `blocks`. Ending `parts`, with any error,
+    /// does not stop whatever produces them; stop the producer separately.
     ///
     /// - Parameters:
     ///   - parts: The message content, in order.
