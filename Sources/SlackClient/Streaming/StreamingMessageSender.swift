@@ -32,8 +32,10 @@ protocol StreamingMessageTransport: Sendable {
 /// with each call. Reading in the caller's task keeps the sequence in the caller's isolation, so it need not be
 /// `Sendable`.
 ///
-/// When the sequence throws ``StreamingMessage/SessionStopped``, the caller's task raises a ``SessionStopSignal``,
-/// which every path checks before it starts a call, and after a call before it acts on the outcome.
+/// Every message has a ``StreamingMessage/Control``, the caller's or a new one, which `send` reserves at its first
+/// suspension. When the sequence throws ``StreamingMessage/SessionStopped``, or the app marks the control, the
+/// control raises the message's ``SessionStopSignal``, which every path checks before it starts a call, and after
+/// a call before it acts on the outcome, and it wakes delivery waiting for parts.
 ///
 /// Cancelling the task ends delivery like a failed call: the parts and blocks not yet sent are discarded, and the
 /// message is stopped without content once it has a `ts`.
@@ -48,85 +50,134 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
     /// next element is suspended, rather than waiting for the producer to yield again.
     func send<Parts: AsyncSequence & Sendable>(
         _ parts: Parts,
+        control: StreamingMessage.Control? = nil,
         isolation: isolated (any Actor)? = #isolation,
     ) async throws -> String where Parts.Element == StreamingMessage.Part {
         let buffer = PartBuffer()
         let stopSignal = SessionStopSignal(sleep: sleep)
-        return try await withThrowingTaskGroup(of: String?.self, returning: String.self, isolation: isolation) { group in
-            group.addTask {
-                try await deliver(from: buffer, stopSignal: stopSignal)
-            }
-            group.addTask {
-                do {
-                    for try await part in parts {
-                        guard await buffer.append(part) else { break }
+        let control = control ?? StreamingMessage.Control()
+        guard try await control.begin(stopSignal: stopSignal, buffer: buffer) else {
+            _ = await control.end()
+            throw StreamingMessage.SessionStopped()
+        }
+        do {
+            let ts = try await withThrowingTaskGroup(
+                of: String?.self,
+                returning: String.self,
+                isolation: isolation,
+            ) { group in
+                group.addTask {
+                    try await deliver(from: buffer, stopSignal: stopSignal, control: control)
+                }
+                group.addTask {
+                    do {
+                        for try await part in parts {
+                            guard await buffer.append(part) else { break }
+                        }
+                        await buffer.finish(throwing: nil)
+                    } catch let stopped as StreamingMessage.SessionStopped {
+                        await control.markSessionStopped()
+                        await buffer.finish(throwing: stopped)
+                    } catch {
+                        await buffer.finish(throwing: error)
                     }
-                    await buffer.finish(throwing: nil)
-                } catch let stopped as StreamingMessage.SessionStopped {
-                    await stopSignal.raise()
-                    await buffer.finish(throwing: stopped)
-                } catch {
-                    await buffer.finish(throwing: error)
+                    return nil
                 }
-                return nil
-            }
-            defer { group.cancelAll() }
-            while let result = try await group.next() {
-                if let ts = result {
-                    return ts
+                // Delivery ending, including when Slack ends the session, cancels the reader.
+                defer { group.cancelAll() }
+                while let result = try await group.next() {
+                    if let ts = result {
+                        return ts
+                    }
                 }
+                preconditionFailure("delivery returns a ts or throws")
             }
-            preconditionFailure("delivery returns a ts or throws")
+            if await control.end() {
+                throw StreamingMessage.SessionStopped()
+            }
+            return ts
+        } catch {
+            if await control.end() {
+                throw StreamingMessage.SessionStopped()
+            }
+            throw error
         }
     }
 
     func send<Parts: AsyncSequence>(
         _ parts: Parts,
+        control: StreamingMessage.Control? = nil,
         isolation: isolated (any Actor)? = #isolation,
     ) async throws -> String where Parts.Element == StreamingMessage.Part {
         let buffer = PartBuffer()
         let stopSignal = SessionStopSignal(sleep: sleep)
-        return try await withThrowingTaskGroup(of: String.self, returning: String.self, isolation: isolation) { group in
-            group.addTask {
-                try await deliver(from: buffer, stopSignal: stopSignal)
-            }
-            do {
-                for try await part in parts {
-                    // The buffer closes when delivery ends early, after a failed call or a cancellation.
-                    guard await buffer.append(part) else { break }
+        let control = control ?? StreamingMessage.Control()
+        guard try await control.begin(stopSignal: stopSignal, buffer: buffer) else {
+            _ = await control.end()
+            throw StreamingMessage.SessionStopped()
+        }
+        do {
+            let ts = try await withThrowingTaskGroup(
+                of: String.self,
+                returning: String.self,
+                isolation: isolation,
+            ) { group in
+                group.addTask {
+                    try await deliver(from: buffer, stopSignal: stopSignal, control: control)
                 }
-                await buffer.finish(throwing: nil)
-            } catch let stopped as StreamingMessage.SessionStopped {
-                // The signal is raised before the input finishes, so delivery sees it with the final batch. It
-                // takes effect even when delivery has already closed the buffer after a failed call.
-                await stopSignal.raise()
-                await buffer.finish(throwing: stopped)
-                // A call in flight cannot be withdrawn: wait for it without cancelling it, and ignore its outcome.
-                _ = try? await group.next()
-                throw stopped
-            } catch {
-                await buffer.finish(throwing: error)
+                do {
+                    for try await part in parts {
+                        // The buffer closes when delivery ends early, after a failed call, a cancellation, or a
+                        // session stop through the control. An idle input is not interrupted.
+                        guard await buffer.append(part) else { break }
+                    }
+                    await buffer.finish(throwing: nil)
+                } catch let stopped as StreamingMessage.SessionStopped {
+                    // The signal is raised before the input finishes, so delivery sees it with the final batch.
+                    // It takes effect even when delivery has already closed the buffer after a failed call.
+                    await control.markSessionStopped()
+                    await buffer.finish(throwing: stopped)
+                    // A call in flight cannot be withdrawn: wait for it without cancelling it, and ignore its
+                    // outcome.
+                    _ = try? await group.next()
+                    throw stopped
+                } catch {
+                    await buffer.finish(throwing: error)
+                }
+                guard let ts = try await group.next() else {
+                    preconditionFailure("delivery returns a ts or throws")
+                }
+                return ts
             }
-            guard let ts = try await group.next() else {
-                preconditionFailure("delivery returns a ts or throws")
+            if await control.end() {
+                throw StreamingMessage.SessionStopped()
             }
             return ts
+        } catch {
+            if await control.end() {
+                throw StreamingMessage.SessionStopped()
+            }
+            throw error
         }
     }
 
-    private func deliver(from buffer: PartBuffer, stopSignal: SessionStopSignal) async throws -> String {
+    private func deliver(
+        from buffer: PartBuffer,
+        stopSignal: SessionStopSignal,
+        control: StreamingMessage.Control,
+    ) async throws -> String {
         var ts: String?
         let ending: PartBuffer.Batch
         let messageTs: String
         do {
-            ending = try await stream(from: buffer, ts: &ts, stopSignal: stopSignal)
+            ending = try await stream(from: buffer, ts: &ts, stopSignal: stopSignal, control: control)
             // Once Slack has ended the session, the final batch and the closing blocks are discarded.
             try await stopSignal.check()
             if let failure = ending.failure, ts == nil, ending.parts.isEmpty {
                 // The input failed before it produced anything, so there is no message to post.
                 throw failure
             }
-            messageTs = try await close(ts: &ts, ending: ending, stopSignal: stopSignal)
+            messageTs = try await close(ts: &ts, ending: ending, stopSignal: stopSignal, control: control)
         } catch {
             await buffer.close()
             try await abandon(ts: ts, stopSignal: stopSignal)
@@ -145,10 +196,11 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
         from buffer: PartBuffer,
         ts: inout String?,
         stopSignal: SessionStopSignal,
+        control: StreamingMessage.Control,
     ) async throws -> PartBuffer.Batch {
         while true {
             // A cancelled task stops waiting here, whether the input is idle or has ended because of the
-            // cancellation.
+            // cancellation. A session stop through the control also wakes this wait, with an empty final batch.
             let batch = await buffer.next()
             try Self.checkCancellation(rethrowing: batch.failure)
             if batch.isFinal {
@@ -156,11 +208,14 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
             }
 
             try await stopSignal.check()
-            // `ts` is stored as soon as a start returns, so a cancellation noticed later still stops the message.
+            // `ts` is stored and shown on the control as soon as a start returns, so a cancellation or session
+            // stop noticed later still knows the message.
             if let ts {
                 try await transport.append(ts: ts, chunks: batch.parts, stopSignal: stopSignal)
             } else {
-                ts = try await transport.start(chunks: batch.parts, stopSignal: stopSignal)
+                let started = try await transport.start(chunks: batch.parts, stopSignal: stopSignal)
+                ts = started
+                await control.started(ts: started)
             }
             // A cancelled wait returns early, and the next batch throws. The wait throws once Slack has ended the
             // session, including during the call that just finished.
@@ -176,6 +231,7 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
         ts: inout String?,
         ending: PartBuffer.Batch,
         stopSignal: SessionStopSignal,
+        control: StreamingMessage.Control,
     ) async throws -> String {
         var chunks = ending.parts
         let messageTs: String
@@ -189,6 +245,7 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
                 stopSignal: stopSignal,
             )
             ts = messageTs
+            await control.started(ts: messageTs)
             chunks = []
             try Self.checkCancellation(rethrowing: ending.failure)
         }
@@ -226,8 +283,9 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
 
 /// Records that Slack has ended a streaming message's session: the one terminal state every request path checks.
 ///
-/// The sender raises it when the input throws ``StreamingMessage/SessionStopped``. Raising it cannot withdraw a
-/// call already in progress; it makes ``check()`` throw before the next one, and it ends ``sleep(for:)`` waits.
+/// The message's ``StreamingMessage/Control`` raises it when the input throws ``StreamingMessage/SessionStopped``
+/// or the app marks the control. Raising it cannot withdraw a call already in progress; it makes ``check()`` throw
+/// before the next one, and it ends ``sleep(for:)`` waits.
 actor SessionStopSignal {
     private let timer: @Sendable (Duration) async throws -> Void
     private var isRaised = false
@@ -337,6 +395,16 @@ actor PartBuffer {
     func close() {
         isClosed = true
         parts = []
+    }
+
+    /// Drops the buffered parts, takes no more, and ends the input, because Slack has ended the session.
+    ///
+    /// A sender waiting in ``next()`` wakes and takes an empty final batch, after which its stop signal check
+    /// throws. The input's own end, which may come later, is then ignored.
+    func discard() {
+        isClosed = true
+        parts = []
+        finish(throwing: StreamingMessage.SessionStopped())
     }
 
     /// Waits until parts are available, the input has ended, or the sender is cancelled, then takes one

@@ -511,6 +511,350 @@ struct StreamingMessageSenderTests {
         #expect(await transport.calls == [.init(method: "start", chunks: [.markdown("first")])])
     }
 
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `a session stop through the control before the message starts posts nothing and reads no input`(
+        path: InputPath,
+    ) async {
+        let transport = FakeTransport()
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let control = StreamingMessage.Control()
+        await control.markSessionStopped()
+        #expect(await control.state == .ready)
+
+        await #expect(throws: StreamingMessage.SessionStopped()) {
+            try await send(sender(transport, blocks: blocks), input, through: path, control: control)
+        }
+
+        #expect(await transport.calls.isEmpty)
+        #expect(await input.readCount == 0)
+        #expect(await control.state == .ended)
+        #expect(await control.isSessionStopped)
+        #expect(await control.messageTs == nil)
+    }
+
+    @Test
+    func `completion atomically observes a previously marked stop`() async throws {
+        let control = StreamingMessage.Control()
+        #expect(try await control.begin(stopSignal: SessionStopSignal(), buffer: PartBuffer()))
+        await control.markSessionStopped()
+        #expect(await control.end())
+        #expect(await control.state == .ended)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: ["start", "append"], InputPath.allCases)
+    func `a session stop through the control finishes the call in flight, ignores it, and makes no further call`(
+        method: String,
+        path: InputPath,
+    ) async {
+        let transport = FakeTransport(pausing: method)
+        let input = ManualInput()
+        let control = StreamingMessage.Control()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await send(sender(transport, blocks: blocks), input, through: path, control: control)
+        }
+        await transport.waitForCalls(1)
+        var reads = 3
+        if method == "append" {
+            await input.yield(.markdown("second"))
+            await transport.waitForCalls(2)
+            reads += 1
+        }
+        await input.yield(.markdown("queued"))
+        await input.waitForReads(reads)
+
+        await control.markSessionStopped()
+        await transport.release()
+        // The input ignores cancellation, so it must end for the call to return.
+        await input.finish()
+
+        await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
+        #expect(await transport.calls.map(\.method) == (method == "start" ? ["start"] : ["start", "append"]))
+        // The start succeeded, so its ts is known even though the call threw.
+        #expect(await control.messageTs == FakeTransport.ts)
+        #expect(await control.state == .ended)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `a session stop through the control ends the minimum interval wait`() async {
+        let transport = FakeTransport()
+        let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
+        defer { continuation.finish() }
+        let (sleeps, sleepContinuation) = AsyncStream.makeStream(of: Duration.self)
+        let control = StreamingMessage.Control()
+        let sending = Task {
+            try await sender(transport, blocks: blocks, minimumInterval: .seconds(3600)) { duration in
+                sleepContinuation.yield(duration)
+                try await Task.sleep(for: duration)
+            }.send(parts, control: control)
+        }
+        continuation.yield(.markdown("first"))
+        #expect(await sleeps.first { _ in true } == .seconds(3600))
+        continuation.yield(.markdown("queued"))
+
+        await control.markSessionStopped()
+
+        await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
+        #expect(await transport.calls == [.init(method: "start", chunks: [.markdown("first")])])
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `a session stop through the control wakes delivery and cancels an idle Sendable input`() async {
+        let transport = FakeTransport()
+        let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
+        let control = StreamingMessage.Control()
+        let sending = Task {
+            try await sender(transport, blocks: blocks).send(parts, control: control)
+        }
+        continuation.yield(.markdown("first"))
+        await transport.waitForCalls(1)
+
+        // The input stays open: only the control ends the message.
+        await control.markSessionStopped()
+
+        await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
+        if case .terminated = continuation.yield(.markdown("never sent")) {} else {
+            Issue.record("Input iteration was not cancelled")
+        }
+        #expect(await transport.calls == [.init(method: "start", chunks: [.markdown("first")])])
+        #expect(await control.messageTs == FakeTransport.ts)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: [false, true], InputPath.allCases)
+    func `a session stop through the control after the input finishes ignores the closing stop in flight`(
+        stopFails: Bool,
+        path: InputPath,
+    ) async {
+        let transport = FakeTransport(failing: stopFails ? ["stop"] : [], pausing: "stop")
+        let input = ManualInput()
+        let control = StreamingMessage.Control()
+        await input.yield(.markdown("first"))
+        await input.finish()
+        let sending = Task {
+            try await send(sender(transport, blocks: blocks), input, through: path, control: control)
+        }
+        await transport.waitForCalls(2)
+
+        await control.markSessionStopped()
+        await transport.release()
+
+        await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
+        // Neither the stop's success nor its failure leads to another call, such as a cleanup stop.
+        #expect(await transport.calls.map(\.method) == ["start", "stop"])
+        #expect(await control.messageTs == FakeTransport.ts)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `the control shows the ts while streaming and keeps it when a later call fails`() async {
+        let transport = FakeTransport(failing: ["append"], pausing: "append")
+        let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
+        defer { continuation.finish() }
+        let control = StreamingMessage.Control()
+        #expect(await control.messageTs == nil)
+        let sending = Task {
+            try await sender(transport, blocks: blocks).send(parts, control: control)
+        }
+        continuation.yield(.markdown("first"))
+        await transport.waitForCalls(1)
+        continuation.yield(.markdown("second"))
+        await transport.waitForCalls(2)
+
+        #expect(await control.messageTs == FakeTransport.ts)
+        #expect(await control.state == .streaming)
+        await transport.release()
+
+        await #expect(throws: StreamingMessage.Error.self) { try await sending.value }
+        #expect(await control.messageTs == FakeTransport.ts)
+        #expect(await control.state == .ended)
+        #expect(await control.isSessionStopped == false)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `the control keeps the ts of a start made with the closing calls when the closing stop fails`(
+        path: InputPath,
+    ) async {
+        // An empty input reaches the closing calls before any start, so they start the message themselves.
+        let transport = FakeTransport(failing: ["stop"])
+        let control = StreamingMessage.Control()
+
+        let parts = AsyncStream<Part> { $0.finish() }
+
+        await #expect(throws: StreamingMessage.Error(method: "chat.stopStream", code: "failed")) {
+            try await send(sender(transport, blocks: blocks), parts, through: path, control: control)
+        }
+
+        #expect(await transport.calls.map(\.method) == ["start", "stop", "stopOnce"])
+        #expect(await control.messageTs == FakeTransport.ts)
+        #expect(await control.state == .ended)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `the control keeps the ts of a closing start that completes after the sending task is cancelled`(
+        path: InputPath,
+    ) async {
+        let transport = FakeTransport(pausing: "start")
+        let control = StreamingMessage.Control()
+        let parts = AsyncStream<Part> { $0.finish() }
+        let sending = Task {
+            try await send(sender(transport, blocks: blocks), parts, through: path, control: control)
+        }
+        await transport.waitForCalls(1)
+        sending.cancel()
+        await transport.release()
+
+        // The ts is recorded before the cancellation is checked, so the control has it and the cleanup stop runs.
+        await #expect(throws: CancellationError.self) { try await sending.value }
+        #expect(await transport.calls.map(\.method) == ["start", "stopOnce"])
+        #expect(await control.messageTs == FakeTransport.ts)
+        #expect(await control.isSessionStopped == false)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `a session stop through the control after the sending task is cancelled skips the cleanup stop`(
+        path: InputPath,
+    ) async {
+        let transport = FakeTransport(pausing: "start")
+        let input = ManualInput()
+        let control = StreamingMessage.Control()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await send(sender(transport, blocks: blocks), input, through: path, control: control)
+        }
+        await transport.waitForCalls(1)
+        sending.cancel()
+        // Slack ends the session while the cancelled start is still in flight.
+        await control.markSessionStopped()
+        await transport.release()
+        await input.finish()
+
+        // The Slack signal takes precedence over the cancellation, and no cleanup stop is made after it.
+        await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
+        #expect(await transport.calls.map(\.method) == ["start"])
+        #expect(await control.messageTs == FakeTransport.ts)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `a control serves one message, and another call with it throws AlreadyUsed without reading or calling`(
+        path: InputPath,
+    ) async throws {
+        let transport = FakeTransport(pausing: "start")
+        let other = FakeTransport()
+        let input = ManualInput()
+        let otherInput = ManualInput()
+        await otherInput.yield(.markdown("other"))
+        await otherInput.finish()
+        let control = StreamingMessage.Control()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await send(sender(transport, blocks: blocks), input, through: path, control: control)
+        }
+        await transport.waitForCalls(1)
+
+        await #expect(throws: StreamingMessage.Control.AlreadyUsed()) {
+            try await send(sender(other), otherInput, through: path, control: control)
+        }
+        #expect(await control.state == .streaming)
+
+        await transport.release()
+        await input.finish()
+        #expect(try await sending.value == FakeTransport.ts)
+        #expect(await control.state == .ended)
+
+        // An ended control cannot be used again either, and a stop no longer has any effect.
+        await control.markSessionStopped()
+        #expect(await control.isSessionStopped == false)
+        await #expect(throws: StreamingMessage.Control.AlreadyUsed()) {
+            try await send(sender(other), otherInput, through: path, control: control)
+        }
+        #expect(await other.calls.isEmpty)
+        #expect(await otherInput.readCount == 0)
+        #expect(await transport.calls.map(\.method) == ["start", "stop"])
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `of two calls given one control at the same time, exactly one streams`() async {
+        let transports = [FakeTransport(), FakeTransport()]
+        let control = StreamingMessage.Control()
+        let attempts = transports.map { transport in
+            Task { () -> (any Error)? in
+                let parts = AsyncStream<Part> { continuation in
+                    continuation.yield(.markdown("hi"))
+                    continuation.finish()
+                }
+                do {
+                    _ = try await sender(transport).send(parts, control: control)
+                    return nil
+                } catch {
+                    return error
+                }
+            }
+        }
+        var errors: [(any Error)?] = []
+        for attempt in attempts {
+            await errors.append(attempt.value)
+        }
+
+        #expect(errors.count { $0 == nil } == 1)
+        #expect(errors.count { $0 is StreamingMessage.Control.AlreadyUsed } == 1)
+        var untouched = 0
+        for transport in transports where await transport.calls.isEmpty {
+            untouched += 1
+        }
+        #expect(untouched == 1)
+        #expect(await control.state == .ended)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `a session stop through one control leaves another message alone`() async throws {
+        let stopped = FakeTransport()
+        let running = FakeTransport()
+        let (stoppedParts, stoppedContinuation) = AsyncStream.makeStream(of: Part.self)
+        let (runningParts, runningContinuation) = AsyncStream.makeStream(of: Part.self)
+        defer { stoppedContinuation.finish() }
+        let stoppedControl = StreamingMessage.Control()
+        let runningControl = StreamingMessage.Control()
+        let stopping = Task {
+            try await sender(stopped, blocks: blocks).send(stoppedParts, control: stoppedControl)
+        }
+        let finishing = Task {
+            try await sender(running, blocks: blocks).send(runningParts, control: runningControl)
+        }
+        stoppedContinuation.yield(.markdown("first"))
+        runningContinuation.yield(.markdown("first"))
+        await stopped.waitForCalls(1)
+        await running.waitForCalls(1)
+
+        await stoppedControl.markSessionStopped()
+        await #expect(throws: StreamingMessage.SessionStopped()) { try await stopping.value }
+        runningContinuation.yield(.markdown(" second"))
+        runningContinuation.finish()
+
+        #expect(try await finishing.value == FakeTransport.ts)
+        #expect(await stopped.calls.map(\.method) == ["start"])
+        let calls = await running.calls
+        #expect(text(calls) == "first second")
+        #expect(calls.last?.method == "stop")
+        #expect(calls.last?.blocks == blocks)
+        #expect(await runningControl.isSessionStopped == false)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `an input that throws SessionStopped marks the control`(path: InputPath) async {
+        let transport = FakeTransport()
+        let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
+        let control = StreamingMessage.Control()
+        continuation.yield(.markdown("first"))
+        continuation.finish(throwing: StreamingMessage.SessionStopped())
+
+        await #expect(throws: StreamingMessage.SessionStopped()) {
+            try await send(sender(transport, blocks: blocks), parts, through: path, control: control)
+        }
+
+        #expect(await control.isSessionStopped)
+        #expect(await control.state == .ended)
+    }
+
     private func sender(
         _ transport: FakeTransport,
         blocks: [Block]? = nil,
@@ -528,12 +872,13 @@ struct StreamingMessageSenderTests {
         _ sender: StreamingMessageSender<FakeTransport>,
         _ parts: Parts,
         through path: InputPath,
+        control: StreamingMessage.Control? = nil,
     ) async throws -> String where Parts.Element == Part {
         switch path {
         case .sendable:
-            try await sender.send(parts)
+            try await sender.send(parts, control: control)
         case .callerIsolated:
-            try await sender.send(NotSendable(parts))
+            try await sender.send(NotSendable(parts), control: control)
         }
     }
 
@@ -623,6 +968,11 @@ actor ManualInput: AsyncSequence {
 
     nonisolated func makeAsyncIterator() -> AsyncIterator {
         AsyncIterator(input: self)
+    }
+
+    /// How many elements the sender has asked for.
+    var readCount: Int {
+        reads
     }
 
     func yield(_ part: StreamingMessage.Part) {
