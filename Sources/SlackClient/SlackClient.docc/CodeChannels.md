@@ -39,7 +39,7 @@ try await client.agentsSessionsSetStatus(body: .json(.init(channelId: channelId,
 try await client.agentsConversationsArchive(body: .json(.init(channelId: channelId)))
 ```
 
-The session methods need the `chat:write` scope. Leave out `threadTs` in code channels, both in these calls and when streaming replies with ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:control:isolation:)`` (see <doc:StreamingMessages>).
+The session methods need the `chat:write` scope. Leave out `threadTs` in code channels, both in these calls and when streaming replies with ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:handle:isolation:)`` (see <doc:StreamingMessages>).
 
 ### Set the context bar and resource
 

@@ -163,7 +163,7 @@ struct StreamMessageTests {
     }
 
     @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
-    func `a session stop through the control ends the closing stop's Retry-After wait after the input finishes`(
+    func `a session stop through the handle ends the closing stop's Retry-After wait after the input finishes`(
         path: InputPath,
     ) async throws {
         let http = SlackHTTP(rateLimitedOnce: "chatStopStream", retryAfter: "3600")
@@ -171,34 +171,34 @@ struct StreamMessageTests {
         let input = ManualInput()
         await input.yield(.markdown("hi"))
         await input.finish()
-        let control = StreamingMessage.Control()
+        let handle = StreamingMessage.Handle()
         let sending = Task {
-            try await streamMessage(client, input, through: path, control: control)
+            try await streamMessage(client, input, through: path, handle: handle)
         }
         // The rate-limited stop means the input has finished and the closing calls wait to retry.
         await http.waitForRequests(2)
 
-        await control.markSessionStopped()
+        await handle.markSessionStopped()
 
         await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
         #expect(await http.requests.map(\.operationID) == ["chatStartStream", "chatStopStream"])
-        #expect(await control.messageTs == SlackHTTP.ts)
-        #expect(await control.state == .ended)
+        #expect(await handle.messageTs == SlackHTTP.ts)
+        #expect(await handle.state == .ended)
     }
 
     @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
-    func `a reused control throws AlreadyUsed before any request`(path: InputPath) async throws {
+    func `a reused handle throws AlreadyUsed before any request`(path: InputPath) async throws {
         let http = SlackHTTP()
         let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
-        let control = StreamingMessage.Control()
+        let handle = StreamingMessage.Handle()
         let input = ManualInput()
         await input.yield(.markdown("hi"))
         await input.finish()
-        #expect(try await streamMessage(client, input, through: path, control: control) == SlackHTTP.ts)
+        #expect(try await streamMessage(client, input, through: path, handle: handle) == SlackHTTP.ts)
         let requests = await http.requests.count
 
-        await #expect(throws: StreamingMessage.Control.AlreadyUsed()) {
-            try await streamMessage(client, ManualInput(), through: path, control: control)
+        await #expect(throws: StreamingMessage.Handle.AlreadyUsed()) {
+            try await streamMessage(client, ManualInput(), through: path, handle: handle)
         }
         #expect(await http.requests.count == requests)
     }
@@ -378,17 +378,17 @@ private func streamMessage(
     _ client: some APIProtocol,
     _ input: ManualInput,
     through path: InputPath,
-    control: StreamingMessage.Control? = nil,
+    handle: StreamingMessage.Handle? = nil,
 ) async throws -> String {
     let blocks: [Block] = [.divider(DividerBlock())]
     switch path {
     case .sendable:
         return try await client.streamMessage(
-            input, channel: "C1", blocks: blocks, minimumInterval: .zero, control: control,
+            input, channel: "C1", blocks: blocks, minimumInterval: .zero, handle: handle,
         )
     case .callerIsolated:
         return try await client.streamMessage(
-            NotSendable(input), channel: "C1", blocks: blocks, minimumInterval: .zero, control: control,
+            NotSendable(input), channel: "C1", blocks: blocks, minimumInterval: .zero, handle: handle,
         )
     }
 }

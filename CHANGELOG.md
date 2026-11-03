@@ -12,7 +12,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 ### Added
 
 * **BREAKING**: Added `AuthProviderBlock` and Block Kit DSL support for authentication provider connections, including account details, menus and fallback blocks. Exhaustive switches on `Block` must handle the new `.authProvider` case - #265
-* Added `StreamingMessage.Control` to signal that Slack ended a session independently of the input and expose the message timestamp after start, even when delivery later fails - #274
+* Added `StreamingMessage.Handle` to signal that Slack ended a session independently of the input and expose the message timestamp after start, even when delivery later fails - #274
 
 ### Changed
 
