@@ -110,7 +110,7 @@ public enum StreamingMessage {
     /// The signal that Slack has already ended a streaming message's session.
     ///
     /// Throw it from the parts sequence when your app learns that Slack ended the session, for example with
-    /// `AsyncThrowingStream.Continuation.finish(throwing:)`, or call ``Delivery/markSessionStopped()``, which also
+    /// `AsyncThrowingStream.Continuation.finish(throwing:)`, or call ``Delivery/notifySessionStopped()``, which also
     /// works once the sequence has finished. Once streaming reads it, the parts and blocks not
     /// yet sent are discarded, no further call is started, not even a closing `chat.stopStream` or a retry,
     /// and waits between calls end. A call already in progress cannot be withdrawn, so streaming waits for it

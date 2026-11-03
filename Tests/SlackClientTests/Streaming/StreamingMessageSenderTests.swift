@@ -519,7 +519,7 @@ struct StreamingMessageSenderTests {
         let input = ManualInput()
         await input.yield(.markdown("first"))
         let delivery = makeDelivery(transport, blocks: blocks)
-        await delivery.markSessionStopped()
+        await delivery.notifySessionStopped()
         #expect(await delivery.state == .ready)
 
         await #expect(throws: StreamingMessage.SessionStopped()) {
@@ -537,7 +537,7 @@ struct StreamingMessageSenderTests {
     func `completion atomically observes a previously marked stop`() async throws {
         let delivery = makeDelivery(FakeTransport())
         #expect(try await delivery.begin(stopSignal: SessionStopSignal(), buffer: PartBuffer()))
-        await delivery.markSessionStopped()
+        await delivery.notifySessionStopped()
         #expect(await delivery.end())
         #expect(await delivery.state == .ended)
     }
@@ -564,7 +564,7 @@ struct StreamingMessageSenderTests {
         await input.yield(.markdown("queued"))
         await input.waitForReads(reads)
 
-        await delivery.markSessionStopped()
+        await delivery.notifySessionStopped()
         await transport.release()
         // The input ignores cancellation, so it must end for the call to return.
         await input.finish()
@@ -595,7 +595,7 @@ struct StreamingMessageSenderTests {
         #expect(await sleeps.first { _ in true } == .seconds(3600))
         continuation.yield(.markdown("queued"))
 
-        await delivery.markSessionStopped()
+        await delivery.notifySessionStopped()
 
         await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
         #expect(await transport.calls == [.init(method: "start", chunks: [.markdown("first")])])
@@ -613,7 +613,7 @@ struct StreamingMessageSenderTests {
         await transport.waitForCalls(1)
 
         // The input stays open: only the delivery ends the message.
-        await delivery.markSessionStopped()
+        await delivery.notifySessionStopped()
 
         await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
         if case .terminated = continuation.yield(.markdown("never sent")) {} else {
@@ -638,7 +638,7 @@ struct StreamingMessageSenderTests {
         }
         await transport.waitForCalls(2)
 
-        await delivery.markSessionStopped()
+        await delivery.notifySessionStopped()
         await transport.release()
 
         await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
@@ -726,7 +726,7 @@ struct StreamingMessageSenderTests {
         await transport.waitForCalls(1)
         sending.cancel()
         // Slack ends the session while the cancelled start is still in flight.
-        await delivery.markSessionStopped()
+        await delivery.notifySessionStopped()
         await transport.release()
         await input.finish()
 
@@ -763,7 +763,7 @@ struct StreamingMessageSenderTests {
         #expect(await delivery.state == .ended)
 
         // An ended delivery cannot be sent again either, and a stop no longer has any effect.
-        await delivery.markSessionStopped()
+        await delivery.notifySessionStopped()
         #expect(await delivery.isSessionStopped == false)
         await #expect(throws: StreamingMessage.Delivery.AlreadyUsed()) {
             try await send(delivery, otherInput, through: path)
@@ -828,7 +828,7 @@ struct StreamingMessageSenderTests {
         await stopped.waitForCalls(1)
         await running.waitForCalls(1)
 
-        await stoppedControl.markSessionStopped()
+        await stoppedControl.notifySessionStopped()
         await #expect(throws: StreamingMessage.SessionStopped()) { try await stopping.value }
         runningContinuation.yield(.markdown(" second"))
         runningContinuation.finish()

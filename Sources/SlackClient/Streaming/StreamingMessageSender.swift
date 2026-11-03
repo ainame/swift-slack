@@ -78,7 +78,7 @@ struct StreamingMessageSender: Sendable {
                         }
                         await buffer.finish(throwing: nil)
                     } catch let stopped as StreamingMessage.SessionStopped {
-                        await delivery.markSessionStopped()
+                        await delivery.notifySessionStopped()
                         await buffer.finish(throwing: stopped)
                     } catch {
                         await buffer.finish(throwing: error)
@@ -136,7 +136,7 @@ struct StreamingMessageSender: Sendable {
                 } catch let stopped as StreamingMessage.SessionStopped {
                     // The signal is raised before the input finishes, so delivery sees it with the final batch.
                     // It takes effect even when delivery has already closed the buffer after a failed call.
-                    await delivery.markSessionStopped()
+                    await delivery.notifySessionStopped()
                     await buffer.finish(throwing: stopped)
                     // A call in flight cannot be withdrawn: wait for it without cancelling it, and ignore its
                     // outcome.

@@ -10,11 +10,11 @@ extension StreamingMessage {
     /// ```swift
     /// let delivery = client.makeStreamingMessage(channel: channel, threadTs: threadTs)
     /// // Register delivery with your agent_session_stopped handler before awaiting.
-    /// // The handler calls `await delivery.markSessionStopped()`.
+    /// // The handler calls `await delivery.notifySessionStopped()`.
     /// let ts = try await delivery.send(parts)
     /// ```
     ///
-    /// ``markSessionStopped()`` ends the message's delivery whatever the parts sequence is doing, including after
+    /// ``notifySessionStopped()`` ends the message's delivery whatever the parts sequence is doing, including after
     /// it has finished while the closing calls or their `Retry-After` waits remain. ``messageTs`` shows the
     /// message's `ts` as soon as `chat.startStream` succeeds.
     ///
@@ -45,7 +45,7 @@ extension StreamingMessage {
         /// It stays available when a later call fails or Slack ends the session, so the app can still refer to a
         /// message that `send` did not return.
         public private(set) var messageTs: String?
-        /// Whether Slack ended the session before the message ended, through ``markSessionStopped()`` or the
+        /// Whether Slack ended the session before the message ended, through ``notifySessionStopped()`` or the
         /// parts sequence throwing ``SessionStopped``.
         public private(set) var isSessionStopped = false
 
@@ -62,7 +62,7 @@ extension StreamingMessage {
 
         /// Streams a Sendable input with concurrent reading and delivery, and returns the message's `ts`.
         ///
-        /// A delivery failure, or ``markSessionStopped()``, cancels input iteration immediately, including while
+        /// A delivery failure, or ``notifySessionStopped()``, cancels input iteration immediately, including while
         /// it waits for another element. The input must cooperate with cancellation; `AsyncStream` and
         /// `AsyncThrowingStream` do so. The method returns only once the input's iteration ends, so an input that
         /// ignores cancellation delays the return after a failure, a session stop, or a cancellation of the
@@ -86,7 +86,7 @@ extension StreamingMessage {
         /// The input need not be `Sendable`: this method runs in the caller's isolation, and only the delivery's
         /// state is read and changed on the delivery actor. Because reading and delivery then share the calling
         /// task, a failed call is noticed only when `parts` yields its next element or ends. Cancelling the
-        /// calling task, or ``markSessionStopped()``, stops delivery promptly, but the method still returns only
+        /// calling task, or ``notifySessionStopped()``, stops delivery promptly, but the method still returns only
         /// once `parts` yields or ends. Completion behavior is otherwise the same as
         /// ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:isolation:)``.
         ///
@@ -115,7 +115,7 @@ extension StreamingMessage {
         /// an `AsyncStream`, ends even while it waits for an element. A sequence read in the caller's isolation is
         /// not interrupted: `send` returns when it yields its next element or ends. Either way, stop whatever
         /// produces the parts separately.
-        public func markSessionStopped() async {
+        public func notifySessionStopped() async {
             guard state != .ended else { return }
             isSessionStopped = true
             guard let stopSignal, let buffer else { return }

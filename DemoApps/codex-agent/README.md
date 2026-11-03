@@ -61,7 +61,7 @@ let delivery = client.makeStreamingMessage(
     blocks: feedbackBlocks,
 )
 // Register both before awaiting. When Slack stops the session, the stop handler calls
-// producer.stopSession() and then `await delivery.markSessionStopped()`.
+// producer.stopSession() and then `await delivery.notifySessionStopped()`.
 await withTaskGroup(of: Void.self) { group in
     group.addTask {
         await producer.run {
@@ -95,7 +95,7 @@ await withTaskGroup(of: Void.self) { group in
 - `TurnProducer` records why production stopped. `cancel()` is the app's own graceful stop: the message is still streaming, so the producer can yield a stopped notice and the delivery finishes the message. `stopSession()` records that Slack ended the session, which the tools check before every Slack call.
 - Parts include `.markdown`, `.task`, `.plan(title:)`, and `.blocks`. Blocks are streamed in order with other parts; the `blocks:` argument adds blocks at the bottom of the finished message.
 - The delivery collects parts while requests are in flight, merges adjacent markdown up to 12,000 characters and blocks up to 50, and spaces calls by `minimumInterval` (1 second by default).
-- Finishing the input sends remaining parts and closing blocks with `chat.stopStream`. Marking the reply's delivery with `markSessionStopped()`, or ending the input with `StreamingMessage.SessionStopped`, discards them and stops subsequent calls once delivery observes the signal. A request that already passed its stop check may still begin. Only the delivery also works once the input has finished, while the closing calls or their `Retry-After` waits remain; it also ends delivery while Codex is idle. Neither makes a cleanup stop. Cancelling the task calling `send` discards unsent content and makes one best-effort empty stop if the timestamp is known.
+- Finishing the input sends remaining parts and closing blocks with `chat.stopStream`. Notifying the reply's delivery with `notifySessionStopped()`, or ending the input with `StreamingMessage.SessionStopped`, discards them and stops subsequent calls once delivery observes the signal. A request that already passed its stop check may still begin. Only the delivery also works once the input has finished, while the closing calls or their `Retry-After` waits remain; it also ends delivery while Codex is idle. Neither makes a cleanup stop. Cancelling the task calling `send` discards unsent content and makes one best-effort empty stop if the timestamp is known.
 - If the input throws, buffered parts and closing blocks are sent before the error is rethrown. If a Slack call fails, the message is stopped without additional chunks or blocks before rethrowing. HTTP 429 responses are retried after `Retry-After`, up to three attempts.
 - The library's streaming tests use fake transports and HTTP responses. The API requires the `WebAPI_Chat` trait, enabled by this demo.
 
