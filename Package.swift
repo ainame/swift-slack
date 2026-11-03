@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.4
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -55,7 +55,15 @@ traits.append(.default(enabledTraits: Set(defaultTraitNames)))
 
 let package = Package(
     name: "swift-slack",
-    platforms: [.macOS(.v14)],
+    // Streaming cleanup uses `withTaskCancellationShield`, which these platforms provide from version 27.
+    platforms: [
+        .macOS(.v27),
+        .iOS(.v27),
+        .macCatalyst(.v27),
+        .tvOS(.v27),
+        .watchOS(.v27),
+        .visionOS(.v27),
+    ],
     products: [
         .library(name: "SlackClient", targets: ["SlackClient"]),
         .library(name: "SlackApp", targets: ["SlackApp"]),

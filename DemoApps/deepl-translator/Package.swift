@@ -1,9 +1,9 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.4
 import PackageDescription
 
 let package = Package(
     name: "deepl-translator",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v27)],
     products: [
         .executable(name: "deepl-translator", targets: ["DeepLTranslator"])
     ],

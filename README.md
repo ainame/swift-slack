@@ -7,7 +7,7 @@
 **Build Slack apps in Swift.**\
 Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 
-[![Swift 6.2+](https://img.shields.io/badge/Swift-6.2+-F05138.svg?logo=swift&logoColor=white)](https://swift.org)
+[![Swift 6.4+](https://img.shields.io/badge/Swift-6.4+-F05138.svg?logo=swift&logoColor=white)](https://swift.org)
 ![Platforms: macOS | Linux](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux-lightgrey.svg)
 [![GitHub Release](https://img.shields.io/github/v/release/ainame/swift-slack)](https://github.com/ainame/swift-slack/releases)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/ainame/swift-slack/test.yml?branch=main)](https://github.com/ainame/swift-slack/actions)
@@ -81,7 +81,8 @@ The Web API client is generated with [swift-openapi-generator](https://github.co
 ## Get started
 
 Build a bot that replies to `/echo` using Socket Mode, without a public HTTP endpoint.
-Requires Swift 6.2+ and macOS 14+ or Linux, plus a Slack workspace where you can install apps.
+Requires Swift 6.4+ and macOS 27+ or Linux, plus a Slack workspace where you can install apps.
+The package's minimum deployment target is 27 on every Apple platform it declares: macOS, iOS, Mac Catalyst, tvOS, watchOS, and visionOS.
 
 Only need Web API calls? Jump to [Use the Web API client](#use-the-web-api-client).
 
@@ -106,12 +107,12 @@ mkdir -p Sources/EchoBot
 Save this as `Package.swift`:
 
 ```swift
-// swift-tools-version: 6.2
+// swift-tools-version: 6.4
 import PackageDescription
 
 let package = Package(
     name: "EchoBot",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v27)],
     dependencies: [
         .package(
             url: "https://github.com/ainame/swift-slack.git",
@@ -283,7 +284,7 @@ Events API handlers are acknowledged automatically. Slash commands, block action
 
 Issues and pull requests are welcome. If a Web API method or event is missing or decodes incorrectly, [open an issue](https://github.com/ainame/swift-slack/issues) with the payload you received.
 
-To work on the SDK itself, use the Swift and Ruby versions in [`.swift-version`](.swift-version) and [`.ruby-version`](.ruby-version), plus a C compiler for the tree-sitter Java grammar. The development toolchain currently uses Swift 6.4; the package manifest's minimum is Swift 6.2.
+To work on the SDK itself, use the Swift and Ruby versions in [`.swift-version`](.swift-version) and [`.ruby-version`](.ruby-version), plus a C compiler for the tree-sitter Java grammar. The development toolchain and the package manifest's minimum are both Swift 6.4.
 
 ```bash
 git clone --recursive https://github.com/ainame/swift-slack.git

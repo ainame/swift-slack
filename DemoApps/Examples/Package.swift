@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.4
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -16,7 +16,7 @@ targets.append(executable("viewFieldsCheck"))
 
 let package = Package(
     name: "Examples",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v27)],
     products: products(from: targets),
     dependencies: [
         .package(

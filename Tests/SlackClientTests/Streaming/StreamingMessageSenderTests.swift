@@ -248,6 +248,53 @@ struct StreamingMessageSenderTests {
         #expect(await transport.calls == sent + [.init(method: "stopOnce", chunks: [])])
     }
 
+    @Test(.timeLimit(.minutes(1)), arguments: [false, true], InputPath.allCases)
+    func `makes the cleanup stop in the cancelled task under a shield and rethrows the call's error afterwards`(
+        cleanupFails: Bool,
+        path: InputPath,
+    ) async {
+        let transport = FakeTransport(
+            failing: cleanupFails ? ["append", "stopOnce"] : ["append"],
+            pausing: "append",
+        )
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task { () -> (error: (any Error)?, isCancelled: Bool, isShielded: Bool) in
+            var error: (any Error)?
+            do {
+                _ = try await send(sender(transport, blocks: blocks), input, through: path)
+            } catch let thrown {
+                error = thrown
+            }
+            return (error, Task.isCancelled, Task.hasActiveCancellationShield)
+        }
+        await transport.waitForCalls(1)
+        await input.yield(.markdown("second"))
+        await transport.waitForCalls(2)
+        // The append is in flight when the task is cancelled, and fails once it is answered.
+        sending.cancel()
+        await transport.release()
+        await transport.waitForCalls(3)
+        await input.finish()
+
+        let outcome = await sending.value
+        // The append's error, rather than `CancellationError` or the cleanup stop's error.
+        #expect(outcome.error as? StreamingMessage.Error == StreamingMessage.Error(
+            method: "chat.appendStream",
+            code: "failed",
+        ))
+        // The shield ends with the cleanup stop, so the task observes its cancellation again.
+        #expect(outcome.isCancelled)
+        #expect(!outcome.isShielded)
+        // Only the cleanup stop is shielded. It runs in the cancelled delivery task, isolated to the transport
+        // actor, yet observes no cancellation; the calls before it would have honored one.
+        #expect(await transport.contexts == [
+            .init(method: "start", isCancelled: false, isShielded: false),
+            .init(method: "append", isCancelled: false, isShielded: false),
+            .init(method: "stopOnce", isCancelled: false, isShielded: true),
+        ])
+    }
+
     @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
     func `stops the message without content when the closing start completes after the sending task is cancelled`(
         path: InputPath,
@@ -464,8 +511,9 @@ struct StreamingMessageSenderTests {
             .init(method: "start", chunks: [.markdown("first")]),
             .init(method: "stopOnce", chunks: []),
         ])
-        // The cleanup stop does not run in the cancelled task.
+        // The cleanup stop is shielded from the cancellation, even while it waits for the session stop.
         #expect(await transport.heldCallWasCancelled == false)
+        #expect(await transport.contexts.last == .init(method: "stopOnce", isCancelled: false, isShielded: true))
     }
 
     @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
@@ -1101,9 +1149,18 @@ actor FakeTransport: StreamingMessageTransport {
         var blocks: [Block]?
     }
 
+    /// What the task making a call observed when the call reached the transport.
+    struct Context: Equatable {
+        var method: String
+        var isCancelled: Bool
+        var isShielded: Bool
+    }
+
     static let ts = "1700000000.000100"
 
     private(set) var calls: [Call] = []
+    /// One entry per call, including calls refused because their task was cancelled.
+    private(set) var contexts: [Context] = []
     /// Whether the held call's task was cancelled while Slack had not answered it.
     private(set) var heldCallWasCancelled = false
     private let failingMethods: Set<String>
@@ -1164,8 +1221,13 @@ actor FakeTransport: StreamingMessageTransport {
     }
 
     private func record(_ call: Call, stopSignal: SessionStopSignal) async throws {
+        contexts.append(Context(
+            method: call.method,
+            isCancelled: Task.isCancelled,
+            isShielded: Task.hasActiveCancellationShield,
+        ))
         // Refuse calls made from a cancelled task, like an HTTP transport, so the tests show that the cleanup stop
-        // does not run in one.
+        // is shielded from the cancellation.
         try Task.checkCancellation()
         calls.append(call)
         for waiter in waiters where waiter.count <= calls.count {
