@@ -61,7 +61,14 @@ struct StreamMessageTests {
         continuation.finish()
 
         #expect(try await sending.value == SlackHTTP.ts)
-        let requests = await http.requests
+        var requests = await http.requests
+        // The sender may take "done" before it reads the end of the input, and then appends it before an empty
+        // stop. Either way, "done" is sent once, after the task update; fold that append into the stop.
+        if requests.count == 4, requests[2].operationID == "chatAppendStream" {
+            #expect(requests[3].fields["chunks"] == nil)
+            requests[3].fields["chunks"] = requests[2].fields["chunks"]
+            requests.remove(at: 2)
+        }
         #expect(requests.map(\.operationID) == ["chatStartStream", "chatAppendStream", "chatStopStream"])
 
         let start = requests[0].fields
@@ -155,121 +162,12 @@ struct StreamMessageTests {
         #expect(await http.requests.map(\.operationID) == ["chatStartStream"])
     }
 
-    @Test(.timeLimit(.minutes(1)))
-    func `sends a rate-limited start with the closing calls when cancelled during Retry-After`() async throws {
-        let http = SlackHTTP(rateLimitedOnce: "chatStartStream", retryAfter: "3600")
-        let waits = Waits()
-        let sender = await rateLimitedSender(http, waits: waits)
-        let input = ManualInput()
-        await input.yield(.markdown("first"))
-        let sending = Task {
-            try await sender.send(input)
-        }
-        await waits.waitFor(1)
-        await input.yield(.markdown(" second"))
-        await input.waitForReads(3)
-        sending.cancel()
-        await input.finish()
-
-        #expect(try await sending.value == SlackHTTP.ts)
-        let requests = await http.requests
-        #expect(requests.map(\.operationID) == ["chatStartStream", "chatStartStream", "chatStopStream"])
-        #expect(try requests[1].chunks() == [["type": "markdown_text", "text": "first second"]])
-        #expect(requests[2].fields["chunks"] == nil)
-        #expect(requests[2].fields["blocks"]?.contains("divider") == true)
-        try await expectRetryAfterWaitedOut(waits)
-    }
-
-    @Test(.timeLimit(.minutes(1)))
-    func `sends a rate-limited append with the closing calls when cancelled during Retry-After`() async throws {
-        let http = SlackHTTP(rateLimitedOnce: "chatAppendStream", retryAfter: "3600")
-        let waits = Waits()
-        let sender = await rateLimitedSender(http, waits: waits)
-        let input = ManualInput()
-        await input.yield(.markdown("first"))
-        let sending = Task {
-            try await sender.send(input)
-        }
-        await http.waitForRequests(1)
-        await input.yield(.markdown(" second"))
-        await waits.waitFor(1)
-        await input.yield(.markdown(" third"))
-        await input.waitForReads(4)
-        sending.cancel()
-        await input.finish()
-
-        #expect(try await sending.value == SlackHTTP.ts)
-        let requests = await http.requests
-        #expect(requests.map(\.operationID) == ["chatStartStream", "chatAppendStream", "chatStopStream"])
-        #expect(try requests[1].chunks() == [["type": "markdown_text", "text": " second"]])
-        #expect(try requests[2].chunks() == [["type": "markdown_text", "text": " second third"]])
-        #expect(requests[2].fields["blocks"]?.contains("divider") == true)
-        try await expectRetryAfterWaitedOut(waits)
-    }
-
-    @Test(.timeLimit(.minutes(1)), arguments: ["chatStartStream", "chatAppendStream"], InputPath.allCases)
-    func `finishes the request in flight and stops the message when the sending task is cancelled`(
-        method: String,
-        path: InputPath,
+    @Test(.timeLimit(.minutes(1)), arguments: [URLError.Code.networkConnectionLost, .cancelled])
+    func `does not resend a request that fails in flight and stops the message without content`(
+        code: URLError.Code,
     ) async throws {
-        let http = SlackHTTP(pausing: method)
-        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
-        let input = ManualInput()
-        await input.yield(.markdown("first"))
-        let sending = Task {
-            try await streamMessage(client, input, through: path)
-        }
-        await http.waitForRequests(1)
-        var reads = 3
-        if method == "chatAppendStream" {
-            await input.yield(.markdown(" second"))
-            await http.waitForRequests(2)
-            reads += 1
-        }
-        await input.yield(.markdown(" last"))
-        // This read means the sender has buffered the last part.
-        await input.waitForReads(reads)
-        sending.cancel()
-        await http.release()
-        await input.finish()
-
-        #expect(try await sending.value == SlackHTTP.ts)
-        #expect(await http.pausedRequestWasCancelled == false)
-        let requests = await http.requests
-        #expect(requests.map(\.operationID) == (method == "chatStartStream"
-                ? ["chatStartStream", "chatStopStream"] : ["chatStartStream", "chatAppendStream", "chatStopStream"]))
-        #expect(try requests.last?.chunks() == [["type": "markdown_text", "text": " last"]])
-        #expect(requests.last?.fields["blocks"]?.contains("divider") == true)
-    }
-
-    @Test(.timeLimit(.minutes(1)))
-    func `waits out Retry-After from a request rate limited after the sending task is cancelled`() async throws {
-        let http = SlackHTTP(rateLimitedOnce: "chatStartStream", retryAfter: "3600", pausing: "chatStartStream")
-        let waits = Waits()
-        let sender = await rateLimitedSender(http, waits: waits)
-        let input = ManualInput()
-        await input.yield(.markdown("first"))
-        let sending = Task {
-            try await sender.send(input)
-        }
-        await http.waitForRequests(1)
-        await input.yield(.markdown(" second"))
-        await input.waitForReads(3)
-        sending.cancel()
-        await http.release()
-        await input.finish()
-
-        #expect(try await sending.value == SlackHTTP.ts)
-        #expect(await http.pausedRequestWasCancelled == false)
-        let requests = await http.requests
-        #expect(requests.map(\.operationID) == ["chatStartStream", "chatStartStream", "chatStopStream"])
-        #expect(try requests[1].chunks() == [["type": "markdown_text", "text": "first second"]])
-        try await expectRetryAfterWaitedOut(waits)
-    }
-
-    @Test(.timeLimit(.minutes(1)))
-    func `does not resend a request that fails in flight and stops the message without content`() async {
-        let http = SlackHTTP(throwing: "chatAppendStream")
+        // URLError.cancelled from a task that is not cancelled is an ordinary transport failure.
+        let http = SlackHTTP(throwing: "chatAppendStream", error: URLError(code))
         let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
         let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
         let sending = Task {
@@ -279,13 +177,133 @@ struct StreamMessageTests {
         await http.waitForRequests(1)
         continuation.yield(.markdown(" second"))
 
-        await #expect(throws: (any Error).self) { try await sending.value }
+        let error = await #expect(throws: ClientError.self) { try await sending.value }
+        #expect((error?.underlyingError as? URLError)?.code == code)
         continuation.finish()
 
         let requests = await http.requests
         #expect(requests.map(\.operationID) == ["chatStartStream", "chatAppendStream", "chatStopStream"])
+        #expect(try requests[1].chunks() == [["type": "markdown_text", "text": " second"]])
         #expect(requests[2].fields["chunks"] == nil)
         #expect(requests[2].fields["blocks"] == nil)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: ["chatStartStream", "chatAppendStream"], InputPath.allCases)
+    func `abandons a request in flight when the sending task is cancelled and stops only a message with a ts`(
+        method: String,
+        path: InputPath,
+    ) async throws {
+        // The paused request reaches the server, which throws on release like an HTTP client abandoning it.
+        let http = SlackHTTP(pausing: method)
+        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task { try await streamMessage(client, input, through: path) }
+        await http.waitForRequests(1)
+        if method == "chatAppendStream" {
+            await input.yield(.markdown(" second"))
+            await http.waitForRequests(2)
+        }
+        await input.yield(.markdown(" unsent"))
+        sending.cancel()
+        await http.release()
+        // The cleanup, if any, happens while the input is still idle; it ignores cancellation, so end it.
+        await http.waitForRequests(method == "chatStartStream" ? 1 : 3)
+        await input.finish()
+
+        let error = await #expect(throws: ClientError.self) { try await sending.value }
+        #expect(error?.underlyingError is CancellationError)
+        #expect(await http.pausedRequestWasCancelled)
+        let requests = await http.requests
+        if method == "chatStartStream" {
+            // Slack may have posted the message, but its ts is unknown, so there is nothing to stop.
+            #expect(requests.map(\.operationID) == ["chatStartStream"])
+        } else {
+            #expect(requests.map(\.operationID) == ["chatStartStream", "chatAppendStream", "chatStopStream"])
+            #expect(requests[2].fields["ts"] == SlackHTTP.ts)
+            #expect(requests[2].fields["chunks"] == nil)
+            #expect(requests[2].fields["blocks"] == nil)
+        }
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `rethrows URLError.cancelled from a request abandoned on cancellation`() async throws {
+        let http = SlackHTTP(pausing: "chatAppendStream", abandonedWith: URLError(.cancelled))
+        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task { try await streamMessage(client, input, through: .sendable) }
+        await http.waitForRequests(1)
+        await input.yield(.markdown(" second"))
+        await http.waitForRequests(2)
+        sending.cancel()
+        await http.release()
+        await http.waitForRequests(3)
+        await input.finish()
+
+        let error = await #expect(throws: ClientError.self) { try await sending.value }
+        #expect((error?.underlyingError as? URLError)?.code == .cancelled)
+        #expect(await http.requests.map(\.operationID) == ["chatStartStream", "chatAppendStream", "chatStopStream"])
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: ["chatStartStream", "chatAppendStream"], InputPath.allCases)
+    func `ends a Retry-After wait on cancellation without resending its parts`(
+        method: String,
+        path: InputPath,
+    ) async throws {
+        let http = SlackHTTP(rateLimitedOnce: method, retryAfter: "3600")
+        let waits = Waits()
+        let sender = await rateLimitedSender(http, waits: waits)
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            switch path {
+            case .sendable:
+                try await sender.send(input)
+            case .callerIsolated:
+                try await sender.send(NotSendable(input))
+            }
+        }
+        if method == "chatAppendStream" {
+            await http.waitForRequests(1)
+            await input.yield(.markdown(" second"))
+        }
+        await waits.waitFor(1)
+        sending.cancel()
+        await http.waitForRequests(method == "chatStartStream" ? 1 : 3)
+        await input.finish()
+
+        await #expect(throws: CancellationError.self) { try await sending.value }
+        let requests = await http.requests
+        if method == "chatStartStream" {
+            // Slack rejected the start, so there is no message: no retry and no stop.
+            #expect(requests.map(\.operationID) == ["chatStartStream"])
+        } else {
+            #expect(requests.map(\.operationID) == ["chatStartStream", "chatAppendStream", "chatStopStream"])
+            #expect(requests[2].fields["chunks"] == nil)
+            #expect(requests[2].fields["blocks"] == nil)
+        }
+        // Only the cancelled Retry-After wait: the cleanup stop does not wait for the rate limit to pass.
+        #expect(await waits.durations == [.seconds(3600)])
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `makes the cleanup stop once without waiting when Slack rate limits it`() async throws {
+        let http = SlackHTTP(rateLimitedOnce: "chatStopStream", retryAfter: "3600", throwing: "chatAppendStream")
+        let waits = Waits(blocksFirstWait: false)
+        let sender = await rateLimitedSender(http, waits: waits)
+        let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
+        let sending = Task { try await sender.send(parts) }
+        continuation.yield(.markdown("first"))
+        await http.waitForRequests(1)
+        continuation.yield(.markdown(" second"))
+
+        // The append's error, not the rate-limited cleanup's.
+        let error = await #expect(throws: ClientError.self) { try await sending.value }
+        #expect((error?.underlyingError as? URLError)?.code == .networkConnectionLost)
+        continuation.finish()
+        #expect(await http.requests.map(\.operationID) == ["chatStartStream", "chatAppendStream", "chatStopStream"])
+        #expect(await waits.durations.isEmpty)
     }
 
     @Test
@@ -348,19 +366,16 @@ private func rateLimitedSender(
     return sender
 }
 
-/// Expects the cancelled `Retry-After` wait of an hour, then a wait for what remained of it before the closing calls.
-private func expectRetryAfterWaitedOut(_ waits: Waits) async throws {
-    let durations = await waits.durations
-    try #require(durations.count == 2)
-    #expect(durations[0] == .seconds(3600))
-    #expect(durations[1] > .seconds(3500) && durations[1] <= .seconds(3600))
-}
-
-/// Records the sender's waits. Only the first wait takes its time, until the task is cancelled; later waits,
-/// such as those of the uncancelled closing calls, return at once.
+/// Records the sender's waits. Only the first wait takes its time, until the task is cancelled, unless
+/// `blocksFirstWait` is `false`; later waits return at once.
 private actor Waits {
     private(set) var durations: [Duration] = []
+    private let blocksFirstWait: Bool
     private var waiters: [(count: Int, continuation: CheckedContinuation<Void, Never>)] = []
+
+    init(blocksFirstWait: Bool = true) {
+        self.blocksFirstWait = blocksFirstWait
+    }
 
     func sleep(for duration: Duration) async throws {
         durations.append(duration)
@@ -368,7 +383,7 @@ private actor Waits {
             waiter.continuation.resume()
         }
         waiters.removeAll { $0.count <= durations.count }
-        if durations.count == 1 {
+        if blocksFirstWait, durations.count == 1 {
             try await Task.sleep(for: duration)
         }
     }
@@ -410,29 +425,37 @@ private actor SlackHTTP: ClientTransport {
     private let retryAfter: String
     private let failing: (operationID: String, code: String)?
     private let throwing: String?
+    private let thrownError: URLError
     private var pausing: String?
+    private let abandonmentError: any Error
     private var pausedRequest: CheckedContinuation<Void, Never>?
     private var isReleased = false
     private var waiters: [(count: Int, continuation: CheckedContinuation<Void, Never>)] = []
 
     /// Creates a transport that rate limits the first `rateLimitedOnce` request, answers `failing` requests with
-    /// `"ok": false`, and throws for `throwing` requests after recording them, like a connection lost in flight.
+    /// `"ok": false`, and throws `error` for `throwing` requests after recording them, like a connection lost in
+    /// flight.
     ///
-    /// The first `pausing` request is answered only once the test calls ``release()``. If its task was cancelled
-    /// by then, it throws `CancellationError` instead, like an HTTP client that abandons the request.
+    /// The first `pausing` request is answered only once the test calls ``release()``, whether or not its task is
+    /// cancelled, so a test never depends on cancellation to resume it. If its task was cancelled by then, it
+    /// throws `abandonedWith` instead, like an HTTP client that abandons a request Slack has already received.
     init(
         rateLimitedOnce: String? = nil,
         retryAfter: String = "0",
         failing operationID: String? = nil,
         code: String = "",
         throwing throwingOperationID: String? = nil,
+        error: URLError = URLError(.networkConnectionLost),
         pausing pausedOperationID: String? = nil,
+        abandonedWith abandonmentError: any Error = CancellationError(),
     ) {
         self.rateLimitedOnce = rateLimitedOnce
         self.retryAfter = retryAfter
         failing = operationID.map { ($0, code) }
         throwing = throwingOperationID
+        thrownError = error
         pausing = pausedOperationID
+        self.abandonmentError = abandonmentError
     }
 
     func waitForRequests(_ count: Int) async {
@@ -470,11 +493,11 @@ private actor SlackHTTP: ClientTransport {
             }
             if Task.isCancelled {
                 pausedRequestWasCancelled = true
-                throw CancellationError()
+                throw abandonmentError
             }
         }
         if throwing == operationID {
-            throw URLError(.networkConnectionLost)
+            throw thrownError
         }
         if rateLimitedOnce == operationID {
             rateLimitedOnce = nil

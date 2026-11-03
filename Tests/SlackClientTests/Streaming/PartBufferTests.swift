@@ -106,11 +106,15 @@ struct PartBufferTests {
     }
 
     @Test
-    func `refuses parts once closed`() async {
+    func `discards buffered parts and refuses new ones once closed`() async {
         let buffer = PartBuffer()
-        await buffer.append(.markdown("kept"))
+        await buffer.append(.markdown("discarded"))
 
-        #expect(await buffer.close().parts == [.markdown("kept")])
+        await buffer.close()
         #expect(await buffer.append(.markdown("dropped")) == false)
+        await buffer.finish(throwing: nil)
+        let batch = await buffer.next()
+        #expect(batch.parts.isEmpty)
+        #expect(batch.isFinal)
     }
 }

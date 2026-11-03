@@ -5,12 +5,9 @@ import SlackBlockKit
 
 /// Streams one message through the generated Web API methods.
 ///
-/// Each HTTP request runs to completion even when the task is cancelled: HTTP transports abandon requests made
-/// from a cancelled task, and an abandoned request may still reach Slack without returning its outcome, such as
-/// the message's `ts`. A call that Slack rate limits (HTTP 429) is retried after its `Retry-After` delay, up to
-/// three attempts, unless Slack has ended the session meanwhile. Only that delay honors cancellation: when the
-/// task is cancelled, the call throws ``RateLimitedCallCancelled`` instead of retrying, so the sender sends its
-/// parts with the closing calls.
+/// A call that Slack rate limits (HTTP 429) is retried after its `Retry-After` delay, up to three attempts,
+/// unless the task is cancelled or Slack has ended the session meanwhile. Requests run in the caller's task, so
+/// cancelling it may abandon a request that has already reached Slack. Other failed requests are not retried.
 struct WebAPIStreamingTransport: StreamingMessageTransport {
     let client: any APIProtocol
     let channel: String
@@ -90,34 +87,38 @@ struct WebAPIStreamingTransport: StreamingMessageTransport {
         try Self.check("chat.stopStream", ok: response.ok, error: response.error)
     }
 
+    /// Makes a single attempt: a rate-limited answer throws instead of waiting out its `Retry-After`.
+    func stopOnce(ts: String, stopSignal: SessionStopSignal) async throws {
+        try await stopSignal.check()
+        let body = Operations.ChatStopStream.Input.Body.json(.init(
+            channel: channel, ts: ts, sessionStatus: sessionStatus,
+        ))
+        let response = try await client.chatStopStream(body: body).ok.body.json
+        try Self.check("chat.stopStream", ok: response.ok, error: response.error)
+    }
+
     /// Repeats `call` while `rateLimited` finds a 429 response, waiting the seconds in its `Retry-After`.
     ///
-    /// Each attempt runs without the caller's cancellation, so its response arrives; the wait between attempts
-    /// runs in the caller's task. Once `stopSignal` is raised, the wait ends and no retry starts. When the task is
-    /// cancelled, the wait ends and ``RateLimitedCallCancelled`` is thrown instead of retrying. Other failures are
-    /// thrown without a retry, because a request that failed in flight may already have reached Slack.
-    private func retryingRateLimits<Output: Sendable>(
+    /// Each attempt runs in the caller's task, so cancelling it can abandon the request. Once `stopSignal` is
+    /// raised, the wait ends and no retry starts. When the task is cancelled, the wait ends and
+    /// `CancellationError` is thrown instead of retrying. Other failures are thrown without a retry, because a
+    /// request that failed in flight may already have reached Slack.
+    private func retryingRateLimits<Output>(
         stopSignal: SessionStopSignal,
-        _ call: @escaping @Sendable () async throws -> Output,
+        _ call: () async throws -> Output,
         rateLimited: (Output) -> UndocumentedPayload?,
     ) async throws -> Output {
         var attempt = 1
         while true {
             try await stopSignal.check()
-            let output = try await withoutCancellation(call)
-            guard let payload = rateLimited(output), attempt < Self.maximumAttempts else {
-                return output
-            }
+            try Task.checkCancellation()
+            let output = try await call()
+            guard let payload = rateLimited(output), attempt < Self.maximumAttempts else { return output }
             let retryAfter = payload.headerFields
                 .first { $0.name.canonicalName == "retry-after" }
                 .flatMap { Int($0.value) }
-            let delay = Duration.seconds(retryAfter ?? 1)
-            let retryAt = ContinuousClock.now + delay
-            try await stopSignal.sleep(for: delay)
-            if Task.isCancelled {
-                // A cancelled task does not retry; Slack rejected the call, so the sender can resend its parts.
-                throw RateLimitedCallCancelled(retryAt: retryAt)
-            }
+            try await stopSignal.sleep(for: .seconds(retryAfter ?? 1))
+            try Task.checkCancellation()
             attempt += 1
         }
     }

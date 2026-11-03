@@ -6,9 +6,9 @@ import SlackBlockKit
 /// Each call takes the message's ``SessionStopSignal``. A transport that retries checks it before every retry
 /// and waits through it, so that no retry starts once Slack has ended the session.
 ///
-/// Cancelling the task must not abandon a request in progress: the sender relies on the outcome, such as the
-/// `ts` of a start that Slack processed, to stop the message. Cancellation may end only the waits between
-/// retries, and a transport that ends one for a rate-limited call throws ``RateLimitedCallCancelled``.
+/// Calls run in the caller's task and honor its cancellation. A request abandoned on cancellation may still have
+/// reached Slack, so the sender never resends it. A wait before a rate-limit retry that ends on cancellation
+/// throws `CancellationError` instead of retrying.
 protocol StreamingMessageTransport: Sendable {
     /// Calls `chat.startStream` and returns the message's `ts`.
     func start(chunks: [StreamingMessage.Part], stopSignal: SessionStopSignal) async throws -> String
@@ -21,17 +21,9 @@ protocol StreamingMessageTransport: Sendable {
         blocks: [Block]?,
         stopSignal: SessionStopSignal,
     ) async throws
-}
-
-/// Thrown by a transport when Slack rejected a call as rate limited (HTTP 429) and the task was cancelled before
-/// the retry.
-///
-/// Slack did not process the rejected call, so its parts are still unsent: the sender sends them with the closing
-/// calls, which do not run in the cancelled task, once `retryAt` has passed. Other failures do not mean this,
-/// because a call that failed in flight may already have reached Slack.
-struct RateLimitedCallCancelled: Error {
-    /// When Slack accepts calls again, from the rejection's `Retry-After`.
-    var retryAt: ContinuousClock.Instant
+    /// Calls `chat.stopStream` once without chunks or blocks, to end a message whose delivery failed or was
+    /// cancelled. A rate-limited call is not retried.
+    func stopOnce(ts: String, stopSignal: SessionStopSignal) async throws
 }
 
 /// Sends a sequence of parts as one streaming message.
@@ -42,6 +34,9 @@ struct RateLimitedCallCancelled: Error {
 ///
 /// When the sequence throws ``StreamingMessage/SessionStopped``, the caller's task raises a ``SessionStopSignal``,
 /// which every path checks before it starts a call, and after a call before it acts on the outcome.
+///
+/// Cancelling the task ends delivery like a failed call: the parts and blocks not yet sent are discarded, and the
+/// message is stopped without content once it has a `ts`.
 struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
     let transport: Transport
     let blocks: [Block]?
@@ -122,59 +117,67 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
     private func deliver(from buffer: PartBuffer, stopSignal: SessionStopSignal) async throws -> String {
         var ts: String?
         let ending: PartBuffer.Batch
-        var retryAt: ContinuousClock.Instant?
-        do {
-            ending = try await stream(from: buffer, ts: &ts, retryAt: &retryAt, stopSignal: stopSignal)
-        } catch {
-            await buffer.close()
-            if let ts {
-                try await withoutCancellation { try await stopAfterFailure(ts: ts, stopSignal: stopSignal) }
-            }
-            // Once Slack has ended the session, the failure no longer matters and the message needs no stop.
-            try await stopSignal.check()
-            throw error
-        }
-        // Once Slack has ended the session, the final batch and the closing blocks are discarded.
-        try await stopSignal.check()
-        if let failure = ending.failure, ts == nil, ending.parts.isEmpty {
-            // The input failed before it produced anything, so there is no message to post.
-            throw failure
-        }
-
-        // The closing calls run even when the caller was cancelled, because cancelling must still stop the
-        // message, and the waits between them and before rate-limit retries would otherwise end early.
         let messageTs: String
         do {
-            messageTs = try await withoutCancellation { [ts, retryAt] in
-                try await close(ts: ts, parts: ending.parts, retryAt: retryAt, stopSignal: stopSignal)
-            }
-        } catch {
+            ending = try await stream(from: buffer, ts: &ts, stopSignal: stopSignal)
+            // Once Slack has ended the session, the final batch and the closing blocks are discarded.
             try await stopSignal.check()
+            if let failure = ending.failure, ts == nil, ending.parts.isEmpty {
+                // The input failed before it produced anything, so there is no message to post.
+                throw failure
+            }
+            messageTs = try await close(ts: &ts, ending: ending, stopSignal: stopSignal)
+        } catch {
+            await buffer.close()
+            try await abandon(ts: ts, stopSignal: stopSignal)
             throw error
         }
-        try await stopSignal.check()
         if let failure = ending.failure {
             throw failure
         }
         return messageTs
     }
 
-    /// Sends the final parts and the closing blocks, starting the message first when it has no `ts` yet.
+    /// Starts and appends to the message until the input ends, and returns the final batch for the closing calls.
     ///
-    /// When a call fails once the message has a `ts`, including one from the start made here, the message is
-    /// stopped without further content and the call's error is rethrown.
+    /// Throws once the task is cancelled, which discards the batch just taken and everything still buffered.
+    private func stream(
+        from buffer: PartBuffer,
+        ts: inout String?,
+        stopSignal: SessionStopSignal,
+    ) async throws -> PartBuffer.Batch {
+        while true {
+            // A cancelled task stops waiting here, whether the input is idle or has ended because of the
+            // cancellation.
+            let batch = await buffer.next()
+            try Self.checkCancellation(rethrowing: batch.failure)
+            if batch.isFinal {
+                return batch
+            }
+
+            try await stopSignal.check()
+            // `ts` is stored as soon as a start returns, so a cancellation noticed later still stops the message.
+            if let ts {
+                try await transport.append(ts: ts, chunks: batch.parts, stopSignal: stopSignal)
+            } else {
+                ts = try await transport.start(chunks: batch.parts, stopSignal: stopSignal)
+            }
+            // A cancelled wait returns early, and the next batch throws. The wait throws once Slack has ended the
+            // session, including during the call that just finished.
+            try await stopSignal.sleep(for: minimumInterval)
+        }
+    }
+
+    /// Sends the final batch and the closing blocks, starting the message first when it has no `ts` yet.
+    ///
+    /// The final batch fits one request, because the buffer takes bounded batches until the input has ended. When
+    /// the task is cancelled after a start made here, the message keeps that start's `ts` for the cleanup stop.
     private func close(
-        ts: String?,
-        parts: [StreamingMessage.Part],
-        retryAt: ContinuousClock.Instant?,
+        ts: inout String?,
+        ending: PartBuffer.Batch,
         stopSignal: SessionStopSignal,
     ) async throws -> String {
-        if let retryAt {
-            // Slack rejected the last call as rate limited, so wait out its Retry-After first.
-            try await stopSignal.sleep(for: ContinuousClock.now.duration(to: retryAt))
-        }
-        var batches = PartBuffer.requestBatches(parts)
-        var chunks = batches.removeFirst()
+        var chunks = ending.parts
         let messageTs: String
         if let ts {
             messageTs = ts
@@ -185,88 +188,40 @@ struct StreamingMessageSender<Transport: StreamingMessageTransport>: Sendable {
                 chunks: chunks.isEmpty ? [.markdown(" ")] : chunks,
                 stopSignal: stopSignal,
             )
+            ts = messageTs
             chunks = []
+            try Self.checkCancellation(rethrowing: ending.failure)
         }
-        do {
-            // Flush bounded requests even when cancellation accumulated a large final buffer.
-            for next in batches {
-                if !chunks.isEmpty {
-                    try await stopSignal.check()
-                    try await transport.append(ts: messageTs, chunks: chunks, stopSignal: stopSignal)
-                    try await stopSignal.sleep(for: minimumInterval)
-                }
-                chunks = next
-            }
-            try await stopSignal.check()
-            try await transport.stop(ts: messageTs, chunks: chunks, blocks: blocks, stopSignal: stopSignal)
-        } catch {
-            try await stopAfterFailure(ts: messageTs, stopSignal: stopSignal)
-            throw error
-        }
+        try await stopSignal.check()
+        try await transport.stop(ts: messageTs, chunks: chunks, blocks: blocks, stopSignal: stopSignal)
+        try await stopSignal.check()
         return messageTs
     }
 
-    /// Stops the message after a failed call so it does not stay streaming, and leaves rethrowing the call's
-    /// error to the caller.
+    /// Ends delivery after a failed call or a cancellation, and leaves rethrowing the error to the caller.
     ///
-    /// The stop carries no parts or blocks: the failed call may already have delivered its parts. Its own failure
-    /// is ignored in favor of the original error. Once Slack has ended the session, it makes no call and throws
-    /// ``StreamingMessage/SessionStopped`` instead.
-    private func stopAfterFailure(ts: String, stopSignal: SessionStopSignal) async throws {
+    /// Once the message has a `ts`, it is stopped with one call that carries no parts or blocks: a call that failed
+    /// or was abandoned may already have delivered its parts. That call runs in a task that does not inherit the
+    /// caller's cancellation, because HTTP transports abandon requests made from a cancelled task; the caller
+    /// awaits it, so it does not outlive `send`. Its failure is ignored in favor of the original error. Once Slack
+    /// has ended the session, no call is made and ``StreamingMessage/SessionStopped`` is thrown instead.
+    private func abandon(ts: String?, stopSignal: SessionStopSignal) async throws {
         try await stopSignal.check()
-        try? await transport.stop(ts: ts, chunks: [], blocks: nil, stopSignal: stopSignal)
+        guard let ts else { return }
+        try? await Task { [transport] in
+            try await stopSignal.check()
+            try await transport.stopOnce(ts: ts, stopSignal: stopSignal)
+        }.value
         try await stopSignal.check()
     }
 
-    /// Starts and appends to the message until the input ends, and returns the final batch for the closing calls.
-    ///
-    /// `retryAt` is set when Slack rate limited the last call and the closing calls must wait before they start.
-    private func stream(
-        from buffer: PartBuffer,
-        ts: inout String?,
-        retryAt: inout ContinuousClock.Instant?,
-        stopSignal: SessionStopSignal,
-    ) async throws -> PartBuffer.Batch {
-        while true {
-            var batch = await buffer.next()
-            if !batch.isFinal, Task.isCancelled {
-                // Cancelling ends the input: the batch just taken and everything still buffered go out with the
-                // closing calls.
-                batch = await buffer.close(prepending: batch.parts)
-            }
-            if batch.isFinal {
-                return batch
-            }
-
-            try await stopSignal.check()
-            do {
-                if let ts {
-                    try await transport.append(ts: ts, chunks: batch.parts, stopSignal: stopSignal)
-                } else {
-                    ts = try await transport.start(chunks: batch.parts, stopSignal: stopSignal)
-                }
-            } catch let cancelled as RateLimitedCallCancelled {
-                // Slack did not process the batch, so it goes out with the closing calls like the rest.
-                try await stopSignal.check()
-                retryAt = cancelled.retryAt
-                return await buffer.close(prepending: batch.parts)
-            }
-            // A cancelled wait returns early, and the next batch is the final one. The wait throws once Slack has
-            // ended the session, including during the call that just finished.
-            try await stopSignal.sleep(for: minimumInterval)
+    /// Throws once the task is cancelled. When the input ended with an error, that error is thrown instead of
+    /// `CancellationError`, so that cancellation does not hide it.
+    private static func checkCancellation(rethrowing failure: (any Error)?) throws {
+        if Task.isCancelled {
+            throw failure ?? CancellationError()
         }
     }
-}
-
-/// Runs `operation` in a new task, which does not inherit the caller's cancellation, and returns its result.
-///
-/// Streaming runs its HTTP requests and closing calls this way, because cancellation cannot withdraw a request
-/// that may already have reached Slack. The caller awaits each result, so these tasks do not outlive `send`,
-/// and task-local values and priority carry over.
-func withoutCancellation<T: Sendable>(
-    _ operation: @escaping @Sendable () async throws -> T,
-) async throws -> T {
-    try await Task { try await operation() }.value
 }
 
 /// Records that Slack has ended a streaming message's session: the one terminal state every request path checks.
@@ -378,17 +333,10 @@ actor PartBuffer {
         resumeWaiter()
     }
 
-    /// Stops taking parts and returns everything buffered as the final batch, after `taken`: parts the sender
-    /// took earlier but did not send.
-    @discardableResult
-    func close(prepending taken: [StreamingMessage.Part] = []) -> Batch {
+    /// Stops taking parts and discards everything buffered, once delivery has ended without sending them.
+    func close() {
         isClosed = true
-        let buffered = parts
         parts = []
-        for part in taken + buffered {
-            add(part)
-        }
-        return take(isFinal: true, bounded: false)
     }
 
     /// Waits until parts are available, the input has ended, or the sender is cancelled, then takes one
@@ -409,8 +357,8 @@ actor PartBuffer {
         return take(isFinal: isFinished)
     }
 
-    private func take(isFinal: Bool, bounded: Bool = true) -> Batch {
-        let taken = bounded ? Self.requestBatches(parts)[0] : parts
+    private func take(isFinal: Bool) -> Batch {
+        let taken = Self.requestBatches(parts)[0]
         parts.removeFirst(taken.count)
         let final = isFinal && parts.isEmpty
         return Batch(parts: taken, isFinal: final, failure: final ? failure : nil)

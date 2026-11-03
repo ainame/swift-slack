@@ -50,44 +50,6 @@ struct StreamingMessageSenderTests {
         }
     }
 
-    @Test(.timeLimit(.minutes(1)))
-    func `local cancellation flushes a large buffer with bounded requests`() async throws {
-        let transport = FakeTransport()
-        let input = ManualInput()
-        let (sleeps, continuation) = AsyncStream.makeStream(of: Duration.self)
-        let waits = ClosingWaitCounter()
-        await input.yield(.markdown("first"))
-        let sending = Task {
-            try await sender(transport, minimumInterval: .milliseconds(10)) { duration in
-                continuation.yield(duration)
-                if await waits.isFirst() {
-                    try await Task.sleep(for: .seconds(3600))
-                }
-            }.send(input)
-        }
-        _ = await sleeps.first { _ in true }
-        let value = String(repeating: "x", count: 30000)
-        await input.yield(.markdown(value))
-        await input.waitForReads(3)
-        sending.cancel()
-        // The closing path also waits between appends; allow those waits to finish immediately.
-        continuation.finish()
-        await input.finish()
-        _ = try await sending.value
-        let calls = await transport.calls
-        #expect(text(calls) == "first" + value)
-        #expect(calls.last?.method == "stop")
-        #expect(calls.allSatisfy { call in
-            call.chunks.reduce(0) { total, part in
-                if case let .markdown(value) = part {
-                    total + value.count
-                } else {
-                    total
-                }
-            } <= 12000
-        })
-    }
-
     @Test
     func `starts and stops a message when the input is empty`() async throws {
         let transport = FakeTransport()
@@ -122,25 +84,6 @@ struct StreamingMessageSenderTests {
         try await sender(transport).send(Words(["a", "b"]).map { Part.markdown($0) })
 
         #expect(await text(transport.calls) == "ab")
-    }
-
-    @Test
-    func `stops the message when the sending task is cancelled, though the transport honors cancellation`() async throws {
-        let transport = FakeTransport()
-        let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
-        continuation.yield(.markdown("partial"))
-
-        let sending = Task {
-            try await sender(transport, blocks: blocks).send(parts)
-        }
-        await transport.waitForCalls(1)
-        sending.cancel()
-        _ = try await sending.value
-
-        let calls = await transport.calls
-        #expect(calls.first == .init(method: "start", chunks: [.markdown("partial")]))
-        #expect(calls.last?.method == "stop")
-        #expect(calls.last?.blocks == blocks)
     }
 
     @Test
@@ -196,9 +139,9 @@ struct StreamingMessageSenderTests {
         #expect(await transport.calls.isEmpty)
     }
 
-    @Test
-    func `stops the message without blocks and throws when an append fails`() async {
-        let transport = FakeTransport(failing: ["append"])
+    @Test(arguments: [false, true])
+    func `stops the message without content and rethrows the error when an append fails`(cleanupFails: Bool) async {
+        let transport = FakeTransport(failing: cleanupFails ? ["append", "stopOnce"] : ["append"])
         let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
         let sending = Task {
             try await sender(transport, blocks: blocks).send(parts)
@@ -210,212 +153,172 @@ struct StreamingMessageSenderTests {
         await transport.waitForCalls(3)
         continuation.yield(.markdown("third"))
 
-        await #expect(throws: StreamingMessage.Error.self) {
+        // A failed cleanup stop does not replace the append's error.
+        await #expect(throws: StreamingMessage.Error(method: "chat.appendStream", code: "failed")) {
             try await sending.value
         }
         continuation.finish()
 
-        let calls = await transport.calls
-        #expect(calls.map(\.method) == ["start", "append", "stop"])
-        #expect(calls.last == .init(method: "stop", chunks: []))
+        #expect(await transport.calls == [
+            .init(method: "start", chunks: [.markdown("first")]),
+            .init(method: "append", chunks: [.markdown("second")]),
+            .init(method: "stopOnce", chunks: []),
+        ])
     }
 
-    @Test(.timeLimit(.minutes(1)))
-    func `sends the parts buffered during the minimum interval when the sending task is cancelled`() async throws {
+    @Test(arguments: [false, true])
+    func `stops a message that the closing start posted without content when the closing stop fails`(
+        cleanupFails: Bool,
+    ) async {
+        // An empty input reaches the closing calls before any start, so they start the message themselves.
+        let transport = FakeTransport(failing: cleanupFails ? ["stop", "stopOnce"] : ["stop"])
+
+        await #expect(throws: StreamingMessage.Error(method: "chat.stopStream", code: "failed")) {
+            try await sender(transport, blocks: blocks).send(AsyncStream<Part> { $0.finish() })
+        }
+
+        #expect(await transport.calls == [
+            .init(method: "start", chunks: [.markdown(" ")]),
+            .init(method: "stop", chunks: [], blocks: blocks),
+            .init(method: "stopOnce", chunks: []),
+        ])
+    }
+
+    @Test
+    func `makes no stop when the closing start fails`() async {
+        let transport = FakeTransport(failing: ["start"])
+
+        await #expect(throws: StreamingMessage.Error(method: "chat.startStream", code: "failed")) {
+            try await sender(transport, blocks: blocks).send(AsyncStream<Part> { $0.finish() })
+        }
+
+        #expect(await transport.calls == [.init(method: "start", chunks: [.markdown(" ")])])
+    }
+
+    @Test
+    func `finishes the message when the input throws CancellationError but the sending task is not cancelled`() async {
+        // Only the sending task's cancellation discards content; an input that ends with this error ends gracefully.
+        let transport = FakeTransport()
+        let parts = AsyncThrowingStream<Part, any Error> { continuation in
+            continuation.yield(.markdown("partial"))
+            continuation.finish(throwing: CancellationError())
+        }
+
+        await #expect(throws: CancellationError.self) {
+            try await sender(transport, blocks: blocks).send(parts)
+        }
+
+        let calls = await transport.calls
+        #expect(calls.last?.method == "stop")
+        #expect(calls.last?.blocks == blocks)
+        #expect(text(calls) == "partial")
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: ["start", "append"], InputPath.allCases)
+    func `stops the message without content when a call completes after the sending task is cancelled`(
+        method: String,
+        path: InputPath,
+    ) async throws {
+        // The paused call completes despite the cancellation, so the sender learns the outcome, including the ts.
+        let transport = FakeTransport(pausing: method)
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await send(sender(transport, blocks: blocks), input, through: path)
+        }
+        await transport.waitForCalls(1)
+        if method == "append" {
+            await input.yield(.markdown("second"))
+            await transport.waitForCalls(2)
+        }
+        await input.yield(.markdown(" unsent"))
+        // This read means the sender has buffered the unsent part.
+        await input.waitForReads(method == "append" ? 4 : 3)
+        sending.cancel()
+        await transport.release()
+        await transport.waitForCalls(method == "append" ? 3 : 2)
+        await input.finish()
+
+        await #expect(throws: CancellationError.self) { try await sending.value }
+        var sent: [FakeTransport.Call] = [.init(method: "start", chunks: [.markdown("first")])]
+        if method == "append" {
+            sent.append(.init(method: "append", chunks: [.markdown("second")]))
+        }
+        // The unsent part and the closing blocks are discarded.
+        #expect(await transport.calls == sent + [.init(method: "stopOnce", chunks: [])])
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `stops the message without content when the closing start completes after the sending task is cancelled`(
+        path: InputPath,
+    ) async throws {
+        let transport = FakeTransport(pausing: "start")
+        let sending = Task {
+            try await send(sender(transport, blocks: blocks), AsyncStream<Part> { $0.finish() }, through: path)
+        }
+        await transport.waitForCalls(1)
+        sending.cancel()
+        await transport.release()
+
+        // The start's ts is kept before the cancellation is checked, so the cleanup stop replaces the closing one.
+        await #expect(throws: CancellationError.self) { try await sending.value }
+        #expect(await transport.calls == [
+            .init(method: "start", chunks: [.markdown(" ")]),
+            .init(method: "stopOnce", chunks: []),
+        ])
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `discards the parts buffered during the minimum interval when the sending task is cancelled`(
+        path: InputPath,
+    ) async throws {
         let transport = FakeTransport()
         let input = ManualInput()
         let (sleeps, sleepContinuation) = AsyncStream.makeStream(of: Duration.self)
         await input.yield(.markdown("first"))
         let sending = Task {
-            try await sender(transport, blocks: blocks, minimumInterval: .seconds(3600)) { duration in
+            let messageSender = sender(transport, blocks: blocks, minimumInterval: .seconds(3600)) { duration in
                 sleepContinuation.yield(duration)
                 try await Task.sleep(for: duration)
-            }.send(input)
+            }
+            return try await send(messageSender, input, through: path)
         }
         #expect(await sleeps.first { _ in true } == .seconds(3600))
         await input.yield(.markdown("second"))
         // The third read means the sender has buffered the second part.
         await input.waitForReads(3)
         sending.cancel()
-        // The input ignores cancellation, so the buffer stays open while the cancelled sender takes the part.
+        // Delivery notices the cancellation and stops the message while the input, which ignores it, is idle.
         await transport.waitForCalls(2)
         await input.finish()
 
-        #expect(try await sending.value == FakeTransport.ts)
+        await #expect(throws: CancellationError.self) { try await sending.value }
         #expect(await transport.calls == [
             .init(method: "start", chunks: [.markdown("first")]),
-            .init(method: "stop", chunks: [.markdown("second")], blocks: blocks),
+            .init(method: "stopOnce", chunks: []),
         ])
     }
 
     @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
-    func `stops the message that a start in flight posts when the sending task is cancelled`(
+    func `throws CancellationError when the input finishes because the sending task is cancelled`(
         path: InputPath,
     ) async throws {
-        let transport = FakeTransport(pausing: "start")
-        let input = ManualInput()
-        await input.yield(.markdown("first"))
-        let sending = Task {
-            try await send(sender(transport, blocks: blocks), input, through: path)
-        }
-        await transport.waitForCalls(1)
-        await input.yield(.markdown(" second"))
-        // The third read means the sender has buffered the second part.
-        await input.waitForReads(3)
-        sending.cancel()
-        await transport.release()
-        await input.finish()
-
-        #expect(try await sending.value == FakeTransport.ts)
-        #expect(await transport.calls == [
-            .init(method: "start", chunks: [.markdown("first")]),
-            .init(method: "stop", chunks: [.markdown(" second")], blocks: blocks),
-        ])
-    }
-
-    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
-    func `sends only the parts after an append in flight when the sending task is cancelled`(
-        path: InputPath,
-    ) async throws {
-        let transport = FakeTransport(pausing: "append")
-        let input = ManualInput()
-        await input.yield(.markdown("first"))
-        let sending = Task {
-            try await send(sender(transport, blocks: blocks), input, through: path)
-        }
-        await transport.waitForCalls(1)
-        await input.yield(.markdown(" second"))
-        await transport.waitForCalls(2)
-        await input.yield(.markdown(" third"))
-        await input.waitForReads(4)
-        sending.cancel()
-        await transport.release()
-        await input.finish()
-
-        #expect(try await sending.value == FakeTransport.ts)
-        #expect(await transport.calls == [
-            .init(method: "start", chunks: [.markdown("first")]),
-            .init(method: "append", chunks: [.markdown(" second")]),
-            .init(method: "stop", chunks: [.markdown(" third")], blocks: blocks),
-        ])
-    }
-
-    @Test(.timeLimit(.minutes(1)))
-    func `stops a message posted by the closing calls without content when the closing stop fails`() async {
-        // The rate-limited start leaves the parts to the closing calls, which start the message themselves.
-        let transport = FakeTransport(failing: ["stop"], rateLimiting: "start")
+        // An AsyncStream ends without an error when the task reading it is cancelled.
+        let transport = FakeTransport()
         let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
-        let sending = Task {
-            try await sender(transport, blocks: blocks).send(parts)
-        }
-        continuation.yield(.markdown("first"))
-        // Finishing the input only after the first start keeps the first part out of the final batch.
-        await transport.waitForCalls(1)
-        continuation.finish()
-
-        await #expect(throws: StreamingMessage.Error(method: "chat.stopStream", code: "rate_limited")) {
-            try await sending.value
-        }
-
-        #expect(await transport.calls == [
-            .init(method: "start", chunks: [.markdown("first")]),
-            .init(method: "start", chunks: [.markdown("first")]),
-            .init(method: "stop", chunks: [], blocks: blocks),
-            .init(method: "stop", chunks: []),
-        ])
-    }
-
-    @Test(.timeLimit(.minutes(1)), arguments: [false, true])
-    func `stops the message without content and rethrows when a closing append fails after a closing start`(
-        cleanupFails: Bool,
-    ) async {
-        let transport = FakeTransport(failing: cleanupFails ? ["append", "stop"] : ["append"], rateLimiting: "start")
-        let value = String(repeating: "x", count: 30000)
-        let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
-        continuation.yield(.markdown(value))
-        continuation.finish()
-
-        // A failed cleanup stop does not replace the append's error.
-        await #expect(throws: StreamingMessage.Error(method: "chat.appendStream", code: "rate_limited")) {
-            try await sender(transport, blocks: blocks).send(parts)
-        }
-
-        let chunk = Part.markdown(String(repeating: "x", count: 12000))
-        #expect(await transport.calls == [
-            .init(method: "start", chunks: [chunk]),
-            .init(method: "start", chunks: [chunk]),
-            .init(method: "append", chunks: [chunk]),
-            .init(method: "stop", chunks: []),
-        ])
-    }
-
-    @Test(.timeLimit(.minutes(1)))
-    func `stops the message without content and rethrows when a closing append fails`() async {
-        // The rate-limited append leaves its parts to the closing calls, which append them in bounded requests.
-        let transport = FakeTransport(failing: ["append"], rateLimiting: "append")
-        let (parts, continuation) = AsyncStream.makeStream(of: Part.self)
-        let sending = Task {
-            try await sender(transport, blocks: blocks).send(parts)
-        }
-        continuation.yield(.markdown("first"))
-        await transport.waitForCalls(1)
-        continuation.yield(.markdown(String(repeating: "x", count: 30000)))
-        continuation.finish()
-
-        await #expect(throws: StreamingMessage.Error(method: "chat.appendStream", code: "rate_limited")) {
-            try await sending.value
-        }
-
-        let chunk = Part.markdown(String(repeating: "x", count: 12000))
-        #expect(await transport.calls == [
-            .init(method: "start", chunks: [.markdown("first")]),
-            .init(method: "append", chunks: [chunk]),
-            .init(method: "append", chunks: [chunk]),
-            .init(method: "stop", chunks: []),
-        ])
-    }
-
-    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
-    func `throws SessionStopped when Slack ends the session during a successful closing stop`(path: InputPath) async {
-        let transport = FakeTransport(holding: "stop", rateLimiting: "start")
-        let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
+        defer { continuation.finish() }
+        continuation.yield(.markdown("partial"))
         let sending = Task {
             try await send(sender(transport, blocks: blocks), parts, through: path)
         }
-        continuation.yield(.markdown("first"))
-        await transport.waitForCalls(3)
-        continuation.finish(throwing: StreamingMessage.SessionStopped())
+        await transport.waitForCalls(1)
+        sending.cancel()
 
-        await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
-        #expect(await transport.calls.map(\.method) == ["start", "start", "stop"])
-        #expect(await transport.heldCallWasCancelled == false)
-    }
-
-    @Test(.timeLimit(.minutes(1)), arguments: ["append", "stop"], InputPath.allCases)
-    func `makes no cleanup stop and throws SessionStopped when Slack ends the session during the closing calls`(
-        heldMethod: String,
-        path: InputPath,
-    ) async {
-        // The closing append fails once Slack has ended the session, or its cleanup stop is answered only then.
-        let transport = FakeTransport(failing: ["append"], holding: heldMethod, rateLimiting: "start")
-        let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
-        let sending = Task {
-            try await send(sender(transport, blocks: blocks), parts, through: path)
-        }
-        // The closing start takes the first 12,000 characters, so the closing calls append the next ones.
-        continuation.yield(.markdown(String(repeating: "x", count: 30000)))
-        await transport.waitForCalls(heldMethod == "append" ? 3 : 4)
-        continuation.finish(throwing: StreamingMessage.SessionStopped())
-
-        await #expect(throws: StreamingMessage.SessionStopped()) {
-            try await sending.value
-        }
-
-        let calls = await transport.calls
-        #expect(calls.map(\.method) == (heldMethod == "append"
-                ? ["start", "start", "append"] : ["start", "start", "append", "stop"]))
-        #expect(calls.last?.blocks == nil)
-        #expect(await transport.heldCallWasCancelled == false)
+        await #expect(throws: CancellationError.self) { try await sending.value }
+        #expect(await transport.calls == [
+            .init(method: "start", chunks: [.markdown("partial")]),
+            .init(method: "stopOnce", chunks: []),
+        ])
     }
 
     @Test
@@ -521,7 +424,7 @@ struct StreamingMessageSenderTests {
     @Test(.timeLimit(.minutes(1)))
     func `ignores the stop in flight after a failed call when Slack ends the session`() async throws {
         // The failed append closes the buffer, but the input is still read, so the signal still takes effect.
-        let transport = FakeTransport(failing: ["append"], holding: "stop")
+        let transport = FakeTransport(failing: ["append"], holding: "stopOnce")
         let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
         let sending = Task {
             try await sender(transport, blocks: blocks).send(parts)
@@ -536,8 +439,53 @@ struct StreamingMessageSenderTests {
             try await sending.value
         }
 
-        #expect(await transport.calls.map(\.method) == ["start", "append", "stop"])
+        #expect(await transport.calls.map(\.method) == ["start", "append", "stopOnce"])
         #expect(await transport.heldCallWasCancelled == false)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `throws SessionStopped instead of the cancellation when Slack ends the session during the cleanup stop`(
+        path: InputPath,
+    ) async throws {
+        let transport = FakeTransport(holding: "stopOnce")
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await send(sender(transport, blocks: blocks), input, through: path)
+        }
+        await transport.waitForCalls(1)
+        sending.cancel()
+        // The cleanup stop starts while the input is idle; the input ignores cancellation and ends only now.
+        await transport.waitForCalls(2)
+        await input.finish(throwing: StreamingMessage.SessionStopped())
+
+        await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
+        #expect(await transport.calls == [
+            .init(method: "start", chunks: [.markdown("first")]),
+            .init(method: "stopOnce", chunks: []),
+        ])
+        // The cleanup stop does not run in the cancelled task.
+        #expect(await transport.heldCallWasCancelled == false)
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
+    func `makes no cleanup stop when Slack ends the session during a call in a cancelled task`(
+        path: InputPath,
+    ) async throws {
+        let transport = FakeTransport(holding: "append")
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task {
+            try await send(sender(transport, blocks: blocks), input, through: path)
+        }
+        await transport.waitForCalls(1)
+        await input.yield(.markdown("second"))
+        await transport.waitForCalls(2)
+        sending.cancel()
+        await input.finish(throwing: StreamingMessage.SessionStopped())
+
+        await #expect(throws: StreamingMessage.SessionStopped()) { try await sending.value }
+        #expect(await transport.calls.map(\.method) == ["start", "append"])
     }
 
     @Test(.timeLimit(.minutes(1)))
@@ -652,22 +600,24 @@ extension NotSendable: Sendable {}
 
 /// An input that a test feeds by hand.
 ///
-/// Its reads ignore cancellation, like a producer that finishes on its own terms, and it counts them, so a test
-/// knows that the sender has buffered every part read before the latest read.
+/// Its reads ignore cancellation, like a producer that finishes on its own terms, so a test must end it with
+/// ``finish(throwing:)``. It counts reads, so a test knows that the sender has buffered every part read before
+/// the latest read.
 actor ManualInput: AsyncSequence {
     typealias Element = StreamingMessage.Part
 
     struct AsyncIterator: AsyncIteratorProtocol {
         let input: ManualInput
 
-        func next() async -> StreamingMessage.Part? {
-            await input.read()
+        func next() async throws -> StreamingMessage.Part? {
+            try await input.read()
         }
     }
 
     private var parts: [StreamingMessage.Part] = []
     private var isFinished = false
-    private var reader: CheckedContinuation<StreamingMessage.Part?, Never>?
+    private var failure: (any Error)?
+    private var reader: CheckedContinuation<StreamingMessage.Part?, any Error>?
     private var reads = 0
     private var readWaiters: [(count: Int, continuation: CheckedContinuation<Void, Never>)] = []
 
@@ -684,10 +634,18 @@ actor ManualInput: AsyncSequence {
         }
     }
 
-    func finish() {
+    /// Ends the input after the parts yielded so far, by throwing `error` if one is given.
+    func finish(throwing error: (any Error)? = nil) {
         isFinished = true
-        reader?.resume(returning: nil)
-        reader = nil
+        failure = error
+        if let reader {
+            self.reader = nil
+            if let error {
+                reader.resume(throwing: error)
+            } else {
+                reader.resume(returning: nil)
+            }
+        }
     }
 
     func waitForReads(_ count: Int) async {
@@ -695,7 +653,7 @@ actor ManualInput: AsyncSequence {
         await withCheckedContinuation { readWaiters.append((count, $0)) }
     }
 
-    private func read() async -> StreamingMessage.Part? {
+    private func read() async throws -> StreamingMessage.Part? {
         reads += 1
         for waiter in readWaiters where waiter.count <= reads {
             waiter.continuation.resume()
@@ -705,9 +663,12 @@ actor ManualInput: AsyncSequence {
             return parts.removeFirst()
         }
         if isFinished {
+            if let failure {
+                throw failure
+            }
             return nil
         }
-        return await withCheckedContinuation { reader = $0 }
+        return try await withCheckedThrowingContinuation { reader = $0 }
     }
 }
 
@@ -725,7 +686,6 @@ actor FakeTransport: StreamingMessageTransport {
     private(set) var heldCallWasCancelled = false
     private let failingMethods: Set<String>
     private let heldMethod: String?
-    private var rateLimitedMethod: String?
     private var pausedMethod: String?
     private var pausedCall: CheckedContinuation<Void, Never>?
     private var isReleased = false
@@ -734,18 +694,16 @@ actor FakeTransport: StreamingMessageTransport {
     /// Creates a transport whose `failing` calls fail, and whose `holding` calls are answered only once the
     /// session's stop signal is raised, like a request Slack answers after it has ended the session.
     ///
-    /// The first `rateLimiting` call is rejected as rate limited in a cancelled task, with a `Retry-After` that
-    /// has already passed. The first `pausing` call is answered only once the test calls ``release()``, even
-    /// when its task is cancelled, like a request that a transport does not abandon.
+    /// Methods are named `start`, `append`, `stop`, and `stopOnce` for the cleanup stop. The first `pausing` call
+    /// is answered only once the test calls ``release()``, even when its task is cancelled meanwhile, like a
+    /// request whose response arrives before the transport notices the cancellation.
     init(
         failing failingMethods: Set<String> = [],
         holding heldMethod: String? = nil,
-        rateLimiting rateLimitedMethod: String? = nil,
         pausing pausedMethod: String? = nil,
     ) {
         self.failingMethods = failingMethods
         self.heldMethod = heldMethod
-        self.rateLimitedMethod = rateLimitedMethod
         self.pausedMethod = pausedMethod
     }
 
@@ -767,6 +725,10 @@ actor FakeTransport: StreamingMessageTransport {
         try await record(Call(method: "stop", chunks: chunks, blocks: blocks), stopSignal: stopSignal)
     }
 
+    func stopOnce(ts _: String, stopSignal: SessionStopSignal) async throws {
+        try await record(Call(method: "stopOnce", chunks: []), stopSignal: stopSignal)
+    }
+
     func waitForCalls(_ count: Int) async {
         guard calls.count < count else { return }
         await withCheckedContinuation { waiters.append((count, $0)) }
@@ -780,7 +742,8 @@ actor FakeTransport: StreamingMessageTransport {
     }
 
     private func record(_ call: Call, stopSignal: SessionStopSignal) async throws {
-        // Refuse calls made from a cancelled task, so the tests show that the closing calls do not run in one.
+        // Refuse calls made from a cancelled task, like an HTTP transport, so the tests show that the cleanup stop
+        // does not run in one.
         try Task.checkCancellation()
         calls.append(call)
         for waiter in waiters where waiter.count <= calls.count {
@@ -797,20 +760,9 @@ actor FakeTransport: StreamingMessageTransport {
             await stopSignal.waitUntilRaised()
             heldCallWasCancelled = heldCallWasCancelled || Task.isCancelled
         }
-        if call.method == rateLimitedMethod {
-            rateLimitedMethod = nil
-            throw RateLimitedCallCancelled(retryAt: .now)
-        }
         if failingMethods.contains(call.method) {
-            throw StreamingMessage.Error(method: "chat.\(call.method)Stream", code: "rate_limited")
+            let method = call.method == "stopOnce" ? "stop" : call.method
+            throw StreamingMessage.Error(method: "chat.\(method)Stream", code: "failed")
         }
-    }
-}
-
-private actor ClosingWaitCounter {
-    var count = 0
-    func isFirst() -> Bool {
-        defer { count += 1 }
-        return count == 0
     }
 }
