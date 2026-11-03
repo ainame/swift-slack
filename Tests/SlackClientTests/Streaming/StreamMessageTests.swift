@@ -1,5 +1,6 @@
 import Foundation
 import HTTPTypes
+import Logging
 import OpenAPIRuntime
 import SlackBlockKit
 @testable import SlackClient
@@ -142,7 +143,7 @@ struct StreamMessageTests {
             sessionStatus: nil,
         )
         let (sleeps, sleepContinuation) = AsyncStream.makeStream(of: Duration.self)
-        var sender = StreamingMessageSender(transport: transport, blocks: nil, minimumInterval: .zero)
+        var sender = StreamingMessageSender(transport: transport, blocks: nil, minimumInterval: .zero, logger: .discarding)
         sender.sleep = { duration in
             sleepContinuation.yield(duration)
             try await Task.sleep(for: duration)
@@ -395,6 +396,44 @@ struct StreamMessageTests {
         #expect(await waits.durations.isEmpty)
     }
 
+    @Test(.timeLimit(.minutes(1)), arguments: [false, true])
+    func `reports a failed cleanup stop to the logger the caller passes`(throughFactory: Bool) async throws {
+        let http = SlackHTTP(failing: "chatStopStream", code: "message_not_in_streaming_state", throwing: "chatAppendStream")
+        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+        let log = LogRecorder(metadata: ["request": "R1"])
+
+        // The append's error, not the cleanup stop's.
+        let error = await #expect(throws: ClientError.self) {
+            try await sendFailingAppend(client, http, logger: log.logger, throughFactory: throughFactory)
+        }
+        #expect((error?.underlyingError as? URLError)?.code == .networkConnectionLost)
+        #expect(await http.requests.map(\.operationID) == ["chatStartStream", "chatAppendStream", "chatStopStream"])
+        // The caller's metadata is kept, and the warning names the message without its content or the request.
+        let entries = await log.entries()
+        #expect(entries.map(\.level) == [.warning])
+        #expect(entries.first?.metadata == [
+            "request": "R1",
+            "slack.channel": "C1",
+            "slack.method": "chat.stopStream",
+            "slack.message_ts": SlackHTTP.ts,
+            "error.type": "SlackClient.StreamingMessage.Error",
+            "slack.error": "message_not_in_streaming_state",
+        ])
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `logs the delivery's channel without modifying the caller's logger`() async throws {
+        let http = SlackHTTP(failing: "chatStopStream", code: "message_not_in_streaming_state", throwing: "chatAppendStream")
+        let client = await Slack(transport: http, configuration: .init(token: "xoxb-test")).client
+        let log = LogRecorder(metadata: ["slack.channel": "caller"])
+
+        await #expect(throws: ClientError.self) {
+            try await sendFailingAppend(client, http, logger: log.logger, throughFactory: false)
+        }
+        #expect(await log.entries().map { $0.metadata["slack.channel"] } == ["C1"])
+        #expect(log.logger[metadataKey: "slack.channel"] == "caller")
+    }
+
     @Test
     func `throws StreamingMessage.Error when Slack answers ok false`() async throws {
         let http = SlackHTTP(failing: "chatStartStream", code: "not_in_channel")
@@ -436,6 +475,29 @@ private func streamMessage(
     }
 }
 
+/// Streams two parts into C1 so that the second goes out with `chat.appendStream`, through `makeStreamingMessage`
+/// or `streamMessage`.
+private func sendFailingAppend(
+    _ client: some APIProtocol,
+    _ http: SlackHTTP,
+    logger: Logger,
+    throughFactory: Bool,
+) async throws {
+    let (parts, continuation) = AsyncStream.makeStream(of: StreamingMessage.Part.self)
+    defer { continuation.finish() }
+    let sending = Task {
+        if throughFactory {
+            try await client.makeStreamingMessage(channel: "C1", minimumInterval: .zero, logger: logger).send(parts)
+        } else {
+            try await client.streamMessage(parts, channel: "C1", minimumInterval: .zero, logger: logger)
+        }
+    }
+    continuation.yield(.markdown("first"))
+    await http.waitForRequests(1)
+    continuation.yield(.markdown(" second"))
+    _ = try await sending.value
+}
+
 /// A message into C1 with a closing divider, made like the one `streamMessage(_:_:through:)` streams.
 private func makeDelivery(_ client: some APIProtocol) -> StreamingMessage.Delivery {
     client.makeStreamingMessage(channel: "C1", blocks: [.divider(DividerBlock())], minimumInterval: .zero)
@@ -469,7 +531,12 @@ private func rateLimitedDelivery(
         taskDisplay: .timeline,
         sessionStatus: nil,
     )
-    var sender = StreamingMessageSender(transport: transport, blocks: [.divider(DividerBlock())], minimumInterval: .zero)
+    var sender = StreamingMessageSender(
+        transport: transport,
+        blocks: [.divider(DividerBlock())],
+        minimumInterval: .zero,
+        logger: .discarding,
+    )
     sender.sleep = { try await waits.sleep(for: $0) }
     return StreamingMessage.Delivery(sender: sender)
 }

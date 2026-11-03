@@ -2,7 +2,7 @@
 extension StreamingMessage {
     /// One streaming message, with its channel and options bound, that the app can stop from outside its parts.
     ///
-    /// Create it with ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:)``,
+    /// Create it with ``APIProtocol/makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:)``,
     /// which makes no request, and register it where the code that learns Slack has ended the session can reach
     /// it, such as an `agent_session_stopped` handler, before you await anything. Then stream the parts with
     /// `send(_:)`, which returns once the message has been delivered:
@@ -70,7 +70,7 @@ extension StreamingMessage {
         ///
         /// Swift picks this overload when the argument's static type is `Sendable`, and the input is then read in
         /// a child task rather than in the caller's isolation. Completion behavior is otherwise the same as
-        /// ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:isolation:)``.
+        /// ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:isolation:)``.
         ///
         /// - Throws: ``AlreadyUsed`` when the delivery has been sent before or is being sent.
         @discardableResult
@@ -88,7 +88,7 @@ extension StreamingMessage {
         /// task, a failed call is noticed only when `parts` yields its next element or ends. Cancelling the
         /// calling task, or ``notifySessionStopped()``, stops delivery promptly, but the method still returns only
         /// once `parts` yields or ends. Completion behavior is otherwise the same as
-        /// ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:isolation:)``.
+        /// ``APIProtocol/streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:isolation:)``.
         ///
         /// - Throws: ``AlreadyUsed`` when the delivery has been sent before or is being sent.
         @discardableResult
