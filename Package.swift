@@ -55,15 +55,7 @@ traits.append(.default(enabledTraits: Set(defaultTraitNames)))
 
 let package = Package(
     name: "swift-slack",
-    // Streaming cleanup uses `withTaskCancellationShield`, which these platforms provide from version 27.
-    platforms: [
-        .macOS(.v27),
-        .iOS(.v27),
-        .macCatalyst(.v27),
-        .tvOS(.v27),
-        .watchOS(.v27),
-        .visionOS(.v27),
-    ],
+    platforms: [.macOS(.v14)],
     products: [
         .library(name: "SlackClient", targets: ["SlackClient"]),
         .library(name: "SlackApp", targets: ["SlackApp"]),

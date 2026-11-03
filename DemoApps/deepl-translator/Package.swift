@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "deepl-translator",
-    platforms: [.macOS(.v27)],
+    platforms: [.macOS(.v15)],
     products: [
         .executable(name: "deepl-translator", targets: ["DeepLTranslator"])
     ],
