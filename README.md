@@ -17,22 +17,22 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
 > [!TIP]
-> For new apps, we recommend [2027.1.0-beta.3](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.3) ahead of the January 2027 release. Changes from 2026.x include:
+> For new apps, we recommend [2027.1.0-beta.4](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.4) ahead of the January 2027 release. Changes from 2026.x include:
 >
 > * Web API response and event models generated from upstream [java-slack-sdk](https://github.com/slackapi/java-slack-sdk), with decoding checked against its recorded payloads.
 > * Additional Block Kit blocks and elements, including cards, carousels and alerts.
 > * Agent conversation APIs and events, plus typed Slack Code channel helpers.
 > * `AsyncSequence` message streaming into threads and Code channels, demonstrated in the [Codex agent demo](DemoApps/codex-agent).
 >
-> Beta.3 adds Code channel support and streaming and Socket Mode fixes. See the [changelog](CHANGELOG.md) for details.
+> Beta.4 requires Swift 6.4+ and updates streaming cancellation and lifecycle control. See the [changelog](CHANGELOG.md) for details.
 >
 > APIs may still change. SwiftPM does not select the beta from a `2026.x` requirement:
 >
 > ```swift
-> .package(url: "https://github.com/ainame/swift-slack.git", from: "2027.1.0-beta.3")
+> .package(url: "https://github.com/ainame/swift-slack.git", from: "2027.1.0-beta.4")
 > ```
 >
-> Existing apps require migration. Read [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [changelog](CHANGELOG.md) for breaking changes. When upgrading from beta.2, note that `BlockActionsPayload.team` is now optional.
+> Existing apps require migration. Read [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [changelog](CHANGELOG.md) for breaking changes.
 
 ```swift
 import SlackKit
@@ -115,7 +115,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/ainame/swift-slack.git",
-            from: "2027.1.0-beta.3"
+            from: "2027.1.0-beta.4"
         )
     ],
     targets: [
@@ -264,7 +264,7 @@ The default package traits include the Web API, events, and Socket Mode. For sma
 ```swift
 .package(
     url: "https://github.com/ainame/swift-slack.git",
-    from: "2027.1.0-beta.3",
+    from: "2027.1.0-beta.4",
     traits: ["SocketMode", "Events", "WebAPI_Chat", "WebAPI_Views"]
 )
 ```
