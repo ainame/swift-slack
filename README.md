@@ -24,7 +24,7 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 > * Agent conversation APIs and events, plus typed Slack Code channel helpers.
 > * `AsyncSequence` message streaming into threads and Code channels, demonstrated in the [Codex agent demo](https://github.com/ainame/swift-slack/tree/2027.1.0-beta.3/DemoApps/codex-agent).
 >
-> Beta.3 adds Code channel support and streaming and Socket Mode fixes. See the [changelog](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.3/CHANGELOG.md) for details.
+> Beta.3 adds Code channel support and streaming and Socket Mode fixes. It requires Swift 6.2+, while the current [2027 release branch](https://github.com/ainame/swift-slack/tree/release-2027-01) requires Swift 6.4+. See the [changelog](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.3/CHANGELOG.md) for details.
 >
 > APIs may still change. SwiftPM does not select the beta from a `2026.x` requirement:
 >
