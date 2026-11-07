@@ -24,7 +24,7 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 > * Agent conversation APIs and events, plus typed Slack Code channel helpers.
 > * `AsyncSequence` message streaming into threads and Code channels, demonstrated in the [Codex agent demo](DemoApps/codex-agent).
 >
-> Beta.3 adds Code channel support and streaming and Socket Mode fixes. See the [changelog](CHANGELOG.md) for details.
+> Beta.3 adds Code channel support and streaming and Socket Mode fixes. Beta.3 requires Swift 6.2+; the current release branch requires Swift 6.4+. See the [changelog](CHANGELOG.md) for details.
 >
 > APIs may still change. SwiftPM does not select the beta from a `2026.x` requirement:
 >
