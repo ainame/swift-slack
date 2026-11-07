@@ -17,7 +17,7 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
 > [!TIP]
-> The upcoming 2027.1.0 release requires Swift 6.4+ and includes Slack Code channel support. For new apps, try [2027.1.0-beta.4](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.4); APIs may still change before release.
+> For new apps, we recommend [2027.1.0-beta.4](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.4) ahead of the January 2027 release. The upcoming 2027.1.0 release requires Swift 6.4+ and includes Slack Code channel support. APIs may still change before release.
 >
 > Existing apps require migration. See the [migration guide](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.4/MIGRATING_TO_JAVA_DERIVED_MODELS.md) and [changelog](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.4/CHANGELOG.md) for breaking changes. The quickstart below uses 2026.x.
 
