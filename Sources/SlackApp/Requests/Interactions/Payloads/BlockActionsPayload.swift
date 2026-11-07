@@ -1,7 +1,7 @@
 import Foundation
 import OpenAPIRuntime
 import SlackBlockKit
-import SlackModels
+import SlackClient
 
 /// https://docs.slack.dev/reference/interaction-payloads/block_actions-payload#fields
 public struct BlockActionsPayload: InteractivePayloadProtocol, Decodable, Sendable {
@@ -9,7 +9,8 @@ public struct BlockActionsPayload: InteractivePayloadProtocol, Decodable, Sendab
     public let _type: String
     public let triggerId: String?
     public let user: User
-    public let team: Team
+    /// The installing workspace, or `nil` for an organization-installed app.
+    public let team: Team?
     public let enterprise: Enterprise?
     public let container: Container
     public let apiAppId: String?
@@ -17,9 +18,6 @@ public struct BlockActionsPayload: InteractivePayloadProtocol, Decodable, Sendab
     public let hash: String?
     /// The interacted elements and their selected values.
     public let blockActions: [Action]
-    /// Storage for the deprecated `actions`: the same `actions` JSON array as `blockActions`, decoded as Block Kit
-    /// element definitions, skipping elements that cannot be decoded that way. Remove with `actions` (#156).
-    private let elementActions: [ActionElementType]?
     public let channel: Channel?
     public let message: Message?
     /// Includes all stateful elements, not only input blocks
@@ -59,14 +57,12 @@ public struct BlockActionsPayload: InteractivePayloadProtocol, Decodable, Sendab
         _type = try container.decode(String.self, forKey: ._type)
         triggerId = try container.decodeIfPresent(String.self, forKey: .triggerId)
         user = try container.decode(User.self, forKey: .user)
-        team = try container.decode(Team.self, forKey: .team)
+        team = try container.decodeIfPresent(Team.self, forKey: .team)
         enterprise = try container.decodeIfPresent(Enterprise.self, forKey: .enterprise)
         self.container = try container.decode(Container.self, forKey: .container)
         apiAppId = try container.decodeIfPresent(String.self, forKey: .apiAppId)
         hash = try container.decodeIfPresent(String.self, forKey: .hash)
         blockActions = try container.decodeIfPresent([Action].self, forKey: .actions) ?? []
-        elementActions = try container.decodeIfPresent([LossyActionElement].self, forKey: .actions)?
-            .compactMap(\.element)
         channel = try container.decodeIfPresent(Channel.self, forKey: .channel)
         message = try container.decodeIfPresent(Message.self, forKey: .message)
         state = try container.decodeIfPresent(StateValuesObject.self, forKey: .state)
@@ -76,28 +72,7 @@ public struct BlockActionsPayload: InteractivePayloadProtocol, Decodable, Sendab
         botAccessToken = try container.decodeIfPresent(String.self, forKey: .botAccessToken)
         responseUrl = try container.decodeIfPresent(URL.self, forKey: .responseUrl)
     }
-
-    /// The interacted elements decoded as Block Kit element definitions.
-    ///
-    /// Element definitions do not carry `block_id` or selected values, and elements that cannot be decoded
-    /// this way, such as checkboxes without their `options`, are skipped.
-    @available(*, deprecated, message: "Use blockActions, which carries each action's action_id, block_id, and selected values. actions will be removed in a 2027 release.")
-    public var actions: [ActionElementType]? {
-        elementActions
-    }
 }
-
-/// Decodes an element of `actions` as a Block Kit element definition, or `nil` when it cannot be decoded that way.
-private struct LossyActionElement: Decodable {
-    let element: ActionElementType?
-
-    init(from decoder: any Decoder) throws {
-        element = try? ActionElementType(from: decoder)
-    }
-}
-
-@available(*, deprecated, renamed: "BlockActionsPayload")
-public typealias BlockActionsPaylaod = BlockActionsPayload
 
 extension BlockActionsPayload {
     /// The `callback_id` of the view that contains the actions, or `nil` for actions outside a view, such as message buttons.

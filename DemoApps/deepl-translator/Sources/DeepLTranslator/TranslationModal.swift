@@ -1,7 +1,6 @@
 import Foundation
 import SlackBlockKitDSL
 import SlackKit
-import SlackModels
 
 public enum TranslationModal {
     public static func buildNewModal(defaultLang: String, languages: [String]) -> View {
@@ -60,7 +59,7 @@ public enum TranslationModal {
         switch view {
         case let .modal(modalView):
             return .modal(modalView)
-        case .homeTab:
+        case .homeTab, .unknown:
             fatalError("Expected modal view")
         }
     }
@@ -83,7 +82,7 @@ public enum TranslationModal {
         switch view {
         case let .modal(modalView):
             return .modal(modalView)
-        case .homeTab:
+        case .homeTab, .unknown:
             fatalError("Expected modal view")
         }
     }
@@ -115,7 +114,7 @@ public enum TranslationModal {
         switch view {
         case let .modal(modalView):
             return .modal(modalView)
-        case .homeTab:
+        case .homeTab, .unknown:
             fatalError("Expected modal view")
         }
     }

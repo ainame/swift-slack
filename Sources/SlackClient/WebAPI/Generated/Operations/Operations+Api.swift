@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Api
 extension Operations {
+    /// Checks API calling code.
+    ///
+    /// - Remark: HTTP `POST /api.test`.
+    /// - Remark: Generated from `#/paths//api.test/post(apiTest)`.
     public enum ApiTest {
         public static let id: Swift.String = "apiTest"
         public struct Input: Sendable, Hashable {

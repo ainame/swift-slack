@@ -138,7 +138,6 @@ public class Router {
     private var globalShortcutHandlers: [String: RequestHandler] = [:]
     private var messageShortcutHandlers: [String: RequestHandler] = [:]
     private var actionHandlers: [ActionKey: RequestHandler] = [:]
-    private var blockActionHandlers: [String: RequestHandler] = [:]
     private var blockSuggestionHandlers: [ActionKey: RequestHandler] = [:]
     private var anyViewHandlers: [String: RequestHandler] = [:]
     private var viewSubmissionHandlers: [String: RequestHandler] = [:]
@@ -157,7 +156,6 @@ public class Router {
         private let globalShortcutHandlers: [String: RequestHandler]
         private let messageShortcutHandlers: [String: RequestHandler]
         private let actionHandlers: [ActionKey: RequestHandler]
-        private let blockActionHandlers: [String: RequestHandler]
         private let blockSuggestionHandlers: [ActionKey: RequestHandler]
         private let anyViewHandlers: [String: RequestHandler]
         private let viewSubmissionHandlers: [String: RequestHandler]
@@ -174,7 +172,6 @@ public class Router {
             globalShortcutHandlers = router.globalShortcutHandlers
             messageShortcutHandlers = router.messageShortcutHandlers
             actionHandlers = router.actionHandlers
-            blockActionHandlers = router.blockActionHandlers
             blockSuggestionHandlers = router.blockSuggestionHandlers
             anyViewHandlers = router.anyViewHandlers
             viewSubmissionHandlers = router.viewSubmissionHandlers
@@ -234,14 +231,7 @@ public class Router {
                 }
                 return interactiveHandler
             case let .blockActions(payload):
-                if let handler = actionHandler(for: payload) {
-                    return handler
-                }
-                if let callbackId = payload.callbackId,
-                   let handler = blockActionHandlers[callbackId] {
-                    return handler
-                }
-                return interactiveHandler
+                return actionHandler(for: payload) ?? interactiveHandler
             // `onView` handlers in `anyViewHandlers` run their body for both view payload types, so they can serve
             // as the fallback when no handler is registered for the payload's own type. Type-specific handlers must
             // not: their body skips the other type, and returning one would report the request as handled without
@@ -300,11 +290,6 @@ public class Router {
                   case let .interactive(payload) = request else { return }
             try await handler(context, payload)
         }
-    }
-
-    @available(*, deprecated, message: "Use onGlobalShortcut(_:handler:) instead. This misspelled API will be removed in a future version.")
-    public func onGlboalShortcut(_ callbackId: String, handler: @escaping RequestPayloadHandler<GlobalShortcutPayload>) {
-        onGlobalShortcut(callbackId, handler: handler)
     }
 
     public func onGlobalShortcut(_ callbackId: String, handler: @escaping RequestPayloadHandler<GlobalShortcutPayload>) {
@@ -386,24 +371,6 @@ public class Router {
                   case let .blockSuggestion(payload) = interactiveEnvelope.body,
                   payload.actionId == actionId,
                   blockId == nil || payload.blockId == blockId else {
-                return
-            }
-            try await handler(context, payload)
-        }
-    }
-
-    /// Registers a handler for `block_actions` requests from any element in a view with the given `callback_id`.
-    ///
-    /// This was implemented incorrectly: it does not match Bolt, which matches block actions by the element's
-    /// `action_id`. A view's `callback_id` also never matches elements in messages, which have no view. Use
-    /// ``onAction(_:blockId:handler:)`` instead.
-    @available(*, deprecated, message: "onBlockAction(_:) was implemented incorrectly: it does not match Bolt's app.action and app.blockAction, which match the element's action_id. It matches the containing view's callback_id instead, so it never matches elements in messages. Use onAction(_:blockId:handler:) to match an action_id, or onInteractive(_:) and check payload.callbackId to handle every action in a view. onBlockAction(_:) will be removed in a 2027 release.")
-    public func onBlockAction(_ callbackId: String, handler: @escaping RequestPayloadHandler<BlockActionsPayload>) {
-        blockActionHandlers[callbackId] = { context, request in
-            guard let context = context.requestContext,
-                  case let .interactive(interactiveEnvelope) = request,
-                  case let .blockActions(payload) = interactiveEnvelope.body,
-                  payload.callbackId == callbackId else {
                 return
             }
             try await handler(context, payload)

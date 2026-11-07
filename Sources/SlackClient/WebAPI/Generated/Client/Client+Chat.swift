@@ -11,6 +11,7 @@ import struct Foundation.Date
 import struct Foundation.URL
 #endif
 import HTTPTypes
+import SlackBlockKit
 
 extension Client {
     /// Sends an ephemeral message to a user in a channel.
@@ -612,75 +613,6 @@ extension Client {
                     case "application/json":
                         body = try await converter.getResponseBodyAsJSON(
                             Components.Schemas.ChatMeMessageResponse.self,
-                            from: responseBody,
-                            transforming: { value in
-                                .json(value)
-                            },
-                        )
-                    default:
-                        preconditionFailure("bestContentType chose an invalid content type.")
-                    }
-                    return .ok(.init(body: body))
-                default:
-                    return .undocumented(
-                        statusCode: response.status.code,
-                        .init(
-                            headerFields: response.headerFields,
-                            body: responseBody,
-                        ),
-                    )
-                }
-            },
-        )
-    }
-
-    /// Returns a list of scheduled messages.
-    ///
-    /// - Remark: HTTP `POST /chat.scheduledMessages.list`.
-    /// - Remark: Generated from `#/paths//chat.scheduledMessages.list/post(chatScheduledMessagesList)`.
-    func chatScheduledMessagesList(_ input: Operations.ChatScheduledMessagesList.Input) async throws -> Operations.ChatScheduledMessagesList.Output {
-        try await client.send(
-            input: input,
-            forOperation: Operations.ChatScheduledMessagesList.id,
-            serializer: { input in
-                let path = try converter.renderedPath(
-                    template: "/chat.scheduledMessages.list",
-                    parameters: [],
-                )
-                var request: HTTPTypes.HTTPRequest = .init(
-                    soar_path: path,
-                    method: .post,
-                )
-                suppressMutabilityWarning(&request)
-                converter.setAcceptHeader(
-                    in: &request.headerFields,
-                    contentTypes: input.headers.accept,
-                )
-                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
-                case let .json(value):
-                    try converter.setRequiredRequestBodyAsJSON(
-                        value,
-                        headerFields: &request.headerFields,
-                        contentType: "application/json; charset=utf-8",
-                    )
-                }
-                return (request, body)
-            },
-            deserializer: { response, responseBody in
-                switch response.status.code {
-                case 200:
-                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
-                    let body: Operations.ChatScheduledMessagesList.Output.Ok.Body
-                    let chosenContentType = try converter.bestContentType(
-                        received: contentType,
-                        options: [
-                            "application/json",
-                        ],
-                    )
-                    switch chosenContentType {
-                    case "application/json":
-                        body = try await converter.getResponseBodyAsJSON(
-                            Components.Schemas.ChatScheduledMessagesListResponse.self,
                             from: responseBody,
                             transforming: { value in
                                 .json(value)

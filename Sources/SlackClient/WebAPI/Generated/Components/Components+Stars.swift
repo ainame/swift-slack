@@ -9,133 +9,498 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Stars
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/StarsAddResponse`.
     public struct StarsAddResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/StarsAddResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/StarsAddResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/StarsAddResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/StarsAddResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/StarsAddResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/StarsAddResponse/provided`.
         public var provided: Swift.String?
         /// Creates a new `StarsAddResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/StarsListResponse`.
     public struct StarsListResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/StarsListResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/StarsListResponse/items`.
-        public var items: [SlackModels.Item]?
-        /// - Remark: Generated from `#/components/schemas/StarsListResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/StarsListResponse/ok`.
         public var ok: Swift.Bool
-        /// - Remark: Generated from `#/components/schemas/StarsListResponse/paging`.
-        public var paging: SlackModels.Paging?
+        /// - Remark: Generated from `#/components/schemas/StarsListResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/StarsListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/StarsListResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/StarsListResponse/provided`.
         public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload`.
+        public struct ItemsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/type`.
+            public var _type: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/channel`.
+            public var channel: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message`.
+            public struct MessagePayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/type`.
+                public var _type: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/subtype`.
+                public var subtype: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/text`.
+                public var text: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/ts`.
+                public var ts: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/bot_id`.
+                public var botId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/bot_profile`.
+                public var botProfile: Components.Schemas.BotProfile?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/display_as_bot`.
+                public var displayAsBot: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/team`.
+                public var team: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/attachments`.
+                public var attachments: [Components.Schemas.Attachment]?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/blocks`.
+                public var blocks: [Components.Schemas.Block]?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/files`.
+                public var files: [Components.Schemas.File]?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/upload`.
+                public var upload: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/permalink`.
+                public var permalink: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/is_starred`.
+                public var isStarred: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/is_locked`.
+                public var isLocked: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/inviter`.
+                public var inviter: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/client_msg_id`.
+                public var clientMsgId: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/user`.
+                public var user: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/username`.
+                public var username: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/thread_ts`.
+                public var threadTs: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/reply_count`.
+                public var replyCount: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/reply_users_count`.
+                public var replyUsersCount: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/latest_reply`.
+                public var latestReply: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/reply_users`.
+                public var replyUsers: [Swift.String]?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/RepliesPayload`.
+                public struct RepliesPayloadPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/RepliesPayload/user`.
+                    public var user: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/RepliesPayload/ts`.
+                    public var ts: Swift.String?
+                    /// Creates a new `RepliesPayloadPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - user:
+                    ///   - ts:
+                    public init(
+                        user: Swift.String? = nil,
+                        ts: Swift.String? = nil,
+                    ) {
+                        self.user = user
+                        self.ts = ts
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case user
+                        case ts
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/replies`.
+                public typealias RepliesPayload = [Components.Schemas.StarsListResponse.ItemsPayloadPayload.MessagePayload.RepliesPayloadPayload]
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/replies`.
+                public var replies: Components.Schemas.StarsListResponse.ItemsPayloadPayload.MessagePayload.RepliesPayload?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/subscribed`.
+                public var subscribed: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/last_read`.
+                public var lastRead: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/reactions`.
+                public var reactions: [Components.Schemas.Reaction]?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/edited`.
+                public struct EditedPayload: Codable, Hashable, Sendable {
+                    /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/edited/user`.
+                    public var user: Swift.String?
+                    /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/edited/ts`.
+                    public var ts: Swift.String?
+                    /// Creates a new `EditedPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - user:
+                    ///   - ts:
+                    public init(
+                        user: Swift.String? = nil,
+                        ts: Swift.String? = nil,
+                    ) {
+                        self.user = user
+                        self.ts = ts
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case user
+                        case ts
+                    }
+                }
+
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message/edited`.
+                public var edited: Components.Schemas.StarsListResponse.ItemsPayloadPayload.MessagePayload.EditedPayload?
+                /// Creates a new `MessagePayload`.
+                ///
+                /// - Parameters:
+                ///   - _type:
+                ///   - subtype:
+                ///   - text:
+                ///   - ts:
+                ///   - botId:
+                ///   - botProfile:
+                ///   - displayAsBot:
+                ///   - team:
+                ///   - attachments:
+                ///   - blocks:
+                ///   - files:
+                ///   - upload:
+                ///   - permalink:
+                ///   - isStarred:
+                ///   - isLocked:
+                ///   - inviter:
+                ///   - clientMsgId:
+                ///   - user:
+                ///   - username:
+                ///   - threadTs:
+                ///   - replyCount:
+                ///   - replyUsersCount:
+                ///   - latestReply:
+                ///   - replyUsers:
+                ///   - replies:
+                ///   - subscribed:
+                ///   - lastRead:
+                ///   - reactions:
+                ///   - edited:
+                public init(
+                    _type: Swift.String? = nil,
+                    subtype: Swift.String? = nil,
+                    text: Swift.String? = nil,
+                    ts: Swift.String? = nil,
+                    botId: Swift.String? = nil,
+                    botProfile: Components.Schemas.BotProfile? = nil,
+                    displayAsBot: Swift.Bool? = nil,
+                    team: Swift.String? = nil,
+                    attachments: [Components.Schemas.Attachment]? = nil,
+                    blocks: [Components.Schemas.Block]? = nil,
+                    files: [Components.Schemas.File]? = nil,
+                    upload: Swift.Bool? = nil,
+                    permalink: Swift.String? = nil,
+                    isStarred: Swift.Bool? = nil,
+                    isLocked: Swift.Bool? = nil,
+                    inviter: Swift.String? = nil,
+                    clientMsgId: Swift.String? = nil,
+                    user: Swift.String? = nil,
+                    username: Swift.String? = nil,
+                    threadTs: Swift.String? = nil,
+                    replyCount: Swift.Int? = nil,
+                    replyUsersCount: Swift.Int? = nil,
+                    latestReply: Swift.String? = nil,
+                    replyUsers: [Swift.String]? = nil,
+                    replies: Components.Schemas.StarsListResponse.ItemsPayloadPayload.MessagePayload.RepliesPayload? = nil,
+                    subscribed: Swift.Bool? = nil,
+                    lastRead: Swift.String? = nil,
+                    reactions: [Components.Schemas.Reaction]? = nil,
+                    edited: Components.Schemas.StarsListResponse.ItemsPayloadPayload.MessagePayload.EditedPayload? = nil,
+                ) {
+                    self._type = _type
+                    self.subtype = subtype
+                    self.text = text
+                    self.ts = ts
+                    self.botId = botId
+                    self.botProfile = botProfile
+                    self.displayAsBot = displayAsBot
+                    self.team = team
+                    self.attachments = attachments
+                    self.blocks = blocks
+                    self.files = files
+                    self.upload = upload
+                    self.permalink = permalink
+                    self.isStarred = isStarred
+                    self.isLocked = isLocked
+                    self.inviter = inviter
+                    self.clientMsgId = clientMsgId
+                    self.user = user
+                    self.username = username
+                    self.threadTs = threadTs
+                    self.replyCount = replyCount
+                    self.replyUsersCount = replyUsersCount
+                    self.latestReply = latestReply
+                    self.replyUsers = replyUsers
+                    self.replies = replies
+                    self.subscribed = subscribed
+                    self.lastRead = lastRead
+                    self.reactions = reactions
+                    self.edited = edited
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case _type = "type"
+                    case subtype
+                    case text
+                    case ts
+                    case botId = "bot_id"
+                    case botProfile = "bot_profile"
+                    case displayAsBot = "display_as_bot"
+                    case team
+                    case attachments
+                    case blocks
+                    case files
+                    case upload
+                    case permalink
+                    case isStarred = "is_starred"
+                    case isLocked = "is_locked"
+                    case inviter
+                    case clientMsgId = "client_msg_id"
+                    case user
+                    case username
+                    case threadTs = "thread_ts"
+                    case replyCount = "reply_count"
+                    case replyUsersCount = "reply_users_count"
+                    case latestReply = "latest_reply"
+                    case replyUsers = "reply_users"
+                    case replies
+                    case subscribed
+                    case lastRead = "last_read"
+                    case reactions
+                    case edited
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/message`.
+            public var message: Components.Schemas.StarsListResponse.ItemsPayloadPayload.MessagePayload?
+            /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/date_create`.
+            public var dateCreate: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/file`.
+            public var file: Components.Schemas.File?
+            /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/comment`.
+            public struct CommentPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/comment/id`.
+                public var id: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/comment/created`.
+                public var created: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/comment/timestamp`.
+                public var timestamp: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/comment/user`.
+                public var user: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/comment/is_intro`.
+                public var isIntro: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/comment/comment`.
+                public var comment: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/comment/num_stars`.
+                public var numStars: Swift.Int?
+                /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/comment/is_starred`.
+                public var isStarred: Swift.Bool?
+                /// Creates a new `CommentPayload`.
+                ///
+                /// - Parameters:
+                ///   - id:
+                ///   - created:
+                ///   - timestamp:
+                ///   - user:
+                ///   - isIntro:
+                ///   - comment:
+                ///   - numStars:
+                ///   - isStarred:
+                public init(
+                    id: Swift.String? = nil,
+                    created: Swift.Int? = nil,
+                    timestamp: Swift.Int? = nil,
+                    user: Swift.String? = nil,
+                    isIntro: Swift.Bool? = nil,
+                    comment: Swift.String? = nil,
+                    numStars: Swift.Int? = nil,
+                    isStarred: Swift.Bool? = nil,
+                ) {
+                    self.id = id
+                    self.created = created
+                    self.timestamp = timestamp
+                    self.user = user
+                    self.isIntro = isIntro
+                    self.comment = comment
+                    self.numStars = numStars
+                    self.isStarred = isStarred
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case id
+                    case created
+                    case timestamp
+                    case user
+                    case isIntro = "is_intro"
+                    case comment
+                    case numStars = "num_stars"
+                    case isStarred = "is_starred"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/StarsListResponse/ItemsPayload/comment`.
+            public var comment: Components.Schemas.StarsListResponse.ItemsPayloadPayload.CommentPayload?
+            /// Creates a new `ItemsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - _type:
+            ///   - channel:
+            ///   - message:
+            ///   - dateCreate:
+            ///   - file:
+            ///   - comment:
+            public init(
+                _type: Swift.String? = nil,
+                channel: Swift.String? = nil,
+                message: Components.Schemas.StarsListResponse.ItemsPayloadPayload.MessagePayload? = nil,
+                dateCreate: Swift.Int? = nil,
+                file: Components.Schemas.File? = nil,
+                comment: Components.Schemas.StarsListResponse.ItemsPayloadPayload.CommentPayload? = nil,
+            ) {
+                self._type = _type
+                self.channel = channel
+                self.message = message
+                self.dateCreate = dateCreate
+                self.file = file
+                self.comment = comment
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case _type = "type"
+                case channel
+                case message
+                case dateCreate = "date_create"
+                case file
+                case comment
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/StarsListResponse/items`.
+        public typealias ItemsPayload = [Components.Schemas.StarsListResponse.ItemsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/StarsListResponse/items`.
+        public var items: Components.Schemas.StarsListResponse.ItemsPayload?
+        /// - Remark: Generated from `#/components/schemas/StarsListResponse/paging`.
+        public var paging: Components.Schemas.Paging?
         /// Creates a new `StarsListResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - items:
-        ///   - needed:
         ///   - ok:
-        ///   - paging:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
+        ///   - items:
+        ///   - paging:
         public init(
-            error: Swift.String? = nil,
-            items: [SlackModels.Item]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            paging: SlackModels.Paging? = nil,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
             provided: Swift.String? = nil,
+            items: Components.Schemas.StarsListResponse.ItemsPayload? = nil,
+            paging: Components.Schemas.Paging? = nil,
         ) {
-            self.error = error
-            self.items = items
-            self.needed = needed
             self.ok = ok
-            self.paging = paging
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
+            self.items = items
+            self.paging = paging
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case items
-            case needed
             case ok
-            case paging
+            case warning
+            case error
+            case needed
             case provided
+            case items
+            case paging
         }
     }
 
     /// - Remark: Generated from `#/components/schemas/StarsRemoveResponse`.
     public struct StarsRemoveResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/StarsRemoveResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/StarsRemoveResponse/warning`.
+        public var warning: Swift.String?
         /// - Remark: Generated from `#/components/schemas/StarsRemoveResponse/error`.
         public var error: Swift.String?
         /// - Remark: Generated from `#/components/schemas/StarsRemoveResponse/needed`.
         public var needed: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/StarsRemoveResponse/ok`.
-        public var ok: Swift.Bool
         /// - Remark: Generated from `#/components/schemas/StarsRemoveResponse/provided`.
         public var provided: Swift.String?
         /// Creates a new `StarsRemoveResponse`.
         ///
         /// - Parameters:
+        ///   - ok:
+        ///   - warning:
         ///   - error:
         ///   - needed:
-        ///   - ok:
         ///   - provided:
         public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
             error: Swift.String? = nil,
             needed: Swift.String? = nil,
-            ok: Swift.Bool,
             provided: Swift.String? = nil,
         ) {
+            self.ok = ok
+            self.warning = warning
             self.error = error
             self.needed = needed
-            self.ok = ok
             self.provided = provided
         }
 
         public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
             case error
             case needed
-            case ok
             case provided
         }
     }

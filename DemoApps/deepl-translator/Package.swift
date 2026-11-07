@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.4
 import PackageDescription
 
 let package = Package(
@@ -32,7 +32,6 @@ let package = Package(
             name: "DeepLTranslator",
             dependencies: [
                 .product(name: "SlackKit", package: "swift-slack"),
-                .product(name: "SlackModels", package: "swift-slack"),
                 .product(name: "SlackBlockKitDSL", package: "swift-slack"),
                 .product(name: "AsyncHTTPClient", package: "async-http-client"),
                 .product(name: "NIOCore", package: "swift-nio"),

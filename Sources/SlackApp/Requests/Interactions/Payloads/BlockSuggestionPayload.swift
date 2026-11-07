@@ -1,7 +1,7 @@
 import Foundation
 import OpenAPIRuntime
 import SlackBlockKit
-import SlackModels
+import SlackClient
 
 /// Sent when a user types in an external select menu, so the app can respond with options.
 ///

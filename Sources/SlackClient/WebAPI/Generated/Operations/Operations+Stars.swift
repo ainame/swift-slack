@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Stars
 extension Operations {
+    /// Save an item for later. Formerly known as adding a star.
+    ///
+    /// - Remark: HTTP `POST /stars.add`.
+    /// - Remark: Generated from `#/paths//stars.add/post(starsAdd)`.
     public enum StarsAdd {
         public static let id: Swift.String = "starsAdd"
         public struct Input: Sendable, Hashable {
@@ -185,6 +189,10 @@ extension Operations {
         }
     }
 
+    /// Listed a user's saved items, formerly known as stars.
+    ///
+    /// - Remark: HTTP `POST /stars.list`.
+    /// - Remark: Generated from `#/paths//stars.list/post(starsList)`.
     public enum StarsList {
         public static let id: Swift.String = "starsList"
         public struct Input: Sendable, Hashable {
@@ -351,6 +359,10 @@ extension Operations {
         }
     }
 
+    /// Removes a saved item (star) from an item.
+    ///
+    /// - Remark: HTTP `POST /stars.remove`.
+    /// - Remark: Generated from `#/paths//stars.remove/post(starsRemove)`.
     public enum StarsRemove {
         public static let id: Swift.String = "starsRemove"
         public struct Input: Sendable, Hashable {

@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Auth
 extension Operations {
+    /// Revokes a token.
+    ///
+    /// - Remark: HTTP `POST /auth.revoke`.
+    /// - Remark: Generated from `#/paths//auth.revoke/post(authRevoke)`.
     public enum AuthRevoke {
         public static let id: Swift.String = "authRevoke"
         public struct Input: Sendable, Hashable {
@@ -159,170 +163,10 @@ extension Operations {
         }
     }
 
-    public enum AuthTeamsList {
-        public static let id: Swift.String = "authTeamsList"
-        public struct Input: Sendable, Hashable {
-            /// - Remark: Generated from `#/paths/auth.teams.list/POST/header`.
-            public struct Headers: Sendable, Hashable {
-                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AuthTeamsList.AcceptableContentType>]
-                /// Creates a new `Headers`.
-                ///
-                /// - Parameters:
-                ///   - accept:
-                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AuthTeamsList.AcceptableContentType>] = .defaultValues()) {
-                    self.accept = accept
-                }
-            }
-
-            public var headers: Operations.AuthTeamsList.Input.Headers
-            /// - Remark: Generated from `#/paths/auth.teams.list/POST/requestBody`.
-            @frozen public enum Body: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/auth.teams.list/POST/requestBody/json`.
-                public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// The maximum number of workspaces to return. Must be a positive integer no larger than 1000.
-                    ///
-                    /// - Remark: Generated from `#/paths/auth.teams.list/POST/requestBody/json/limit`.
-                    public var limit: Swift.Int?
-                    /// Set cursor to next_cursor returned by the previous call to list items in the next page.
-                    ///
-                    /// - Remark: Generated from `#/paths/auth.teams.list/POST/requestBody/json/cursor`.
-                    public var cursor: Swift.String?
-                    /// Whether to return icon paths for each workspace. An icon path represents a URI pointing to the image signifying the workspace.
-                    ///
-                    /// - Remark: Generated from `#/paths/auth.teams.list/POST/requestBody/json/include_icon`.
-                    public var includeIcon: Swift.Bool?
-                    /// Creates a new `JsonPayload`.
-                    ///
-                    /// - Parameters:
-                    ///   - limit: The maximum number of workspaces to return. Must be a positive integer no larger than 1000.
-                    ///   - cursor: Set cursor to next_cursor returned by the previous call to list items in the next page.
-                    ///   - includeIcon: Whether to return icon paths for each workspace. An icon path represents a URI pointing to the image signifying the workspace.
-                    public init(
-                        limit: Swift.Int? = nil,
-                        cursor: Swift.String? = nil,
-                        includeIcon: Swift.Bool? = nil,
-                    ) {
-                        self.limit = limit
-                        self.cursor = cursor
-                        self.includeIcon = includeIcon
-                    }
-
-                    public enum CodingKeys: String, CodingKey {
-                        case limit
-                        case cursor
-                        case includeIcon = "include_icon"
-                    }
-                }
-
-                /// - Remark: Generated from `#/paths/auth.teams.list/POST/requestBody/content/application\/json`.
-                case json(Operations.AuthTeamsList.Input.Body.JsonPayload)
-            }
-
-            public var body: Operations.AuthTeamsList.Input.Body
-            /// Creates a new `Input`.
-            ///
-            /// - Parameters:
-            ///   - headers:
-            ///   - body:
-            public init(
-                headers: Operations.AuthTeamsList.Input.Headers = .init(),
-                body: Operations.AuthTeamsList.Input.Body,
-            ) {
-                self.headers = headers
-                self.body = body
-            }
-        }
-
-        @frozen public enum Output: Sendable, Hashable {
-            public struct Ok: Sendable, Hashable {
-                /// - Remark: Generated from `#/paths/auth.teams.list/POST/responses/200/content`.
-                @frozen public enum Body: Sendable, Hashable {
-                    /// - Remark: Generated from `#/paths/auth.teams.list/POST/responses/200/content/application\/json`.
-                    case json(Components.Schemas.AuthTeamsListResponse)
-                    /// The associated value of the enum case if `self` is `.json`.
-                    ///
-                    /// - Throws: An error if `self` is not `.json`.
-                    /// - SeeAlso: `.json`.
-                    public var json: Components.Schemas.AuthTeamsListResponse {
-                        get throws {
-                            switch self {
-                            case let .json(body):
-                                body
-                            }
-                        }
-                    }
-                }
-
-                /// Received HTTP response body
-                public var body: Operations.AuthTeamsList.Output.Ok.Body
-                /// Creates a new `Ok`.
-                ///
-                /// - Parameters:
-                ///   - body: Received HTTP response body
-                public init(body: Operations.AuthTeamsList.Output.Ok.Body) {
-                    self.body = body
-                }
-            }
-
-            /// OK
-            ///
-            /// - Remark: Generated from `#/paths//auth.teams.list/post(authTeamsList)/responses/200`.
-            ///
-            /// HTTP response code: `200 ok`.
-            case ok(Operations.AuthTeamsList.Output.Ok)
-            /// The associated value of the enum case if `self` is `.ok`.
-            ///
-            /// - Throws: An error if `self` is not `.ok`.
-            /// - SeeAlso: `.ok`.
-            public var ok: Operations.AuthTeamsList.Output.Ok {
-                get throws {
-                    switch self {
-                    case let .ok(response):
-                        response
-                    default:
-                        try throwUnexpectedResponseStatus(
-                            expectedStatus: "ok",
-                            response: self,
-                        )
-                    }
-                }
-            }
-
-            /// Undocumented response.
-            ///
-            /// A response with a code that is not documented in the OpenAPI document.
-            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
-        }
-
-        @frozen public enum AcceptableContentType: AcceptableProtocol {
-            case json
-            case other(Swift.String)
-            public init?(rawValue: Swift.String) {
-                switch rawValue.lowercased() {
-                case "application/json":
-                    self = .json
-                default:
-                    self = .other(rawValue)
-                }
-            }
-
-            public var rawValue: Swift.String {
-                switch self {
-                case let .other(string):
-                    string
-                case .json:
-                    "application/json"
-                }
-            }
-
-            public static var allCases: [Self] {
-                [
-                    .json,
-                ]
-            }
-        }
-    }
-
+    /// Checks authentication & identity.
+    ///
+    /// - Remark: HTTP `POST /auth.test`.
+    /// - Remark: Generated from `#/paths//auth.test/post(authTest)`.
     public enum AuthTest {
         public static let id: Swift.String = "authTest"
         public struct Input: Sendable, Hashable {

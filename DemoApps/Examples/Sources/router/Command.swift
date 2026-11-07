@@ -42,6 +42,8 @@ struct Command {
                 print("onInteractive: .viewSubmission")
             case .viewClosed:
                 print("onInteractive: .viewClosed")
+            case .blockSuggestion:
+                print("onInteractive: .blockSuggestion")
             case .unsupported:
                 print("onInteractive: .unsupported")
             }

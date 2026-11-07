@@ -9,14 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackBlockKit)
 import SlackBlockKit
-#endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
 
 #if WebAPI_Blocks
 extension Operations {
+    /// Validates blocks, messages, and views Block Kit JSON payloads.
+    ///
+    /// - Remark: HTTP `POST /blocks.validate`.
+    /// - Remark: Generated from `#/paths//blocks.validate/post(blocksValidate)`.
     public enum BlocksValidate {
         public static let id: Swift.String = "blocksValidate"
         public struct Input: Sendable, Hashable {
@@ -40,7 +40,7 @@ extension Operations {
                     /// A JSON-encoded array of structured blocks. Provide exactly one of blocks, view, or message.
                     ///
                     /// - Remark: Generated from `#/paths/blocks.validate/POST/requestBody/json/blocks`.
-                    public var blocks: [SlackBlockKit.Block]?
+                    public var blocks: [Components.Schemas.Block]?
                     /// A JSON-encoded message payload to validate. Provide exactly one of blocks, view, or message.
                     ///
                     /// - Remark: Generated from `#/paths/blocks.validate/POST/requestBody/json/message`.
@@ -48,7 +48,7 @@ extension Operations {
                     /// A JSON-encoded view payload to validate. Provide exactly one of blocks, view, or message.
                     ///
                     /// - Remark: Generated from `#/paths/blocks.validate/POST/requestBody/json/view`.
-                    public var view: SlackBlockKit.View?
+                    public var view: Components.Schemas.View?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -56,9 +56,9 @@ extension Operations {
                     ///   - message: A JSON-encoded message payload to validate. Provide exactly one of blocks, view, or message.
                     ///   - view: A JSON-encoded view payload to validate. Provide exactly one of blocks, view, or message.
                     public init(
-                        blocks: [SlackBlockKit.Block]? = nil,
+                        blocks: [Components.Schemas.Block]? = nil,
                         message: OpenAPIRuntime.OpenAPIObjectContainer? = nil,
-                        view: SlackBlockKit.View? = nil,
+                        view: Components.Schemas.View? = nil,
                     ) {
                         self.blocks = blocks
                         self.message = message

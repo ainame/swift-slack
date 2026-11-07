@@ -1,0 +1,189 @@
+#if WebAPI_Chat
+import Logging
+import SlackBlockKit
+
+extension APIProtocol {
+    /// Creates one streaming message with its channel and options, to send later with
+    /// ``StreamingMessage/Delivery``'s `send`.
+    ///
+    /// Use it instead of
+    /// ``streamMessage(_:channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:isolation:)``
+    /// when the app must be able to tell the message that Slack has ended the session, or read its `ts` before
+    /// the message finishes. This method makes no request and starts no task, so the app can register the
+    /// delivery, and even stop it, before the message starts:
+    ///
+    /// ```swift
+    /// let delivery = client.makeStreamingMessage(channel: channel, threadTs: threadTs)
+    /// // Register delivery with your agent_session_stopped handler before awaiting.
+    /// let ts = try await delivery.send(parts)
+    /// ```
+    ///
+    /// The parameters are those of `streamMessage`.
+    public func makeStreamingMessage(
+        channel: String,
+        threadTs: String? = nil,
+        recipient: StreamingMessage.Recipient? = nil,
+        taskDisplay: StreamingMessage.TaskDisplay = .timeline,
+        blocks: [Block]? = nil,
+        sessionStatus: String? = nil,
+        minimumInterval: Duration = .seconds(1),
+        logger: Logger? = nil,
+    ) -> StreamingMessage.Delivery {
+        // A copy keeps the caller's logger unchanged and identifies the channel of this delivery.
+        var logger = logger ?? Logger(label: "Slack")
+        logger[metadataKey: "slack.channel"] = "\(channel)"
+        let transport = WebAPIStreamingTransport(
+            client: self,
+            channel: channel,
+            threadTs: threadTs,
+            recipient: recipient,
+            taskDisplay: taskDisplay,
+            sessionStatus: sessionStatus,
+        )
+        return StreamingMessage.Delivery(sender: StreamingMessageSender(
+            transport: transport,
+            blocks: blocks,
+            minimumInterval: minimumInterval,
+            logger: logger,
+        ))
+    }
+
+    /// Streams a Sendable input with concurrent reading and delivery. A delivery failure cancels input
+    /// iteration immediately, including while it waits for another element. The input must cooperate with
+    /// cancellation; `AsyncStream` and `AsyncThrowingStream` do so. The method returns only once the input's
+    /// iteration ends, so an input that ignores cancellation delays the return after a failure or a
+    /// cancellation of the calling task.
+    ///
+    /// Swift picks this overload when the argument's static type is `Sendable`. That includes an `AsyncStream`
+    /// mapped directly with `map`, because `AsyncMapSequence` is `Sendable` when its base and elements are; the
+    /// input, including the mapping closure, is then read in a child task rather than in the caller's
+    /// isolation. Generic code whose sequence type is constrained only to `AsyncSequence` picks the
+    /// caller-isolated overload, even when the concrete type is `Sendable`.
+    ///
+    /// Other arguments and completion behavior are the same as the caller-isolated sequence overload.
+    @discardableResult
+    public func streamMessage<Parts: AsyncSequence & Sendable>(
+        _ parts: Parts,
+        channel: String,
+        threadTs: String? = nil,
+        recipient: StreamingMessage.Recipient? = nil,
+        taskDisplay: StreamingMessage.TaskDisplay = .timeline,
+        blocks: [Block]? = nil,
+        sessionStatus: String? = nil,
+        minimumInterval: Duration = .seconds(1),
+        logger: Logger? = nil,
+        isolation: isolated (any Actor)? = #isolation,
+    ) async throws -> String where Parts.Element == StreamingMessage.Part {
+        try await makeStreamingMessage(
+            channel: channel, threadTs: threadTs, recipient: recipient, taskDisplay: taskDisplay,
+            blocks: blocks, sessionStatus: sessionStatus, minimumInterval: minimumInterval, logger: logger,
+        ).send(parts, isolation: isolation)
+    }
+
+    /// Streams `parts` into one message, and stops the message once `parts` ends.
+    ///
+    /// Pass any `AsyncSequence` of ``StreamingMessage/Part``, such as an LLM's text deltas mapped to
+    /// ``StreamingMessage/Part/markdown(_:)``:
+    ///
+    /// ```swift
+    /// try await context.client.streamMessage(
+    ///     llm.tokens(for: prompt).map { StreamingMessage.Part.markdown($0) },
+    ///     channel: event.channel,
+    ///     threadTs: event.threadTs ?? event.ts,
+    ///     recipient: .init(userId: event.user, teamId: envelope.teamId),
+    /// )
+    /// ```
+    ///
+    /// The method starts the message with `chat.startStream` when the first parts arrive, sends the parts that
+    /// arrive during each call together with the next `chat.appendStream` call, waits at least
+    /// `minimumInterval` between calls, and sends the parts left when `parts` ends with `chat.stopStream`.
+    /// Adjacent markdown merges into one chunk, so a producer can yield one part per token.
+    ///
+    /// How the message ends depends on how `parts` ends:
+    ///
+    /// - When `parts` finishes, the remaining parts and `blocks` go out with the stop call.
+    /// - When `parts` throws, the parts so far and `blocks` go out, and then the error is rethrown.
+    ///   If `parts` throws before producing anything, no message is posted.
+    /// - When `parts` throws ``StreamingMessage/SessionStopped`` because Slack has already ended the session,
+    ///   the parts and `blocks` not yet sent are discarded and no further call is made, not even a retry or
+    ///   the stop call. A call already in progress cannot be withdrawn; the method waits for it without
+    ///   cancelling it, ignores its outcome, and rethrows ``StreamingMessage/SessionStopped``, without the cleanup
+    ///   stop described below. To signal a session stop from outside `parts`, including
+    ///   after `parts` has finished while the closing calls or their retries remain, create the message with
+    ///   ``makeStreamingMessage(channel:threadTs:recipient:taskDisplay:blocks:sessionStatus:minimumInterval:logger:)``
+    ///   and call ``StreamingMessage/Delivery/notifySessionStopped()``.
+    /// - When a call fails, including one of the closing calls, the message is stopped without further content
+    ///   once it has a `ts`, and the call's error is rethrown, even if that stop fails too. Slack answering
+    ///   `"ok": false` throws ``StreamingMessage/Error``. Rate-limited calls (HTTP 429) are retried after their
+    ///   `Retry-After` delay, up to three attempts. Other failed calls are not resent, because a call that fails
+    ///   in flight may already have reached Slack.
+    /// - When the calling task is cancelled, delivery ends and discards the parts and `blocks` not yet sent.
+    ///   The method rethrows the error of the call that the cancellation interrupted, or the error `parts`
+    ///   ended with if delivery has already read it, and otherwise throws `CancellationError`. A request in
+    ///   progress may be interrupted by cancellation, so whether Slack applied it is unknown, and it is not resent; a
+    ///   rate-limited call is not retried. Once the message has a `ts`, the method attempts one
+    ///   `chat.stopStream` without content, protected from cancellation, without retrying
+    ///   it or waiting out a `Retry-After` delay. If the cancellation interrupts `chat.startStream`, Slack may
+    ///   have posted a message whose `ts` the method never learns, and that message stays streaming.
+    ///   Cancellation ends `parts` only if `parts` honors it, so the method may not return promptly; see below.
+    ///
+    /// A message can stay in Slack's streaming state whenever the stop call or the best-effort cleanup stop
+    /// fails, or when a cancelled start leaves its `ts` unknown.
+    ///
+    /// A failed cleanup stop does not replace the error the method throws; `logger` reports it as a warning,
+    /// unless delivery has observed a Slack session stop. The warning's metadata names the channel, the message's `ts`, the
+    /// error's type, and Slack's error code or the HTTP status when known. It carries no message content,
+    /// request, or response.
+    ///
+    /// This overload reads `parts` in the calling task's isolation, so it need not be `Sendable`. Swift picks
+    /// it for any sequence whose static type is not `Sendable`, including a sequence in generic code constrained
+    /// only to `AsyncSequence`; a `Sendable` sequence, such as a directly mapped `AsyncStream`, picks the
+    /// overload that reads it in a child task. Because reading and delivery then share the calling task, a
+    /// failed call is noticed only when `parts` yields its next element or ends: while `parts` is idle, the
+    /// method does not return, and it does not cancel `parts`. Cancelling the calling task stops delivery
+    /// promptly, but the method still returns only once `parts` yields or ends; an input that ignores
+    /// cancellation keeps it waiting.
+    ///
+    /// To stop a reply early while still finishing it, end `parts` rather than cancelling the calling task, for
+    /// example by cancelling the task that yields to an `AsyncStream`; that task can still yield closing parts,
+    /// such as a note that the reply was stopped, and they go out with `blocks`. Ending `parts`, with any error,
+    /// does not stop whatever produces them; stop the producer separately.
+    ///
+    /// - Parameters:
+    ///   - parts: The message content, in order.
+    ///   - channel: The channel to post in.
+    ///   - threadTs: The thread to reply in. Pass `nil` to stream a top-level message, which Slack supports only
+    ///     in channels where the whole channel is one agent session, such as Slack Code; elsewhere
+    ///     `chat.startStream` fails with `invalid_thread_ts`.
+    ///   - recipient: The user the reply is for. Slack requires it when streaming into a channel rather than a
+    ///     DM with the app.
+    ///   - taskDisplay: How ``StreamingMessage/Part/task(_:)`` parts render.
+    ///   - blocks: Blocks rendered at the bottom of the finished message, up to 50.
+    ///   - sessionStatus: The agent session's status after the stream stops, such as `suspended`. Slack
+    ///     defaults to `active`.
+    ///   - minimumInterval: The shortest time between two calls. `chat.appendStream` is a Tier 4 method.
+    ///   - logger: The logger for a failed cleanup stop. Pass `nil` to use `Logger(label: "Slack")`, which logs
+    ///     through the backend set with `LoggingSystem.bootstrap`. The logger given to `Slack`'s initializer is
+    ///     not used automatically; in a SlackApp handler, pass `context.logger`.
+    ///   - isolation: The caller's actor isolation, inherited by default so the sequence is read in its context.
+    /// - Returns: The message's `ts`.
+    @discardableResult
+    public func streamMessage<Parts: AsyncSequence>(
+        _ parts: Parts,
+        channel: String,
+        threadTs: String? = nil,
+        recipient: StreamingMessage.Recipient? = nil,
+        taskDisplay: StreamingMessage.TaskDisplay = .timeline,
+        blocks: [Block]? = nil,
+        sessionStatus: String? = nil,
+        minimumInterval: Duration = .seconds(1),
+        logger: Logger? = nil,
+        isolation: isolated (any Actor)? = #isolation,
+    ) async throws -> String where Parts.Element == StreamingMessage.Part {
+        try await makeStreamingMessage(
+            channel: channel, threadTs: threadTs, recipient: recipient, taskDisplay: taskDisplay,
+            blocks: blocks, sessionStatus: sessionStatus, minimumInterval: minimumInterval, logger: logger,
+        ).send(parts, isolation: isolation)
+    }
+}
+#endif

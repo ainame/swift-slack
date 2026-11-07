@@ -294,5 +294,29 @@ struct EventTests {
         let payload = eventType.payload
         #expect(payload == nil)
     }
+
+    // MARK: - Equality and Hashing Tests
+
+    @Test
+    func `events compare by case and payload`() throws {
+        func decode(_ json: String) throws -> Event {
+            try JSONDecoder().decode(Event.self, from: Data(json.utf8))
+        }
+        let message = try decode(#"{ "type": "message", "channel": "C1", "text": "hi", "ts": "1.1" }"#)
+        let sameMessage = try decode(#"{ "type": "message", "channel": "C1", "text": "hi", "ts": "1.1" }"#)
+        let otherMessage = try decode(#"{ "type": "message", "channel": "C1", "text": "bye", "ts": "1.1" }"#)
+        let meMessage = try decode(#"{ "type": "message", "subtype": "me_message", "channel": "C1", "text": "hi", "ts": "1.1" }"#)
+        let unsupported = try decode(#"{ "type": "future_event" }"#)
+
+        #expect(message == sameMessage)
+        #expect(message.hashValue == sameMessage.hashValue)
+        #expect(message != otherMessage)
+        #expect(message != meMessage)
+        #expect(message != unsupported)
+        #expect(unsupported == .unsupported("future_event"))
+        #expect(unsupported.hashValue == Event.unsupported("future_event").hashValue)
+        #expect(unsupported != .unsupported("other_event"))
+        #expect(Set([message, sameMessage, otherMessage, unsupported]).count == 3)
+    }
 }
 #endif

@@ -1,0 +1,119 @@
+# Hand-written OpenAPI schemas merged into the generated Web API document (.tmp/WebAPI/openapi.json).
+#
+# Use one only where the upstream java-slack-sdk class declaration cannot describe the JSON:
+#   * types java-slack-sdk reads through a Gson type adapter (scripts/lib/java_openapi/gson_adapters.rb,
+#     decision kind :schema), and
+#   * fields whose recorded fixture values contradict the Java declaration
+#     (scripts/java_type_overrides.yml, override type `schema`).
+# Everything else comes from the Java classes.
+#
+# Extensions:
+#   x-java-class: <FQN>       replaced by the schema generated from that Java class (inner classes included)
+#   x-swift-accessors: [...]  for a `oneOf`, one name per alternative (or null). scripts/process_webapi.rb
+#                             generates a read-only property per name that returns that alternative or nil,
+#                             because Apple's swift-openapi-generator names the enum cases case1, case2, ...
+#
+# Generation fails when a schema here is not referenced.
+
+AttachmentVideoHtml:
+  description: >-
+    The `video_html` of a message attachment: a string of HTML or an object with `source`
+    (java-slack-sdk GsonMessageAttachmentVideoHtmlFactory).
+  oneOf:
+    - type: string
+    - type: object
+      properties:
+        source:
+          type: string
+  x-swift-accessors: [html, video]
+
+MessageChangedEventPreviousMessage:
+  description: >-
+    The `previous_message` of a `message_changed` event: the message before the edit, or an empty array
+    (java-slack-sdk GsonMessageChangedEventPreviousMessageFactory).
+  oneOf:
+    - x-java-class: com.slack.api.model.event.MessageChangedEvent.Message
+    - type: array
+      maxItems: 0
+      items: {}
+  x-swift-accessors: [message, null]
+
+AppWorkflowStepInputValue:
+  description: >-
+    A workflow step input value: a scalar, an array of strings, an array of blocks, or an object with
+    `elements` and `required` (java-slack-sdk GsonAppWorkflowStepInputValueFactory).
+  oneOf:
+    - type: string
+    - type: number
+    - type: boolean
+    - type: array
+      items:
+        type: string
+    - type: array
+      items:
+        x-java-class: com.slack.api.model.block.LayoutBlock
+    - type: object
+      properties:
+        elements:
+          type: array
+          items:
+            x-java-class: com.slack.api.model.admin.AppWorkflow.StepInputValueElement
+        required:
+          type: array
+          items:
+            type: string
+  x-swift-accessors: [stringValue, numberValue, boolValue, stringValues, interactiveBlocks, form]
+
+AppWorkflowStepInputValueElementDefault:
+  description: >-
+    The default of a workflow step input element: a string or an array of strings
+    (java-slack-sdk GsonAppWorkflowStepInputValueDefaultFactory).
+  oneOf:
+    - type: string
+    - type: array
+      items:
+        type: string
+  x-swift-accessors: [stringValue, stringValues]
+
+ListViewGrouping:
+  description: >-
+    How a list view groups its items (java-slack-sdk GsonListViewGroupingFactory).
+  type: object
+  properties:
+    group_by:
+      type: string
+    group_by_column_id:
+      type: string
+    order:
+      $ref: '#/components/schemas/ListViewGroupingOrder'
+
+ListViewGroupingOrder:
+  description: >-
+    The ordered group values of a list view grouping, or an empty string when there are none.
+  oneOf:
+    - type: array
+      items:
+        x-java-class: com.slack.api.model.list.ListView.GroupingOrder
+    - type: string
+  x-swift-accessors: [values, null]
+
+ListRecordFieldValue:
+  description: >-
+    The value of a list item cell, whose JSON type depends on the column.
+  oneOf:
+    - type: string
+    - type: number
+    - type: boolean
+  x-swift-accessors: [stringValue, numberValue, boolValue]
+
+WorkflowCollaboratorError:
+  description: >-
+    A per-user failure in admin.workflows.collaborators.add or admin.workflows.collaborators.remove.
+  type: object
+  properties:
+    message:
+      type: string
+    user:
+      type: string
+    workflow:
+      type: string

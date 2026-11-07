@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Search
 extension Operations {
+    /// Searches for messages and files matching a query.
+    ///
+    /// - Remark: HTTP `POST /search.all`.
+    /// - Remark: Generated from `#/paths//search.all/post(searchAll)`.
     public enum SearchAll {
         public static let id: Swift.String = "searchAll"
         public struct Input: Sendable, Hashable {
@@ -193,6 +197,10 @@ extension Operations {
         }
     }
 
+    /// Searches for files matching a query.
+    ///
+    /// - Remark: HTTP `POST /search.files`.
+    /// - Remark: Generated from `#/paths//search.files/post(searchFiles)`.
     public enum SearchFiles {
         public static let id: Swift.String = "searchFiles"
         public struct Input: Sendable, Hashable {
@@ -373,6 +381,10 @@ extension Operations {
         }
     }
 
+    /// Searches for messages matching a query.
+    ///
+    /// - Remark: HTTP `POST /search.messages`.
+    /// - Remark: Generated from `#/paths//search.messages/post(searchMessages)`.
     public enum SearchMessages {
         public static let id: Swift.String = "searchMessages"
         public struct Input: Sendable, Hashable {

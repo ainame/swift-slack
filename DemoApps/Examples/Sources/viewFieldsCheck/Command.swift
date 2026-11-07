@@ -99,7 +99,7 @@ struct ViewFieldsCheckCommand {
                     line = summary(check, response)
                 case .clientDecodedFields:
                     let view = View.modal(withDecodedFields(next, from: decoded))
-                    print("→ swift-slack views.update view keys: \(try jsonObject(view).keys.sorted())")
+                    try print("→ swift-slack views.update view keys: \(jsonObject(view).keys.sorted())")
                     let response = try await context.client.viewsUpdate(body: .json(.init(viewId: viewId, view: view)))
                     let json = try response.ok.body.json
                     print("← ok: \(json.ok), error: \(json.error ?? "none"), messages: \(json.responseMetadata?.messages ?? [])")
@@ -125,7 +125,7 @@ struct ViewFieldsCheckCommand {
             let line = "*swift-slack: ack update with decoded fields*: accepted"
             let view = View.modal(withDecodedFields(modal(results: results(in: decoded) + [line]), from: decoded))
             print("== ack update: hash \(decoded.hash ?? "none")")
-            print("→ swift-slack ack view keys: \(try jsonObject(view).keys.sorted())")
+            try print("→ swift-slack ack view keys: \(jsonObject(view).keys.sorted())")
             try await context.ack(responseAction: .update, view: view)
         }
 

@@ -9,10 +9,14 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-/// API operations, with input and output types, generated from `#/paths` in the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_OpenID
 extension Operations {
+    /// Exchanges a temporary OAuth verifier code for an access token for Sign in with Slack.
+    ///
+    /// - Remark: HTTP `POST /openid.connect.token`.
+    /// - Remark: Generated from `#/paths//openid.connect.token/post(openidConnectToken)`.
     public enum OpenidConnectToken {
         public static let id: Swift.String = "openidConnectToken"
         public struct Input: Sendable, Hashable {
@@ -209,6 +213,10 @@ extension Operations {
         }
     }
 
+    /// Get the identity of a user who has authorized Sign in with Slack.
+    ///
+    /// - Remark: HTTP `POST /openid.connect.userInfo`.
+    /// - Remark: Generated from `#/paths//openid.connect.userInfo/post(openidConnectUserInfo)`.
     public enum OpenidConnectUserInfo {
         public static let id: Swift.String = "openidConnectUserInfo"
         public struct Input: Sendable, Hashable {

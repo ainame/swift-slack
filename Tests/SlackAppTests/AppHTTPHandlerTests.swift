@@ -237,6 +237,53 @@ struct AppHTTPHandlerTests {
         #expect(await tracker.text == "hello")
     }
 
+    @Test(arguments: [
+        ([HTTPField](), nil as Int?, nil as String?),
+        (
+            [
+                HTTPField(name: HTTPField.Name("X-Slack-Retry-Num")!, value: "2"),
+                HTTPField(name: HTTPField.Name("X-Slack-Retry-Reason")!, value: "http_timeout"),
+            ],
+            2,
+            "http_timeout",
+        ),
+    ])
+    func `event context carries retry headers`(headerFields: [HTTPField], retryNum: Int?, retryReason: String?) async throws {
+        actor Tracker {
+            private(set) var retry: (num: Int?, reason: String?)?
+
+            func set(_ num: Int?, _ reason: String?) {
+                retry = (num, reason)
+            }
+        }
+
+        let tracker = Tracker()
+        let router = Router()
+        router.onEvent(MessageEvent.self) { context, _, _ in
+            await tracker.set(context.retryNum, context.retryReason)
+        }
+
+        let body = Data(
+            #"{"team_id":"T123","api_app_id":"A123","event":{"type":"message","channel":"C123","channel_type":"channel","event_ts":"123","team":"T123","text":"hello","ts":"123","user":"U123"},"type":"event_callback","event_id":"Ev123","event_time":123}"#
+                .utf8,
+        )
+        let request = signedRequest(
+            secret: "secret",
+            method: .post,
+            path: "/slack/events",
+            contentType: "application/json",
+            body: body,
+            timestamp: currentTimestamp(),
+            headerFields: headerFields,
+        )
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
+        _ = try await app.handle(request.0, body: request.1)
+
+        let retry = try #require(await tracker.retry)
+        #expect(retry.num == retryNum)
+        #expect(retry.reason == retryReason)
+    }
+
     @Test func `unmatched slash command returns OK`() async throws {
         let body = Data(
             "command=%2Funknown&text=hello+world&response_url=https%3A%2F%2Fhooks.slack.com%2Fcommands%2F123%2F456&trigger_id=trigger&user_id=U123&user_name=tester&channel_id=C123&channel_name=general&team_id=T123&team_domain=example&is_enterprise_install=false&api_app_id=A123"
@@ -595,6 +642,7 @@ private func signedRequest(
     contentType: String,
     body: Data,
     timestamp: String,
+    headerFields: [HTTPField] = [],
 ) -> (HTTPRequest, Data) {
     let base = "v0:\(timestamp):" + String(decoding: body, as: UTF8.self)
     let key = SymmetricKey(data: Data(secret.utf8))
@@ -611,7 +659,7 @@ private func signedRequest(
                 HTTPField(name: .contentType, value: contentType),
                 HTTPField(name: HTTPField.Name("x-slack-request-timestamp")!, value: timestamp),
                 HTTPField(name: HTTPField.Name("x-slack-signature")!, value: signature),
-            ]),
+            ] + headerFields),
         ),
         body,
     )

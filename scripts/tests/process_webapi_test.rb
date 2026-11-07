@@ -1,0 +1,244 @@
+# frozen_string_literal: true
+
+require 'minitest/autorun'
+require 'tmpdir'
+require_relative '../process_webapi'
+
+class EventEnumTest < Minitest::Test
+  EVENTS = {
+    'MessageEvent' => { 'type' => 'message' },
+    'MessageBotEvent' => { 'type' => 'message', 'subtype' => 'bot_message' },
+    'IMCloseEvent' => { 'type' => 'im_close' },
+  }.freeze
+
+  def source
+    @source ||= EventEnum.new(EVENTS).source
+  end
+
+  def test_case_names_are_lower_camel_without_event_suffix
+    assert_includes source, 'case imClose(IMCloseEvent)'
+    assert_includes source, 'case messageBot(MessageBotEvent)'
+    assert_includes source, 'case message(MessageEvent)'
+    assert_includes source, 'case unsupported(String)'
+  end
+
+  def test_acronym_words_in_case_names
+    source = EventEnum.new({ 'ChannelIDChangedEvent' => { 'type' => 'channel_id_changed' } }).source
+
+    assert_includes source, 'case channelIdChanged(ChannelIDChangedEvent)'
+  end
+
+  def test_plain_type_decoder
+    assert_includes source, "\"im_close\": { try .imClose(IMCloseEvent(from: $0)) },"
+  end
+
+  def test_message_type_decoders_are_keyed_by_subtype
+    assert_includes source, <<~SWIFT.lines.map { |line| "    #{line}" }.join
+      private static let subtypeDecoders: [String: [String?: Decode]] = [
+          "message": [
+              nil: { try .message(MessageEvent(from: $0)) },
+              "bot_message": { try .messageBot(MessageBotEvent(from: $0)) },
+          ],
+      ]
+    SWIFT
+    refute_includes source, '"message": {'
+  end
+
+  def test_empty_decoder_tables_are_empty_dictionary_literals
+    plain_only = EventEnum.new({ 'IMCloseEvent' => { 'type' => 'im_close' } }).source
+    subtype_only = EventEnum.new({ 'MessageBotEvent' => { 'type' => 'message', 'subtype' => 'bot_message' } }).source
+
+    assert_includes plain_only, 'private static let subtypeDecoders: [String: [String?: Decode]] = [:]'
+    assert_includes subtype_only, 'private static let decoders: [String: Decode] = [:]'
+    refute_includes source, '= [:]'
+  end
+
+  def test_decoding_does_not_switch_over_every_event
+    refute_match(/switch type/, source)
+    refute_match(/^\s*case "/, source)
+  end
+
+  def test_equality_and_hashing_go_through_payload
+    assert_includes source, 'public static func == (lhs: Event, rhs: Event) -> Bool {'
+    assert_includes source, 'return AnyHashable(lhsPayload) == AnyHashable(rhsPayload)'
+    assert_includes source, 'hasher.combine(AnyHashable(payload))'
+  end
+
+  def test_payload_switch_covers_every_case
+    EVENTS.each_key do |name|
+      case_name = name.delete_suffix('Event').gsub('ID', 'Id').gsub('IM', 'Im')
+      assert_match(/case \.#{case_name[0].downcase}#{case_name[1..]}\(let event\):/, source)
+    end
+  end
+
+  def test_subtype_only_events_have_no_nil_subtype_decoder
+    source = EventEnum.new({ 'MessageBotEvent' => { 'type' => 'message', 'subtype' => 'bot_message' } }).source
+
+    refute_includes source, 'nil: {'
+    assert_includes source, 'self = .unsupported(type)'
+  end
+
+  def test_several_plain_events_with_same_type_raise
+    events = { 'AEvent' => { 'type' => 'x' }, 'BEvent' => { 'type' => 'x' } }
+
+    error = assert_raises(RuntimeError) { EventEnum.new(events).source }
+    assert_equal 'several events have type x and no subtype: AEvent, BEvent', error.message
+  end
+
+  def test_several_events_with_same_type_and_subtype_raise
+    events = {
+      'MessageAEvent' => { 'type' => 'message', 'subtype' => 'bot_message' },
+      'MessageBEvent' => { 'type' => 'message', 'subtype' => 'bot_message' },
+    }
+
+    error = assert_raises(RuntimeError) { EventEnum.new(events).source }
+    assert_equal 'several events have type message and subtype bot_message: MessageAEvent, MessageBEvent', error.message
+  end
+
+  def test_source_is_wrapped_in_events_trait
+    assert source.start_with?("#if Events\nimport Foundation")
+    assert source.end_with?("#endif\n")
+  end
+end
+
+class APIGroupsTest < Minitest::Test
+  GROUPS = %w[chat conversations lists dnd oauth].freeze
+
+  def test_group_for_matches_prefix_of_operation_and_response_names
+    assert_equal 'chat', APIGroups.group_for('chatPostMessage', groups: GROUPS)
+    assert_equal 'chat', APIGroups.group_for('ChatPostMessage', groups: GROUPS)
+    assert_equal 'conversations', APIGroups.group_for('ConversationsListResponse', groups: GROUPS)
+    assert_equal 'dnd', APIGroups.group_for('DndInfoResponse', groups: GROUPS)
+  end
+
+  def test_slacklists_alias_maps_to_lists
+    assert_equal 'lists', APIGroups.group_for('slackListsItemsCreate', groups: GROUPS)
+    assert_equal 'lists', APIGroups.group_for('SlackListsCreateResponse', groups: GROUPS)
+  end
+
+  def test_unknown_name_raises
+    error = assert_raises(UnknownAPIGroupError) { APIGroups.group_for('mysteryMethod', groups: GROUPS) }
+
+    assert_match(/mysteryMethod/, error.message)
+  end
+
+  def test_trait_and_display_names
+    assert_equal 'WebAPI_Chat', APIGroups.trait('chat')
+    assert_equal 'WebAPI_DND', APIGroups.trait('dnd')
+    assert_equal 'WebAPI_OAuth', APIGroups.trait('oauth')
+    assert_equal 'OpenID', APIGroups.display_name('openid')
+    assert_equal 'RTM', APIGroups.display_name('rtm')
+  end
+
+  def test_all_reads_group_names_from_a_directory
+    Dir.mktmpdir do |dir|
+      FileUtils.mkdir_p(File.join(dir, 'chat'))
+      File.write(File.join(dir, 'chat', 'a.json'), '{"name":"chat.postMessage"}')
+      File.write(File.join(dir, 'chat', 'b.json'), '{"name":"chat.update"}')
+      File.write(File.join(dir, 'c.json'), '{"name":"pins.add"}')
+
+      assert_equal %w[chat pins], APIGroups.all(dir).sort
+    end
+  end
+
+  def test_all_raises_when_directory_has_no_groups
+    Dir.mktmpdir do |dir|
+      assert_raises(RuntimeError) { APIGroups.all(dir) }
+    end
+  end
+end
+
+class DictionarySubscriptsTest < Minitest::Test
+  SCHEMA = <<~SWIFT.lines.map { |line| "        #{line}" } # declared at 8 spaces, as in Types.swift
+            /// - Remark: Generated from `#/components/schemas/User`.
+            public struct User: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/User/fields`.
+                public struct FieldsPayload: Codable, Hashable, Sendable {
+                    public struct AdditionalPropertiesPayload: Codable, Hashable, Sendable {
+                        public var value: Swift.String?
+                    }
+                    public var additionalProperties: [String: Components.Schemas.User.FieldsPayload.AdditionalPropertiesPayload]
+                }
+                public var fields: Components.Schemas.User.FieldsPayload?
+                public struct OtherPayload: Codable, Hashable, Sendable {
+                    public var name: Swift.String?
+                    public var additionalProperties: [String: Swift.String]
+                }
+            }
+  SWIFT
+
+  def test_only_pure_dictionary_wrappers_get_a_subscript
+    schema = SwiftDeclarations::Declaration.new('User', SCHEMA)
+    processor = WebAPIProcessor.allocate
+    source = processor.send(:dictionary_subscripts, schema)
+
+    assert_includes source, 'extension Components.Schemas.User.FieldsPayload {'
+    assert_includes source, 'public subscript(key: Swift.String) -> Components.Schemas.User.FieldsPayload.AdditionalPropertiesPayload? {'
+    refute_includes source, 'OtherPayload'
+  end
+end
+
+class FileNameTest < Minitest::Test
+  METHODS = %w[
+    admin.analytics.getFile admin.users.session.reset chat.postMessage files.remote.add oauth.v2.access
+    openid.connect.token slackLists.items.create
+  ].freeze
+
+  def path_item(method, response: nil)
+    operation_id = method.gsub(/\.(\w)/) { Regexp.last_match(1).upcase }
+    response ||= "#{operation_id[0].upcase}#{operation_id[1..]}Response"
+    { 'post' => { 'operationId' => operation_id, 'responses' => { '200' => { 'content' => {
+      'application/json' => { 'schema' => { '$ref' => "#/components/schemas/#{response}" } },
+    } } } } }
+  end
+
+  def processor(paths = METHODS.to_h { |method| ["/#{method}", path_item(method)] })
+    processor = WebAPIProcessor.allocate
+    processor.instance_variable_set(:@openapi, { 'paths' => paths })
+    processor
+  end
+
+  def test_methods_below_a_namespace_get_their_own_file
+    assert_equal 'AdminAnalytics', processor.send(:file_name, 'adminAnalyticsGetFile')
+    assert_equal 'AdminUsers', processor.send(:file_name, 'AdminUsersSessionReset')
+    assert_equal 'FilesRemote', processor.send(:file_name, 'FilesRemoteAddResponse')
+  end
+
+  def test_methods_directly_in_a_group_use_the_group_file
+    assert_equal 'Chat', processor.send(:file_name, 'ChatPostMessage')
+    assert_equal 'Chat', processor.send(:file_name, 'ChatPostMessageResponse')
+  end
+
+  def test_aliased_groups_use_the_group_display_name
+    assert_equal 'ListsItems', processor.send(:file_name, 'slackListsItemsCreate')
+    assert_equal 'ListsItems', processor.send(:file_name, 'SlackListsItemsCreateResponse')
+  end
+
+  def test_response_type_shared_across_files_raises
+    paths = {
+      '/chat.postMessage' => path_item('chat.postMessage', response: 'SharedResponse'),
+      '/files.remote.add' => path_item('files.remote.add', response: 'SharedResponse'),
+    }
+    error = assert_raises(RuntimeError) { processor(paths).send(:file_name, 'ChatPostMessage') }
+
+    assert_match(/SharedResponse belongs to both Chat and FilesRemote/, error.message)
+  end
+
+  def test_response_type_shared_within_a_file_is_allowed
+    paths = {
+      '/chat.postMessage' => path_item('chat.postMessage', response: 'SharedResponse'),
+      '/chat.update' => path_item('chat.update', response: 'SharedResponse'),
+    }
+
+    assert_equal 'Chat', processor(paths).send(:file_name, 'SharedResponse')
+  end
+
+  def test_version_and_protocol_segments_are_not_namespaces
+    assert_equal 'OAuth', processor.send(:file_name, 'oauthV2Access')
+    assert_equal 'OpenID', processor.send(:file_name, 'OpenidConnectTokenResponse')
+  end
+
+  def test_unknown_name_raises
+    assert_raises(RuntimeError) { processor.send(:file_name, 'ChatUpdate') }
+  end
+end

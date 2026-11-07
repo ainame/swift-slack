@@ -1,7 +1,7 @@
 import Foundation
 import OpenAPIRuntime
 import SlackBlockKit
-import SlackModels
+import SlackClient
 
 /// https://docs.slack.dev/reference/interaction-payloads/view-interactions-payload#view_closed
 public struct ViewClosedPayload: InteractivePayloadProtocol, Decodable, Sendable {

@@ -8,6 +8,11 @@ public struct TriggerObject: Codable, Hashable, Sendable {
         self.url = url
         self.customizableInputParameters = customizableInputParameters
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case url
+        case customizableInputParameters = "customizable_input_parameters"
+    }
 }
 
 public struct InputParameter: Codable, Hashable, Sendable {

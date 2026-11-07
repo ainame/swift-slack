@@ -122,7 +122,7 @@ router.onAction("approve", blockId: "request_42") { context, payload in
 
 To handle every action in a view, use `onInteractive(_:)` and check the payload's `callbackId`.
 
-`onBlockAction(_:)` is deprecated because it was implemented incorrectly: it does not match Bolt, which matches the element's `action_id`, and matches the containing view's `callback_id` instead. It will be removed in a 2027 release. Replace it with `onAction(_:blockId:handler:)` for each element, or with `onInteractive(_:)` for a whole view.
+2027.1.0 removed `onBlockAction(_:)`, which matched the containing view's `callback_id` instead of the element's `action_id`, unlike Bolt. Replace it with `onAction(_:blockId:handler:)` for each element, or with `onInteractive(_:)` for a whole view.
 
 ## External select menus
 

@@ -8,7 +8,7 @@ struct SocketModeFrameDecodingTests {
     private let logger = Logger(label: "test")
 
     @Test func `undecodable Events API envelope is acknowledged and skipped`() async {
-        // A message event whose blocks include a block type swift-slack does not model.
+        // A message event whose blocks include a malformed block (unknown block types decode as .unknown).
         let json = """
         {
           "envelope_id": "env-1",
@@ -26,7 +26,7 @@ struct SocketModeFrameDecodingTests {
               "user": "U123",
               "text": "hello",
               "ts": "1.2",
-              "blocks": [{ "type": "unmodeled_block", "block_id": "b1" }]
+              "blocks": [{ "type": "section", "block_id": "b1", "text": "not a text object" }]
             }
           }
         }
@@ -42,7 +42,7 @@ struct SocketModeFrameDecodingTests {
     }
 
     @Test(arguments: [
-        // A view submission whose view includes a block type swift-slack does not model.
+        // A view submission whose view includes a malformed block (unknown block types decode as .unknown).
         """
         {
           "envelope_id": "env-1",
@@ -56,7 +56,7 @@ struct SocketModeFrameDecodingTests {
               "id": "V123",
               "type": "modal",
               "title": { "type": "plain_text", "text": "Preferences" },
-              "blocks": [{ "type": "unmodeled_block" }]
+              "blocks": [{ "type": "section", "text": "not a text object" }]
             }
           }
         }
@@ -165,6 +165,34 @@ struct SocketModeFrameDecodingTests {
         #expect(payload.command == "/echo")
         #expect(await acks.envelopeIds.isEmpty)
     }
+
+    #if Events
+    @Test func `retried Events API envelope carries its retry attempt and reason`() async throws {
+        let json = """
+        {
+          "envelope_id": "env-3",
+          "type": "events_api",
+          "accepts_response_payload": false,
+          "retry_attempt": 1,
+          "retry_reason": "timeout",
+          "payload": {
+            "team_id": "T123",
+            "api_app_id": "A123",
+            "event": {"type": "app_mention", "channel": "C123", "user": "U123", "text": "hi", "ts": "1", "event_ts": "1"},
+            "type": "event_callback",
+            "event_id": "Ev123",
+            "event_time": 123
+          }
+        }
+        """
+
+        let envelope = await SlackApp.decodeSocketModeFrame(ByteBuffer(string: json), logger: logger) { _ in }
+
+        let decoded = try #require(envelope)
+        #expect(decoded.retryAttempt == 1)
+        #expect(decoded.retryReason == "timeout")
+    }
+    #endif
 }
 
 private struct AckFailure: Error {}

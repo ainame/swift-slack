@@ -9,66 +9,132 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
-
-#if canImport(SlackModels)
-import SlackModels
-#endif
-/// Types generated from the components section of the OpenAPI document.
+import SlackBlockKit
 
 #if WebAPI_Blocks
 extension Components.Schemas {
     /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse`.
     public struct BlocksValidateResponse: Codable, Hashable, Sendable {
-        /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/error`.
-        public var error: Swift.String?
-        /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/errors`.
-        public var errors: [SlackModels._Error]?
-        /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/needed`.
-        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/ok`.
         public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/needed`.
+        public var needed: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/provided`.
         public var provided: Swift.String?
         /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/response_metadata`.
-        public var responseMetadata: SlackModels.ResponseMetadata?
-        /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/warning`.
-        public var warning: Swift.String?
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/ErrorsPayload`.
+        public struct ErrorsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/ErrorsPayload/pointer`.
+            public var pointer: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/ErrorsPayload/code`.
+            public var code: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/ErrorsPayload/message`.
+            public var message: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/ErrorsPayload/constraint`.
+            public struct ConstraintPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/ErrorsPayload/constraint/type`.
+                public var _type: Swift.String?
+                /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/ErrorsPayload/constraint/expected`.
+                public var expected: OpenAPIRuntime.OpenAPIValueContainer?
+                /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/ErrorsPayload/constraint/got`.
+                public var got: OpenAPIRuntime.OpenAPIValueContainer?
+                /// Creates a new `ConstraintPayload`.
+                ///
+                /// - Parameters:
+                ///   - _type:
+                ///   - expected:
+                ///   - got:
+                public init(
+                    _type: Swift.String? = nil,
+                    expected: OpenAPIRuntime.OpenAPIValueContainer? = nil,
+                    got: OpenAPIRuntime.OpenAPIValueContainer? = nil,
+                ) {
+                    self._type = _type
+                    self.expected = expected
+                    self.got = got
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case _type = "type"
+                    case expected
+                    case got
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/ErrorsPayload/constraint`.
+            public var constraint: Components.Schemas.BlocksValidateResponse.ErrorsPayloadPayload.ConstraintPayload?
+            /// Creates a new `ErrorsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - pointer:
+            ///   - code:
+            ///   - message:
+            ///   - constraint:
+            public init(
+                pointer: Swift.String? = nil,
+                code: Swift.String? = nil,
+                message: Swift.String? = nil,
+                constraint: Components.Schemas.BlocksValidateResponse.ErrorsPayloadPayload.ConstraintPayload? = nil,
+            ) {
+                self.pointer = pointer
+                self.code = code
+                self.message = message
+                self.constraint = constraint
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case pointer
+                case code
+                case message
+                case constraint
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/errors`.
+        public typealias ErrorsPayload = [Components.Schemas.BlocksValidateResponse.ErrorsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/BlocksValidateResponse/errors`.
+        public var errors: Components.Schemas.BlocksValidateResponse.ErrorsPayload?
         /// Creates a new `BlocksValidateResponse`.
         ///
         /// - Parameters:
-        ///   - error:
-        ///   - errors:
-        ///   - needed:
         ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
         ///   - provided:
         ///   - responseMetadata:
-        ///   - warning:
+        ///   - errors:
         public init(
-            error: Swift.String? = nil,
-            errors: [SlackModels._Error]? = nil,
-            needed: Swift.String? = nil,
             ok: Swift.Bool,
-            provided: Swift.String? = nil,
-            responseMetadata: SlackModels.ResponseMetadata? = nil,
             warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
+            errors: Components.Schemas.BlocksValidateResponse.ErrorsPayload? = nil,
         ) {
-            self.error = error
-            self.errors = errors
-            self.needed = needed
             self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
             self.provided = provided
             self.responseMetadata = responseMetadata
-            self.warning = warning
+            self.errors = errors
         }
 
         public enum CodingKeys: String, CodingKey {
-            case error
-            case errors
-            case needed
             case ok
+            case warning
+            case error
+            case needed
             case provided
             case responseMetadata = "response_metadata"
-            case warning
+            case errors
         }
     }
 }

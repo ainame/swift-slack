@@ -9,5 +9,7 @@ import struct Foundation.Data
 import struct Foundation.Date
 import struct Foundation.URL
 #endif
+import SlackBlockKit
+
 /// Server URLs defined in the OpenAPI document.
 public enum Servers {}

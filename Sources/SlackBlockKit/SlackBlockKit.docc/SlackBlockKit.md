@@ -44,7 +44,7 @@ SlackBlockKit integrates seamlessly with other swift-slack modules:
 
 - Pass blocks and views to `SlackClient` Web API calls to send messages and open modals.
 - Build the same models declaratively with `SlackBlockKitDSL`.
-- `SlackModels` uses these types in Web API requests, responses, and event payloads.
+- `SlackClient` and `SlackApp` use these types in Web API requests, responses, and event payloads.
 
 ```swift
 import OpenAPIAsyncHTTPClient

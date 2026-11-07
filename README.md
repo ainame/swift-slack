@@ -7,7 +7,7 @@
 **Build Slack apps in Swift.**\
 Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 
-[![Swift 6.2+](https://img.shields.io/badge/Swift-6.2+-F05138.svg?logo=swift&logoColor=white)](https://swift.org)
+[![Swift 6.4+](https://img.shields.io/badge/Swift-6.4+-F05138.svg?logo=swift&logoColor=white)](https://swift.org)
 ![Platforms: macOS | Linux](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux-lightgrey.svg)
 [![GitHub Release](https://img.shields.io/github/v/release/ainame/swift-slack)](https://github.com/ainame/swift-slack/releases)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/ainame/swift-slack/test.yml?branch=main)](https://github.com/ainame/swift-slack/actions)
@@ -17,22 +17,22 @@ Typed Web API, Bolt-style routing, and a SwiftUI-style Block Kit DSL.
 [Get started](#get-started) · [Examples](#examples) · [Documentation](https://ainame.github.io/swift-slack/documentation) · [Releases](https://github.com/ainame/swift-slack/releases)
 
 > [!TIP]
-> For new apps, we recommend [2027.1.0-beta.3](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.3) ahead of the January 2027 release. Changes from 2026.x include:
+> For new apps, we recommend [2027.1.0-beta.4](https://github.com/ainame/swift-slack/releases/tag/2027.1.0-beta.4) ahead of the January 2027 release. Changes from 2026.x include:
 >
 > * Web API response and event models generated from upstream [java-slack-sdk](https://github.com/slackapi/java-slack-sdk), with decoding checked against its recorded payloads.
 > * Additional Block Kit blocks and elements, including cards, carousels and alerts.
 > * Agent conversation APIs and events, plus typed Slack Code channel helpers.
-> * `AsyncSequence` message streaming into threads and Code channels, demonstrated in the [Codex agent demo](https://github.com/ainame/swift-slack/tree/2027.1.0-beta.3/DemoApps/codex-agent).
+> * `AsyncSequence` message streaming into threads and Code channels, demonstrated in the [Codex agent demo](DemoApps/codex-agent).
 >
-> Beta.3 adds Code channel support and streaming and Socket Mode fixes. See the [changelog](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.3/CHANGELOG.md) for details.
+> Beta.4 requires Swift 6.4+ and updates streaming cancellation and lifecycle control. See the [changelog](CHANGELOG.md) for details.
 >
 > APIs may still change. SwiftPM does not select the beta from a `2026.x` requirement:
 >
 > ```swift
-> .package(url: "https://github.com/ainame/swift-slack.git", from: "2027.1.0-beta.3")
+> .package(url: "https://github.com/ainame/swift-slack.git", from: "2027.1.0-beta.4")
 > ```
 >
-> Existing apps require migration. Read [Migrating to Java-derived models](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.3/MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [changelog](https://github.com/ainame/swift-slack/blob/2027.1.0-beta.3/CHANGELOG.md) for breaking changes. When upgrading from beta.2, note that `BlockActionsPayload.team` is now optional. The quickstart below works with both 2026.x and the beta.
+> Existing apps require migration. Read [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md) and the [changelog](CHANGELOG.md) for breaking changes.
 
 ```swift
 import SlackKit
@@ -81,7 +81,7 @@ The Web API client is generated with [swift-openapi-generator](https://github.co
 ## Get started
 
 Build a bot that replies to `/echo` using Socket Mode, without a public HTTP endpoint.
-Requires Swift 6.2+ and macOS 14+ or Linux, plus a Slack workspace where you can install apps.
+Requires Swift 6.4+ and macOS 14+ or Linux, plus a Slack workspace where you can install apps.
 
 Only need Web API calls? Jump to [Use the Web API client](#use-the-web-api-client).
 
@@ -106,7 +106,7 @@ mkdir -p Sources/EchoBot
 Save this as `Package.swift`:
 
 ```swift
-// swift-tools-version: 6.2
+// swift-tools-version: 6.4
 import PackageDescription
 
 let package = Package(
@@ -115,7 +115,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/ainame/swift-slack.git",
-            from: "2026.10.2"
+            from: "2027.1.0-beta.4"
         )
     ],
     targets: [
@@ -264,7 +264,7 @@ The default package traits include the Web API, events, and Socket Mode. For sma
 ```swift
 .package(
     url: "https://github.com/ainame/swift-slack.git",
-    from: "2026.10.2",
+    from: "2027.1.0-beta.4",
     traits: ["SocketMode", "Events", "WebAPI_Chat", "WebAPI_Views"]
 )
 ```
@@ -277,17 +277,18 @@ Events API handlers are acknowledged automatically. Slash commands, block action
 - [Package traits](Sources/SlackClient/SlackClient.docc/Traits.md): choose the APIs and integrations your app needs.
 - [API documentation](https://ainame.github.io/swift-slack/documentation): explore the package's modules and types.
 - [Migration guide](Sources/SlackApp/SlackApp.docc/MigrationGuide.md): upgrade from 0.5.x to `SlackApp`.
+- [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md): upgrade apps that used `SlackModels` or spell out Web API and event model types.
 
 ## Contributing
 
 Issues and pull requests are welcome. If a Web API method or event is missing or decodes incorrectly, [open an issue](https://github.com/ainame/swift-slack/issues) with the payload you received.
 
-To work on the SDK itself, use the Swift and Ruby versions in [`.swift-version`](.swift-version) and [`.ruby-version`](.ruby-version), plus Node.js 20+. The development toolchain currently uses Swift 6.4; the package manifest's minimum is Swift 6.2.
+To work on the SDK itself, use the Swift and Ruby versions in [`.swift-version`](.swift-version) and [`.ruby-version`](.ruby-version), plus a C compiler for the tree-sitter Java grammar. The development toolchain and the package manifest's minimum are both Swift 6.4.
 
 ```bash
 git clone --recursive https://github.com/ainame/swift-slack.git
 cd swift-slack
-npm ci
+bundle install
 make generate
 swift test
 ```
@@ -307,7 +308,7 @@ Test the skill manually before enabling the schedule. GitHub Actions continues t
 test PRs; the Schema Update workflow is a manual fallback and should not run while
 an agent sync is running or awaiting review.
 
-Web API request parameters come from [slack-ruby/slack-api-ref](https://github.com/slack-ruby/slack-api-ref). Response and event models are inferred from [Slack's Java SDK samples](https://github.com/slackapi/java-slack-sdk), using quicktype and swift-openapi-generator. Many properties are optional because of schema inference; coverage depends on the available upstream samples.
+Web API request parameters come from [slack-ruby/slack-api-ref](https://github.com/slack-ruby/slack-api-ref). Response and event models are translated from the model classes of [Slack's Java SDK](https://github.com/slackapi/java-slack-sdk) and generated with swift-openapi-generator. Properties other than `ok` on responses and `_type` on events are optional, because Slack omits fields depending on the method, the object, and the workspace. Every generated method and event is checked against the Java SDK's recorded payloads (`make check-fixtures`).
 
 ## License
 

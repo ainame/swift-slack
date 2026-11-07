@@ -1,0 +1,10 @@
+{
+  "type": "agent_session_stopped",
+  "channel": "C0123ABC456",
+  "user": "U0123ABC456",
+  "streaming_message_ts": [
+    "1787267140.336949"
+  ],
+  "thread_ts": "1787267126.742989",
+  "event_ts": "1787267141.948630"
+}

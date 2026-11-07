@@ -1,0 +1,15 @@
+# Event payloads for events that upstream java-slack-sdk models but has not recorded under
+# json-logs/samples/events. Each scripts/event_fixtures/<Name>Payload.json is a verbatim copy of the
+# JSON that the event class's upstream unit test deserializes, and is used like an upstream fixture:
+# it selects the event for generation and is decoded by `make check-fixtures`.
+#
+# Key:       <Name> of scripts/event_fixtures/<Name>Payload.json; the Java event class is <Name>Event
+# java_test: the upstream unit test, relative to vendor/java-slack-sdk, whose `String json` holds the payload
+#
+# Generation fails if a payload no longer equals its unit test's JSON, if an entry and a payload file do
+# not pair up, or once upstream records the event itself: then delete the entry and the payload.
+
+AgentSessionStopped:
+  java_test: slack-api-model/src/test/java/test_locally/api/model/event/AgentSessionStoppedEventTest.java
+AgentSessionTitleChanged:
+  java_test: slack-api-model/src/test/java/test_locally/api/model/event/AgentSessionTitleChangedEventTest.java

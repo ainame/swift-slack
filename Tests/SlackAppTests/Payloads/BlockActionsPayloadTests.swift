@@ -3,6 +3,24 @@ import Foundation
 import Testing
 
 struct BlockActionsPayloadTests {
+    @Test(arguments: ["\"team\": null,", ""])
+    func `decode button without workspace team`(teamField: String) throws {
+        let json = """
+        {
+          "type": "block_actions",
+          \(teamField)
+          "user": { "id": "U123" },
+          "container": { "type": "message", "channel_id": "C123", "message_ts": "123.456" },
+          "actions": [{ "type": "button", "action_id": "approve", "value": "request-123" }]
+        }
+        """
+        let payload = try JSONDecoder().decode(BlockActionsPayload.self, from: Data(json.utf8))
+
+        #expect(payload.team == nil)
+        #expect(payload.blockActions.first?.actionId == "approve")
+        #expect(payload.blockActions.first?.value == "request-123")
+    }
+
     @Test
     func `decode message container block actions without view`() throws {
         let json = """
@@ -29,6 +47,7 @@ struct BlockActionsPayloadTests {
         let payload = try JSONDecoder().decode(BlockActionsPayload.self, from: #require(json.data(using: .utf8)))
 
         #expect(payload._type == "block_actions")
+        #expect(payload.team?.id == "T03T5HH7T9U")
         #expect(payload.container._type == "message")
         #expect(payload.view == nil)
         #expect(payload.callbackId == nil)
@@ -235,39 +254,13 @@ struct BlockActionsPayloadTests {
         #expect(actions[0]._type == "plain_text_input")
         #expect(actions[0].value == "Hello")
         #expect(actions[1].richTextValue?.elements.count == 1)
-        #expect(actions[2].richTextValue == nil)
-        #expect(actions[3]._type == "future_element")
-        #expect(actions[3].actionId == "future")
-    }
-
-    @Test
-    @available(*, deprecated)
-    func `deprecated actions skips elements that do not decode as Block Kit elements`() throws {
-        let payload = try decodeMessageBlockActions(actions: """
-        {
-          "type": "checkboxes",
-          "action_id": "toppings",
-          "block_id": "b1",
-          "selected_options": [],
-          "action_ts": "1.1"
-        },
-        {
-          "type": "button",
-          "action_id": "approve",
-          "block_id": "b2",
-          "text": { "type": "plain_text", "text": "Approve" },
-          "action_ts": "1.2"
-        }
-        """)
-
-        #expect(payload.blockActions.map(\.actionId) == ["toppings", "approve"])
-        let elements = try #require(payload.actions)
-        #expect(elements.count == 1)
-        guard case let .button(button) = elements.first else {
-            Issue.record("Expected the button element")
+        // Unmodeled rich text elements are preserved as .unknown rather than dropping the value.
+        guard case .unknown("rich_text_future_element", _)? = actions[2].richTextValue?.elements.first else {
+            Issue.record("Expected an unknown rich text element")
             return
         }
-        #expect(button.actionId == "approve")
+        #expect(actions[3]._type == "future_element")
+        #expect(actions[3].actionId == "future")
     }
 }
 

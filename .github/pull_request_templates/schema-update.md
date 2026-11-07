@@ -1,15 +1,15 @@
 ## 🤖 Automated Schema Update
 
 This PR contains automated updates to the Slack API schemas from the following sources:
-- `java-slack-sdk`: Sample JSON payloads
-- `slack-api-ref`: API method definitions
+- `java-slack-sdk`: Java model, response and event classes, and recorded JSON fixtures
+- `slack-api-ref`: API method definitions and arguments
 
 ### Changes
 
 The following files have been updated:
 - Generated WebAPI client code
 - Generated event types
-- SlackModels shared types
+- Generated shared model types
 
 ### Review Checklist
 

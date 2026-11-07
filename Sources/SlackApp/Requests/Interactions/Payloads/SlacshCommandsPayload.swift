@@ -1,5 +1,5 @@
 import Foundation
-import SlackModels
+import SlackClient
 
 public struct SlashCommandsPayload: Decodable, Hashable, Sendable {
     public let command: String

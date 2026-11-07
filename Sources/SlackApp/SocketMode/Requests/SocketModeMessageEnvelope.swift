@@ -16,19 +16,34 @@ public struct SocketModeMessageEnvelope: Decodable, Hashable, Sendable {
     public let _type: String
     public let payload: Payload
     public let acceptsResponsePayload: Bool
+    /// How many times Slack has retried an `events_api` envelope, or `nil` for the first delivery.
+    public let retryAttempt: Int?
+    /// Why Slack retried an `events_api` envelope, such as `timeout`, or `nil` for the first delivery.
+    public let retryReason: String?
 
     public enum CodingKeys: String, CodingKey {
         case envelopeId = "envelope_id"
         case _type = "type"
         case payload
         case acceptsResponsePayload = "accepts_response_payload"
+        case retryAttempt = "retry_attempt"
+        case retryReason = "retry_reason"
     }
 
-    init(envelopeId: String, _type: String, payload: Payload, acceptsResponsePayload: Bool) {
+    init(
+        envelopeId: String,
+        _type: String,
+        payload: Payload,
+        acceptsResponsePayload: Bool,
+        retryAttempt: Int? = nil,
+        retryReason: String? = nil,
+    ) {
         self.envelopeId = envelopeId
         self._type = _type
         self.payload = payload
         self.acceptsResponsePayload = acceptsResponsePayload
+        self.retryAttempt = retryAttempt
+        self.retryReason = retryReason
     }
 
     public init(from decoder: any Decoder) throws {
@@ -36,6 +51,8 @@ public struct SocketModeMessageEnvelope: Decodable, Hashable, Sendable {
         _type = try container.decode(String.self, forKey: CodingKeys._type)
         envelopeId = try container.decode(String.self, forKey: CodingKeys.envelopeId)
         acceptsResponsePayload = try container.decode(Bool.self, forKey: CodingKeys.acceptsResponsePayload)
+        retryAttempt = try container.decodeIfPresent(Int.self, forKey: CodingKeys.retryAttempt)
+        retryReason = try container.decodeIfPresent(String.self, forKey: CodingKeys.retryReason)
 
         switch _type {
         case "interactive":

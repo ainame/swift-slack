@@ -11,7 +11,8 @@ rm -rf "$OUTPUT_DIR"
 mkdir -p "${OUTPUT_DIR}"
 mkdir -p "${TMP_DIR}"
 
-swift package --allow-writing-to-directory "${TMP_DIR}" \
+# Document trait-gated API such as HummingbirdAdapter, which is off by default.
+swift package --enable-all-traits --allow-writing-to-directory "${TMP_DIR}" \
     generate-documentation \
     --product SlackKit \
     --output-path "${TMP_DIR}" \
@@ -19,7 +20,6 @@ swift package --allow-writing-to-directory "${TMP_DIR}" \
     --product SlackClient \
     --product SlackBlockKit \
     --product SlackBlockKitDSL \
-    --product SlackModels \
     --disable-indexing \
     --transform-for-static-hosting \
     --source-service github \

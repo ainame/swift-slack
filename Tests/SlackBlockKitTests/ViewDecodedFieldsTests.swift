@@ -101,7 +101,11 @@ struct ViewEncodingCoverageTests {
         let view = try JSONDecoder().decode(T.self, from: Data(json.utf8))
         let properties = Mirror(reflecting: view).children
         for property in properties {
-            let isNil = if case Optional<Any>.none = property.value { true } else { false }
+            let isNil = if case Optional<Any>.none = property.value {
+                true
+            } else {
+                false
+            }
             #expect(!isNil, "The fixture doesn't set \(property.label ?? "a property")")
         }
 
