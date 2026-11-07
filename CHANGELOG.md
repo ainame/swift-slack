@@ -9,6 +9,10 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+## [2027.1.0-beta.4] - 2026-11-07
+
+This beta requires Swift 6.4 and changes streaming cancellation and cleanup behavior. It adds per-message delivery control and authentication provider blocks. APIs may still change before the January 2027 release.
+
 ### Added
 
 * **BREAKING**: Added `AuthProviderBlock` and Block Kit DSL support for authentication provider connections, including account details, menus and fallback blocks. Exhaustive switches on `Block` must handle the new `.authProvider` case - #265
