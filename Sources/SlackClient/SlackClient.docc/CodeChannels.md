@@ -90,7 +90,7 @@ try await client.setCodeChannelView(
 )
 ```
 
-Calls with the same `key` update the same view; a diff view is one per channel, so it takes no key. HTML and diff content is limited to 1,000,000 bytes. Slack honors only `resourceDomains` of an HTML view's ``CodeChannel/CSP`` today and stores `connectDomains` without applying them. A canvas view with `accessLevel: .comment` keeps channel members from editing it; `agentContentHash` is opaque to Slack, for detecting edits by people later.
+Calls with the same `key` update the same view; a diff view is one per channel, so it takes no key. HTML and diff content is limited to 1,000,000 bytes. Use `resourceDomains` on an HTML view's ``CodeChannel/CSP`` to allow external resources. A canvas view with `accessLevel: .comment` keeps channel members from editing it; `agentContentHash` is opaque to Slack, for detecting edits by people later.
 
 Slack enforces these limits. The helpers do not check them, so a request beyond a limit fails with Slack's error code or succeeds with a `warning`.
 

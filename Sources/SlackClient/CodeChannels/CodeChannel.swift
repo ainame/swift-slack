@@ -150,18 +150,15 @@ public enum CodeChannel {
     /// The Content-Security-Policy domains of an HTML view.
     ///
     /// Slack validates the domains (HTTPS only, no private or internal hosts). It honors only
-    /// ``resourceDomains`` when rendering today; it stores ``connectDomains`` without applying them.
+    /// ``resourceDomains`` when rendering.
     public struct CSP: Encodable, Sendable, Hashable {
-        public var connectDomains: [String]?
         public var resourceDomains: [String]?
 
-        public init(connectDomains: [String]? = nil, resourceDomains: [String]? = nil) {
-            self.connectDomains = connectDomains
+        public init(resourceDomains: [String]? = nil) {
             self.resourceDomains = resourceDomains
         }
 
         private enum CodingKeys: String, CodingKey {
-            case connectDomains = "connect_domains"
             case resourceDomains = "resource_domains"
         }
     }
@@ -186,8 +183,6 @@ public enum CodeChannel {
             agentContentHash: String? = nil,
             name: String? = nil,
         )
-        /// A pull request.
-        case pullRequest(url: String, name: String? = nil)
 
         /// The access a canvas view grants the channel's members. Slack defaults to `write`.
         public enum AccessLevel: String, Sendable, Hashable {

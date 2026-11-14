@@ -58,12 +58,12 @@ extension AgentToolset {
         """, properties: ["name": ["type": "string", "minLength": 1]], required: ["name"]),
         makeToolSpec(publishCodeView, description: """
         Publish a view in the current code channel. HTML content is a self-contained document; diff is unified
-        diff; block_kit content is a JSON array of Block Kit blocks. Canvas uses an existing canvas_id;
-        pull_request uses a URL. html, block_kit and canvas require a stable key. Only use HTTPS resource domains.
+        diff; block_kit content is a JSON array of Block Kit blocks. Canvas uses an existing canvas_id.
+        html, block_kit and canvas require a stable key. Only use HTTPS resource domains.
         """, properties: [
-            "type": ["type": "string", "enum": ["html", "diff", "block_kit", "canvas", "pull_request"]],
+            "type": ["type": "string", "enum": ["html", "diff", "block_kit", "canvas"]],
             "key": ["type": "string"], "content": ["type": "string"], "name": ["type": "string"],
-            "url": ["type": "string", "pattern": "^https://"], "canvas_id": ["type": "string"],
+            "canvas_id": ["type": "string"],
             "access_level": ["type": "string", "enum": ["read", "write", "comment"]],
             "resource_domains": ["type": "array", "items": ["type": "string"]],
         ], required: ["type"]),
@@ -81,13 +81,12 @@ extension AgentToolset {
         let key: String?
         let content: String?
         let name: String?
-        let url: String?
         let canvasId: String?
         let accessLevel: String?
         let resourceDomains: [String]?
 
         enum CodingKeys: String, CodingKey {
-            case type, key, content, name, url
+            case type, key, content, name
             case canvasId = "canvas_id"
             case accessLevel = "access_level"
             case resourceDomains = "resource_domains"
@@ -125,7 +124,6 @@ extension AgentToolset {
                     accessLevel: canvasAccess(),
                     name: name,
                 )
-            case "pull_request": return try .pullRequest(url: required(url, field: "url"), name: name)
             default: throw AgentToolError(description: "Unknown code view type.")
             }
         }

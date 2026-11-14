@@ -4,6 +4,19 @@ import Foundation
 import Testing
 
 struct EventTests {
+    @Test func `user connection disconnect dispatches as a user connection`() throws {
+        // From java-slack-sdk UserConnectionEventTest.deserializeDisconnect.
+        let data = Data(#"{"type":"user_connection","subtype":"disconnect","user":"U123ABC456","enterprise_id":"E123ABC456","event_ts":"1764264317.061589"}"#.utf8)
+        let event = try JSONDecoder().decode(Event.self, from: data)
+        guard case let .userConnection(connection) = event else {
+            Issue.record("Expected a user connection event")
+            return
+        }
+        #expect(connection.subtype == "disconnect")
+        #expect(connection.enterpriseId == "E123ABC456")
+        #expect(connection.triggerId == nil)
+    }
+
     // MARK: - Regular Message Tests
 
     @Test

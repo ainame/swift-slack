@@ -104,14 +104,14 @@ struct CodeChannelTests {
                 key: "report.html",
                 content: "<html></html>",
                 name: "Report",
-                csp: .init(connectDomains: ["https://api.example.com"], resourceDomains: ["https://cdn.example.com"]),
+                csp: .init(resourceDomains: ["https://cdn.example.com"]),
             ),
             [
                 "type": "html",
                 "view_key": "report.html",
                 "content": "<html></html>",
                 "name": "Report",
-                "csp": #"{"connect_domains":["https://api.example.com"],"resource_domains":["https://cdn.example.com"]}"#,
+                "csp": #"{"resource_domains":["https://cdn.example.com"]}"#,
             ],
         ),
         (
@@ -132,10 +132,6 @@ struct CodeChannelTests {
                 "agent_content_hash": "abc",
                 "name": "Notes",
             ],
-        ),
-        (
-            .pullRequest(url: "https://github.com/o/r/pull/1", name: "PR"),
-            ["type": "pull_request", "pr_url": "https://github.com/o/r/pull/1", "name": "PR"],
         ),
     ] as [(CodeChannel.View, [String: String])])
     func `sends the arguments of each view kind`(view: CodeChannel.View, expected: [String: String]) async throws {
@@ -189,7 +185,7 @@ struct CodeChannelTests {
             case "agentsConversationsSetCommands":
                 try await client.setCodeChannelCommands(channelId: "C1", commands: [])
             default:
-                try await client.setCodeChannelView(channelId: "C1", view: .pullRequest(url: "https://example.com"))
+                try await client.setCodeChannelView(channelId: "C1", view: .html(key: "report", content: "<html></html>"))
             }
         }
         #expect(await http.requests.map(\.operationID) == [operationID])

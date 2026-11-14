@@ -389,6 +389,9 @@ public struct Button: ActionElementConvertible, SectionAccessoryConvertible {
     private var style: ButtonStyle?
     private var confirm: ConfirmationDialog?
     private var accessibilityLabel: String?
+    private var agentPrompt: String?
+    private var agentPromptDisplay: String?
+    private var visibleToUserIds: [String]?
 
     public init(_ text: Text) {
         self.text = text
@@ -434,20 +437,29 @@ public struct Button: ActionElementConvertible, SectionAccessoryConvertible {
         return copy
     }
 
+    public func agentPrompt(_ prompt: String, display: String? = nil) -> Button {
+        var copy = self
+        copy.agentPrompt = prompt
+        copy.agentPromptDisplay = display
+        return copy
+    }
+
+    public func visibleToUserIds(_ ids: [String]) -> Button {
+        var copy = self
+        copy.visibleToUserIds = ids
+        return copy
+    }
+
     public func asActionElement() -> ActionElementType {
-        .button(ButtonElement(
-            text: text.render(),
-            actionId: actionId,
-            url: url,
-            value: value,
-            style: style,
-            confirm: confirm?.render(),
-            accessibilityLabel: accessibilityLabel,
-        ))
+        .button(renderElement())
     }
 
     public func asSectionAccessory() -> SectionAccessory {
-        .button(ButtonElement(
+        .button(renderElement())
+    }
+
+    private func renderElement() -> ButtonElement {
+        ButtonElement(
             text: text.render(),
             actionId: actionId,
             url: url,
@@ -455,7 +467,10 @@ public struct Button: ActionElementConvertible, SectionAccessoryConvertible {
             style: style,
             confirm: confirm?.render(),
             accessibilityLabel: accessibilityLabel,
-        ))
+            agentPrompt: agentPrompt,
+            agentPromptDisplay: agentPromptDisplay,
+            visibleToUserIds: visibleToUserIds,
+        )
     }
 }
 
