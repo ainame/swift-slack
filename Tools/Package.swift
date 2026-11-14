@@ -13,8 +13,8 @@ let package = Package(
         // renovate: datasource=github-release-attachments depName=nicklockwood/SwiftFormat versioning=semver
         .binaryTarget(
             name: "swiftformat",
-            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.61.0/swiftformat.artifactbundle.zip",
-            checksum: "3d6d8a321d9cf17c2841652f19e39cde37ced02e6b7dfc65486402f9941f9e49",
+            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.64.7/swiftformat.artifactbundle.zip",
+            checksum: "44b9cacf63d3a7d1610ad03b3b0556514df70bdcc6ba24cd9b3abad345c957f1",
         ),
         // Formats files outside this package, so `make format` grants write access to the
         // repository with `--allow-writing-to-directory` instead of the package directory.
