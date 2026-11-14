@@ -403,6 +403,11 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/team.info/POST/requestBody/json/team`.
                     public var team: Swift.String?
+                    /// Include advisory Slackbot availability for the returned workspace or organization. Only applies to a single team in the caller's own workspace or organization; omitted for
+                    /// external teams. Does not guarantee individual eligibility, remaining usage, or access to a particular app.
+                    ///
+                    /// - Remark: Generated from `#/paths/team.info/POST/requestBody/json/include_slackbot_availability`.
+                    public var includeSlackbotAvailability: Swift.Bool?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -410,17 +415,22 @@ extension Operations {
                     /// domain to belong to a team and not the enterprise itself. This is the value set up for the 'Joining This Workspace' workspace setting. If it contains more than one domain, the
                     /// field will contain multiple comma-separated domain values. If no domain is set, the field is empty.
                     ///   - team: Team to get info about; if omitted, will return information about the current team.
+                    ///   - includeSlackbotAvailability: Include advisory Slackbot availability for the returned workspace or organization. Only applies to a single team in the caller's own workspace
+                    /// or organization; omitted for external teams. Does not guarantee individual eligibility, remaining usage, or access to a particular app.
                     public init(
                         domain: Swift.String? = nil,
                         team: Swift.String? = nil,
+                        includeSlackbotAvailability: Swift.Bool? = nil,
                     ) {
                         self.domain = domain
                         self.team = team
+                        self.includeSlackbotAvailability = includeSlackbotAvailability
                     }
 
                     public enum CodingKeys: String, CodingKey {
                         case domain
                         case team
+                        case includeSlackbotAvailability = "include_slackbot_availability"
                     }
                 }
 

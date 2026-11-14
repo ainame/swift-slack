@@ -83,6 +83,8 @@ extension Components.Schemas {
         public var payProdCur: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Team/locale`.
         public var locale: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/Team/slackbot_availability`.
+        public var slackbotAvailability: Swift.String?
         /// Creates a new `Team`.
         ///
         /// - Parameters:
@@ -105,6 +107,7 @@ extension Components.Schemas {
         ///   - ssoProvider:
         ///   - payProdCur:
         ///   - locale:
+        ///   - slackbotAvailability:
         public init(
             id: Swift.String? = nil,
             name: Swift.String? = nil,
@@ -125,6 +128,7 @@ extension Components.Schemas {
             ssoProvider: Components.Schemas.Team.SsoProviderPayload? = nil,
             payProdCur: Swift.String? = nil,
             locale: Swift.String? = nil,
+            slackbotAvailability: Swift.String? = nil,
         ) {
             self.id = id
             self.name = name
@@ -145,6 +149,7 @@ extension Components.Schemas {
             self.ssoProvider = ssoProvider
             self.payProdCur = payProdCur
             self.locale = locale
+            self.slackbotAvailability = slackbotAvailability
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -167,6 +172,7 @@ extension Components.Schemas {
             case ssoProvider = "sso_provider"
             case payProdCur = "pay_prod_cur"
             case locale
+            case slackbotAvailability = "slackbot_availability"
         }
     }
 }

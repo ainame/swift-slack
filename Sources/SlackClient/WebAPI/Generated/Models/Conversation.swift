@@ -94,6 +94,8 @@ extension Components.Schemas {
         public var isThreadOnly: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/Conversation/is_non_threadable`.
         public var isNonThreadable: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/Conversation/is_file`.
+        public var isFile: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/Conversation/is_shared`.
         public var isShared: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/Conversation/is_ext_shared`.
@@ -163,6 +165,7 @@ extension Components.Schemas {
         ///   - isReadOnly:
         ///   - isThreadOnly:
         ///   - isNonThreadable:
+        ///   - isFile:
         ///   - isShared:
         ///   - isExtShared:
         ///   - isOrgShared:
@@ -217,6 +220,7 @@ extension Components.Schemas {
             isReadOnly: Swift.Bool? = nil,
             isThreadOnly: Swift.Bool? = nil,
             isNonThreadable: Swift.Bool? = nil,
+            isFile: Swift.Bool? = nil,
             isShared: Swift.Bool? = nil,
             isExtShared: Swift.Bool? = nil,
             isOrgShared: Swift.Bool? = nil,
@@ -271,6 +275,7 @@ extension Components.Schemas {
             self.isReadOnly = isReadOnly
             self.isThreadOnly = isThreadOnly
             self.isNonThreadable = isNonThreadable
+            self.isFile = isFile
             self.isShared = isShared
             self.isExtShared = isExtShared
             self.isOrgShared = isOrgShared
@@ -327,6 +332,7 @@ extension Components.Schemas {
             case isReadOnly = "is_read_only"
             case isThreadOnly = "is_thread_only"
             case isNonThreadable = "is_non_threadable"
+            case isFile = "is_file"
             case isShared = "is_shared"
             case isExtShared = "is_ext_shared"
             case isOrgShared = "is_org_shared"

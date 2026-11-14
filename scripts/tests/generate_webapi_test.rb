@@ -68,6 +68,18 @@ class GenerateWebapiTest < Minitest::Test
     assert_match(/declared `String`, but recorded responses send integers/, file.dig('original_w', 'description'))
   end
 
+  def test_detailed_request_array_items
+    openapi, = build(%w[slackbot.skills.create admin.apps.mcp.servers.permissions.set])
+    properties = lambda do |method|
+      openapi.dig('paths', method, 'post', 'requestBody', 'content', 'application/json', 'schema', 'properties')
+    end
+
+    mcp_server = properties.call('slackbot.skills.create').dig('mcp_servers', 'items')
+    assert_equal %w[service_type], mcp_server['required']
+    assert_equal %w[app_id permission_namespace server_id service_type], mcp_server['properties'].keys.sort
+    assert_equal 'string', properties.call('admin.apps.mcp.servers.permissions.set').dig('user_ids', 'items', 'type')
+  end
+
   def test_reads_utf8_sources_under_a_non_utf8_locale
     Dir.mktmpdir do |directory|
       path = File.join(directory, 'api.test.json')

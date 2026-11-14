@@ -88,6 +88,8 @@ public enum Event: Decodable, Hashable, Sendable {
     case teamRename(TeamRenameEvent)
     case tokensRevoked(TokensRevokedEvent)
     case userChange(UserChangeEvent)
+    case userConnection(UserConnectionEvent)
+    case userConnectionStatusRequested(UserConnectionStatusRequestedEvent)
     case userHuddleChanged(UserHuddleChangedEvent)
     case userProfileChanged(UserProfileChangedEvent)
     case userStatusChanged(UserStatusChangedEvent)
@@ -192,6 +194,8 @@ public enum Event: Decodable, Hashable, Sendable {
         "team_rename": { try .teamRename(TeamRenameEvent(from: $0)) },
         "tokens_revoked": { try .tokensRevoked(TokensRevokedEvent(from: $0)) },
         "user_change": { try .userChange(UserChangeEvent(from: $0)) },
+        "user_connection": { try .userConnection(UserConnectionEvent(from: $0)) },
+        "user_connection_status_requested": { try .userConnectionStatusRequested(UserConnectionStatusRequestedEvent(from: $0)) },
         "user_huddle_changed": { try .userHuddleChanged(UserHuddleChangedEvent(from: $0)) },
         "user_profile_changed": { try .userProfileChanged(UserProfileChangedEvent(from: $0)) },
         "user_status_changed": { try .userStatusChanged(UserStatusChangedEvent(from: $0)) },
@@ -398,6 +402,10 @@ public enum Event: Decodable, Hashable, Sendable {
         case let .tokensRevoked(event):
             event
         case let .userChange(event):
+            event
+        case let .userConnection(event):
+            event
+        case let .userConnectionStatusRequested(event):
             event
         case let .userHuddleChanged(event):
             event

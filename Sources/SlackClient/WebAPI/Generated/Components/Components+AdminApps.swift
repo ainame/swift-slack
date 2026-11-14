@@ -313,6 +313,303 @@ extension Components.Schemas {
         }
     }
 
+    /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse`.
+    public struct AdminAppsMcpServersListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/ServersPayload`.
+        public struct ServersPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/ServersPayload/app_id`.
+            public var appId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/ServersPayload/app_name`.
+            public var appName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/ServersPayload/auth_type`.
+            public var authType: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/ServersPayload/server_id`.
+            public var serverId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/ServersPayload/server_name`.
+            public var serverName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/ServersPayload/url`.
+            public var url: Swift.String?
+            /// Creates a new `ServersPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - appId:
+            ///   - appName:
+            ///   - authType:
+            ///   - serverId:
+            ///   - serverName:
+            ///   - url:
+            public init(
+                appId: Swift.String? = nil,
+                appName: Swift.String? = nil,
+                authType: Swift.String? = nil,
+                serverId: Swift.String? = nil,
+                serverName: Swift.String? = nil,
+                url: Swift.String? = nil,
+            ) {
+                self.appId = appId
+                self.appName = appName
+                self.authType = authType
+                self.serverId = serverId
+                self.serverName = serverName
+                self.url = url
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case appId = "app_id"
+                case appName = "app_name"
+                case authType = "auth_type"
+                case serverId = "server_id"
+                case serverName = "server_name"
+                case url
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/servers`.
+        public typealias ServersPayload = [Components.Schemas.AdminAppsMcpServersListResponse.ServersPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersListResponse/servers`.
+        public var servers: Components.Schemas.AdminAppsMcpServersListResponse.ServersPayload?
+        /// Creates a new `AdminAppsMcpServersListResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - responseMetadata:
+        ///   - servers:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
+            servers: Components.Schemas.AdminAppsMcpServersListResponse.ServersPayload? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.responseMetadata = responseMetadata
+            self.servers = servers
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case responseMetadata = "response_metadata"
+            case servers
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse`.
+    public struct AdminAppsMcpServersPermissionsListResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/ServersPayload`.
+        public struct ServersPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/ServersPayload/is_inherited`.
+            public var isInherited: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/ServersPayload/permission_type`.
+            public var permissionType: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/ServersPayload/server_id`.
+            public var serverId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/ServersPayload/server_name`.
+            public var serverName: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/ServersPayload/url`.
+            public var url: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/ServersPayload/usergroup_ids`.
+            public var usergroupIds: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/ServersPayload/user_ids`.
+            public var userIds: [Swift.String]?
+            /// Creates a new `ServersPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - isInherited:
+            ///   - permissionType:
+            ///   - serverId:
+            ///   - serverName:
+            ///   - url:
+            ///   - usergroupIds:
+            ///   - userIds:
+            public init(
+                isInherited: Swift.Bool? = nil,
+                permissionType: Swift.String? = nil,
+                serverId: Swift.String? = nil,
+                serverName: Swift.String? = nil,
+                url: Swift.String? = nil,
+                usergroupIds: [Swift.String]? = nil,
+                userIds: [Swift.String]? = nil,
+            ) {
+                self.isInherited = isInherited
+                self.permissionType = permissionType
+                self.serverId = serverId
+                self.serverName = serverName
+                self.url = url
+                self.usergroupIds = usergroupIds
+                self.userIds = userIds
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case isInherited = "is_inherited"
+                case permissionType = "permission_type"
+                case serverId = "server_id"
+                case serverName = "server_name"
+                case url
+                case usergroupIds = "usergroup_ids"
+                case userIds = "user_ids"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/servers`.
+        public typealias ServersPayload = [Components.Schemas.AdminAppsMcpServersPermissionsListResponse.ServersPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsListResponse/servers`.
+        public var servers: Components.Schemas.AdminAppsMcpServersPermissionsListResponse.ServersPayload?
+        /// Creates a new `AdminAppsMcpServersPermissionsListResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - servers:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            servers: Components.Schemas.AdminAppsMcpServersPermissionsListResponse.ServersPayload? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.servers = servers
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case servers
+        }
+    }
+
+    /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse`.
+    public struct AdminAppsMcpServersPermissionsSetResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/is_inherited`.
+        public var isInherited: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/permission_type`.
+        public var permissionType: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/server_id`.
+        public var serverId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/server_name`.
+        public var serverName: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/url`.
+        public var url: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/usergroup_ids`.
+        public var usergroupIds: [Swift.String]?
+        /// - Remark: Generated from `#/components/schemas/AdminAppsMcpServersPermissionsSetResponse/user_ids`.
+        public var userIds: [Swift.String]?
+        /// Creates a new `AdminAppsMcpServersPermissionsSetResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - isInherited:
+        ///   - permissionType:
+        ///   - serverId:
+        ///   - serverName:
+        ///   - url:
+        ///   - usergroupIds:
+        ///   - userIds:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            isInherited: Swift.Bool? = nil,
+            permissionType: Swift.String? = nil,
+            serverId: Swift.String? = nil,
+            serverName: Swift.String? = nil,
+            url: Swift.String? = nil,
+            usergroupIds: [Swift.String]? = nil,
+            userIds: [Swift.String]? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.isInherited = isInherited
+            self.permissionType = permissionType
+            self.serverId = serverId
+            self.serverName = serverName
+            self.url = url
+            self.usergroupIds = usergroupIds
+            self.userIds = userIds
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case isInherited = "is_inherited"
+            case permissionType = "permission_type"
+            case serverId = "server_id"
+            case serverName = "server_name"
+            case url
+            case usergroupIds = "usergroup_ids"
+            case userIds = "user_ids"
+        }
+    }
+
     /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse`.
     public struct AdminAppsRequestsCancelResponse: Codable, Hashable, Sendable {
         /// - Remark: Generated from `#/components/schemas/AdminAppsRequestsCancelResponse/ok`.

@@ -246,11 +246,34 @@ def normalize_type(name, attributes)
   attributes['type']
 end
 
+# The compact slack-api-ref method index drops array item shapes. Use the detailed
+# request definitions for the new Slackbot skill and MCP administration families.
+def detailed_array_items(path, method_name)
+  return {} unless method_name.match?(/\A(?:slackbot\.skills|admin\.slackbot\.skills|admin\.apps\.mcp\.servers)\./)
+
+  detailed_path = File.expand_path("../../docs.slack.dev/methods/#{method_name}.json", File.dirname(path))
+  arguments = JSON.parse(File.read(detailed_path)).dig('args', 'properties')
+  arguments.select { |_, attributes| attributes['type'] == 'array' }
+           .transform_values { |attributes| request_item_schema(attributes.fetch('items')) }
+end
+
+def request_item_schema(attributes)
+  return { 'type' => 'string' } if %w[user_id subteam_id].include?(attributes['schema'])
+
+  schema = attributes.slice('type', 'required')
+  schema['description'] = attributes['desc'] if attributes.key?('desc')
+  if (properties = attributes['properties'])
+    schema['properties'] = properties.transform_values { |property| request_item_schema(property) }
+  end
+  schema
+end
+
 def generate_openapi_path(path, response_model_name)
   method_name = File.basename(path, '.json')
   json = JSON.parse(File.read(path))
   operation_id = method_name.camelize(separator: '\.')
   method_args = json['args'].is_a?(Hash) ? json['args'] : {}
+  array_items = detailed_array_items(path, method_name)
   required = []
   request_body_props = method_args.each_with_object({}) do |(name, attributes), props|
     attributes = {} unless attributes.is_a?(Hash)
@@ -272,6 +295,7 @@ def generate_openapi_path(path, response_model_name)
     else
       normalized_type = normalize_type(name, attributes)
       props[name] = { 'type': normalized_type }
+      props[name]['items'] = array_items.fetch(name) if normalized_type == 'array' && array_items.key?(name)
     end
 
     props[name]['example'] = attributes['example'] if attributes.key?('example')

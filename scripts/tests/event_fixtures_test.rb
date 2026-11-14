@@ -85,7 +85,7 @@ class EventFixturesTest < Minitest::Test
   end
 
   def test_repository_payloads_match_their_upstream_unit_tests
-    assert_equal %w[AgentSessionStopped AgentSessionTitleChanged],
+    assert_equal %w[AgentSessionStopped AgentSessionTitleChanged UserConnection UserConnectionStatusRequested],
                  EventFixtures.local_paths.map { File.basename(_1, '.json').delete_suffix('Payload') }
   end
 end
