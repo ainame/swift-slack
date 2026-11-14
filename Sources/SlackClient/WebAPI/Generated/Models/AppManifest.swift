@@ -381,6 +381,33 @@ extension Components.Schemas {
             public var slashCommands: Components.Schemas.AppManifest.FeaturesPayload.SlashCommandsPayload?
             /// - Remark: Generated from `#/components/schemas/AppManifest/features/unfurl_domains`.
             public var unfurlDomains: [Swift.String]?
+            /// - Remark: Generated from `#/components/schemas/AppManifest/features/user_connections`.
+            public struct UserConnectionsPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/AppManifest/features/user_connections/is_enabled`.
+                public var isEnabled: Swift.Bool?
+                /// - Remark: Generated from `#/components/schemas/AppManifest/features/user_connections/auth_hosts`.
+                public var authHosts: [Swift.String]?
+                /// Creates a new `UserConnectionsPayload`.
+                ///
+                /// - Parameters:
+                ///   - isEnabled:
+                ///   - authHosts:
+                public init(
+                    isEnabled: Swift.Bool? = nil,
+                    authHosts: [Swift.String]? = nil,
+                ) {
+                    self.isEnabled = isEnabled
+                    self.authHosts = authHosts
+                }
+
+                public enum CodingKeys: String, CodingKey {
+                    case isEnabled = "is_enabled"
+                    case authHosts = "auth_hosts"
+                }
+            }
+
+            /// - Remark: Generated from `#/components/schemas/AppManifest/features/user_connections`.
+            public var userConnections: Components.Schemas.AppManifest.FeaturesPayload.UserConnectionsPayload?
             /// Creates a new `FeaturesPayload`.
             ///
             /// - Parameters:
@@ -389,18 +416,21 @@ extension Components.Schemas {
             ///   - shortcuts:
             ///   - slashCommands:
             ///   - unfurlDomains:
+            ///   - userConnections:
             public init(
                 appHome: Components.Schemas.AppManifest.FeaturesPayload.AppHomePayload? = nil,
                 botUser: Components.Schemas.AppManifest.FeaturesPayload.BotUserPayload? = nil,
                 shortcuts: Components.Schemas.AppManifest.FeaturesPayload.ShortcutsPayload? = nil,
                 slashCommands: Components.Schemas.AppManifest.FeaturesPayload.SlashCommandsPayload? = nil,
                 unfurlDomains: [Swift.String]? = nil,
+                userConnections: Components.Schemas.AppManifest.FeaturesPayload.UserConnectionsPayload? = nil,
             ) {
                 self.appHome = appHome
                 self.botUser = botUser
                 self.shortcuts = shortcuts
                 self.slashCommands = slashCommands
                 self.unfurlDomains = unfurlDomains
+                self.userConnections = userConnections
             }
 
             public enum CodingKeys: String, CodingKey {
@@ -409,6 +439,7 @@ extension Components.Schemas {
                 case shortcuts
                 case slashCommands = "slash_commands"
                 case unfurlDomains = "unfurl_domains"
+                case userConnections = "user_connections"
             }
         }
 

@@ -56,6 +56,8 @@ extension Components.Schemas {
             public var rating: [Swift.Int]?
             /// - Remark: Generated from `#/components/schemas/ListRecord/FieldsPayload/timestamp`.
             public var timestamp: [Swift.Int]?
+            /// java-slack-sdk decode aliases for com.slack.api.model.list.ListRecord.LinkField.
+            ///
             /// - Remark: Generated from `#/components/schemas/ListRecord/FieldsPayload/LinkPayload`.
             public struct LinkPayloadPayload: Codable, Hashable, Sendable {
                 /// - Remark: Generated from `#/components/schemas/ListRecord/FieldsPayload/LinkPayload/original_url`.
@@ -84,6 +86,20 @@ extension Components.Schemas {
                     case originalUrl = "original_url"
                     case displayAsUrl = "display_as_url"
                     case displayName = "display_name"
+                }
+
+                private enum AlternateCodingKeys: String, CodingKey {
+                    case originalUrl
+                    case displayAsUrl
+                    case displayName
+                }
+
+                public init(from decoder: any Decoder) throws {
+                    let container = try decoder.container(keyedBy: CodingKeys.self)
+                    let alternate = try decoder.container(keyedBy: AlternateCodingKeys.self)
+                    originalUrl = try container.decodeIfPresent(Swift.String.self, forKey: .originalUrl) ?? alternate.decodeIfPresent(Swift.String.self, forKey: .originalUrl)
+                    displayAsUrl = try container.decodeIfPresent(Swift.Bool.self, forKey: .displayAsUrl) ?? alternate.decodeIfPresent(Swift.Bool.self, forKey: .displayAsUrl)
+                    displayName = try container.decodeIfPresent(Swift.String.self, forKey: .displayName) ?? alternate.decodeIfPresent(Swift.String.self, forKey: .displayName)
                 }
             }
 

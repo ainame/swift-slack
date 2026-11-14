@@ -32,12 +32,14 @@ class JavaSourceTest < Minitest::Test
         private String plainName;
         @SerializedName("custom_key") private Integer renamed;
         @SerializedName(value = "primary", alternate = {"alt1", "alt2"}) private Boolean multi;
+        @SerializedName(value = "key", alternate = "oldKey") private String single;
       }
     JAVA
 
-    assert_equal %w[plainName renamed multi], klass.fields.map(&:name)
-    assert_equal ['plain_name', 'custom_key', 'primary'], klass.fields.map(&:json_key)
+    assert_equal %w[plainName renamed multi single], klass.fields.map(&:name)
+    assert_equal ['plain_name', 'custom_key', 'primary', 'key'], klass.fields.map(&:json_key)
     assert_nil klass.fields[0].serialized_name
+    assert_equal [[], [], %w[alt1 alt2], %w[oldKey]], klass.fields.map(&:alternate_names)
   end
 
   def test_static_and_transient_fields_are_skipped_but_final_instance_fields_kept

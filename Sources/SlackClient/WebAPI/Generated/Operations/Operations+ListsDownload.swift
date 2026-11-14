@@ -59,6 +59,11 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/slackLists.download.get/POST/requestBody/json/include_attachments`.
                     public var includeAttachments: Swift.Bool?
+                    /// Must match the include_archived passed to slackLists.download.start. The returned download_url carries this through so the served export includes archived items when they were
+                    /// requested.
+                    ///
+                    /// - Remark: Generated from `#/paths/slackLists.download.get/POST/requestBody/json/include_archived`.
+                    public var includeArchived: Swift.Bool?
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
@@ -69,18 +74,22 @@ extension Operations {
                     /// generated. Only applies when format is json.
                     ///   - includeAttachments: Must match the include_attachments passed to slackLists.download.start. The returned download_url carries this through so the served export matches what
                     /// was generated. Only applies when format is json.
+                    ///   - includeArchived: Must match the include_archived passed to slackLists.download.start. The returned download_url carries this through so the served export includes archived
+                    /// items when they were requested.
                     public init(
                         listId: Swift.String,
                         jobId: Swift.String,
                         format: Swift.String? = nil,
                         includeThreads: Swift.Bool? = nil,
                         includeAttachments: Swift.Bool? = nil,
+                        includeArchived: Swift.Bool? = nil,
                     ) {
                         self.listId = listId
                         self.jobId = jobId
                         self.format = format
                         self.includeThreads = includeThreads
                         self.includeAttachments = includeAttachments
+                        self.includeArchived = includeArchived
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -89,6 +98,7 @@ extension Operations {
                         case format
                         case includeThreads = "include_threads"
                         case includeAttachments = "include_attachments"
+                        case includeArchived = "include_archived"
                     }
                 }
 

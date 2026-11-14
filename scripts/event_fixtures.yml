@@ -13,3 +13,7 @@ AgentSessionStopped:
   java_test: slack-api-model/src/test/java/test_locally/api/model/event/AgentSessionStoppedEventTest.java
 AgentSessionTitleChanged:
   java_test: slack-api-model/src/test/java/test_locally/api/model/event/AgentSessionTitleChangedEventTest.java
+UserConnection:
+  java_test: slack-api-model/src/test/java/test_locally/api/model/event/UserConnectionEventTest.java
+UserConnectionStatusRequested:
+  java_test: slack-api-model/src/test/java/test_locally/api/model/event/UserConnectionStatusRequestedEventTest.java

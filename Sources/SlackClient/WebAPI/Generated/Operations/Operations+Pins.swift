@@ -37,7 +37,7 @@ extension Operations {
             @frozen public enum Body: Sendable, Hashable {
                 /// - Remark: Generated from `#/paths/pins.add/POST/requestBody/json`.
                 public struct JsonPayload: Codable, Hashable, Sendable {
-                    /// Channel to pin the messsage to. You must also include a timestamp when pinning messages.
+                    /// Channel to pin the message to. You must also include a timestamp when pinning messages.
                     ///
                     /// - Remark: Generated from `#/paths/pins.add/POST/requestBody/json/channel`.
                     public var channel: Swift.String
@@ -48,7 +48,7 @@ extension Operations {
                     /// Creates a new `JsonPayload`.
                     ///
                     /// - Parameters:
-                    ///   - channel: Channel to pin the messsage to. You must also include a timestamp when pinning messages.
+                    ///   - channel: Channel to pin the message to. You must also include a timestamp when pinning messages.
                     ///   - timestamp: Timestamp of the message to pin. You must also include the channel.
                     public init(
                         channel: Swift.String,

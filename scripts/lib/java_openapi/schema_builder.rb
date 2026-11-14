@@ -161,7 +161,8 @@ def ref(name)
   # Object schema with every serialized field of `java_class` as an optional property.
   # `inline_stack` holds the inner classes being expanded, to detect recursion.
   def object_schema(java_class, inline_stack)
-    properties = @index.fields_of(java_class).to_h do |key, (field, owner)|
+    fields = @index.fields_of(java_class)
+    properties = fields.to_h do |key, (field, owner)|
       where = "#{owner.file.path}:#{field.type.line} (#{owner.fqn}.#{field.name})"
       schema = type_schema(field.type, owner, where, inline_stack)
       [key, expand_handwritten(@type_overrides.apply(schema, owner, field, key), where)]
@@ -169,7 +170,16 @@ def ref(name)
     @type_overrides.additions_for(java_class).each do |key, schema|
       properties[key] = expand_handwritten(schema, "#{java_class.fqn}##{key}")
     end
-    { 'type' => 'object', 'properties' => properties }
+    schema = { 'type' => 'object', 'properties' => properties }
+    aliases = fields.filter_map do |key, (field, _)|
+      [key, field.alternate_names] unless field.alternate_names.empty?
+    end.to_h
+    unless aliases.empty?
+      schema['x-java-decode-aliases'] = aliases
+      # OpenAPI Generator preserves schema descriptions on inline Swift structs.
+      schema['description'] = "java-slack-sdk decode aliases for #{java_class.fqn}."
+    end
+    schema
   end
 
   # Schema for a type written inside class `context`.

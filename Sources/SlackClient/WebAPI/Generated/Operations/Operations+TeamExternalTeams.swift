@@ -205,7 +205,7 @@ extension Operations {
                     /// - Remark: Generated from `#/paths/team.externalTeams.list/POST/requestBody/json/sort_direction`.
                     public var sortDirection: Swift.String?
                     /// Filters connected orgs by Slack Connect pref override(s). Value can be: approved_orgs_only allow_sc_file_uploads profile_visibility away_team_sc_invite_permissions
-                    /// accept_sc_invites sc_mpdm_to_private require_sc_channel_for_sc_dm external_awareness_context_bar.
+                    /// accept_sc_invites sc_mpdm_to_private external_awareness_context_bar.
                     ///
                     /// - Remark: Generated from `#/paths/team.externalTeams.list/POST/requestBody/json/slack_connect_pref_filter`.
                     public var slackConnectPrefFilter: OpenAPIRuntime.OpenAPIArrayContainer?
@@ -226,7 +226,7 @@ extension Operations {
                     ///   - sortField: Name of the parameter that we are sorting by.
                     ///   - sortDirection: Direction to sort in asc or desc.
                     ///   - slackConnectPrefFilter: Filters connected orgs by Slack Connect pref override(s). Value can be: approved_orgs_only allow_sc_file_uploads profile_visibility
-                    /// away_team_sc_invite_permissions accept_sc_invites sc_mpdm_to_private require_sc_channel_for_sc_dm external_awareness_context_bar.
+                    /// away_team_sc_invite_permissions accept_sc_invites sc_mpdm_to_private external_awareness_context_bar.
                     ///   - workspaceFilter: Shows connected orgs which are connected on a specified encoded workspace ID.
                     ///   - connectionStatusFilter: Status of the connected team.
                     public init(

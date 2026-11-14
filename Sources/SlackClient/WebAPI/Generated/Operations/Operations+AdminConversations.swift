@@ -3256,7 +3256,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/admin.conversations.search/POST/requestBody/json/connected_team_ids`.
                     public var connectedTeamIds: OpenAPIRuntime.OpenAPIArrayContainer?
-                    /// Name of the the channel to query by.
+                    /// Name of the channel to query by.
                     ///
                     /// - Remark: Generated from `#/paths/admin.conversations.search/POST/requestBody/json/query`.
                     public var query: Swift.String?
@@ -3291,7 +3291,7 @@ extension Operations {
                     /// - Parameters:
                     ///   - teamIds: Comma separated string of team IDs, signifying the internal workspaces to search through.
                     ///   - connectedTeamIds: Array of encoded team IDs, signifying the external orgs to search through.
-                    ///   - query: Name of the the channel to query by.
+                    ///   - query: Name of the channel to query by.
                     ///   - limit: Maximum number of items to be returned. Must be between 1 - 20 both inclusive. Default is 10.
                     ///   - cursor: Set cursor to next_cursor returned by the previous call to list items in the next page.
                     ///   - searchChannelTypes: The type of channel to include or exclude in the search. For example private will search private channels, while private_exclude will exclude them. For

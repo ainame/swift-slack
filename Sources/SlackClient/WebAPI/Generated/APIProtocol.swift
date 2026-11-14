@@ -90,6 +90,21 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.apps.config.set`.
     /// - Remark: Generated from `#/paths//admin.apps.config.set/post(adminAppsConfigSet)`.
     func adminAppsConfigSet(_ input: Operations.AdminAppsConfigSet.Input) async throws -> Operations.AdminAppsConfigSet.Output
+    /// List third-party app MCP servers approved for an organization, derived from the org's MCP server allowlist. Entries reflect allowlist state, not install/scope liveness: servers of apps that are uninstalled (but not deleted) are still listed.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.list/post(adminAppsMcpServersList)`.
+    func adminAppsMcpServersList(_ input: Operations.AdminAppsMcpServersList.Input) async throws -> Operations.AdminAppsMcpServersList.Output
+    /// List MCP servers for an app with their access control permissions
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.list/post(adminAppsMcpServersPermissionsList)`.
+    func adminAppsMcpServersPermissionsList(_ input: Operations.AdminAppsMcpServersPermissionsList.Input) async throws -> Operations.AdminAppsMcpServersPermissionsList.Output
+    /// Set the access control permission for who can use an MCP server
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.set`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.set/post(adminAppsMcpServersPermissionsSet)`.
+    func adminAppsMcpServersPermissionsSet(_ input: Operations.AdminAppsMcpServersPermissionsSet.Input) async throws -> Operations.AdminAppsMcpServersPermissionsSet.Output
     /// Cancel app request for team
     ///
     /// - Remark: HTTP `POST /admin.apps.requests.cancel`.
@@ -355,6 +370,26 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.roles.removeAssignments`.
     /// - Remark: Generated from `#/paths//admin.roles.removeAssignments/post(adminRolesRemoveAssignments)`.
     func adminRolesRemoveAssignments(_ input: Operations.AdminRolesRemoveAssignments.Input) async throws -> Operations.AdminRolesRemoveAssignments.Output
+    /// Lists metadata for skills owned by the organization, including invite-only skills.
+    ///
+    /// - Remark: HTTP `POST /admin.slackbot.skills.list`.
+    /// - Remark: Generated from `#/paths//admin.slackbot.skills.list/post(adminSlackbotSkillsList)`.
+    func adminSlackbotSkillsList(_ input: Operations.AdminSlackbotSkillsList.Input) async throws -> Operations.AdminSlackbotSkillsList.Output
+    /// Publishes Slackbot skills to an organization's catalog.
+    ///
+    /// - Remark: HTTP `POST /admin.slackbot.skills.publish`.
+    /// - Remark: Generated from `#/paths//admin.slackbot.skills.publish/post(adminSlackbotSkillsPublish)`.
+    func adminSlackbotSkillsPublish(_ input: Operations.AdminSlackbotSkillsPublish.Input) async throws -> Operations.AdminSlackbotSkillsPublish.Output
+    /// Sets who a Slackbot skill is automatically turned on for.
+    ///
+    /// - Remark: HTTP `POST /admin.slackbot.skills.setAutoEnabled`.
+    /// - Remark: Generated from `#/paths//admin.slackbot.skills.setAutoEnabled/post(adminSlackbotSkillsSetAutoEnabled)`.
+    func adminSlackbotSkillsSetAutoEnabled(_ input: Operations.AdminSlackbotSkillsSetAutoEnabled.Input) async throws -> Operations.AdminSlackbotSkillsSetAutoEnabled.Output
+    /// Removes Slackbot skills from the org catalog, preserving access, libraries, and deployments.
+    ///
+    /// - Remark: HTTP `POST /admin.slackbot.skills.unpublish`.
+    /// - Remark: Generated from `#/paths//admin.slackbot.skills.unpublish/post(adminSlackbotSkillsUnpublish)`.
+    func adminSlackbotSkillsUnpublish(_ input: Operations.AdminSlackbotSkillsUnpublish.Input) async throws -> Operations.AdminSlackbotSkillsUnpublish.Output
     /// List all of the admins on a given workspace.
     ///
     /// - Remark: HTTP `POST /admin.teams.admins.list`.
@@ -770,6 +805,11 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /canvases.edit`.
     /// - Remark: Generated from `#/paths//canvases.edit/post(canvasesEdit)`.
     func canvasesEdit(_ input: Operations.CanvasesEdit.Input) async throws -> Operations.CanvasesEdit.Output
+    /// Get the content of a canvas as markdown (default) or HTML.
+    ///
+    /// - Remark: HTTP `POST /canvases.getContent`.
+    /// - Remark: Generated from `#/paths//canvases.getContent/post(canvasesGetContent)`.
+    func canvasesGetContent(_ input: Operations.CanvasesGetContent.Input) async throws -> Operations.CanvasesGetContent.Output
     /// Find sections matching the provided criteria
     ///
     /// - Remark: HTTP `POST /canvases.sections.lookup`.
@@ -1266,6 +1306,43 @@ public protocol APIProtocol: Sendable {
     /// - Remark: Generated from `#/paths//search.messages/post(searchMessages)`.
     func searchMessages(_ input: Operations.SearchMessages.Input) async throws -> Operations.SearchMessages.Output
     #endif
+    #if WebAPI_Slackbot
+    /// Creates a skill from markdown instructions, or turns an existing canvas the caller owns into a skill.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.create`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.create/post(slackbotSkillsCreate)`.
+    func slackbotSkillsCreate(_ input: Operations.SlackbotSkillsCreate.Input) async throws -> Operations.SlackbotSkillsCreate.Output
+    /// Deletes a Slackbot skill and its canvas, and removes it from every library, skill set, and the org catalog.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.delete`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.delete/post(slackbotSkillsDelete)`.
+    func slackbotSkillsDelete(_ input: Operations.SlackbotSkillsDelete.Input) async throws -> Operations.SlackbotSkillsDelete.Output
+    /// Returns one Slackbot skill, including its instructions.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.info`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.info/post(slackbotSkillsInfo)`.
+    func slackbotSkillsInfo(_ input: Operations.SlackbotSkillsInfo.Input) async throws -> Operations.SlackbotSkillsInfo.Output
+    /// Turns a skill on in the caller's personal library.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.library.add`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.library.add/post(slackbotSkillsLibraryAdd)`.
+    func slackbotSkillsLibraryAdd(_ input: Operations.SlackbotSkillsLibraryAdd.Input) async throws -> Operations.SlackbotSkillsLibraryAdd.Output
+    /// Turns a skill off in the caller's personal library.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.library.remove`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.library.remove/post(slackbotSkillsLibraryRemove)`.
+    func slackbotSkillsLibraryRemove(_ input: Operations.SlackbotSkillsLibraryRemove.Input) async throws -> Operations.SlackbotSkillsLibraryRemove.Output
+    /// Lists Slackbot skills from the caller's point of view. Instructions are not included.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.list`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.list/post(slackbotSkillsList)`.
+    func slackbotSkillsList(_ input: Operations.SlackbotSkillsList.Input) async throws -> Operations.SlackbotSkillsList.Output
+    /// Changes a Slackbot skill's instructions or metadata. Only the inputs you send are changed; a call that changes nothing succeeds without writing.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.update`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.update/post(slackbotSkillsUpdate)`.
+    func slackbotSkillsUpdate(_ input: Operations.SlackbotSkillsUpdate.Input) async throws -> Operations.SlackbotSkillsUpdate.Output
+    #endif
     #if WebAPI_Stars
     /// Save an item for later. Formerly known as adding a star.
     ///
@@ -1659,6 +1736,45 @@ extension APIProtocol {
         body: Operations.AdminAppsConfigSet.Input.Body
     ) async throws -> Operations.AdminAppsConfigSet.Output {
         try await adminAppsConfigSet(Operations.AdminAppsConfigSet.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// List third-party app MCP servers approved for an organization, derived from the org's MCP server allowlist. Entries reflect allowlist state, not install/scope liveness: servers of apps that are uninstalled (but not deleted) are still listed.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.list/post(adminAppsMcpServersList)`.
+    public func adminAppsMcpServersList(
+        headers: Operations.AdminAppsMcpServersList.Input.Headers = .init(),
+        body: Operations.AdminAppsMcpServersList.Input.Body
+    ) async throws -> Operations.AdminAppsMcpServersList.Output {
+        try await adminAppsMcpServersList(Operations.AdminAppsMcpServersList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// List MCP servers for an app with their access control permissions
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.list/post(adminAppsMcpServersPermissionsList)`.
+    public func adminAppsMcpServersPermissionsList(
+        headers: Operations.AdminAppsMcpServersPermissionsList.Input.Headers = .init(),
+        body: Operations.AdminAppsMcpServersPermissionsList.Input.Body
+    ) async throws -> Operations.AdminAppsMcpServersPermissionsList.Output {
+        try await adminAppsMcpServersPermissionsList(Operations.AdminAppsMcpServersPermissionsList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Set the access control permission for who can use an MCP server
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.set`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.set/post(adminAppsMcpServersPermissionsSet)`.
+    public func adminAppsMcpServersPermissionsSet(
+        headers: Operations.AdminAppsMcpServersPermissionsSet.Input.Headers = .init(),
+        body: Operations.AdminAppsMcpServersPermissionsSet.Input.Body
+    ) async throws -> Operations.AdminAppsMcpServersPermissionsSet.Output {
+        try await adminAppsMcpServersPermissionsSet(Operations.AdminAppsMcpServersPermissionsSet.Input(
             headers: headers,
             body: body
         ))
@@ -2348,6 +2464,58 @@ extension APIProtocol {
         body: Operations.AdminRolesRemoveAssignments.Input.Body
     ) async throws -> Operations.AdminRolesRemoveAssignments.Output {
         try await adminRolesRemoveAssignments(Operations.AdminRolesRemoveAssignments.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Lists metadata for skills owned by the organization, including invite-only skills.
+    ///
+    /// - Remark: HTTP `POST /admin.slackbot.skills.list`.
+    /// - Remark: Generated from `#/paths//admin.slackbot.skills.list/post(adminSlackbotSkillsList)`.
+    public func adminSlackbotSkillsList(
+        headers: Operations.AdminSlackbotSkillsList.Input.Headers = .init(),
+        body: Operations.AdminSlackbotSkillsList.Input.Body
+    ) async throws -> Operations.AdminSlackbotSkillsList.Output {
+        try await adminSlackbotSkillsList(Operations.AdminSlackbotSkillsList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Publishes Slackbot skills to an organization's catalog.
+    ///
+    /// - Remark: HTTP `POST /admin.slackbot.skills.publish`.
+    /// - Remark: Generated from `#/paths//admin.slackbot.skills.publish/post(adminSlackbotSkillsPublish)`.
+    public func adminSlackbotSkillsPublish(
+        headers: Operations.AdminSlackbotSkillsPublish.Input.Headers = .init(),
+        body: Operations.AdminSlackbotSkillsPublish.Input.Body
+    ) async throws -> Operations.AdminSlackbotSkillsPublish.Output {
+        try await adminSlackbotSkillsPublish(Operations.AdminSlackbotSkillsPublish.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Sets who a Slackbot skill is automatically turned on for.
+    ///
+    /// - Remark: HTTP `POST /admin.slackbot.skills.setAutoEnabled`.
+    /// - Remark: Generated from `#/paths//admin.slackbot.skills.setAutoEnabled/post(adminSlackbotSkillsSetAutoEnabled)`.
+    public func adminSlackbotSkillsSetAutoEnabled(
+        headers: Operations.AdminSlackbotSkillsSetAutoEnabled.Input.Headers = .init(),
+        body: Operations.AdminSlackbotSkillsSetAutoEnabled.Input.Body
+    ) async throws -> Operations.AdminSlackbotSkillsSetAutoEnabled.Output {
+        try await adminSlackbotSkillsSetAutoEnabled(Operations.AdminSlackbotSkillsSetAutoEnabled.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Removes Slackbot skills from the org catalog, preserving access, libraries, and deployments.
+    ///
+    /// - Remark: HTTP `POST /admin.slackbot.skills.unpublish`.
+    /// - Remark: Generated from `#/paths//admin.slackbot.skills.unpublish/post(adminSlackbotSkillsUnpublish)`.
+    public func adminSlackbotSkillsUnpublish(
+        headers: Operations.AdminSlackbotSkillsUnpublish.Input.Headers = .init(),
+        body: Operations.AdminSlackbotSkillsUnpublish.Input.Body
+    ) async throws -> Operations.AdminSlackbotSkillsUnpublish.Output {
+        try await adminSlackbotSkillsUnpublish(Operations.AdminSlackbotSkillsUnpublish.Input(
             headers: headers,
             body: body
         ))
@@ -3395,6 +3563,19 @@ extension APIProtocol {
         body: Operations.CanvasesEdit.Input.Body
     ) async throws -> Operations.CanvasesEdit.Output {
         try await canvasesEdit(Operations.CanvasesEdit.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Get the content of a canvas as markdown (default) or HTML.
+    ///
+    /// - Remark: HTTP `POST /canvases.getContent`.
+    /// - Remark: Generated from `#/paths//canvases.getContent/post(canvasesGetContent)`.
+    public func canvasesGetContent(
+        headers: Operations.CanvasesGetContent.Input.Headers = .init(),
+        body: Operations.CanvasesGetContent.Input.Body
+    ) async throws -> Operations.CanvasesGetContent.Output {
+        try await canvasesGetContent(Operations.CanvasesGetContent.Input(
             headers: headers,
             body: body
         ))
@@ -4634,6 +4815,99 @@ extension APIProtocol {
         body: Operations.SearchMessages.Input.Body
     ) async throws -> Operations.SearchMessages.Output {
         try await searchMessages(Operations.SearchMessages.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    #endif
+    #if WebAPI_Slackbot
+    /// Creates a skill from markdown instructions, or turns an existing canvas the caller owns into a skill.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.create`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.create/post(slackbotSkillsCreate)`.
+    public func slackbotSkillsCreate(
+        headers: Operations.SlackbotSkillsCreate.Input.Headers = .init(),
+        body: Operations.SlackbotSkillsCreate.Input.Body
+    ) async throws -> Operations.SlackbotSkillsCreate.Output {
+        try await slackbotSkillsCreate(Operations.SlackbotSkillsCreate.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Deletes a Slackbot skill and its canvas, and removes it from every library, skill set, and the org catalog.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.delete`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.delete/post(slackbotSkillsDelete)`.
+    public func slackbotSkillsDelete(
+        headers: Operations.SlackbotSkillsDelete.Input.Headers = .init(),
+        body: Operations.SlackbotSkillsDelete.Input.Body
+    ) async throws -> Operations.SlackbotSkillsDelete.Output {
+        try await slackbotSkillsDelete(Operations.SlackbotSkillsDelete.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Returns one Slackbot skill, including its instructions.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.info`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.info/post(slackbotSkillsInfo)`.
+    public func slackbotSkillsInfo(
+        headers: Operations.SlackbotSkillsInfo.Input.Headers = .init(),
+        body: Operations.SlackbotSkillsInfo.Input.Body
+    ) async throws -> Operations.SlackbotSkillsInfo.Output {
+        try await slackbotSkillsInfo(Operations.SlackbotSkillsInfo.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Turns a skill on in the caller's personal library.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.library.add`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.library.add/post(slackbotSkillsLibraryAdd)`.
+    public func slackbotSkillsLibraryAdd(
+        headers: Operations.SlackbotSkillsLibraryAdd.Input.Headers = .init(),
+        body: Operations.SlackbotSkillsLibraryAdd.Input.Body
+    ) async throws -> Operations.SlackbotSkillsLibraryAdd.Output {
+        try await slackbotSkillsLibraryAdd(Operations.SlackbotSkillsLibraryAdd.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Turns a skill off in the caller's personal library.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.library.remove`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.library.remove/post(slackbotSkillsLibraryRemove)`.
+    public func slackbotSkillsLibraryRemove(
+        headers: Operations.SlackbotSkillsLibraryRemove.Input.Headers = .init(),
+        body: Operations.SlackbotSkillsLibraryRemove.Input.Body
+    ) async throws -> Operations.SlackbotSkillsLibraryRemove.Output {
+        try await slackbotSkillsLibraryRemove(Operations.SlackbotSkillsLibraryRemove.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Lists Slackbot skills from the caller's point of view. Instructions are not included.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.list`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.list/post(slackbotSkillsList)`.
+    public func slackbotSkillsList(
+        headers: Operations.SlackbotSkillsList.Input.Headers = .init(),
+        body: Operations.SlackbotSkillsList.Input.Body
+    ) async throws -> Operations.SlackbotSkillsList.Output {
+        try await slackbotSkillsList(Operations.SlackbotSkillsList.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Changes a Slackbot skill's instructions or metadata. Only the inputs you send are changed; a call that changes nothing succeeds without writing.
+    ///
+    /// - Remark: HTTP `POST /slackbot.skills.update`.
+    /// - Remark: Generated from `#/paths//slackbot.skills.update/post(slackbotSkillsUpdate)`.
+    public func slackbotSkillsUpdate(
+        headers: Operations.SlackbotSkillsUpdate.Input.Headers = .init(),
+        body: Operations.SlackbotSkillsUpdate.Input.Body
+    ) async throws -> Operations.SlackbotSkillsUpdate.Output {
+        try await slackbotSkillsUpdate(Operations.SlackbotSkillsUpdate.Input(
             headers: headers,
             body: body
         ))

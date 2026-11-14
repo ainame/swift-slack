@@ -3,6 +3,86 @@
 The submodule gitlinks are the generation inputs. Review coverage applies to the
 selected delta, not complete historical parity or live Slack service behavior.
 
+## Review on 2026-11-14
+
+| Source | Previous commit | Reviewed snapshot |
+| --- | --- | --- |
+| [java-slack-sdk](https://github.com/slackapi/java-slack-sdk) | `383dd5f35085b700db5c926add4705a8e8df56ee` | `66ca90f086bf775f37d6c4ac19a5c34efce5eba6` |
+| [slack-api-ref](https://github.com/slack-ruby/slack-api-ref) | `9d12de7552102bcacb8cb72162063a39b7b6d9b9` | `cd2b031eb6ce9db1f04fa9e286985208423b4650` |
+
+Both snapshots are fast-forwards from the pins at
+`release-2027-01` commit `0ce30ea942b418e71f2da416c0170b41006fa5c8`.
+
+### Implemented
+
+- Added 15 swift-slack Web API operations with both slack-api-ref request definitions
+  and java-slack-sdk response fixtures. These cover seven `slackbot.skills.*`, four
+  `admin.slackbot.skills.*`, three `admin.apps.mcp.servers.*` and
+  `canvases.getContent`. The downloaded canvas content is a string. The Java
+  shared Skill model and admin-list skill payload have separate Swift types.
+- Used detailed slack-api-ref request definitions for typed skill and admin MCP
+  arrays, including the required service type and optional IDs and Salesforce
+  permission namespace on skill MCP server entries. Added request fields
+  `canvases.create.channel_id`, `team.info.include_slackbot_availability` and
+  `slackLists.download.get.include_archived`. Regenerated changed request comments.
+  Fixed form encoding to distinguish numeric 0 and 1 from JSON booleans, so
+  `slackbot.skills.list` can send `limit=1`. Matched java-slack-sdk form
+  encoding for the new admin ID arrays (comma-separated) and skill MCP server
+  objects (JSON arrays).
+- The slack-api-ref snapshot removed `agents.conversations.setView.pr_url`.
+  Removed the generated property, the handwritten `CodeChannel.View.pullRequest`
+  case and its Codex demo tool option. The Java request retains the argument.
+  Removed `CodeChannel.CSP.connectDomains` to match the detailed slack-api-ref
+  schema. The generated `csp` argument remains an untyped object.
+- Matched updated java-slack-sdk declarations for `Conversation.is_file`,
+  `Team.slackbot_availability` and `AppManifest.features.user_connections`.
+  Applied Gson's new decode aliases for Slack Lists link fields to both standalone
+  and attachment-embedded Swift records. Canonical encoding remains snake_case.
+- Added handwritten swift-slack `PlanBlock`, `Block.plan`, button prompt and
+  visibility fields and their DSL support. Plan tasks omit `type` as shown in the
+  upstream Java test and [Slack reference](https://docs.slack.dev/reference/block-kit/blocks/plan-block/).
+  Existing standalone task card encoding still includes `type`.
+- Generated `UserConnectionEvent` and `UserConnectionStatusRequestedEvent` from
+  java-slack-sdk classes, using verbatim connect and status-request test payloads.
+  Added a dispatch test for the Java disconnect example. Both connect and disconnect
+  use the same event case, with optional `trigger_id` and `enterprise_id` matching
+  [Slack's event examples](https://docs.slack.dev/reference/events/user_connection/)
+  and the [Node Slack SDK types](https://github.com/slackapi/node-slack-sdk/blob/main/packages/types/src/events/user.ts).
+  Swift's event decoder uses the existing generated route for each event type.
+- Exhaustive switches over swift-slack `Block` and `Event` require the new cases.
+  The pull-request Code channel view removal also changes public source API.
+
+### Reviewed exclusions and coverage gaps
+
+- `admin.analytics.slackbot.skills`, `admin.analytics.slackbot.tools`,
+  `admin.conversations.kick`, `admin.users.access.pause`,
+  `admin.users.access.resume` and `admin.users.deactivate` lack java-slack-sdk
+  response fixtures. The existing seven `admin.usergroups.*` fixture gaps remain.
+- java-slack-sdk has response fixtures for `apps.user.connection.bulkUpdate` and
+  `requestAuth` without matching slack-api-ref request definitions.
+  `apps.user.connection.update` already has both inputs and is generated on the base.
+- slack-api-ref lists `message.session` without a java-slack-sdk event class or
+  recorded payload. The guest-status event and the agent-session title event's
+  `enterprise_id` placement still lack the inputs noted below.
+- The slack-api-ref assistant-search partial failure metadata lacks a Java
+  response fixture. Other documentation-only response examples, rate limits and
+  error lists do not change Java-derived response shapes.
+- File-upload blocks are already accepted by swift-slack
+  `files.completeUploadExternal` and encoded by its form middleware. Java's upload
+  convenience helper, Java async rate-limit configuration and client wiring have
+  no equivalent in the downstream implementation. Swift already tolerates
+  malformed streaming `Retry-After` values and rejects null or empty typed
+  response bodies. Java metrics, packaging, release tooling and Kotlin-specific
+  builder changes do not require downstream changes.
+
+### Verification
+
+With Swift 6.4.0 and Ruby 4.0.7, `bundle install`, `make test-scripts`
+(138 tests, 440 assertions), `make check-fixtures` (292 Web API responses and
+95 events, zero unexplained mismatches) and `swift test` (264 tests across 36
+suites) passed. Two full `make generate` runs produced identical hashes for
+all 404 generated Swift files and `Package.swift`. `git diff --check` passed.
+
 ## Review on 2026-10-17
 
 Sync PR: #265.

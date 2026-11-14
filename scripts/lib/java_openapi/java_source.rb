@@ -29,7 +29,7 @@ module JavaSource
   end
 
   # An instance field that Gson serializes. `serialized_name` is the @SerializedName value, if any.
-  JavaField = Struct.new(:name, :type, :serialized_name) do
+  JavaField = Struct.new(:name, :type, :serialized_name, :alternate_names) do
     # Gson's naming for this SDK: @SerializedName if present, otherwise lowerCamel => lower_snake.
     def json_key
       serialized_name || JavaSource.snake_case(name)
@@ -189,7 +189,8 @@ module JavaSource
       fail_at(declarator, "C-style array declarator `#{name}[]` in #{java_class.fqn}") if declarator.child_by_field_name('dimensions')
 
       type = parse_type(node.child_by_field_name('type'))
-      java_class.fields << JavaField.new(name, type, serialized_name(modifiers))
+      primary, alternates = serialized_names(modifiers)
+      java_class.fields << JavaField.new(name, type, primary, alternates)
     end
 
     # Keeps `static final` fields initialised with a string literal, such as an event's TYPE_NAME.
@@ -198,27 +199,29 @@ module JavaSource
       java_class.constants[name] = string_value(value) if value&.type == :string_literal
     end
 
-    # The key from `@SerializedName("key")` or `@SerializedName(value = "key", alternate = {...})`, or nil.
-    # Alternate keys are accepted by Gson when reading but are not modelled.
-    def serialized_name(modifiers)
-      return nil unless modifiers
-
-      annotation = modifiers.each_named.find do |child|
+    # The canonical key and any decode-only aliases from @SerializedName.
+    def serialized_names(modifiers)
+      annotation = modifiers&.each_named&.find do |child|
         %i[annotation marker_annotation].include?(child.type) &&
           text(child.child_by_field_name('name')).end_with?('SerializedName')
       end
-      return nil unless annotation
+      return [nil, []] unless annotation
 
-      arguments = annotation.child_by_field_name('arguments')
-      name = arguments&.each_named&.filter_map do |argument|
-        if argument.type == :string_literal
-          string_value(argument)
-        elsif argument.type == :element_value_pair && text(argument.child_by_field_name('key')) == 'value'
-          string_value(argument.child_by_field_name('value'))
-        end
-      end&.first
-      fail_at(annotation, '@SerializedName without a name') unless name
-      name
+      arguments = annotation.child_by_field_name('arguments')&.each_named&.to_a || []
+      pairs = arguments.select { |node| node.type == :element_value_pair }.to_h do |node|
+        [text(node.child_by_field_name('key')), node.child_by_field_name('value')]
+      end
+      primary = pairs['value'] || arguments.find { |node| node.type == :string_literal }
+      fail_at(annotation, '@SerializedName without a name') unless primary
+
+      alternate = pairs['alternate']
+      nodes = case alternate&.type
+              when :element_value_array_initializer then alternate.each_named.to_a
+              when :string_literal then [alternate]
+              when nil then []
+              else fail_at(alternate, 'unsupported @SerializedName alternate')
+              end
+      [string_value(primary), nodes.map { |node| string_value(node) }]
     end
 
     # Java string literals in these sources are plain names, which are valid JSON strings.

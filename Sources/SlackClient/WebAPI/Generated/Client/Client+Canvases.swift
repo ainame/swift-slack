@@ -220,5 +220,74 @@ extension Client {
             },
         )
     }
+
+    /// Get the content of a canvas as markdown (default) or HTML.
+    ///
+    /// - Remark: HTTP `POST /canvases.getContent`.
+    /// - Remark: Generated from `#/paths//canvases.getContent/post(canvasesGetContent)`.
+    func canvasesGetContent(_ input: Operations.CanvasesGetContent.Input) async throws -> Operations.CanvasesGetContent.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.CanvasesGetContent.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/canvases.getContent",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.CanvasesGetContent.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.CanvasesGetContentResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
 }
 #endif

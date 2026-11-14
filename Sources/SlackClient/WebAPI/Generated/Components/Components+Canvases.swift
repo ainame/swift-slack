@@ -177,5 +177,60 @@ extension Components.Schemas {
             case responseMetadata = "response_metadata"
         }
     }
+
+    /// - Remark: Generated from `#/components/schemas/CanvasesGetContentResponse`.
+    public struct CanvasesGetContentResponse: Codable, Hashable, Sendable {
+        /// - Remark: Generated from `#/components/schemas/CanvasesGetContentResponse/ok`.
+        public var ok: Swift.Bool
+        /// - Remark: Generated from `#/components/schemas/CanvasesGetContentResponse/warning`.
+        public var warning: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/CanvasesGetContentResponse/error`.
+        public var error: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/CanvasesGetContentResponse/needed`.
+        public var needed: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/CanvasesGetContentResponse/provided`.
+        public var provided: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/CanvasesGetContentResponse/content`.
+        public var content: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/CanvasesGetContentResponse/response_metadata`.
+        public var responseMetadata: Components.Schemas.ResponseMetadata?
+        /// Creates a new `CanvasesGetContentResponse`.
+        ///
+        /// - Parameters:
+        ///   - ok:
+        ///   - warning:
+        ///   - error:
+        ///   - needed:
+        ///   - provided:
+        ///   - content:
+        ///   - responseMetadata:
+        public init(
+            ok: Swift.Bool,
+            warning: Swift.String? = nil,
+            error: Swift.String? = nil,
+            needed: Swift.String? = nil,
+            provided: Swift.String? = nil,
+            content: Swift.String? = nil,
+            responseMetadata: Components.Schemas.ResponseMetadata? = nil,
+        ) {
+            self.ok = ok
+            self.warning = warning
+            self.error = error
+            self.needed = needed
+            self.provided = provided
+            self.content = content
+            self.responseMetadata = responseMetadata
+        }
+
+        public enum CodingKeys: String, CodingKey {
+            case ok
+            case warning
+            case error
+            case needed
+            case provided
+            case content
+            case responseMetadata = "response_metadata"
+        }
+    }
 }
 #endif

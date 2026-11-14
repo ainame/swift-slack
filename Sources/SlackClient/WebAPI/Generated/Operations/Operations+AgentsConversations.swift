@@ -1412,8 +1412,8 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/channel_id`.
                     public var channelId: Swift.String
-                    /// The kind of view to create or update. Defaults to html. Determines which other arguments are required: html and diff require content, block_kit requires blocks, canvas requires
-                    /// canvas_id, pull_request requires pr_url.
+                    /// The kind of view to create or update. Defaults to html. Determines which other arguments are required: html and diff require content, block_kit requires blocks, and canvas
+                    /// requires canvas_id.
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/type`.
                     public var _type: Swift.String?
@@ -1422,7 +1422,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/view_key`.
                     public var viewKey: Swift.String?
-                    /// View content. For html, a full self-contained HTML document; for diff, raw unified diff text. Capped at 1,000,000 bytes — larger content returns content_too_large. The cap is
+                    /// View content. For html, a full self-contained HTML document; for diff, raw unified diff text. Capped at 1,000,000 bytes; larger content returns content_too_large. The cap is
                     /// enforced by the handler (not schema maxLength) so the documented error code actually surfaces instead of a generic argument-validation failure. Required when type is html or
                     /// diff.
                     ///
@@ -1436,8 +1436,8 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/canvas_id`.
                     public var canvasId: Swift.String?
-                    /// For canvas views: access level granted to the channel for the canvas tab. Defaults to write. Use 'comment' to grant channel members comment access (read and comment, no
-                    /// editing) so the agent remains the sole author of the canvas text.
+                    /// For canvas views: access level granted to the channel for the canvas tab. Defaults to write. Use comment to grant channel members comment access (read and comment, no editing)
+                    /// so the agent remains the sole author of the canvas text.
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/access_level`.
                     public var accessLevel: Swift.String?
@@ -1445,10 +1445,6 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/agent_content_hash`.
                     public var agentContentHash: Swift.String?
-                    /// For pull_request views: the pull request's URL. Required when type is pull_request; ignored otherwise.
-                    ///
-                    /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/pr_url`.
-                    public var prUrl: Swift.String?
                     /// For diff views: base branch name for display purposes.
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/base_branch`.
@@ -1457,17 +1453,16 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/head_branch`.
                     public var headBranch: Swift.String?
-                    /// Display label for the view tab. Preferred over the legacy 'label' argument (name wins if both are supplied). Defaults to the last path segment of view_key, stripped of any
-                    /// .html/.htm extension.
+                    /// Display label for the view tab. Preferred over the legacy label argument (name wins if both are supplied). Defaults to the last path segment of view_key, stripped of any .html
+                    /// or .htm extension.
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/name`.
                     public var name: Swift.String?
-                    /// Deprecated alias for 'name'. Display label for the view tab. Defaults to the last path segment of view_key, stripped of any .html/.htm extension.
+                    /// Deprecated alias for name. Display label for the view tab. Defaults to the last path segment of view_key, stripped of any .html or .htm extension.
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/label`.
                     public var label: Swift.String?
-                    /// Content-Security-Policy domain declarations for the view. Domains are validated server-side (https-only, no private/internal hosts) and persisted. Only resource_domains is
-                    /// honored at render time today; connect_domains is accepted and stored for forward-compatibility but NOT honored yet.
+                    /// Content-Security-Policy domain declarations for the view. Domains are validated server-side (https:// only, no private or internal hosts) and persisted.
                     ///
                     /// - Remark: Generated from `#/paths/agents.conversations.setView/POST/requestBody/json/csp`.
                     public var csp: OpenAPIRuntime.OpenAPIObjectContainer?
@@ -1475,27 +1470,25 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - channelId: ID of the code channel to render the view in.
-                    ///   - _type: The kind of view to create or update. Defaults to html. Determines which other arguments are required: html and diff require content, block_kit requires blocks,
-                    /// canvas requires canvas_id, pull_request requires pr_url.
+                    ///   - _type: The kind of view to create or update. Defaults to html. Determines which other arguments are required: html and diff require content, block_kit requires blocks, and
+                    /// canvas requires canvas_id.
                     ///   - viewKey: Agent-assigned stable identity for the view (e.g. the source file path on the agent's machine). Used as the upsert key: calls with the same view_key update the
                     /// same view. Required for html, block_kit, and canvas views; ignored for diff (a diff view is a per-channel singleton).
-                    ///   - content: View content. For html, a full self-contained HTML document; for diff, raw unified diff text. Capped at 1,000,000 bytes — larger content returns content_too_large.
+                    ///   - content: View content. For html, a full self-contained HTML document; for diff, raw unified diff text. Capped at 1,000,000 bytes; larger content returns content_too_large.
                     /// The cap is enforced by the handler (not schema maxLength) so the documented error code actually surfaces instead of a generic argument-validation failure. Required when type is
                     /// html or diff.
                     ///   - blocks: Block Kit blocks to render in the view tab. Required when type is block_kit; ignored otherwise.
                     ///   - canvasId: Encoded ID of the canvas to attach as the view. Required when type is canvas; ignored otherwise.
-                    ///   - accessLevel: For canvas views: access level granted to the channel for the canvas tab. Defaults to write. Use 'comment' to grant channel members comment access (read and
+                    ///   - accessLevel: For canvas views: access level granted to the channel for the canvas tab. Defaults to write. Use comment to grant channel members comment access (read and
                     /// comment, no editing) so the agent remains the sole author of the canvas text.
                     ///   - agentContentHash: For canvas views: hash of the canvas-derived markdown the agent last wrote, recorded so the agent can later detect human edits to the canvas. Opaque to
                     /// the server.
-                    ///   - prUrl: For pull_request views: the pull request's URL. Required when type is pull_request; ignored otherwise.
                     ///   - baseBranch: For diff views: base branch name for display purposes.
                     ///   - headBranch: For diff views: head branch name for display purposes.
-                    ///   - name: Display label for the view tab. Preferred over the legacy 'label' argument (name wins if both are supplied). Defaults to the last path segment of view_key, stripped
-                    /// of any .html/.htm extension.
-                    ///   - label: Deprecated alias for 'name'. Display label for the view tab. Defaults to the last path segment of view_key, stripped of any .html/.htm extension.
-                    ///   - csp: Content-Security-Policy domain declarations for the view. Domains are validated server-side (https-only, no private/internal hosts) and persisted. Only
-                    /// resource_domains is honored at render time today; connect_domains is accepted and stored for forward-compatibility but NOT honored yet.
+                    ///   - name: Display label for the view tab. Preferred over the legacy label argument (name wins if both are supplied). Defaults to the last path segment of view_key, stripped of
+                    /// any .html or .htm extension.
+                    ///   - label: Deprecated alias for name. Display label for the view tab. Defaults to the last path segment of view_key, stripped of any .html or .htm extension.
+                    ///   - csp: Content-Security-Policy domain declarations for the view. Domains are validated server-side (https:// only, no private or internal hosts) and persisted.
                     public init(
                         channelId: Swift.String,
                         _type: Swift.String? = nil,
@@ -1505,7 +1498,6 @@ extension Operations {
                         canvasId: Swift.String? = nil,
                         accessLevel: Swift.String? = nil,
                         agentContentHash: Swift.String? = nil,
-                        prUrl: Swift.String? = nil,
                         baseBranch: Swift.String? = nil,
                         headBranch: Swift.String? = nil,
                         name: Swift.String? = nil,
@@ -1520,7 +1512,6 @@ extension Operations {
                         self.canvasId = canvasId
                         self.accessLevel = accessLevel
                         self.agentContentHash = agentContentHash
-                        self.prUrl = prUrl
                         self.baseBranch = baseBranch
                         self.headBranch = headBranch
                         self.name = name
@@ -1537,7 +1528,6 @@ extension Operations {
                         case canvasId = "canvas_id"
                         case accessLevel = "access_level"
                         case agentContentHash = "agent_content_hash"
-                        case prUrl = "pr_url"
                         case baseBranch = "base_branch"
                         case headBranch = "head_branch"
                         case name

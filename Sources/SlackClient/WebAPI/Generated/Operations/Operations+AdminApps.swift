@@ -1155,6 +1155,501 @@ extension Operations {
         }
     }
 
+    /// List third-party app MCP servers approved for an organization, derived from the org's MCP server allowlist. Entries reflect allowlist state, not install/scope liveness: servers of apps that
+    /// are uninstalled (but not deleted) are still listed.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.list/post(adminAppsMcpServersList)`.
+    public enum AdminAppsMcpServersList {
+        public static let id: Swift.String = "adminAppsMcpServersList"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersList.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersList.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminAppsMcpServersList.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// The maximum number of items to return. Must be between 1 - 1000 both inclusive.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/requestBody/json/limit`.
+                    public var limit: Swift.Int?
+                    /// Set cursor to next_cursor returned by the previous call to list items in the next page.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/requestBody/json/cursor`.
+                    public var cursor: Swift.String?
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - limit: The maximum number of items to return. Must be between 1 - 1000 both inclusive.
+                    ///   - cursor: Set cursor to next_cursor returned by the previous call to list items in the next page.
+                    public init(
+                        limit: Swift.Int? = nil,
+                        cursor: Swift.String? = nil,
+                    ) {
+                        self.limit = limit
+                        self.cursor = cursor
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case limit
+                        case cursor
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminAppsMcpServersList.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminAppsMcpServersList.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminAppsMcpServersList.Input.Headers = .init(),
+                body: Operations.AdminAppsMcpServersList.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.list/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminAppsMcpServersListResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminAppsMcpServersListResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminAppsMcpServersList.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminAppsMcpServersList.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.list/post(adminAppsMcpServersList)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminAppsMcpServersList.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminAppsMcpServersList.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
+    /// List MCP servers for an app with their access control permissions
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.list/post(adminAppsMcpServersPermissionsList)`.
+    public enum AdminAppsMcpServersPermissionsList {
+        public static let id: Swift.String = "adminAppsMcpServersPermissionsList"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersPermissionsList.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersPermissionsList.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminAppsMcpServersPermissionsList.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// Encoded ID of the app.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/requestBody/json/app_id`.
+                    public var appId: Swift.String
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - appId: Encoded ID of the app.
+                    public init(appId: Swift.String) {
+                        self.appId = appId
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case appId = "app_id"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminAppsMcpServersPermissionsList.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminAppsMcpServersPermissionsList.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminAppsMcpServersPermissionsList.Input.Headers = .init(),
+                body: Operations.AdminAppsMcpServersPermissionsList.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.list/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminAppsMcpServersPermissionsListResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminAppsMcpServersPermissionsListResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminAppsMcpServersPermissionsList.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminAppsMcpServersPermissionsList.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.list/post(adminAppsMcpServersPermissionsList)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminAppsMcpServersPermissionsList.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminAppsMcpServersPermissionsList.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
+    /// Set the access control permission for who can use an MCP server
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.set`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.set/post(adminAppsMcpServersPermissionsSet)`.
+    public enum AdminAppsMcpServersPermissionsSet {
+        public static let id: Swift.String = "adminAppsMcpServersPermissionsSet"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersPermissionsSet.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.AdminAppsMcpServersPermissionsSet.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+
+            public var headers: Operations.AdminAppsMcpServersPermissionsSet.Input.Headers
+            /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json`.
+                public struct JsonPayload: Codable, Hashable, Sendable {
+                    /// Encoded ID of the app.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json/app_id`.
+                    public var appId: Swift.String
+                    /// Encoded ID of the MCP server.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json/server_id`.
+                    public var serverId: Swift.String
+                    /// The type of permission that defines who can use this MCP server.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json/permission_type`.
+                    public var permissionType: Swift.String
+                    /// List of user IDs to set for named_entities or named_entities_exclude.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json/user_ids`.
+                    public var userIds: [Swift.String]?
+                    /// List of encoded usergroup IDs.
+                    ///
+                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/json/usergroup_ids`.
+                    public var usergroupIds: [Swift.String]?
+                    /// Creates a new `JsonPayload`.
+                    ///
+                    /// - Parameters:
+                    ///   - appId: Encoded ID of the app.
+                    ///   - serverId: Encoded ID of the MCP server.
+                    ///   - permissionType: The type of permission that defines who can use this MCP server.
+                    ///   - userIds: List of user IDs to set for named_entities or named_entities_exclude.
+                    ///   - usergroupIds: List of encoded usergroup IDs.
+                    public init(
+                        appId: Swift.String,
+                        serverId: Swift.String,
+                        permissionType: Swift.String,
+                        userIds: [Swift.String]? = nil,
+                        usergroupIds: [Swift.String]? = nil,
+                    ) {
+                        self.appId = appId
+                        self.serverId = serverId
+                        self.permissionType = permissionType
+                        self.userIds = userIds
+                        self.usergroupIds = usergroupIds
+                    }
+
+                    public enum CodingKeys: String, CodingKey {
+                        case appId = "app_id"
+                        case serverId = "server_id"
+                        case permissionType = "permission_type"
+                        case userIds = "user_ids"
+                        case usergroupIds = "usergroup_ids"
+                    }
+                }
+
+                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/requestBody/content/application\/json`.
+                case json(Operations.AdminAppsMcpServersPermissionsSet.Input.Body.JsonPayload)
+            }
+
+            public var body: Operations.AdminAppsMcpServersPermissionsSet.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - headers:
+            ///   - body:
+            public init(
+                headers: Operations.AdminAppsMcpServersPermissionsSet.Input.Headers = .init(),
+                body: Operations.AdminAppsMcpServersPermissionsSet.Input.Body,
+            ) {
+                self.headers = headers
+                self.body = body
+            }
+        }
+
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Ok: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/responses/200/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/admin.apps.mcp.servers.permissions.set/POST/responses/200/content/application\/json`.
+                    case json(Components.Schemas.AdminAppsMcpServersPermissionsSetResponse)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.AdminAppsMcpServersPermissionsSetResponse {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                body
+                            }
+                        }
+                    }
+                }
+
+                /// Received HTTP response body
+                public var body: Operations.AdminAppsMcpServersPermissionsSet.Output.Ok.Body
+                /// Creates a new `Ok`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.AdminAppsMcpServersPermissionsSet.Output.Ok.Body) {
+                    self.body = body
+                }
+            }
+
+            /// OK
+            ///
+            /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.set/post(adminAppsMcpServersPermissionsSet)/responses/200`.
+            ///
+            /// HTTP response code: `200 ok`.
+            case ok(Operations.AdminAppsMcpServersPermissionsSet.Output.Ok)
+            /// The associated value of the enum case if `self` is `.ok`.
+            ///
+            /// - Throws: An error if `self` is not `.ok`.
+            /// - SeeAlso: `.ok`.
+            public var ok: Operations.AdminAppsMcpServersPermissionsSet.Output.Ok {
+                get throws {
+                    switch self {
+                    case let .ok(response):
+                        response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "ok",
+                            response: self,
+                        )
+                    }
+                }
+            }
+
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    string
+                case .json:
+                    "application/json"
+                }
+            }
+
+            public static var allCases: [Self] {
+                [
+                    .json,
+                ]
+            }
+        }
+    }
+
     /// Cancel app request for team
     ///
     /// - Remark: HTTP `POST /admin.apps.requests.cancel`.

@@ -12,6 +12,9 @@ let responseFixtureDecoders: [String: @Sendable (Data) throws -> Any] = {
     decoders["admin.apps.clearResolution"] = { try JSONDecoder().decode(Components.Schemas.AdminAppsClearResolutionResponse.self, from: $0) }
     decoders["admin.apps.config.lookup"] = { try JSONDecoder().decode(Components.Schemas.AdminAppsConfigLookupResponse.self, from: $0) }
     decoders["admin.apps.config.set"] = { try JSONDecoder().decode(Components.Schemas.AdminAppsConfigSetResponse.self, from: $0) }
+    decoders["admin.apps.mcp.servers.list"] = { try JSONDecoder().decode(Components.Schemas.AdminAppsMcpServersListResponse.self, from: $0) }
+    decoders["admin.apps.mcp.servers.permissions.list"] = { try JSONDecoder().decode(Components.Schemas.AdminAppsMcpServersPermissionsListResponse.self, from: $0) }
+    decoders["admin.apps.mcp.servers.permissions.set"] = { try JSONDecoder().decode(Components.Schemas.AdminAppsMcpServersPermissionsSetResponse.self, from: $0) }
     decoders["admin.apps.requests.cancel"] = { try JSONDecoder().decode(Components.Schemas.AdminAppsRequestsCancelResponse.self, from: $0) }
     decoders["admin.apps.requests.list"] = { try JSONDecoder().decode(Components.Schemas.AdminAppsRequestsListResponse.self, from: $0) }
     decoders["admin.apps.restrict"] = { try JSONDecoder().decode(Components.Schemas.AdminAppsRestrictResponse.self, from: $0) }
@@ -65,6 +68,10 @@ let responseFixtureDecoders: [String: @Sendable (Data) throws -> Any] = {
     decoders["admin.roles.addAssignments"] = { try JSONDecoder().decode(Components.Schemas.AdminRolesAddAssignmentsResponse.self, from: $0) }
     decoders["admin.roles.listAssignments"] = { try JSONDecoder().decode(Components.Schemas.AdminRolesListAssignmentsResponse.self, from: $0) }
     decoders["admin.roles.removeAssignments"] = { try JSONDecoder().decode(Components.Schemas.AdminRolesRemoveAssignmentsResponse.self, from: $0) }
+    decoders["admin.slackbot.skills.list"] = { try JSONDecoder().decode(Components.Schemas.AdminSlackbotSkillsListResponse.self, from: $0) }
+    decoders["admin.slackbot.skills.publish"] = { try JSONDecoder().decode(Components.Schemas.AdminSlackbotSkillsPublishResponse.self, from: $0) }
+    decoders["admin.slackbot.skills.setAutoEnabled"] = { try JSONDecoder().decode(Components.Schemas.AdminSlackbotSkillsSetAutoEnabledResponse.self, from: $0) }
+    decoders["admin.slackbot.skills.unpublish"] = { try JSONDecoder().decode(Components.Schemas.AdminSlackbotSkillsUnpublishResponse.self, from: $0) }
     decoders["admin.teams.admins.list"] = { try JSONDecoder().decode(Components.Schemas.AdminTeamsAdminsListResponse.self, from: $0) }
     decoders["admin.teams.create"] = { try JSONDecoder().decode(Components.Schemas.AdminTeamsCreateResponse.self, from: $0) }
     decoders["admin.teams.list"] = { try JSONDecoder().decode(Components.Schemas.AdminTeamsListResponse.self, from: $0) }
@@ -165,6 +172,7 @@ let responseFixtureDecoders: [String: @Sendable (Data) throws -> Any] = {
     decoders["canvases.create"] = { try JSONDecoder().decode(Components.Schemas.CanvasesCreateResponse.self, from: $0) }
     decoders["canvases.delete"] = { try JSONDecoder().decode(Components.Schemas.CanvasesDeleteResponse.self, from: $0) }
     decoders["canvases.edit"] = { try JSONDecoder().decode(Components.Schemas.CanvasesEditResponse.self, from: $0) }
+    decoders["canvases.getContent"] = { try JSONDecoder().decode(Components.Schemas.CanvasesGetContentResponse.self, from: $0) }
     decoders["canvases.sections.lookup"] = { try JSONDecoder().decode(Components.Schemas.CanvasesSectionsLookupResponse.self, from: $0) }
     #endif
     #if WebAPI_Chat
@@ -292,6 +300,15 @@ let responseFixtureDecoders: [String: @Sendable (Data) throws -> Any] = {
     decoders["slackLists.items.list"] = { try JSONDecoder().decode(Components.Schemas.SlackListsItemsListResponse.self, from: $0) }
     decoders["slackLists.items.update"] = { try JSONDecoder().decode(Components.Schemas.SlackListsItemsUpdateResponse.self, from: $0) }
     decoders["slackLists.update"] = { try JSONDecoder().decode(Components.Schemas.SlackListsUpdateResponse.self, from: $0) }
+    #endif
+    #if WebAPI_Slackbot
+    decoders["slackbot.skills.create"] = { try JSONDecoder().decode(Components.Schemas.SlackbotSkillsCreateResponse.self, from: $0) }
+    decoders["slackbot.skills.delete"] = { try JSONDecoder().decode(Components.Schemas.SlackbotSkillsDeleteResponse.self, from: $0) }
+    decoders["slackbot.skills.info"] = { try JSONDecoder().decode(Components.Schemas.SlackbotSkillsInfoResponse.self, from: $0) }
+    decoders["slackbot.skills.library.add"] = { try JSONDecoder().decode(Components.Schemas.SlackbotSkillsLibraryAddResponse.self, from: $0) }
+    decoders["slackbot.skills.library.remove"] = { try JSONDecoder().decode(Components.Schemas.SlackbotSkillsLibraryRemoveResponse.self, from: $0) }
+    decoders["slackbot.skills.list"] = { try JSONDecoder().decode(Components.Schemas.SlackbotSkillsListResponse.self, from: $0) }
+    decoders["slackbot.skills.update"] = { try JSONDecoder().decode(Components.Schemas.SlackbotSkillsUpdateResponse.self, from: $0) }
     #endif
     #if WebAPI_Stars
     decoders["stars.add"] = { try JSONDecoder().decode(Components.Schemas.StarsAddResponse.self, from: $0) }

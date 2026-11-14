@@ -117,9 +117,12 @@ class Scanner
     when Hash
       properties = schema.fetch('properties', {})
       additional = schema['additionalProperties']
+      aliases = schema.fetch('x-java-decode-aliases', {}).flat_map do |key, names|
+        names.map { |name| [name, properties.fetch(key)] }
+      end.to_h
       value.each do |key, child|
-        if properties.key?(key)
-          check(child, properties[key], "#{path}.#{key}", source, findings)
+        if (property = properties[key] || aliases[key])
+          check(child, property, "#{path}.#{key}", source, findings)
         elsif additional.is_a?(Hash)
           check(child, additional, "#{path}.*", source, findings)
         elsif !additional

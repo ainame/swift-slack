@@ -705,7 +705,7 @@ extension Operations {
                     ///
                     /// - Remark: Generated from `#/paths/slackLists.items.list/POST/requestBody/json/list_id`.
                     public var listId: Swift.String
-                    /// The maximum number of records to return.
+                    /// The maximum number of records to return, up to the list row limit of 5000.
                     ///
                     /// - Remark: Generated from `#/paths/slackLists.items.list/POST/requestBody/json/limit`.
                     public var limit: Swift.Int?
@@ -725,7 +725,7 @@ extension Operations {
                     ///
                     /// - Parameters:
                     ///   - listId: ID of the List.
-                    ///   - limit: The maximum number of records to return.
+                    ///   - limit: The maximum number of records to return, up to the list row limit of 5000.
                     ///   - cursor: Next cursor for pagination.
                     ///   - archived: Boolean indicating whether archived items or normal items should be returned.
                     ///   - includeList: Set to true to also return the parent list object, including its title, column schema, and total row count. Defaults to false to keep the response small.

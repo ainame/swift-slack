@@ -77,6 +77,7 @@ public typealias RestrictedApp = Components.Schemas.RestrictedApp
 public typealias RoleAssignment = Components.Schemas.RoleAssignment
 public typealias Room = Components.Schemas.Room
 public typealias SearchResult = Components.Schemas.SearchResult
+public typealias Skill = Components.Schemas.Skill
 public typealias Team = Components.Schemas.Team
 public typealias TeamIcon = Components.Schemas.TeamIcon
 public typealias Topic = Components.Schemas.Topic

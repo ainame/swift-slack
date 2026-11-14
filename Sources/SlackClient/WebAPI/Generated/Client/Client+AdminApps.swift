@@ -428,6 +428,214 @@ extension Client {
         )
     }
 
+    /// List third-party app MCP servers approved for an organization, derived from the org's MCP server allowlist. Entries reflect allowlist state, not install/scope liveness: servers of apps that
+    /// are uninstalled (but not deleted) are still listed.
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.list/post(adminAppsMcpServersList)`.
+    func adminAppsMcpServersList(_ input: Operations.AdminAppsMcpServersList.Input) async throws -> Operations.AdminAppsMcpServersList.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.AdminAppsMcpServersList.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/admin.apps.mcp.servers.list",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.AdminAppsMcpServersList.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.AdminAppsMcpServersListResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
+    /// List MCP servers for an app with their access control permissions
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.list`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.list/post(adminAppsMcpServersPermissionsList)`.
+    func adminAppsMcpServersPermissionsList(_ input: Operations.AdminAppsMcpServersPermissionsList.Input) async throws -> Operations.AdminAppsMcpServersPermissionsList.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.AdminAppsMcpServersPermissionsList.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/admin.apps.mcp.servers.permissions.list",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.AdminAppsMcpServersPermissionsList.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.AdminAppsMcpServersPermissionsListResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
+    /// Set the access control permission for who can use an MCP server
+    ///
+    /// - Remark: HTTP `POST /admin.apps.mcp.servers.permissions.set`.
+    /// - Remark: Generated from `#/paths//admin.apps.mcp.servers.permissions.set/post(adminAppsMcpServersPermissionsSet)`.
+    func adminAppsMcpServersPermissionsSet(_ input: Operations.AdminAppsMcpServersPermissionsSet.Input) async throws -> Operations.AdminAppsMcpServersPermissionsSet.Output {
+        try await client.send(
+            input: input,
+            forOperation: Operations.AdminAppsMcpServersPermissionsSet.id,
+            serializer: { input in
+                let path = try converter.renderedPath(
+                    template: "/admin.apps.mcp.servers.permissions.set",
+                    parameters: [],
+                )
+                var request: HTTPTypes.HTTPRequest = .init(
+                    soar_path: path,
+                    method: .post,
+                )
+                suppressMutabilityWarning(&request)
+                converter.setAcceptHeader(
+                    in: &request.headerFields,
+                    contentTypes: input.headers.accept,
+                )
+                let body: OpenAPIRuntime.HTTPBody? = switch input.body {
+                case let .json(value):
+                    try converter.setRequiredRequestBodyAsJSON(
+                        value,
+                        headerFields: &request.headerFields,
+                        contentType: "application/json; charset=utf-8",
+                    )
+                }
+                return (request, body)
+            },
+            deserializer: { response, responseBody in
+                switch response.status.code {
+                case 200:
+                    let contentType = converter.extractContentTypeIfPresent(in: response.headerFields)
+                    let body: Operations.AdminAppsMcpServersPermissionsSet.Output.Ok.Body
+                    let chosenContentType = try converter.bestContentType(
+                        received: contentType,
+                        options: [
+                            "application/json",
+                        ],
+                    )
+                    switch chosenContentType {
+                    case "application/json":
+                        body = try await converter.getResponseBodyAsJSON(
+                            Components.Schemas.AdminAppsMcpServersPermissionsSetResponse.self,
+                            from: responseBody,
+                            transforming: { value in
+                                .json(value)
+                            },
+                        )
+                    default:
+                        preconditionFailure("bestContentType chose an invalid content type.")
+                    }
+                    return .ok(.init(body: body))
+                default:
+                    return .undocumented(
+                        statusCode: response.status.code,
+                        .init(
+                            headerFields: response.headerFields,
+                            body: responseBody,
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
     /// Cancel app request for team
     ///
     /// - Remark: HTTP `POST /admin.apps.requests.cancel`.

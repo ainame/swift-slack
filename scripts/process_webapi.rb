@@ -231,11 +231,72 @@ class WebAPIProcessor
     schemas_section = sections.find { |section| section.name == 'Schemas' } or raise 'Components has no Schemas'
     _, schemas = SwiftDeclarations.split(SwiftDeclarations.body(schemas_section), indent: 8)
 
+    aliases_by_class = {}
+    collect_java_decode_aliases(@openapi.fetch('components').fetch('schemas'), aliases_by_class)
+    schemas.each { |schema| add_java_decode_aliases(schema.lines, aliases_by_class) }
     responses, events, models, aliases = classify(schemas)
     @client.write('Components/Components+Base.swift', components_base(aliases))
     write_responses(responses)
     write_models(models)
     write_events(events)
+  end
+
+  # OpenAPI Generator synthesizes Codable using only the canonical keys. Add a
+  # decoder where java-slack-sdk explicitly accepts aliases, leaving encoding synthesized.
+  def add_java_decode_aliases(lines, aliases_by_class)
+    lines.each_index.reverse_each do |index|
+      match = lines[index].match(/^([ ]*)\/\/\/ java-slack-sdk decode aliases for ([\w.]+)\.$/)
+      next unless match
+
+      indent, java_class = match.captures
+      start = index + 1
+      start += 1 while SwiftDeclarations.comment?(lines.fetch(start))
+      raise "Expected generated struct for #{java_class}" unless lines.fetch(start).start_with?("#{indent}public struct ")
+
+      finish = (start + 1...lines.size).find { |line_index| lines[line_index] == "#{indent}}\n" }
+      body = lines[(start + 1)...finish].map { |line| line.delete_prefix("#{indent}    ") }.join
+      keys = body[/^public enum CodingKeys: String, CodingKey \{\n(.*?)^\}/m, 1]
+      raise "Missing CodingKeys for #{java_class}" unless keys
+
+      aliases = aliases_by_class.fetch(java_class)
+      assignments = keys.scan(/^    case (\w+)(?: = "([^"]+)")?$/).map do |member, key|
+        type = body[/^public var #{Regexp.escape(member)}: (.+)\?$/, 1]
+        raise "Expected optional member #{java_class}.#{member}" unless type
+
+        alternate_calls = aliases.fetch(key || member, []).map do |name|
+          "alternate.decodeIfPresent(#{type}.self, forKey: .#{name})"
+        end
+        calls = ["container.decodeIfPresent(#{type}.self, forKey: .#{member})", *alternate_calls]
+        "    self.#{member} = try #{calls.join(' ?? ')}"
+      end
+      names = aliases.values.flatten.uniq
+      raise "Invalid Swift coding key for #{java_class}" unless names.all? { |name| name.match?(/\A[A-Za-z_]\w*\z/) }
+
+      decoder = <<~SWIFT
+        private enum AlternateCodingKeys: String, CodingKey {
+        #{names.map { |name| "    case `#{name}`" }.join("\n")}
+        }
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let alternate = try decoder.container(keyedBy: AlternateCodingKeys.self)
+        #{assignments.join("\n")}
+        }
+      SWIFT
+      lines.insert(finish, *decoder.lines.map { |line| "#{indent}    #{line}" })
+    end
+  end
+
+  def collect_java_decode_aliases(value, result)
+    case value
+    when Hash
+      if (aliases = value['x-java-decode-aliases'])
+        java_class = value.fetch('description').delete_prefix('java-slack-sdk decode aliases for ').delete_suffix('.')
+        result[java_class] = aliases
+      end
+      value.each_value { |child| collect_java_decode_aliases(child, result) }
+    when Array
+      value.each { |child| collect_java_decode_aliases(child, result) }
+    end
   end
 
   # Splits the schema declarations into responses, events, shared models and the typealiases that
