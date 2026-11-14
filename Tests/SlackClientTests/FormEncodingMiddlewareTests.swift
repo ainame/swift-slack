@@ -72,6 +72,49 @@ struct FormEncodingMiddlewareTests {
         #expect(buttonElement.value == blockValue)
     }
 
+    @Test
+    func `preserves a numeric Slackbot skills limit of one`() async throws {
+        let payload = Operations.SlackbotSkillsList.Input.Body.JsonPayload(limit: 1)
+        var request = HTTPRequest(
+            method: .post,
+            scheme: "https",
+            authority: "slack.com",
+            path: "/api/slackbot.skills.list",
+        )
+        request.headerFields[.contentType] = "application/json"
+        let (_, body) = try await FormEncodingMiddleware().intercept(
+            request,
+            body: HTTPBody(JSONEncoder().encode(payload)),
+            baseURL: #require(URL(string: "https://slack.com/api")),
+            operationID: "slackbotSkillsList",
+            next: { _, body, _ in (HTTPResponse(status: .ok), body) },
+        )
+        let data = try await Data(collecting: #require(body), upTo: .max)
+        #expect(String(decoding: data, as: UTF8.self) == "limit=1")
+    }
+
+    @Test
+    func `encodes admin Slackbot skill ID lists as comma-separated form values`() async throws {
+        let payload = Operations.AdminSlackbotSkillsPublish.Input.Body.JsonPayload(skillIds: ["SK1", "SK2"])
+        var request = HTTPRequest(
+            method: .post,
+            scheme: "https",
+            authority: "slack.com",
+            path: "/api/admin.slackbot.skills.publish",
+        )
+        request.headerFields[.contentType] = "application/json"
+        let (_, body) = try await FormEncodingMiddleware().intercept(
+            request,
+            body: HTTPBody(JSONEncoder().encode(payload)),
+            baseURL: #require(URL(string: "https://slack.com/api")),
+            operationID: Operations.AdminSlackbotSkillsPublish.id,
+            next: { _, body, _ in (HTTPResponse(status: .ok), body) },
+        )
+        let data = try await Data(collecting: #require(body), upTo: .max)
+        let fields = try #require(parseFormBody(String(decoding: data, as: UTF8.self)))
+        #expect(fields == ["skill_ids": "SK1,SK2"])
+    }
+
     private func parseFormBody(_ body: String) -> [String: String]? {
         var fields: [String: String] = [:]
 

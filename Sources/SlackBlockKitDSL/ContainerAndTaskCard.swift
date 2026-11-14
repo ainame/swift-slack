@@ -31,3 +31,9 @@ extension TaskCardBlock: BlockComponent {
         .taskCard(self)
     }
 }
+
+extension PlanBlock: BlockComponent {
+    public func render() -> Block {
+        .plan(self)
+    }
+}

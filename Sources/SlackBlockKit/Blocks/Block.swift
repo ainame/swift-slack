@@ -17,6 +17,7 @@ public enum Block: Codable, Hashable, Sendable {
     case image(ImageBlock)
     case input(InputBlock)
     case markdown(MarkdownBlock)
+    case plan(PlanBlock)
     case richText(RichTextBlock)
     case section(SectionBlock)
     case taskCard(TaskCardBlock)
@@ -57,6 +58,8 @@ public enum Block: Codable, Hashable, Sendable {
             self = try .input(container.decode(InputBlock.self))
         case "markdown":
             self = try .markdown(container.decode(MarkdownBlock.self))
+        case "plan":
+            self = try .plan(container.decode(PlanBlock.self))
         case "rich_text":
             self = try .richText(container.decode(RichTextBlock.self))
         case "section":
@@ -101,6 +104,8 @@ public enum Block: Codable, Hashable, Sendable {
         case let .input(block):
             try container.encode(block)
         case let .markdown(block):
+            try container.encode(block)
+        case let .plan(block):
             try container.encode(block)
         case let .richText(block):
             try container.encode(block)

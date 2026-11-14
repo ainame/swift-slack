@@ -122,8 +122,6 @@ extension CodeChannel.View {
                 agentContentHash: agentContentHash,
                 name: name,
             )
-        case let .pullRequest(url, name):
-            .init(channelId: channelId, _type: "pull_request", prUrl: url, name: name)
         }
     }
 }

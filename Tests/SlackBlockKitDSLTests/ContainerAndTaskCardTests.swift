@@ -36,4 +36,24 @@ struct ContainerAndTaskCardTests {
         let decoded = try JSONDecoder().decode([Block].self, from: encoded)
         #expect(decoded == content())
     }
+
+    @Test func `build plan and Slackbot button`() {
+        let plan = PlanBlock(title: "Status", tasks: [.init(taskId: "1", title: "Review", status: "complete")])
+        @BlockBuilder func content() -> [Block] {
+            plan
+        }
+        #expect(content() == [.plan(plan)])
+
+        let button = Button("Review")
+            .agentPrompt("Review the report", display: "Review report")
+            .visibleToUserIds(["U123456"])
+        let element = ButtonElement(
+            text: TextObject(type: .plainText, text: "Review"),
+            agentPrompt: "Review the report",
+            agentPromptDisplay: "Review report",
+            visibleToUserIds: ["U123456"],
+        )
+        #expect(button.asActionElement() == .button(element))
+        #expect(button.asSectionAccessory() == .button(element))
+    }
 }
