@@ -9,6 +9,23 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+### Added
+
+* Added 15 Web API methods for Slackbot skills, admin MCP server management, and canvas content retrieval. Enable `WebAPI_Slackbot` when selecting traits manually for non-admin Slackbot skill methods - #282
+* Added request options for tabbing a new canvas into a channel, checking workspace Slackbot availability, and including archived items in a Slack Lists download. Added the java-slack-sdk conversation `is_file`, team `slackbot_availability`, and app manifest `user_connections` fields to the generated swift-slack models - #282
+* **BREAKING**: Added `PlanBlock` and plan DSL support. Add `.plan` to exhaustive `Block` switches - #282
+* Added Slackbot prompts and user visibility to `ButtonElement` and the Button DSL - #282
+* **BREAKING**: Added `.userConnection` and `.userConnectionStatusRequested`. Add both cases to exhaustive `Event` switches - #282
+
+### Removed
+
+* **BREAKING**: Removed `prUrl` from `agents.conversations.setView`, `CodeChannel.View.pullRequest`, and `CodeChannel.CSP.connectDomains` following the slack-api-ref request changes. Choose an HTML, diff, Block Kit, or canvas view and use `resourceDomains` for HTML resource origins - #282
+
+### Fixed
+
+* Fixed swift-slack Slack Lists response decoding to preserve link data sent with camelCase keys. Encoding continues to use snake_case - #282
+* Fixed form encoding that serialized numeric request values of 0 and 1 as booleans - #282
+
 ## [2027.1.0-beta.4] - 2026-11-07
 
 This beta requires Swift 6.4 and changes streaming cancellation and cleanup behavior. It adds per-message delivery control and authentication provider blocks. APIs may still change before the January 2027 release.

@@ -5,6 +5,8 @@ selected delta, not complete historical parity or live Slack service behavior.
 
 ## Review on 2026-11-14
 
+Sync PR: #282.
+
 | Source | Previous commit | Reviewed snapshot |
 | --- | --- | --- |
 | [java-slack-sdk](https://github.com/slackapi/java-slack-sdk) | `383dd5f35085b700db5c926add4705a8e8df56ee` | `66ca90f086bf775f37d6c4ac19a5c34efce5eba6` |
