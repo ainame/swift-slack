@@ -1046,6 +1046,8 @@ extension Components.Schemas {
             public var title: Swift.String?
             /// - Remark: Generated from `#/components/schemas/Message/agent_session/date_status_processing_expire`.
             public var dateStatusProcessingExpire: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Message/agent_session/encoded_initiator_user_id`.
+            public var encodedInitiatorUserId: Swift.String?
             /// Creates a new `AgentSessionPayload`.
             ///
             /// - Parameters:
@@ -1054,18 +1056,21 @@ extension Components.Schemas {
             ///   - agentStatuses:
             ///   - title:
             ///   - dateStatusProcessingExpire:
+            ///   - encodedInitiatorUserId:
             public init(
                 status: Swift.String? = nil,
                 agentBotUserIds: [Swift.String]? = nil,
                 agentStatuses: Components.Schemas.Message.AgentSessionPayload.AgentStatusesPayload? = nil,
                 title: Swift.String? = nil,
                 dateStatusProcessingExpire: Swift.Int? = nil,
+                encodedInitiatorUserId: Swift.String? = nil,
             ) {
                 self.status = status
                 self.agentBotUserIds = agentBotUserIds
                 self.agentStatuses = agentStatuses
                 self.title = title
                 self.dateStatusProcessingExpire = dateStatusProcessingExpire
+                self.encodedInitiatorUserId = encodedInitiatorUserId
             }
 
             public enum CodingKeys: String, CodingKey {
@@ -1074,6 +1079,7 @@ extension Components.Schemas {
                 case agentStatuses = "agent_statuses"
                 case title
                 case dateStatusProcessingExpire = "date_status_processing_expire"
+                case encodedInitiatorUserId = "encoded_initiator_user_id"
             }
         }
 

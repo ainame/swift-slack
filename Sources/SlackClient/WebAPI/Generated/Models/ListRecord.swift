@@ -33,7 +33,7 @@ extension Components.Schemas {
             /// - Remark: Generated from `#/components/schemas/ListRecord/FieldsPayload/rich_text`.
             public var richText: [Components.Schemas.RichTextBlock]?
             /// - Remark: Generated from `#/components/schemas/ListRecord/FieldsPayload/message`.
-            public var message: Components.Schemas.Message?
+            public var message: Components.Schemas.ListRecordFieldMessage?
             /// - Remark: Generated from `#/components/schemas/ListRecord/FieldsPayload/number`.
             public var number: [Swift.Double]?
             /// - Remark: Generated from `#/components/schemas/ListRecord/FieldsPayload/select`.
@@ -173,7 +173,7 @@ extension Components.Schemas {
                 value: Components.Schemas.ListRecordFieldValue? = nil,
                 text: Swift.String? = nil,
                 richText: [Components.Schemas.RichTextBlock]? = nil,
-                message: Components.Schemas.Message? = nil,
+                message: Components.Schemas.ListRecordFieldMessage? = nil,
                 number: [Swift.Double]? = nil,
                 select: [Swift.String]? = nil,
                 date: [Swift.String]? = nil,

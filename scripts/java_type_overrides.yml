@@ -251,20 +251,6 @@ com.slack.api.methods.response.admin.workflows.AdminWorkflowsCollaboratorsRemove
   evidence: [admin.workflows.collaborators.remove]
 
 # ---- Fields recorded in fixtures that the Java classes do not declare
-com.slack.api.model.admin.AppActivity.Payload#tokens_checked:
-  type: schema
-  schema:
-    type: integer
-  added: true
-  reason: Recorded function execution activity payloads carry the number of checked tokens.
-  evidence: [admin.apps.activities.list]
-com.slack.api.model.admin.AppActivity.Payload#extra_message:
-  type: schema
-  schema:
-    type: string
-  added: true
-  reason: Recorded activity payloads carry an extra message.
-  evidence: [admin.apps.activities.list]
 com.slack.api.model.User#email:
   type: schema
   schema:
@@ -300,3 +286,14 @@ com.slack.api.methods.response.conversations.ConversationsListResponse#callstack
   added: true
   reason: Recorded responses carry Slack's debugging `callstack`, which chat.postMessage declares in Java too.
   evidence: [conversations.list]
+
+com.slack.api.model.admin.AppActivity.TriggerConfig#trigger_type_id:
+  type: integer
+  java_type: String
+  reason: Recorded trigger configuration uses a JSON integer.
+  evidence: [admin.apps.activities.list]
+com.slack.api.model.admin.AppActivity.TriggerConfig#trigger_type_app_id:
+  type: integer
+  java_type: String
+  reason: Recorded trigger configuration uses a JSON integer.
+  evidence: [admin.apps.activities.list]

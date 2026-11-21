@@ -8,13 +8,14 @@ struct FormEncodingMiddleware: ClientMiddleware {
         charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~",
     )
 
-    // These ID lists use comma-separated form values in java-slack-sdk.
+    // These lists use comma-separated form values in java-slack-sdk.
     private static let commaSeparatedFields: [String: Set<String>] = [
         "adminAppsMcpServersPermissionsSet": ["user_ids", "usergroup_ids"],
         "adminSlackbotSkillsList": ["creator_ids"],
         "adminSlackbotSkillsPublish": ["skill_ids"],
         "adminSlackbotSkillsSetAutoEnabled": ["usergroup_ids"],
         "adminSlackbotSkillsUnpublish": ["skill_ids"],
+        "assistantSearchContext": ["channel_types", "content_types"],
     ]
 
     func intercept(

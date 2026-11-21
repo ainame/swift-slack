@@ -971,6 +971,10 @@ extension Components.Schemas {
         public var templateIcon: Swift.String?
         /// - Remark: Generated from `#/components/schemas/File/canvas_creator_id`.
         public var canvasCreatorId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/File/canvas_agent_creator_id`.
+        public var canvasAgentCreatorId: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/File/canvas_default_agent_id`.
+        public var canvasDefaultAgentId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/File/team_pref_version_history_enabled`.
         public var teamPrefVersionHistoryEnabled: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/File/show_badge`.
@@ -1026,6 +1030,94 @@ extension Components.Schemas {
         public var isAiSuggested: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/File/is_modified_by_ai`.
         public var isModifiedByAi: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/File/ai_summary`.
+        public struct AiSummaryPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/File/ai_summary/id`.
+            public var id: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/File/ai_summary/unfurl_enabled`.
+            public var unfurlEnabled: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/File/ai_summary/status`.
+            public var status: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/File/ai_summary/content`.
+            public var content: Swift.String?
+            /// Creates a new `AiSummaryPayload`.
+            ///
+            /// - Parameters:
+            ///   - id:
+            ///   - unfurlEnabled:
+            ///   - status:
+            ///   - content:
+            public init(
+                id: Swift.String? = nil,
+                unfurlEnabled: Swift.Bool? = nil,
+                status: Swift.String? = nil,
+                content: Swift.String? = nil,
+            ) {
+                self.id = id
+                self.unfurlEnabled = unfurlEnabled
+                self.status = status
+                self.content = content
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case unfurlEnabled = "unfurl_enabled"
+                case status
+                case content
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/File/ai_summary`.
+        public var aiSummary: Components.Schemas.File.AiSummaryPayload?
+        /// - Remark: Generated from `#/components/schemas/File/is_skill`.
+        public var isSkill: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/File/skill_description`.
+        public var skillDescription: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/File/ai_skill_example_prompts`.
+        public var aiSkillExamplePrompts: [Swift.String]?
+        /// - Remark: Generated from `#/components/schemas/File/AiSkillMcpServersPayload`.
+        public struct AiSkillMcpServersPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/File/AiSkillMcpServersPayload/service_type`.
+            public var serviceType: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/File/AiSkillMcpServersPayload/app_id`.
+            public var appId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/File/AiSkillMcpServersPayload/server_id`.
+            public var serverId: Swift.String?
+            /// Creates a new `AiSkillMcpServersPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - serviceType:
+            ///   - appId:
+            ///   - serverId:
+            public init(
+                serviceType: Swift.String? = nil,
+                appId: Swift.String? = nil,
+                serverId: Swift.String? = nil,
+            ) {
+                self.serviceType = serviceType
+                self.appId = appId
+                self.serverId = serverId
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case serviceType = "service_type"
+                case appId = "app_id"
+                case serverId = "server_id"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/File/ai_skill_mcp_servers`.
+        public typealias AiSkillMcpServersPayload = [Components.Schemas.File.AiSkillMcpServersPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/File/ai_skill_mcp_servers`.
+        public var aiSkillMcpServers: Components.Schemas.File.AiSkillMcpServersPayload?
+        /// - Remark: Generated from `#/components/schemas/File/ai_skill_usage_count`.
+        public var aiSkillUsageCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/File/ai_skill_library_count`.
+        public var aiSkillLibraryCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/File/ai_skill_share_link_count`.
+        public var aiSkillShareLinkCount: Swift.Int?
+        /// - Remark: Generated from `#/components/schemas/File/is_skill_admin_deactivated`.
+        public var isSkillAdminDeactivated: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/File/bot_id`.
         public var botId: Swift.String?
         /// - Remark: Generated from `#/components/schemas/File/initial_comment`.
@@ -1196,6 +1288,8 @@ extension Components.Schemas {
         ///   - templateDescription:
         ///   - templateIcon:
         ///   - canvasCreatorId:
+        ///   - canvasAgentCreatorId:
+        ///   - canvasDefaultAgentId:
         ///   - teamPrefVersionHistoryEnabled:
         ///   - showBadge:
         ///   - favorites:
@@ -1207,6 +1301,15 @@ extension Components.Schemas {
         ///   - canvasPrintingEnabled:
         ///   - isAiSuggested:
         ///   - isModifiedByAi:
+        ///   - aiSummary:
+        ///   - isSkill:
+        ///   - skillDescription:
+        ///   - aiSkillExamplePrompts:
+        ///   - aiSkillMcpServers:
+        ///   - aiSkillUsageCount:
+        ///   - aiSkillLibraryCount:
+        ///   - aiSkillShareLinkCount:
+        ///   - isSkillAdminDeactivated:
         ///   - botId:
         ///   - initialComment:
         ///   - numStars:
@@ -1366,6 +1469,8 @@ extension Components.Schemas {
             templateDescription: Swift.String? = nil,
             templateIcon: Swift.String? = nil,
             canvasCreatorId: Swift.String? = nil,
+            canvasAgentCreatorId: Swift.String? = nil,
+            canvasDefaultAgentId: Swift.String? = nil,
             teamPrefVersionHistoryEnabled: Swift.Bool? = nil,
             showBadge: Swift.Bool? = nil,
             favorites: Components.Schemas.File.FavoritesPayload? = nil,
@@ -1377,6 +1482,15 @@ extension Components.Schemas {
             canvasPrintingEnabled: Swift.Bool? = nil,
             isAiSuggested: Swift.Bool? = nil,
             isModifiedByAi: Swift.Bool? = nil,
+            aiSummary: Components.Schemas.File.AiSummaryPayload? = nil,
+            isSkill: Swift.Bool? = nil,
+            skillDescription: Swift.String? = nil,
+            aiSkillExamplePrompts: [Swift.String]? = nil,
+            aiSkillMcpServers: Components.Schemas.File.AiSkillMcpServersPayload? = nil,
+            aiSkillUsageCount: Swift.Int? = nil,
+            aiSkillLibraryCount: Swift.Int? = nil,
+            aiSkillShareLinkCount: Swift.Int? = nil,
+            isSkillAdminDeactivated: Swift.Bool? = nil,
             botId: Swift.String? = nil,
             initialComment: Components.Schemas.FileComment? = nil,
             numStars: Swift.Int? = nil,
@@ -1536,6 +1650,8 @@ extension Components.Schemas {
             self.templateDescription = templateDescription
             self.templateIcon = templateIcon
             self.canvasCreatorId = canvasCreatorId
+            self.canvasAgentCreatorId = canvasAgentCreatorId
+            self.canvasDefaultAgentId = canvasDefaultAgentId
             self.teamPrefVersionHistoryEnabled = teamPrefVersionHistoryEnabled
             self.showBadge = showBadge
             self.favorites = favorites
@@ -1547,6 +1663,15 @@ extension Components.Schemas {
             self.canvasPrintingEnabled = canvasPrintingEnabled
             self.isAiSuggested = isAiSuggested
             self.isModifiedByAi = isModifiedByAi
+            self.aiSummary = aiSummary
+            self.isSkill = isSkill
+            self.skillDescription = skillDescription
+            self.aiSkillExamplePrompts = aiSkillExamplePrompts
+            self.aiSkillMcpServers = aiSkillMcpServers
+            self.aiSkillUsageCount = aiSkillUsageCount
+            self.aiSkillLibraryCount = aiSkillLibraryCount
+            self.aiSkillShareLinkCount = aiSkillShareLinkCount
+            self.isSkillAdminDeactivated = isSkillAdminDeactivated
             self.botId = botId
             self.initialComment = initialComment
             self.numStars = numStars
@@ -1708,6 +1833,8 @@ extension Components.Schemas {
             case templateDescription = "template_description"
             case templateIcon = "template_icon"
             case canvasCreatorId = "canvas_creator_id"
+            case canvasAgentCreatorId = "canvas_agent_creator_id"
+            case canvasDefaultAgentId = "canvas_default_agent_id"
             case teamPrefVersionHistoryEnabled = "team_pref_version_history_enabled"
             case showBadge = "show_badge"
             case favorites
@@ -1719,6 +1846,15 @@ extension Components.Schemas {
             case canvasPrintingEnabled = "canvas_printing_enabled"
             case isAiSuggested = "is_ai_suggested"
             case isModifiedByAi = "is_modified_by_ai"
+            case aiSummary = "ai_summary"
+            case isSkill = "is_skill"
+            case skillDescription = "skill_description"
+            case aiSkillExamplePrompts = "ai_skill_example_prompts"
+            case aiSkillMcpServers = "ai_skill_mcp_servers"
+            case aiSkillUsageCount = "ai_skill_usage_count"
+            case aiSkillLibraryCount = "ai_skill_library_count"
+            case aiSkillShareLinkCount = "ai_skill_share_link_count"
+            case isSkillAdminDeactivated = "is_skill_admin_deactivated"
             case botId = "bot_id"
             case initialComment = "initial_comment"
             case numStars = "num_stars"

@@ -571,6 +571,8 @@ extension Components.Schemas {
 
             /// - Remark: Generated from `#/components/schemas/ConversationProperties/agent_session/origin_link`.
             public var originLink: Components.Schemas.ConversationProperties.AgentSessionPayload.OriginLinkPayload?
+            /// - Remark: Generated from `#/components/schemas/ConversationProperties/agent_session/encoded_initiator_user_id`.
+            public var encodedInitiatorUserId: Swift.String?
             /// Creates a new `AgentSessionPayload`.
             ///
             /// - Parameters:
@@ -579,18 +581,21 @@ extension Components.Schemas {
             ///   - encodedAgentBotUserIds:
             ///   - title:
             ///   - originLink:
+            ///   - encodedInitiatorUserId:
             public init(
                 status: Swift.String? = nil,
                 agentBotUserIds: [Swift.String]? = nil,
                 encodedAgentBotUserIds: [Swift.String]? = nil,
                 title: Swift.String? = nil,
                 originLink: Components.Schemas.ConversationProperties.AgentSessionPayload.OriginLinkPayload? = nil,
+                encodedInitiatorUserId: Swift.String? = nil,
             ) {
                 self.status = status
                 self.agentBotUserIds = agentBotUserIds
                 self.encodedAgentBotUserIds = encodedAgentBotUserIds
                 self.title = title
                 self.originLink = originLink
+                self.encodedInitiatorUserId = encodedInitiatorUserId
             }
 
             public enum CodingKeys: String, CodingKey {
@@ -599,6 +604,7 @@ extension Components.Schemas {
                 case encodedAgentBotUserIds = "encoded_agent_bot_user_ids"
                 case title
                 case originLink = "origin_link"
+                case encodedInitiatorUserId = "encoded_initiator_user_id"
             }
         }
 

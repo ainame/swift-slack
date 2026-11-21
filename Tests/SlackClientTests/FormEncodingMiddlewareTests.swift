@@ -115,6 +115,21 @@ struct FormEncodingMiddlewareTests {
         #expect(fields == ["skill_ids": "SK1,SK2"])
     }
 
+    @Test func `assistant search filter lists use comma separated values`() async throws {
+        var request = HTTPRequest(method: .post, scheme: "https", authority: "slack.com", path: "/api/assistant.search.context")
+        request.headerFields[.contentType] = "application/json"
+        let (_, body) = try await FormEncodingMiddleware().intercept(
+            request,
+            body: HTTPBody(Data(#"{"channel_types":["im","mpim"],"content_types":["messages","files"]}"#.utf8)),
+            baseURL: #require(URL(string: "https://slack.com/api")),
+            operationID: "assistantSearchContext",
+            next: { _, body, _ in (HTTPResponse(status: .ok), body) },
+        )
+        let data = try await Data(collecting: #require(body), upTo: .max)
+        let fields = try #require(parseFormBody(String(decoding: data, as: UTF8.self)))
+        #expect(fields == ["channel_types": "im,mpim", "content_types": "messages,files"])
+    }
+
     private func parseFormBody(_ body: String) -> [String: String]? {
         var fields: [String: String] = [:]
 

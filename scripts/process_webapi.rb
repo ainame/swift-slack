@@ -347,7 +347,7 @@ class WebAPIProcessor
   # (scripts/handwritten_schemas.yml): `value.html` instead of `if case let .case1(html) = value`.
   def accessors(schema)
     names = @openapi.dig('components', 'schemas', schema.name, 'x-swift-accessors') or return ''
-    cases = schema.text.scan(/^ {12}case (case\d+)\((.+)\)$/)
+    cases = schema.text.scan(/^ {12}case ([A-Za-z_][A-Za-z_0-9]*)\((.+)\)$/)
     raise "#{schema.name}: #{names.size} accessors for #{cases.size} cases" unless names.size == cases.size
 
     properties = names.zip(cases).filter_map do |name, (case_name, type)|

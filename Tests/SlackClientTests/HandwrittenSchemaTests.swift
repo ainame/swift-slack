@@ -63,6 +63,15 @@ struct HandwrittenSchemaTests {
         #expect(user.expirationTs == 1_700_000_000)
     }
 
+    @Test(arguments: [#"{"ts":"1"}"#, #""https://example.com/message""#, #"[{"ts":"1"},"https://example.com/message"]"#])
+    func `list message cells preserve object permalink and mixed array shapes`(_ json: String) throws {
+        let value = try decode(ListRecordFieldMessage.self, json)
+        let encoded = try JSONEncoder().encode(value)
+        let expected = try #require(JSONSerialization.jsonObject(with: Data(json.utf8), options: [.fragmentsAllowed]) as? NSObject)
+        let actual = try #require(JSONSerialization.jsonObject(with: encoded, options: [.fragmentsAllowed]) as? NSObject)
+        #expect(actual.isEqual(expected))
+    }
+
     private func decode<T: Decodable>(_: T.Type, _ json: String) throws -> T {
         try JSONDecoder().decode(T.self, from: Data(json.utf8))
     }
