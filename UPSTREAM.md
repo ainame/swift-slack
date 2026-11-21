@@ -5,7 +5,7 @@ selected delta, not complete historical parity or live Slack service behavior.
 
 ## Review on 2026-11-21
 
-Sync PR: pending.
+Sync PR: #284.
 
 | Source | Previous commit | Reviewed snapshot |
 | --- | --- | --- |
@@ -60,7 +60,7 @@ Both snapshots fast-forward from the pins at release-2027-01 commit
 
 Using Swift 6.4.0 and Ruby 4.0.7: bundle install, full make generate,
 make check-fixtures (296 responses and 95 events, zero unexplained mismatches),
-make test-scripts (139 tests / 444 assertions) and swift test passed. Repeated
+make test-scripts (139 tests / 444 assertions) and swift test (266 tests across 36 suites) passed. Repeated
 complete generation matched all 416 generated/manifest hashes. Handwritten
 formatting and git diff --check passed. Earlier overlapping generation/build
 attempts were discarded; the final sequence ran generation before compilation.
