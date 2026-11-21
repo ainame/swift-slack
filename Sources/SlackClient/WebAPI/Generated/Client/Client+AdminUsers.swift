@@ -1049,7 +1049,8 @@ extension Client {
         )
     }
 
-    /// Set an existing guest user, admin user, or owner to be a regular user.
+    /// Set an existing guest user, admin user, or owner to be a regular user. When team_id is an organization, the user is also set to a regular user on every workspace where they are a workspace
+    /// owner, including workspaces where they were an owner before becoming an org admin or owner.
     ///
     /// - Remark: HTTP `POST /admin.users.setRegular`.
     /// - Remark: Generated from `#/paths//admin.users.setRegular/post(adminUsersSetRegular)`.

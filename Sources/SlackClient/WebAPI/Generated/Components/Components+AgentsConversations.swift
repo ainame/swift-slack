@@ -339,6 +339,71 @@ extension Components.Schemas {
         public typealias ViewsPayload = [Components.Schemas.AgentsConversationsListViewsResponse.ViewsPayloadPayload]
         /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/views`.
         public var views: Components.Schemas.AgentsConversationsListViewsResponse.ViewsPayload?
+        /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/SessionViewsPayload`.
+        public struct SessionViewsPayloadPayload: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/SessionViewsPayload/view_id`.
+            public var viewId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/SessionViewsPayload/type`.
+            public var _type: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/SessionViewsPayload/file_id`.
+            public var fileId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/SessionViewsPayload/view_key`.
+            public var viewKey: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/SessionViewsPayload/name`.
+            public var name: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/SessionViewsPayload/owner_bot_user_id`.
+            public var ownerBotUserId: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/SessionViewsPayload/date_added`.
+            public var dateAdded: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/SessionViewsPayload/content_version`.
+            public var contentVersion: Swift.Int?
+            /// Creates a new `SessionViewsPayloadPayload`.
+            ///
+            /// - Parameters:
+            ///   - viewId:
+            ///   - _type:
+            ///   - fileId:
+            ///   - viewKey:
+            ///   - name:
+            ///   - ownerBotUserId:
+            ///   - dateAdded:
+            ///   - contentVersion:
+            public init(
+                viewId: Swift.String? = nil,
+                _type: Swift.String? = nil,
+                fileId: Swift.String? = nil,
+                viewKey: Swift.String? = nil,
+                name: Swift.String? = nil,
+                ownerBotUserId: Swift.String? = nil,
+                dateAdded: Swift.Int? = nil,
+                contentVersion: Swift.Int? = nil,
+            ) {
+                self.viewId = viewId
+                self._type = _type
+                self.fileId = fileId
+                self.viewKey = viewKey
+                self.name = name
+                self.ownerBotUserId = ownerBotUserId
+                self.dateAdded = dateAdded
+                self.contentVersion = contentVersion
+            }
+
+            public enum CodingKeys: String, CodingKey {
+                case viewId = "view_id"
+                case _type = "type"
+                case fileId = "file_id"
+                case viewKey = "view_key"
+                case name
+                case ownerBotUserId = "owner_bot_user_id"
+                case dateAdded = "date_added"
+                case contentVersion = "content_version"
+            }
+        }
+
+        /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/session_views`.
+        public typealias SessionViewsPayload = [Components.Schemas.AgentsConversationsListViewsResponse.SessionViewsPayloadPayload]
+        /// - Remark: Generated from `#/components/schemas/AgentsConversationsListViewsResponse/session_views`.
+        public var sessionViews: Components.Schemas.AgentsConversationsListViewsResponse.SessionViewsPayload?
         /// Creates a new `AgentsConversationsListViewsResponse`.
         ///
         /// - Parameters:
@@ -348,6 +413,7 @@ extension Components.Schemas {
         ///   - needed:
         ///   - provided:
         ///   - views:
+        ///   - sessionViews:
         public init(
             ok: Swift.Bool,
             warning: Swift.String? = nil,
@@ -355,6 +421,7 @@ extension Components.Schemas {
             needed: Swift.String? = nil,
             provided: Swift.String? = nil,
             views: Components.Schemas.AgentsConversationsListViewsResponse.ViewsPayload? = nil,
+            sessionViews: Components.Schemas.AgentsConversationsListViewsResponse.SessionViewsPayload? = nil,
         ) {
             self.ok = ok
             self.warning = warning
@@ -362,6 +429,7 @@ extension Components.Schemas {
             self.needed = needed
             self.provided = provided
             self.views = views
+            self.sessionViews = sessionViews
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -371,6 +439,7 @@ extension Components.Schemas {
             case needed
             case provided
             case views
+            case sessionViews = "session_views"
         }
     }
 

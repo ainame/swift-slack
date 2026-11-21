@@ -227,7 +227,7 @@ extension Components.Schemas {
                     /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/rich_text`.
                     public var richText: [Components.Schemas.RichTextBlock]?
                     /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/message`.
-                    public var message: Components.Schemas.Message?
+                    public var message: Components.Schemas.ListRecordFieldMessage?
                     /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/number`.
                     public var number: [Swift.Double]?
                     /// - Remark: Generated from `#/components/schemas/Attachment/list_record/record/FieldsPayload/select`.
@@ -367,7 +367,7 @@ extension Components.Schemas {
                         value: Components.Schemas.ListRecordFieldValue? = nil,
                         text: Swift.String? = nil,
                         richText: [Components.Schemas.RichTextBlock]? = nil,
-                        message: Components.Schemas.Message? = nil,
+                        message: Components.Schemas.ListRecordFieldMessage? = nil,
                         number: [Swift.Double]? = nil,
                         select: [Swift.String]? = nil,
                         date: [Swift.String]? = nil,
@@ -496,6 +496,8 @@ extension Components.Schemas {
         public var mimetype: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/url`.
         public var url: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/Attachment/media_type`.
+        public var mediaType: Swift.String?
         /// - Remark: Generated from `#/components/schemas/Attachment/metadata`.
         public struct MetadataPayload: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_64`.
@@ -508,10 +510,42 @@ extension Components.Schemas {
             public var originalW: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/Attachment/metadata/original_h`.
             public var originalH: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_360`.
+            public var thumb360: Swift.Bool?
             /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_360_w`.
             public var thumb360W: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_360_h`.
             public var thumb360H: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_480`.
+            public var thumb480: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_480_w`.
+            public var thumb480W: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_480_h`.
+            public var thumb480H: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_720`.
+            public var thumb720: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_720_w`.
+            public var thumb720W: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_720_h`.
+            public var thumb720H: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_800`.
+            public var thumb800: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_800_w`.
+            public var thumb800W: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_800_h`.
+            public var thumb800H: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_960`.
+            public var thumb960: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_960_w`.
+            public var thumb960W: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_960_h`.
+            public var thumb960H: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_1024`.
+            public var thumb1024: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_1024_w`.
+            public var thumb1024W: Swift.Int?
+            /// - Remark: Generated from `#/components/schemas/Attachment/metadata/thumb_1024_h`.
+            public var thumb1024H: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/Attachment/metadata/format`.
             public var format: Swift.String?
             /// - Remark: Generated from `#/components/schemas/Attachment/metadata/extension`.
@@ -528,8 +562,24 @@ extension Components.Schemas {
             ///   - thumb160:
             ///   - originalW:
             ///   - originalH:
+            ///   - thumb360:
             ///   - thumb360W:
             ///   - thumb360H:
+            ///   - thumb480:
+            ///   - thumb480W:
+            ///   - thumb480H:
+            ///   - thumb720:
+            ///   - thumb720W:
+            ///   - thumb720H:
+            ///   - thumb800:
+            ///   - thumb800W:
+            ///   - thumb800H:
+            ///   - thumb960:
+            ///   - thumb960W:
+            ///   - thumb960H:
+            ///   - thumb1024:
+            ///   - thumb1024W:
+            ///   - thumb1024H:
             ///   - format:
             ///   - _extension:
             ///   - rotation:
@@ -540,8 +590,24 @@ extension Components.Schemas {
                 thumb160: Swift.Bool? = nil,
                 originalW: Swift.Int? = nil,
                 originalH: Swift.Int? = nil,
+                thumb360: Swift.Bool? = nil,
                 thumb360W: Swift.Int? = nil,
                 thumb360H: Swift.Int? = nil,
+                thumb480: Swift.Bool? = nil,
+                thumb480W: Swift.Int? = nil,
+                thumb480H: Swift.Int? = nil,
+                thumb720: Swift.Bool? = nil,
+                thumb720W: Swift.Int? = nil,
+                thumb720H: Swift.Int? = nil,
+                thumb800: Swift.Bool? = nil,
+                thumb800W: Swift.Int? = nil,
+                thumb800H: Swift.Int? = nil,
+                thumb960: Swift.Bool? = nil,
+                thumb960W: Swift.Int? = nil,
+                thumb960H: Swift.Int? = nil,
+                thumb1024: Swift.Bool? = nil,
+                thumb1024W: Swift.Int? = nil,
+                thumb1024H: Swift.Int? = nil,
                 format: Swift.String? = nil,
                 _extension: Swift.String? = nil,
                 rotation: Swift.Int? = nil,
@@ -552,8 +618,24 @@ extension Components.Schemas {
                 self.thumb160 = thumb160
                 self.originalW = originalW
                 self.originalH = originalH
+                self.thumb360 = thumb360
                 self.thumb360W = thumb360W
                 self.thumb360H = thumb360H
+                self.thumb480 = thumb480
+                self.thumb480W = thumb480W
+                self.thumb480H = thumb480H
+                self.thumb720 = thumb720
+                self.thumb720W = thumb720W
+                self.thumb720H = thumb720H
+                self.thumb800 = thumb800
+                self.thumb800W = thumb800W
+                self.thumb800H = thumb800H
+                self.thumb960 = thumb960
+                self.thumb960W = thumb960W
+                self.thumb960H = thumb960H
+                self.thumb1024 = thumb1024
+                self.thumb1024W = thumb1024W
+                self.thumb1024H = thumb1024H
                 self.format = format
                 self._extension = _extension
                 self.rotation = rotation
@@ -566,8 +648,24 @@ extension Components.Schemas {
                 case thumb160 = "thumb_160"
                 case originalW = "original_w"
                 case originalH = "original_h"
+                case thumb360 = "thumb_360"
                 case thumb360W = "thumb_360_w"
                 case thumb360H = "thumb_360_h"
+                case thumb480 = "thumb_480"
+                case thumb480W = "thumb_480_w"
+                case thumb480H = "thumb_480_h"
+                case thumb720 = "thumb_720"
+                case thumb720W = "thumb_720_w"
+                case thumb720H = "thumb_720_h"
+                case thumb800 = "thumb_800"
+                case thumb800W = "thumb_800_w"
+                case thumb800H = "thumb_800_h"
+                case thumb960 = "thumb_960"
+                case thumb960W = "thumb_960_w"
+                case thumb960H = "thumb_960_h"
+                case thumb1024 = "thumb_1024"
+                case thumb1024W = "thumb_1024_w"
+                case thumb1024H = "thumb_1024_h"
                 case format
                 case _extension = "extension"
                 case rotation
@@ -649,6 +747,7 @@ extension Components.Schemas {
         ///   - size:
         ///   - mimetype:
         ///   - url:
+        ///   - mediaType:
         ///   - metadata:
         ///   - isFileAttachment:
         public init(
@@ -719,6 +818,7 @@ extension Components.Schemas {
             size: Swift.Int? = nil,
             mimetype: Swift.String? = nil,
             url: Swift.String? = nil,
+            mediaType: Swift.String? = nil,
             metadata: Components.Schemas.Attachment.MetadataPayload? = nil,
             isFileAttachment: Swift.Bool? = nil,
         ) {
@@ -789,6 +889,7 @@ extension Components.Schemas {
             self.size = size
             self.mimetype = mimetype
             self.url = url
+            self.mediaType = mediaType
             self.metadata = metadata
             self.isFileAttachment = isFileAttachment
         }
@@ -861,6 +962,7 @@ extension Components.Schemas {
             case size
             case mimetype
             case url
+            case mediaType = "media_type"
             case metadata
             case isFileAttachment = "is_file_attachment"
         }

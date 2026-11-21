@@ -10,11 +10,21 @@ module GsonAdapters
   # A decision for one adapter type.
   #                   typeOverrides; `module` says which downstream swift-slack module defines it
   #   :untyped      - emit `{}` (any JSON value)
-  #   :declared     - translate the class declaration anyway, because the adapter only drops malformed values
+  #   :declared     - translate declarations, with optional property-to-handwritten-schema replacements
   #   :unsupported  - must not be reachable from a generated schema; generation fails if it is
-  Decision = Struct.new(:kind, :swift, :module, :schema, :reason, keyword_init: true)
+  Decision = Struct.new(:kind, :swift, :module, :schema, :properties, :reason, keyword_init: true)
 
   DECISIONS = {
+    'com.slack.api.model.admin.AppActivity.FunctionInputValue' => Decision.new(
+      kind: :untyped, reason: 'The adapter accepts arbitrary JSON, including credential objects and mixed arrays.'
+    ),
+    'com.slack.api.audit.response.LogsResponse.DetailsAction' => Decision.new(
+      kind: :unsupported, reason: 'The Audit Logs API is not part of the generated Web API.'
+    ),
+    'com.slack.api.model.list.ListRecord.Field' => Decision.new(
+      kind: :declared, properties: { 'message' => 'ListRecordFieldMessage' },
+      reason: 'The adapter accepts a message object, permalink string, or array under message; other fields follow declarations.'
+    ),
     'java.time.Instant' => Decision.new(
       kind: :unsupported, reason: 'Only RTM pong events use it, which are not generated.'
     ),

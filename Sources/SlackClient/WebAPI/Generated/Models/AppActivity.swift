@@ -88,6 +88,96 @@ extension Components.Schemas {
                     public var description: Swift.String?
                     /// - Remark: Generated from `#/components/schemas/AppActivity/payload/trigger/config/schema`.
                     public var schema: OpenAPIRuntime.OpenAPIValueContainer?
+                    /// - Remark: Generated from `#/components/schemas/AppActivity/payload/trigger/config/function_inputs`.
+                    public struct FunctionInputsPayload: Codable, Hashable, Sendable {
+                        /// - Remark: Generated from `#/components/schemas/AppActivity/payload/trigger/config/function_inputs/additionalProperties`.
+                        public struct AdditionalPropertiesPayload: Codable, Hashable, Sendable {
+                            /// - Remark: Generated from `#/components/schemas/AppActivity/payload/trigger/config/function_inputs/additionalProperties/label`.
+                            public struct LabelPayload: Codable, Hashable, Sendable {
+                                /// A container of undocumented properties.
+                                public var additionalProperties: [String: Swift.String]
+                                /// Creates a new `LabelPayload`.
+                                ///
+                                /// - Parameters:
+                                ///   - additionalProperties: A container of undocumented properties.
+                                public init(additionalProperties: [String: Swift.String] = .init()) {
+                                    self.additionalProperties = additionalProperties
+                                }
+
+                                public init(from decoder: any Swift.Decoder) throws {
+                                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                                }
+
+                                public func encode(to encoder: any Swift.Encoder) throws {
+                                    try encoder.encodeAdditionalProperties(additionalProperties)
+                                }
+                            }
+
+                            /// - Remark: Generated from `#/components/schemas/AppActivity/payload/trigger/config/function_inputs/additionalProperties/label`.
+                            public var label: Components.Schemas.AppActivity.PayloadPayload.TriggerPayload.ConfigPayload.FunctionInputsPayload.AdditionalPropertiesPayload.LabelPayload?
+                            /// - Remark: Generated from `#/components/schemas/AppActivity/payload/trigger/config/function_inputs/additionalProperties/value`.
+                            public var value: OpenAPIRuntime.OpenAPIValueContainer?
+                            /// - Remark: Generated from `#/components/schemas/AppActivity/payload/trigger/config/function_inputs/additionalProperties/hidden`.
+                            public var hidden: Swift.Bool?
+                            /// - Remark: Generated from `#/components/schemas/AppActivity/payload/trigger/config/function_inputs/additionalProperties/locked`.
+                            public var locked: Swift.Bool?
+                            /// Creates a new `AdditionalPropertiesPayload`.
+                            ///
+                            /// - Parameters:
+                            ///   - label:
+                            ///   - value:
+                            ///   - hidden:
+                            ///   - locked:
+                            public init(
+                                label: Components.Schemas.AppActivity.PayloadPayload.TriggerPayload.ConfigPayload.FunctionInputsPayload.AdditionalPropertiesPayload.LabelPayload? = nil,
+                                value: OpenAPIRuntime.OpenAPIValueContainer? = nil,
+                                hidden: Swift.Bool? = nil,
+                                locked: Swift.Bool? = nil,
+                            ) {
+                                self.label = label
+                                self.value = value
+                                self.hidden = hidden
+                                self.locked = locked
+                            }
+
+                            public enum CodingKeys: String, CodingKey {
+                                case label
+                                case value
+                                case hidden
+                                case locked
+                            }
+                        }
+
+                        /// A container of undocumented properties.
+                        public var additionalProperties: [String: Components.Schemas.AppActivity.PayloadPayload.TriggerPayload.ConfigPayload.FunctionInputsPayload.AdditionalPropertiesPayload]
+                        /// Creates a new `FunctionInputsPayload`.
+                        ///
+                        /// - Parameters:
+                        ///   - additionalProperties: A container of undocumented properties.
+                        public init(additionalProperties: [String: Components.Schemas.AppActivity.PayloadPayload.TriggerPayload.ConfigPayload.FunctionInputsPayload.AdditionalPropertiesPayload] =
+                            .init()) {
+                            self.additionalProperties = additionalProperties
+                        }
+
+                        public init(from decoder: any Swift.Decoder) throws {
+                            additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                        }
+
+                        public func encode(to encoder: any Swift.Encoder) throws {
+                            try encoder.encodeAdditionalProperties(additionalProperties)
+                        }
+                    }
+
+                    /// - Remark: Generated from `#/components/schemas/AppActivity/payload/trigger/config/function_inputs`.
+                    public var functionInputs: Components.Schemas.AppActivity.PayloadPayload.TriggerPayload.ConfigPayload.FunctionInputsPayload?
+                    /// Type differs from java-slack-sdk: `AppActivity.TriggerConfig.triggerTypeId` is declared `String`, but recorded responses send integers.
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/AppActivity/payload/trigger/config/trigger_type_id`.
+                    public var triggerTypeId: Swift.Int?
+                    /// Type differs from java-slack-sdk: `AppActivity.TriggerConfig.triggerTypeAppId` is declared `String`, but recorded responses send integers.
+                    ///
+                    /// - Remark: Generated from `#/components/schemas/AppActivity/payload/trigger/config/trigger_type_app_id`.
+                    public var triggerTypeAppId: Swift.Int?
                     /// Creates a new `ConfigPayload`.
                     ///
                     /// - Parameters:
@@ -95,16 +185,25 @@ extension Components.Schemas {
                     ///   - name:
                     ///   - description:
                     ///   - schema:
+                    ///   - functionInputs:
+                    ///   - triggerTypeId: Type differs from java-slack-sdk: `AppActivity.TriggerConfig.triggerTypeId` is declared `String`, but recorded responses send integers.
+                    ///   - triggerTypeAppId: Type differs from java-slack-sdk: `AppActivity.TriggerConfig.triggerTypeAppId` is declared `String`, but recorded responses send integers.
                     public init(
                         eventType: Swift.String? = nil,
                         name: Swift.String? = nil,
                         description: Swift.String? = nil,
                         schema: OpenAPIRuntime.OpenAPIValueContainer? = nil,
+                        functionInputs: Components.Schemas.AppActivity.PayloadPayload.TriggerPayload.ConfigPayload.FunctionInputsPayload? = nil,
+                        triggerTypeId: Swift.Int? = nil,
+                        triggerTypeAppId: Swift.Int? = nil,
                     ) {
                         self.eventType = eventType
                         self.name = name
                         self.description = description
                         self.schema = schema
+                        self.functionInputs = functionInputs
+                        self.triggerTypeId = triggerTypeId
+                        self.triggerTypeAppId = triggerTypeAppId
                     }
 
                     public enum CodingKeys: String, CodingKey {
@@ -112,6 +211,9 @@ extension Components.Schemas {
                         case name
                         case description
                         case schema
+                        case functionInputs = "function_inputs"
+                        case triggerTypeId = "trigger_type_id"
+                        case triggerTypeAppId = "trigger_type_app_id"
                     }
                 }
 
@@ -263,18 +365,14 @@ extension Components.Schemas {
             public var elapsedMs: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/AppActivity/payload/error_stage`.
             public var errorStage: Swift.String?
+            /// - Remark: Generated from `#/components/schemas/AppActivity/payload/extra_message`.
+            public var extraMessage: Swift.String?
             /// - Remark: Generated from `#/components/schemas/AppActivity/payload/http_status_code`.
             public var httpStatusCode: Swift.Int?
             /// - Remark: Generated from `#/components/schemas/AppActivity/payload/provider_key`.
             public var providerKey: Swift.String?
-            /// Not declared by java-slack-sdk `AppActivity.Payload`, but recorded responses include it.
-            ///
             /// - Remark: Generated from `#/components/schemas/AppActivity/payload/tokens_checked`.
             public var tokensChecked: Swift.Int?
-            /// Not declared by java-slack-sdk `AppActivity.Payload`, but recorded responses include it.
-            ///
-            /// - Remark: Generated from `#/components/schemas/AppActivity/payload/extra_message`.
-            public var extraMessage: Swift.String?
             /// Creates a new `PayloadPayload`.
             ///
             /// - Parameters:
@@ -313,10 +411,10 @@ extension Components.Schemas {
             ///   - message:
             ///   - elapsedMs:
             ///   - errorStage:
+            ///   - extraMessage:
             ///   - httpStatusCode:
             ///   - providerKey:
-            ///   - tokensChecked: Not declared by java-slack-sdk `AppActivity.Payload`, but recorded responses include it.
-            ///   - extraMessage: Not declared by java-slack-sdk `AppActivity.Payload`, but recorded responses include it.
+            ///   - tokensChecked:
             public init(
                 execOutcome: Swift.String? = nil,
                 workflowName: Swift.String? = nil,
@@ -353,10 +451,10 @@ extension Components.Schemas {
                 message: Swift.String? = nil,
                 elapsedMs: Swift.Int? = nil,
                 errorStage: Swift.String? = nil,
+                extraMessage: Swift.String? = nil,
                 httpStatusCode: Swift.Int? = nil,
                 providerKey: Swift.String? = nil,
                 tokensChecked: Swift.Int? = nil,
-                extraMessage: Swift.String? = nil,
             ) {
                 self.execOutcome = execOutcome
                 self.workflowName = workflowName
@@ -393,10 +491,10 @@ extension Components.Schemas {
                 self.message = message
                 self.elapsedMs = elapsedMs
                 self.errorStage = errorStage
+                self.extraMessage = extraMessage
                 self.httpStatusCode = httpStatusCode
                 self.providerKey = providerKey
                 self.tokensChecked = tokensChecked
-                self.extraMessage = extraMessage
             }
 
             public enum CodingKeys: String, CodingKey {
@@ -435,10 +533,10 @@ extension Components.Schemas {
                 case message
                 case elapsedMs = "elapsed_ms"
                 case errorStage = "error_stage"
+                case extraMessage = "extra_message"
                 case httpStatusCode = "http_status_code"
                 case providerKey = "provider_key"
                 case tokensChecked = "tokens_checked"
-                case extraMessage = "extra_message"
             }
         }
 
@@ -505,5 +603,17 @@ extension Components.Schemas {
             case created
             case traceId = "trace_id"
         }
+    }
+}
+
+extension Components.Schemas.AppActivity.PayloadPayload.TriggerPayload.ConfigPayload.FunctionInputsPayload {
+    public subscript(key: Swift.String) -> Components.Schemas.AppActivity.PayloadPayload.TriggerPayload.ConfigPayload.FunctionInputsPayload.AdditionalPropertiesPayload? {
+        additionalProperties[key]
+    }
+}
+
+extension Components.Schemas.AppActivity.PayloadPayload.TriggerPayload.ConfigPayload.FunctionInputsPayload.AdditionalPropertiesPayload.LabelPayload {
+    public subscript(key: Swift.String) -> Swift.String? {
+        additionalProperties[key]
     }
 }

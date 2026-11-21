@@ -167,6 +167,11 @@ def ref(name)
       schema = type_schema(field.type, owner, where, inline_stack)
       [key, expand_handwritten(@type_overrides.apply(schema, owner, field, key), where)]
     end
+    # Gson may change individual wire shapes while retaining the remaining declaration.
+    GsonAdapters.decision_for(java_class.fqn)&.properties&.each do |key, name|
+      raise "#{java_class.fqn}: adapter property #{key} is not declared" unless properties.key?(key)
+      properties[key] = handwritten_ref(name)
+    end
     @type_overrides.additions_for(java_class).each do |key, schema|
       properties[key] = expand_handwritten(schema, "#{java_class.fqn}##{key}")
     end

@@ -117,3 +117,19 @@ WorkflowCollaboratorError:
       type: string
     workflow:
       type: string
+
+ListRecordFieldMessage:
+  description: A Slack Lists message cell as accepted by java-slack-sdk GsonListRecordFieldFactory.
+  oneOf:
+    - x-java-class: com.slack.api.model.Message
+    - type: string
+    - type: array
+      items:
+        $ref: '#/components/schemas/ListRecordFieldMessageElement'
+  x-swift-accessors: [message, permalink, messages]
+
+ListRecordFieldMessageElement:
+  oneOf:
+    - x-java-class: com.slack.api.model.Message
+    - type: string
+  x-swift-accessors: [message, permalink]

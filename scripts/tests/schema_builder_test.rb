@@ -25,6 +25,18 @@ class SchemaBuilderTest < Minitest::Test
     builder.send(:instance_variable_get, :@index).fully_qualified(fqn)
   end
 
+  def test_list_record_adapter_preserves_fields_and_replaces_only_message
+    java('com.slack.api.model.list', 'ListRecord', <<~BODY)
+      { public static class Field { private String key; private String message; private Boolean checkbox; } }
+    BODY
+    b = builder(handwritten: { 'ListRecordFieldMessage' => { 'oneOf' => [{ 'type' => 'string' }, { 'type' => 'array', 'items' => { 'type' => 'string' } }] } })
+    schema = b.add_root('Field', root(b, 'com.slack.api.model.list.ListRecord.Field'))
+    assert_equal({ '$ref' => '#/components/schemas/ListRecordFieldMessage' }, schema['properties']['message'])
+    assert_equal({ 'type' => 'string' }, schema['properties']['key'])
+    assert_equal({ 'type' => 'boolean' }, schema['properties']['checkbox'])
+    assert_equal 2, b.components['ListRecordFieldMessage']['oneOf'].length
+  end
+
   def test_add_root_with_scalars_collections_and_maps
     java(MODEL, 'Thing', <<~BODY)
       {

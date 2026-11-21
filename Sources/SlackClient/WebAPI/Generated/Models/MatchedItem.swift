@@ -1045,6 +1045,8 @@ extension Components.Schemas {
         public var isModifiedByAi: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/MatchedItem/contents_extracts`.
         public var contentsExtracts: [Swift.String]?
+        /// - Remark: Generated from `#/components/schemas/MatchedItem/show_badge`.
+        public var showBadge: Swift.Bool?
         /// Creates a new `MatchedItem`.
         ///
         /// - Parameters:
@@ -1198,6 +1200,7 @@ extension Components.Schemas {
         ///   - isAiSuggested:
         ///   - isModifiedByAi:
         ///   - contentsExtracts:
+        ///   - showBadge:
         public init(
             iid: Swift.String? = nil,
             id: Swift.String? = nil,
@@ -1349,6 +1352,7 @@ extension Components.Schemas {
             isAiSuggested: Swift.Bool? = nil,
             isModifiedByAi: Swift.Bool? = nil,
             contentsExtracts: [Swift.String]? = nil,
+            showBadge: Swift.Bool? = nil,
         ) {
             self.iid = iid
             self.id = id
@@ -1500,6 +1504,7 @@ extension Components.Schemas {
             self.isAiSuggested = isAiSuggested
             self.isModifiedByAi = isModifiedByAi
             self.contentsExtracts = contentsExtracts
+            self.showBadge = showBadge
         }
 
         public enum CodingKeys: String, CodingKey {
@@ -1653,6 +1658,7 @@ extension Components.Schemas {
             case isAiSuggested = "is_ai_suggested"
             case isModifiedByAi = "is_modified_by_ai"
             case contentsExtracts = "contents_extracts"
+            case showBadge = "show_badge"
         }
     }
 }
