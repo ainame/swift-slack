@@ -188,6 +188,8 @@ extension Components.Schemas {
         public var file: Components.Schemas.File?
         /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content`.
         public var content: Swift.String?
+        /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content_html`.
+        public var contentHtml: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content_highlight_html`.
         public var contentHighlightHtml: Swift.String?
         /// - Remark: Generated from `#/components/schemas/FilesInfoResponse/content_highlight_css`.
@@ -212,6 +214,7 @@ extension Components.Schemas {
         ///   - provided:
         ///   - file:
         ///   - content:
+        ///   - contentHtml:
         ///   - contentHighlightHtml:
         ///   - contentHighlightCss:
         ///   - isTruncated:
@@ -227,6 +230,7 @@ extension Components.Schemas {
             provided: Swift.String? = nil,
             file: Components.Schemas.File? = nil,
             content: Swift.String? = nil,
+            contentHtml: Swift.String? = nil,
             contentHighlightHtml: Swift.String? = nil,
             contentHighlightCss: Swift.String? = nil,
             isTruncated: Swift.Bool? = nil,
@@ -242,6 +246,7 @@ extension Components.Schemas {
             self.provided = provided
             self.file = file
             self.content = content
+            self.contentHtml = contentHtml
             self.contentHighlightHtml = contentHighlightHtml
             self.contentHighlightCss = contentHighlightCss
             self.isTruncated = isTruncated
@@ -259,6 +264,7 @@ extension Components.Schemas {
             case provided
             case file
             case content
+            case contentHtml = "content_html"
             case contentHighlightHtml = "content_highlight_html"
             case contentHighlightCss = "content_highlight_css"
             case isTruncated = "is_truncated"

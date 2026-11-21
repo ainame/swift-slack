@@ -128,6 +128,8 @@ let responseFixtureDecoders: [String: @Sendable (Data) throws -> Any] = {
     #if WebAPI_Apps
     decoders["apps.connections.open"] = { try JSONDecoder().decode(Components.Schemas.AppsConnectionsOpenResponse.self, from: $0) }
     decoders["apps.event.authorizations.list"] = { try JSONDecoder().decode(Components.Schemas.AppsEventAuthorizationsListResponse.self, from: $0) }
+    decoders["apps.icon.set"] = { try JSONDecoder().decode(Components.Schemas.AppsIconSetResponse.self, from: $0) }
+    decoders["apps.managed.permissions.set"] = { try JSONDecoder().decode(Components.Schemas.AppsManagedPermissionsSetResponse.self, from: $0) }
     decoders["apps.manifest.create"] = { try JSONDecoder().decode(Components.Schemas.AppsManifestCreateResponse.self, from: $0) }
     decoders["apps.manifest.delete"] = { try JSONDecoder().decode(Components.Schemas.AppsManifestDeleteResponse.self, from: $0) }
     decoders["apps.manifest.export"] = { try JSONDecoder().decode(Components.Schemas.AppsManifestExportResponse.self, from: $0) }
@@ -137,6 +139,8 @@ let responseFixtureDecoders: [String: @Sendable (Data) throws -> Any] = {
     decoders["apps.user.connection.update"] = { try JSONDecoder().decode(Components.Schemas.AppsUserConnectionUpdateResponse.self, from: $0) }
     #endif
     #if WebAPI_Assistant
+    decoders["assistant.search.context"] = { try JSONDecoder().decode(Components.Schemas.AssistantSearchContextResponse.self, from: $0) }
+    decoders["assistant.search.info"] = { try JSONDecoder().decode(Components.Schemas.AssistantSearchInfoResponse.self, from: $0) }
     decoders["assistant.threads.setStatus"] = { try JSONDecoder().decode(Components.Schemas.AssistantThreadsSetStatusResponse.self, from: $0) }
     decoders["assistant.threads.setSuggestedPrompts"] = { try JSONDecoder().decode(Components.Schemas.AssistantThreadsSetSuggestedPromptsResponse.self, from: $0) }
     decoders["assistant.threads.setTitle"] = { try JSONDecoder().decode(Components.Schemas.AssistantThreadsSetTitleResponse.self, from: $0) }

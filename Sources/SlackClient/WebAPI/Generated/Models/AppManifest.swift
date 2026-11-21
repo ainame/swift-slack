@@ -162,6 +162,8 @@ extension Components.Schemas {
             public var socketModeEnabled: Swift.Bool?
             /// - Remark: Generated from `#/components/schemas/AppManifest/settings/token_rotation_enabled`.
             public var tokenRotationEnabled: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/AppManifest/settings/app_level_token_rotation_enabled`.
+            public var appLevelTokenRotationEnabled: Swift.Bool?
             /// - Remark: Generated from `#/components/schemas/AppManifest/settings/hermes_app_type`.
             public var hermesAppType: Swift.String?
             /// - Remark: Generated from `#/components/schemas/AppManifest/settings/function_runtime`.
@@ -180,6 +182,7 @@ extension Components.Schemas {
             ///   - orgDeployEnabled:
             ///   - socketModeEnabled:
             ///   - tokenRotationEnabled:
+            ///   - appLevelTokenRotationEnabled:
             ///   - hermesAppType:
             ///   - functionRuntime:
             ///   - isMcpEnabled:
@@ -193,6 +196,7 @@ extension Components.Schemas {
                 orgDeployEnabled: Swift.Bool? = nil,
                 socketModeEnabled: Swift.Bool? = nil,
                 tokenRotationEnabled: Swift.Bool? = nil,
+                appLevelTokenRotationEnabled: Swift.Bool? = nil,
                 hermesAppType: Swift.String? = nil,
                 functionRuntime: Swift.String? = nil,
                 isMcpEnabled: Swift.Bool? = nil,
@@ -206,6 +210,7 @@ extension Components.Schemas {
                 self.orgDeployEnabled = orgDeployEnabled
                 self.socketModeEnabled = socketModeEnabled
                 self.tokenRotationEnabled = tokenRotationEnabled
+                self.appLevelTokenRotationEnabled = appLevelTokenRotationEnabled
                 self.hermesAppType = hermesAppType
                 self.functionRuntime = functionRuntime
                 self.isMcpEnabled = isMcpEnabled
@@ -221,6 +226,7 @@ extension Components.Schemas {
                 case orgDeployEnabled = "org_deploy_enabled"
                 case socketModeEnabled = "socket_mode_enabled"
                 case tokenRotationEnabled = "token_rotation_enabled"
+                case appLevelTokenRotationEnabled = "app_level_token_rotation_enabled"
                 case hermesAppType = "hermes_app_type"
                 case functionRuntime = "function_runtime"
                 case isMcpEnabled = "is_mcp_enabled"

@@ -388,6 +388,8 @@ extension Components.Schemas {
         public var isBot: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/User/is_connector_bot`.
         public var isConnectorBot: Swift.Bool?
+        /// - Remark: Generated from `#/components/schemas/User/is_seamless_enabled_app_bot`.
+        public var isSeamlessEnabledAppBot: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/User/is_stranger`.
         public var isStranger: Swift.Bool?
         /// - Remark: Generated from `#/components/schemas/User/is_app_user`.
@@ -502,6 +504,7 @@ extension Components.Schemas {
         ///   - isUltraRestricted:
         ///   - isBot:
         ///   - isConnectorBot:
+        ///   - isSeamlessEnabledAppBot:
         ///   - isStranger:
         ///   - isAppUser:
         ///   - updated:
@@ -538,6 +541,7 @@ extension Components.Schemas {
             isUltraRestricted: Swift.Bool? = nil,
             isBot: Swift.Bool? = nil,
             isConnectorBot: Swift.Bool? = nil,
+            isSeamlessEnabledAppBot: Swift.Bool? = nil,
             isStranger: Swift.Bool? = nil,
             isAppUser: Swift.Bool? = nil,
             updated: Swift.Int? = nil,
@@ -574,6 +578,7 @@ extension Components.Schemas {
             self.isUltraRestricted = isUltraRestricted
             self.isBot = isBot
             self.isConnectorBot = isConnectorBot
+            self.isSeamlessEnabledAppBot = isSeamlessEnabledAppBot
             self.isStranger = isStranger
             self.isAppUser = isAppUser
             self.updated = updated
@@ -612,6 +617,7 @@ extension Components.Schemas {
             case isUltraRestricted = "is_ultra_restricted"
             case isBot = "is_bot"
             case isConnectorBot = "is_connector_bot"
+            case isSeamlessEnabledAppBot = "is_seamless_enabled_app_bot"
             case isStranger = "is_stranger"
             case isAppUser = "is_app_user"
             case updated

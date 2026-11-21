@@ -3,6 +3,69 @@
 The submodule gitlinks are the generation inputs. Review coverage applies to the
 selected delta, not complete historical parity or live Slack service behavior.
 
+## Review on 2026-11-21
+
+Sync PR: #284.
+
+| Source | Previous commit | Reviewed snapshot |
+| --- | --- | --- |
+| java-slack-sdk | `66ca90f086bf775f37d6c4ac19a5c34efce5eba6` | `4e9ffad2ac4a914f9f5b63bc6d17e6da165c3826` |
+| slack-api-ref | `cd2b031eb6ce9db1f04fa9e286985208423b4650` | `0337ce96941e94fa787b458174de1441a716da5b` |
+
+Both snapshots fast-forward from the pins at release-2027-01 commit
+`b52fd295`. The base and PR target are release-2027-01.
+
+### Implemented
+
+- Added swift-slack operations for `apps.icon.set`, `apps.managed.permissions.set`,
+  `assistant.search.context` and `assistant.search.info`, backed by java-slack-sdk
+  recorded responses and slack-api-ref request definitions. Assistant search filter
+  lists use comma-separated form values, matching the Java serializer.
+- Generated java-slack-sdk additions to agent-session initiator IDs, session views,
+  file canvas/skill/AI-summary metadata, attachment media and thumbnail metadata,
+  matched-item badges, seamless app bots, manifest app-level token rotation and
+  files.info HTML content. Updated admin activity trigger inputs and payload fields.
+- Preserved arbitrary JSON in activity function input values, as the upstream Gson
+  adapter supports raw values as well as strings, arrays and credentials. Added
+  fixture-backed integer overrides for both trigger type identifiers; removed
+  obsolete extra_message and tokens_checked overrides now declared by Java.
+- Modelled Slack Lists message cells as a message object, permalink string or mixed
+  array, following the Java Gson adapter. This changes the public message property
+  type; use its message/permalink/messages accessors. The remaining cell properties
+  continue to follow Java declarations. Supported named union cases in generated
+  read accessors, as emitted by swift-openapi-generator for referenced types.
+- Regenerated slack-api-ref request documentation, including admin.users.setRegular.
+  No Events or Block Kit class changes occurred; handwritten event dispatch, Block
+  Kit cases and app runtime require no changes for this delta.
+
+### Reviewed exclusions and coverage gaps
+
+- New slack-api-ref `admin.analytics.members.activity`, `.metadata` and
+  `oauth.v2.user.access` lack Java response fixtures and remain excluded. Existing
+  missing-fixture methods and missing-request-definition methods from the previous
+  review remain gaps. Newly recorded assistant search resolves its previous gap.
+- apps.icon.set supports the URL route. Its generated file string does not implement
+  Java's binary multipart upload helper; binary icon upload remains a coverage gap.
+- slack-api-ref response examples, errors, rates and documentation-only fields do
+  not replace Java response models. Reviewed new and changed Java fixture fields
+  through the schema scanner, including unknown keys. Existing placeholder handling
+  remains confined to fixture preprocessing.
+- Java Audit Logs adapter/action changes are outside the Web API generated here;
+  explicitly excluded the new DetailsAction adapter. Java client wiring, package
+  versions, recorder changes, documentation removal and build metadata have no
+  applicable downstream runtime behavior. The Lists adapter relocation is covered
+  by the new wire-shape decision. Existing event coverage gaps remain unchanged.
+
+### Verification
+
+Using Swift 6.4.0 and Ruby 4.0.7: bundle install, full make generate,
+make check-fixtures (296 responses and 95 events, zero unexplained mismatches),
+make test-scripts (139 tests / 444 assertions) and swift test (266 tests across 36 suites) passed. Repeated
+complete generation matched all 416 generated/manifest hashes. Handwritten
+formatting and git diff --check passed. Earlier overlapping generation/build
+attempts were discarded; the final sequence ran generation before compilation.
+Live Slack integration was not run.
+
 ## Review on 2026-11-14
 
 Sync PR: #282.

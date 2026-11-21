@@ -530,7 +530,7 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /admin.users.setOwner`.
     /// - Remark: Generated from `#/paths//admin.users.setOwner/post(adminUsersSetOwner)`.
     func adminUsersSetOwner(_ input: Operations.AdminUsersSetOwner.Input) async throws -> Operations.AdminUsersSetOwner.Output
-    /// Set an existing guest user, admin user, or owner to be a regular user.
+    /// Set an existing guest user, admin user, or owner to be a regular user. When team_id is an organization, the user is also set to a regular user on every workspace where they are a workspace owner, including workspaces where they were an owner before becoming an org admin or owner.
     ///
     /// - Remark: HTTP `POST /admin.users.setRegular`.
     /// - Remark: Generated from `#/paths//admin.users.setRegular/post(adminUsersSetRegular)`.
@@ -641,6 +641,16 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /apps.event.authorizations.list`.
     /// - Remark: Generated from `#/paths//apps.event.authorizations.list/post(appsEventAuthorizationsList)`.
     func appsEventAuthorizationsList(_ input: Operations.AppsEventAuthorizationsList.Input) async throws -> Operations.AppsEventAuthorizationsList.Output
+    /// Sets the app icon
+    ///
+    /// - Remark: HTTP `POST /apps.icon.set`.
+    /// - Remark: Generated from `#/paths//apps.icon.set/post(appsIconSet)`.
+    func appsIconSet(_ input: Operations.AppsIconSet.Input) async throws -> Operations.AppsIconSet.Output
+    /// Set who can interact with a managed app. Lets the builder who created a managed app on a partner platform configure the app's permissions, using a user token or bot token from the manager app. Permissions can only be set before the app is installed: if the app is already installed, this method makes no change and returns the app's current permissions.
+    ///
+    /// - Remark: HTTP `POST /apps.managed.permissions.set`.
+    /// - Remark: Generated from `#/paths//apps.managed.permissions.set/post(appsManagedPermissionsSet)`.
+    func appsManagedPermissionsSet(_ input: Operations.AppsManagedPermissionsSet.Input) async throws -> Operations.AppsManagedPermissionsSet.Output
     /// Create an app from an app manifest.
     ///
     /// - Remark: HTTP `POST /apps.manifest.create`.
@@ -678,6 +688,16 @@ public protocol APIProtocol: Sendable {
     func appsUserConnectionUpdate(_ input: Operations.AppsUserConnectionUpdate.Input) async throws -> Operations.AppsUserConnectionUpdate.Output
     #endif
     #if WebAPI_Assistant
+    /// Searches messages, files, channels and users across your Slack organization.
+    ///
+    /// - Remark: HTTP `POST /assistant.search.context`.
+    /// - Remark: Generated from `#/paths//assistant.search.context/post(assistantSearchContext)`.
+    func assistantSearchContext(_ input: Operations.AssistantSearchContext.Input) async throws -> Operations.AssistantSearchContext.Output
+    /// Returns search capabilities on a given team.
+    ///
+    /// - Remark: HTTP `POST /assistant.search.info`.
+    /// - Remark: Generated from `#/paths//assistant.search.info/post(assistantSearchInfo)`.
+    func assistantSearchInfo(_ input: Operations.AssistantSearchInfo.Input) async throws -> Operations.AssistantSearchInfo.Output
     /// Set the status for an AI assistant thread.
     ///
     /// - Remark: HTTP `POST /assistant.threads.setStatus`.
@@ -2884,7 +2904,7 @@ extension APIProtocol {
             body: body
         ))
     }
-    /// Set an existing guest user, admin user, or owner to be a regular user.
+    /// Set an existing guest user, admin user, or owner to be a regular user. When team_id is an organization, the user is also set to a regular user on every workspace where they are a workspace owner, including workspaces where they were an owner before becoming an org admin or owner.
     ///
     /// - Remark: HTTP `POST /admin.users.setRegular`.
     /// - Remark: Generated from `#/paths//admin.users.setRegular/post(adminUsersSetRegular)`.
@@ -3163,6 +3183,32 @@ extension APIProtocol {
             body: body
         ))
     }
+    /// Sets the app icon
+    ///
+    /// - Remark: HTTP `POST /apps.icon.set`.
+    /// - Remark: Generated from `#/paths//apps.icon.set/post(appsIconSet)`.
+    public func appsIconSet(
+        headers: Operations.AppsIconSet.Input.Headers = .init(),
+        body: Operations.AppsIconSet.Input.Body
+    ) async throws -> Operations.AppsIconSet.Output {
+        try await appsIconSet(Operations.AppsIconSet.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Set who can interact with a managed app. Lets the builder who created a managed app on a partner platform configure the app's permissions, using a user token or bot token from the manager app. Permissions can only be set before the app is installed: if the app is already installed, this method makes no change and returns the app's current permissions.
+    ///
+    /// - Remark: HTTP `POST /apps.managed.permissions.set`.
+    /// - Remark: Generated from `#/paths//apps.managed.permissions.set/post(appsManagedPermissionsSet)`.
+    public func appsManagedPermissionsSet(
+        headers: Operations.AppsManagedPermissionsSet.Input.Headers = .init(),
+        body: Operations.AppsManagedPermissionsSet.Input.Body
+    ) async throws -> Operations.AppsManagedPermissionsSet.Output {
+        try await appsManagedPermissionsSet(Operations.AppsManagedPermissionsSet.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Create an app from an app manifest.
     ///
     /// - Remark: HTTP `POST /apps.manifest.create`.
@@ -3256,6 +3302,32 @@ extension APIProtocol {
     }
     #endif
     #if WebAPI_Assistant
+    /// Searches messages, files, channels and users across your Slack organization.
+    ///
+    /// - Remark: HTTP `POST /assistant.search.context`.
+    /// - Remark: Generated from `#/paths//assistant.search.context/post(assistantSearchContext)`.
+    public func assistantSearchContext(
+        headers: Operations.AssistantSearchContext.Input.Headers = .init(),
+        body: Operations.AssistantSearchContext.Input.Body
+    ) async throws -> Operations.AssistantSearchContext.Output {
+        try await assistantSearchContext(Operations.AssistantSearchContext.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Returns search capabilities on a given team.
+    ///
+    /// - Remark: HTTP `POST /assistant.search.info`.
+    /// - Remark: Generated from `#/paths//assistant.search.info/post(assistantSearchInfo)`.
+    public func assistantSearchInfo(
+        headers: Operations.AssistantSearchInfo.Input.Headers = .init(),
+        body: Operations.AssistantSearchInfo.Input.Body? = nil
+    ) async throws -> Operations.AssistantSearchInfo.Output {
+        try await assistantSearchInfo(Operations.AssistantSearchInfo.Input(
+            headers: headers,
+            body: body
+        ))
+    }
     /// Set the status for an AI assistant thread.
     ///
     /// - Remark: HTTP `POST /assistant.threads.setStatus`.
