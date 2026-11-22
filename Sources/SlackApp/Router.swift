@@ -45,6 +45,7 @@ public typealias EventRequestEnvelopePayloadHandler<Envelope: Sendable, Payload:
     @Sendable (SlackApp.EventContext, Envelope, Payload) async throws -> Void
 #endif
 public typealias ErrorHandler = @Sendable (DispatchContext, Request, Swift.Error) async throws -> Void
+public typealias UnmatchedHandler = @Sendable (DispatchContext, Request) async throws -> Void
 
 public enum Request: Sendable {
     case interactive(InteractiveEnvelope)
@@ -147,6 +148,7 @@ public class Router {
     private var typedEventHandlers: [TypedEventKey: RequestHandler] = [:]
     #endif
     private var errorHandler: ErrorHandler?
+    private var unmatchedHandler: UnmatchedHandler?
 
     public init() {}
 
@@ -165,6 +167,7 @@ public class Router {
         private let typedEventHandlers: [TypedEventKey: RequestHandler]
         #endif
         private let errorHandler: ErrorHandler?
+        private let unmatchedHandler: UnmatchedHandler?
 
         init(from router: Router) {
             interactiveHandler = router.interactiveHandler
@@ -181,18 +184,35 @@ public class Router {
             typedEventHandlers = router.typedEventHandlers
             #endif
             errorHandler = router.errorHandler
+            unmatchedHandler = router.unmatchedHandler
         }
 
+        /// Runs the handler that matches `request`, or the `onUnmatched(_:)` handler when none does.
+        ///
+        /// Returns `false` when no handler matched, including when the `onUnmatched(_:)` handler ran, so the
+        /// caller sends an empty acknowledgement if that handler did not acknowledge the request.
         @discardableResult
         func dispatch(context: DispatchContext, request: Request) async throws -> Bool {
             guard let handler = handler(for: request) else {
-                context.logger.warning("No handler matched \(request.routingDescription)")
+                guard let unmatchedHandler else {
+                    context.logger.warning("No handler matched \(request.routingDescription)")
+                    return false
+                }
+                try await run(unmatchedHandler, context: context, request: request)
                 return false
             }
 
+            try await run(handler, context: context, request: request)
+            return true
+        }
+
+        private func run(
+            _ handler: @Sendable (DispatchContext, Request) async throws -> Void,
+            context: DispatchContext,
+            request: Request,
+        ) async throws {
             do {
                 try await handler(context, request)
-                return true
             } catch {
                 if let errorHandler {
                     try await errorHandler(context, request, error)
@@ -438,6 +458,29 @@ public class Router {
 
     public func onError(_ handler: @escaping ErrorHandler) {
         errorHandler = handler
+    }
+
+    /// Registers a handler for requests that no other handler matches, in place of the warning logged for them.
+    ///
+    /// The handler receives slash commands, interactive requests, and events that no handler registered for
+    /// their type and ID, and requests with an unsupported type. Catch-all handlers registered with
+    /// ``onInteractive(_:)`` and ``onEvent(_:)`` match first, so requests they handle never reach it.
+    ///
+    /// A slash command or an interactive request arrives with a ``DispatchContext/request(_:)`` context, whose
+    /// `ack` the handler may call. If the handler returns without acknowledging, swift-slack sends an empty
+    /// acknowledgement, as it does when no handler matches. Errors it throws go to the ``onError(_:)`` handler.
+    ///
+    /// ```swift
+    /// router.onUnmatched { context, request in
+    ///     guard case let .slashCommand(payload) = request,
+    ///           case let .request(context) = context else { return }
+    ///     // Replies to commands this app no longer supports instead of logging a warning.
+    ///     try await context.ack()
+    ///     try await context.respond(to: payload.responseUrl, text: "\(payload.command) is no longer available.")
+    /// }
+    /// ```
+    public func onUnmatched(_ handler: @escaping UnmatchedHandler) {
+        unmatchedHandler = handler
     }
 
     #if Events

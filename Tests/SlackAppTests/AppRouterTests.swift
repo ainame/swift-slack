@@ -399,6 +399,76 @@ struct AppRouterTests {
         #expect(await logs.warnings() == [#"No handler matched event "message" (MessageEvent)"#])
     }
 
+    @Test func `onUnmatched receives unmatched requests instead of the warning`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onSlashCommand("/known") { _, _ in }
+        router.onUnmatched { _, request in
+            switch request {
+            case let .slashCommand(payload):
+                await tracker.set(payload.command)
+            case .event:
+                await tracker.set("event")
+            default:
+                await tracker.set("other")
+            }
+        }
+        let fixed = Router.FixedRouter(from: router)
+
+        let logs = LogRecorder()
+        let commandMatched = try await fixed.dispatch(
+            context: .request(makeRequestContext(logger: logs.makeLogger())),
+            request: .slashCommand(makeSlashCommandPayload(command: "/unknown")),
+        )
+        #expect(!commandMatched)
+        #expect(await tracker.value == "/unknown")
+
+        let eventMatched = try await fixed.dispatch(
+            context: .event(makeEventContext(logger: logs.makeLogger())),
+            request: .event(makeMessageEventEnvelope(text: "hello")),
+        )
+        #expect(!eventMatched)
+        #expect(await tracker.value == "event")
+        #expect(await logs.warnings().isEmpty)
+    }
+
+    @Test func `onUnmatched does not receive requests a catch-all handles`() async throws {
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onInteractive { _, _ in await tracker.set("interactive") }
+        router.onEvent { _, _ in await tracker.set("event") }
+        router.onUnmatched { _, _ in await tracker.set("unmatched") }
+        let fixed = Router.FixedRouter(from: router)
+
+        #expect(try await fixed.dispatch(
+            context: .request(makeRequestContext()),
+            request: .interactive(makeBlockActionEnvelope(actions: [("approve", "request")])),
+        ))
+        #expect(await tracker.value == "interactive")
+
+        #expect(try await fixed.dispatch(
+            context: .event(makeEventContext()),
+            request: .event(makeMessageEventEnvelope(text: "hello")),
+        ))
+        #expect(await tracker.value == "event")
+    }
+
+    @Test func `onUnmatched errors go to onError`() async throws {
+        struct Failure: Error {}
+        let tracker = ValueTracker()
+        let router = Router()
+        router.onUnmatched { _, _ in throw Failure() }
+        router.onError { _, _, error in await tracker.set(String(describing: type(of: error))) }
+
+        await #expect(throws: Failure.self) {
+            try await Router.FixedRouter(from: router).dispatch(
+                context: .request(makeRequestContext()),
+                request: .slashCommand(makeSlashCommandPayload(command: "/unknown")),
+            )
+        }
+        #expect(await tracker.value == "Failure")
+    }
+
     @Test func `requests handled by a fallback handler do not log a warning`() async throws {
         let logs = LogRecorder()
         let router = Router()

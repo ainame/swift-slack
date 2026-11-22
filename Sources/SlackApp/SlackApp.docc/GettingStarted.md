@@ -102,6 +102,7 @@ Slack requires an acknowledgement within three seconds of delivering a request.
 - Block suggestion handlers acknowledge with `ack(options:)` or `ack(optionGroups:)`.
 - Registering another handler of the same kind for the same command, callback ID, or event type replaces the earlier one. `onViewSubmission` and `onViewClosed` can share a callback ID, and `onView` handles only the view payload types that have no type-specific handler.
 - A request that no handler matches is logged as a warning that names its type and ID, such as the command, `action_id`, or `callback_id`. HTTP mode responds with an empty `200 OK`, and Socket Mode sends an empty acknowledgement.
+- To handle those requests yourself instead of logging the warning, register `onUnmatched(_:)`. It receives the `Request` with a `DispatchContext`, and can acknowledge a slash command or interactive request through the `.request` context. If it does not acknowledge, swift-slack sends the same empty acknowledgement. Catch-all handlers registered with `onInteractive` and `onEvent` match first.
 
 Both context types provide `client` for Web API calls, `say` to post a message, `respond` to reply through a response URL, and `logger`.
 

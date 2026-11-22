@@ -165,23 +165,18 @@ extension SlackApp {
                                 try await router.dispatch(context: .event(context), request: request)
                             #endif
                             case .interactive, .slashCommand:
-                                let context = Context(
-                                    client: client,
-                                    logger: runtimeLogger,
-                                    respond: Respond(transport: transport, logger: logger),
-                                    say: Say(client: client, logger: logger),
-                                    ack: SocketModeAcknowledger.makeAck(
-                                        envelopeId: envelope.envelopeId,
-                                        writer: outbound,
-                                    ),
-                                )
-                                let matched = try await router.dispatch(context: .request(context), request: request)
-                                if !matched {
-                                    // The router has logged the unmatched request. Match the HTTP mode, which
-                                    // acknowledges requests that no handler matched.
-                                    try await SocketModeAcknowledger.sendBasicAck(
-                                        envelopeId: envelope.envelopeId,
-                                        writer: outbound,
+                                try await SocketModeAcknowledger.dispatch(
+                                    request,
+                                    to: router,
+                                    envelopeId: envelope.envelopeId,
+                                    write: { text in try await outbound.write(.text(text)) },
+                                ) { ack in
+                                    Context(
+                                        client: client,
+                                        logger: runtimeLogger,
+                                        respond: Respond(transport: transport, logger: logger),
+                                        say: Say(client: client, logger: logger),
+                                        ack: ack,
                                     )
                                 }
                             case let .unsupported(type):
