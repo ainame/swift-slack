@@ -38,6 +38,26 @@ enum SocketModeAcknowledger {
         )
     }
 
+    /// Dispatches an interactive request or a slash command, and sends an empty acknowledgement when no handler
+    /// matched and the `onUnmatched(_:)` handler, if any, did not acknowledge it, as HTTP mode does.
+    static func dispatch(
+        _ request: Request,
+        to router: Router.FixedRouter,
+        envelopeId: String,
+        write: @escaping @Sendable (String) async throws -> Void,
+        makeContext: (Ack) -> SlackApp.Context,
+    ) async throws {
+        let state = SocketModeAcknowledgementState()
+        let ack = makeAck(envelopeId: envelopeId) { text in
+            try await write(text)
+            await state.markSent()
+        }
+        let matched = try await router.dispatch(context: .request(makeContext(ack)), request: request)
+        if !matched, await !state.isSent {
+            try await write(encode(SocketModeAcknowledgementMessage(envelopeId: envelopeId)))
+        }
+    }
+
     static func sendBasicAck(envelopeId: String, writer: WebSocketOutboundWriter) async throws {
         try await send(SocketModeAcknowledgementMessage(envelopeId: envelopeId), writer: writer)
     }
@@ -98,6 +118,15 @@ private struct SocketModeErrorAck: Encodable {
     private enum CodingKeys: String, CodingKey {
         case envelopeId = "envelope_id"
         case payload
+    }
+}
+
+/// Records whether a handler acknowledged a Socket Mode envelope, so swift-slack does not acknowledge it twice.
+actor SocketModeAcknowledgementState {
+    private(set) var isSent = false
+
+    func markSent() {
+        isSent = true
     }
 }
 #endif

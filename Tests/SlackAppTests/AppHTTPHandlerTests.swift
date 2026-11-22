@@ -308,6 +308,36 @@ struct AppHTTPHandlerTests {
         #expect(await logs.warnings() == [#"No handler matched slash command "/unknown""#])
     }
 
+    @Test func `onUnmatched acknowledgement becomes the response`() async throws {
+        let request = signedUnknownSlashCommandRequest()
+        let router = Router()
+        router.onUnmatched { context, _ in
+            guard case let .request(context) = context else { return }
+            try await context.ack(options: [OptionObject(text: TextObject(type: .plainText, text: "Ann"), value: "U1")])
+        }
+        let logs = LogRecorder()
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret", logger: logs.makeLogger()), router: router)
+
+        let (response, responseBody) = try await app.handle(request.0, body: request.1)
+
+        #expect(response.status == .ok)
+        let json = try JSONSerialization.jsonObject(with: #require(responseBody)) as? NSDictionary
+        #expect(json == ["options": [["text": ["type": "plain_text", "text": "Ann"], "value": "U1"]]])
+        #expect(await logs.warnings().isEmpty)
+    }
+
+    @Test func `onUnmatched without acknowledgement returns OK`() async throws {
+        let request = signedUnknownSlashCommandRequest()
+        let router = Router()
+        router.onUnmatched { _, _ in }
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
+
+        let (response, responseBody) = try await app.handle(request.0, body: request.1)
+
+        #expect(response.status == .ok)
+        #expect(responseBody == nil)
+    }
+
     @Test func `message button dispatches action handler by action id`() async throws {
         actor Tracker {
             private(set) var actionId: String?
@@ -680,4 +710,18 @@ private struct NoopAdapter: HTTPServerAdapter {
     func run(
         handler _: @escaping HTTPServerHandler,
     ) async throws {}
+}
+
+private func signedUnknownSlashCommandRequest() -> (HTTPRequest, Data) {
+    signedRequest(
+        secret: "secret",
+        method: .post,
+        path: "/slack/events",
+        contentType: "application/x-www-form-urlencoded",
+        body: Data(
+            "command=%2Funknown&text=&response_url=https%3A%2F%2Fhooks.slack.com%2Fcommands%2F123%2F456&trigger_id=trigger&user_id=U123&user_name=tester&channel_id=C123&channel_name=general&team_id=T123&team_domain=example&is_enterprise_install=false&api_app_id=A123"
+                .utf8,
+        ),
+        timestamp: currentTimestamp(),
+    )
 }
