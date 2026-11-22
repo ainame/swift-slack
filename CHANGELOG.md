@@ -16,7 +16,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * **BREAKING**: Added `PlanBlock` and plan DSL support. Add `.plan` to exhaustive `Block` switches - #282
 * Added Slackbot prompts and user visibility to `ButtonElement` and the Button DSL - #282
 * **BREAKING**: Added `.userConnection` and `.userConnectionStatusRequested`. Add both cases to exhaustive `Event` switches - #282
-* Added `Router.onUnmatched(_:)` to handle requests that no handler matches in place of the warning, including slash commands, which have no catch-all handler. The handler can acknowledge the request; otherwise swift-slack sends the empty acknowledgement it sends today - #285
+* Added `Router.onUnmatched(_:)` to handle requests that no handler matches in place of the warning, including slash commands, which have no catch-all handler. The handler can acknowledge the request; if it returns without acknowledging, swift-slack sends the empty acknowledgement it sends today, and if it throws, the request fails as with any other handler - #285
 
 ### Removed
 

@@ -190,7 +190,8 @@ public class Router {
         /// Runs the handler that matches `request`, or the `onUnmatched(_:)` handler when none does.
         ///
         /// Returns `false` when no handler matched, including when the `onUnmatched(_:)` handler ran, so the
-        /// caller sends an empty acknowledgement if that handler did not acknowledge the request.
+        /// caller of a slash command or an interactive request sends an empty acknowledgement if that handler did
+        /// not acknowledge it.
         @discardableResult
         func dispatch(context: DispatchContext, request: Request) async throws -> Bool {
             guard let handler = handler(for: request) else {
@@ -463,12 +464,15 @@ public class Router {
     /// Registers a handler for requests that no other handler matches, in place of the warning logged for them.
     ///
     /// The handler receives slash commands, interactive requests, and events that no handler registered for
-    /// their type and ID, and requests with an unsupported type. Catch-all handlers registered with
-    /// ``onInteractive(_:)`` and ``onEvent(_:)`` match first, so requests they handle never reach it.
+    /// their type and ID, including interactive payloads and events of types swift-slack does not model.
+    /// Catch-all handlers registered with ``onInteractive(_:)`` and ``onEvent(_:)`` match first, so requests they
+    /// handle never reach it. Socket Mode envelopes of unknown types are acknowledged without reaching it.
     ///
     /// A slash command or an interactive request arrives with a ``DispatchContext/request(_:)`` context, whose
-    /// `ack` the handler may call. If the handler returns without acknowledging, swift-slack sends an empty
-    /// acknowledgement, as it does when no handler matches. Errors it throws go to the ``onError(_:)`` handler.
+    /// `ack` the handler may call before it returns. If the handler returns without acknowledging, swift-slack
+    /// sends an empty acknowledgement, as it does when no handler matches. If it throws, the error goes to the
+    /// ``onError(_:)`` handler and the request fails as it does when a matched handler throws, like Bolt: HTTP
+    /// mode responds with `500` unless the handler has acknowledged, and Socket Mode sends no acknowledgement.
     ///
     /// ```swift
     /// router.onUnmatched { context, request in

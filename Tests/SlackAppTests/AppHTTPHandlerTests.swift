@@ -326,6 +326,19 @@ struct AppHTTPHandlerTests {
         #expect(await logs.warnings().isEmpty)
     }
 
+    @Test func `throwing onUnmatched returns internal server error`() async throws {
+        struct Failure: Error {}
+        let request = signedUnknownSlashCommandRequest()
+        let router = Router()
+        router.onUnmatched { _, _ in throw Failure() }
+        let app = AppHTTPHandler(slack: makeSlack(signingSecret: "secret"), router: router)
+
+        let (response, responseBody) = try await app.handle(request.0, body: request.1)
+
+        #expect(response.status == .internalServerError)
+        #expect(responseBody == nil)
+    }
+
     @Test func `onUnmatched without acknowledgement returns OK`() async throws {
         let request = signedUnknownSlashCommandRequest()
         let router = Router()
