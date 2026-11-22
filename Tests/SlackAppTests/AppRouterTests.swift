@@ -407,6 +407,9 @@ struct AppRouterTests {
             switch request {
             case let .slashCommand(payload):
                 await tracker.set(payload.command)
+            case let .interactive(envelope):
+                guard case let .blockActions(payload) = envelope.body else { return }
+                await tracker.set(payload.blockActions.first?.actionId ?? "")
             case .event:
                 await tracker.set("event")
             default:
@@ -422,6 +425,13 @@ struct AppRouterTests {
         )
         #expect(!commandMatched)
         #expect(await tracker.value == "/unknown")
+
+        let actionMatched = try await fixed.dispatch(
+            context: .request(makeRequestContext(logger: logs.makeLogger())),
+            request: .interactive(makeBlockActionEnvelope(actions: [("approve", "request")])),
+        )
+        #expect(!actionMatched)
+        #expect(await tracker.value == "approve")
 
         let eventMatched = try await fixed.dispatch(
             context: .event(makeEventContext(logger: logs.makeLogger())),

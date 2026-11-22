@@ -79,6 +79,25 @@ struct SocketModeAcknowledgerTests {
         ])
     }
 
+    @Test func `matched handler acknowledgement is sent once`() async throws {
+        let router = Router()
+        router.onSlashCommand("/unknown") { context, _ in try await context.ack() }
+
+        #expect(try await dispatchUnknownCommand(to: router) == [#"{"envelope_id":"env-1"}"#])
+    }
+
+    @Test func `throwing onUnmatched gets no acknowledgement`() async throws {
+        struct Failure: Error {}
+        let router = Router()
+        router.onUnmatched { _, _ in throw Failure() }
+        let messages = Messages()
+
+        await #expect(throws: Failure.self) {
+            try await dispatchUnknownCommand(to: router, messages: messages)
+        }
+        #expect(await messages.texts.isEmpty)
+    }
+
     @Test func `matched handler without acknowledgement gets none`() async throws {
         let router = Router()
         router.onSlashCommand("/unknown") { _, _ in }
@@ -95,7 +114,8 @@ private actor Messages {
     }
 }
 
-private func dispatchUnknownCommand(to router: Router) async throws -> [String] {
+@discardableResult
+private func dispatchUnknownCommand(to router: Router, messages: Messages = Messages()) async throws -> [String] {
     let payload = try JSONDecoder().decode(SlashCommandsPayload.self, from: Data("""
     {
       "trigger_id": "trigger", "command": "/unknown", "text": "", "user_id": "U123", "user_name": "ainame",
@@ -105,7 +125,6 @@ private func dispatchUnknownCommand(to router: Router) async throws -> [String] 
     """.utf8))
     let transport = NoopTransport()
     let client = await Slack(transport: transport).client
-    let messages = Messages()
 
     try await SocketModeAcknowledger.dispatch(
         .slashCommand(payload),
