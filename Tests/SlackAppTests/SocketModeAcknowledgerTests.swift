@@ -1,7 +1,5 @@
 #if SocketMode
 import Foundation
-import HTTPTypes
-import OpenAPIRuntime
 @testable import SlackApp
 import SlackBlockKit
 import SlackClient
@@ -9,14 +7,6 @@ import Testing
 
 struct SocketModeAcknowledgerTests {
     @Test func `clear acknowledgement omits the view`() async throws {
-        actor Messages {
-            private(set) var texts: [String] = []
-
-            func append(_ text: String) {
-                texts.append(text)
-            }
-        }
-
         let messages = Messages()
         let ack = SocketModeAcknowledger.makeAck(envelopeId: "env-1") { text in
             await messages.append(text)
@@ -123,7 +113,7 @@ private func dispatchUnknownCommand(to router: Router, messages: Messages = Mess
       "response_url": "https://hooks.slack.com/commands/T123/1/2", "api_app_id": "A123"
     }
     """.utf8))
-    let transport = NoopTransport()
+    let transport = MockTransport()
     let client = await Slack(transport: transport).client
 
     try await SocketModeAcknowledger.dispatch(
@@ -141,16 +131,5 @@ private func dispatchUnknownCommand(to router: Router, messages: Messages = Mess
         )
     }
     return await messages.texts
-}
-
-private struct NoopTransport: ClientTransport {
-    func send(
-        _: HTTPRequest,
-        body _: HTTPBody?,
-        baseURL _: URL,
-        operationID _: String,
-    ) async throws -> (HTTPResponse, HTTPBody?) {
-        (HTTPResponse(status: .ok), nil)
-    }
 }
 #endif

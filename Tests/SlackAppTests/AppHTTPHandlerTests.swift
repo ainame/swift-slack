@@ -708,17 +708,6 @@ private func signedRequest(
     )
 }
 
-private struct MockTransport: ClientTransport {
-    func send(
-        _: HTTPRequest,
-        body _: HTTPBody?,
-        baseURL _: URL,
-        operationID _: String,
-    ) async throws -> (HTTPResponse, HTTPBody?) {
-        (HTTPResponse(status: .ok), nil)
-    }
-}
-
 private struct NoopAdapter: HTTPServerAdapter {
     func run(
         handler _: @escaping HTTPServerHandler,

@@ -771,14 +771,4 @@ private func makeRequestContext(logger: Logger = Logger(label: "test")) async ->
     )
 }
 
-private struct MockTransport: ClientTransport {
-    func send(
-        _: HTTPRequest,
-        body _: HTTPBody?,
-        baseURL _: URL,
-        operationID _: String,
-    ) async throws -> (HTTPResponse, HTTPBody?) {
-        (HTTPResponse(status: .ok), nil)
-    }
-}
 #endif

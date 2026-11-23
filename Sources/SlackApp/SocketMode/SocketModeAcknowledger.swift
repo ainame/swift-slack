@@ -54,7 +54,7 @@ enum SocketModeAcknowledger {
         }
         let matched = try await router.dispatch(context: .request(makeContext(ack)), request: request)
         if !matched, await !state.isSent {
-            try await write(encode(SocketModeAcknowledgementMessage(envelopeId: envelopeId)))
+            try await ack()
         }
     }
 
