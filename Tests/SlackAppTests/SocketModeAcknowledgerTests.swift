@@ -69,6 +69,46 @@ struct SocketModeAcknowledgerTests {
         ])
     }
 
+    @Test func `onUnmatched acknowledgement still being written is not repeated`() async throws {
+        actor Pending {
+            private(set) var task: Task<Void, any Error>?
+            func set(_ task: Task<Void, any Error>) {
+                self.task = task
+            }
+        }
+
+        let (writeStarted, writeStartedContinuation) = AsyncStream<Void>.makeStream()
+        let (writeReleased, writeReleaseContinuation) = AsyncStream<Void>.makeStream()
+        let messages = Messages()
+        let pending = Pending()
+        let router = Router()
+        router.onUnmatched { context, _ in
+            guard case let .request(context) = context else { return }
+            // Returns while the acknowledgement's write is suspended.
+            await pending.set(Task { try await context.ack(errors: ["field": "Unavailable"]) })
+            for await _ in writeStarted {
+                break
+            }
+        }
+
+        try await dispatchUnknownCommand(to: router, messages: messages) { text in
+            // Only the handler's acknowledgement waits, so a fallback acknowledgement would be recorded first.
+            if text.contains(#""response_action":"errors""#) {
+                writeStartedContinuation.yield()
+                for await _ in writeReleased {
+                    break
+                }
+            }
+            await messages.append(text)
+        }
+        writeReleaseContinuation.yield()
+        try await #require(await pending.task).value
+
+        let texts = await messages.texts
+        #expect(texts.count == 1)
+        #expect(texts.first?.contains(#""response_action":"errors""#) == true)
+    }
+
     @Test func `matched handler acknowledgement is sent once`() async throws {
         let router = Router()
         router.onSlashCommand("/unknown") { context, _ in try await context.ack() }
@@ -105,7 +145,11 @@ private actor Messages {
 }
 
 @discardableResult
-private func dispatchUnknownCommand(to router: Router, messages: Messages = Messages()) async throws -> [String] {
+private func dispatchUnknownCommand(
+    to router: Router,
+    messages: Messages = Messages(),
+    write: (@Sendable (String) async throws -> Void)? = nil,
+) async throws -> [String] {
     let payload = try JSONDecoder().decode(SlashCommandsPayload.self, from: Data("""
     {
       "trigger_id": "trigger", "command": "/unknown", "text": "", "user_id": "U123", "user_name": "ainame",
@@ -120,7 +164,7 @@ private func dispatchUnknownCommand(to router: Router, messages: Messages = Mess
         .slashCommand(payload),
         to: Router.FixedRouter(from: router),
         envelopeId: "env-1",
-        write: { text in await messages.append(text) },
+        write: write ?? { text in await messages.append(text) },
     ) { ack in
         SlackApp.Context(
             client: client,
