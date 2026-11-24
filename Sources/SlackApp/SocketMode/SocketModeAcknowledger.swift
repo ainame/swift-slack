@@ -49,12 +49,13 @@ enum SocketModeAcknowledger {
     ) async throws {
         let state = SocketModeAcknowledgementState()
         let ack = makeAck(envelopeId: envelopeId) { text in
+            // Reserve before the write suspends, so the fallback below sees an acknowledgement still in flight.
+            _ = await state.reserve()
             try await write(text)
-            await state.markSent()
         }
         let matched = try await router.dispatch(context: .request(makeContext(ack)), request: request)
-        if !matched, await !state.isSent {
-            try await ack()
+        if !matched, await state.reserve() {
+            try await makeAck(envelopeId: envelopeId, write: write)()
         }
     }
 
@@ -121,12 +122,15 @@ private struct SocketModeErrorAck: Encodable {
     }
 }
 
-/// Records whether a handler acknowledged a Socket Mode envelope, so swift-slack does not acknowledge it twice.
+/// Records whether an acknowledgement of a Socket Mode envelope has started, so swift-slack does not send a
+/// second one.
 actor SocketModeAcknowledgementState {
-    private(set) var isSent = false
+    private var isReserved = false
 
-    func markSent() {
-        isSent = true
+    /// Marks the acknowledgement as started, and returns whether none had started before.
+    func reserve() -> Bool {
+        defer { isReserved = true }
+        return !isReserved
     }
 }
 #endif
