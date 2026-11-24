@@ -22,7 +22,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Changed
 
-* Lowered the minimum back to Swift 6.2. Swift 6.4 is still the development toolchain, and CI now also builds with Swift 6.2 - #PR
+* Lowered the minimum back to Swift 6.2. Swift 6.4 is still the development toolchain, and CI now also builds with Swift 6.2 - #289
 
 ### Removed
 
@@ -34,7 +34,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 * Fixed swift-slack Slack Lists response decoding to preserve link data sent with camelCase keys. Encoding continues to use snake_case - #282
 * Fixed form encoding that serialized numeric request values of 0 and 1 as booleans - #282
-* Fixed apps built with Swift 6.4 failing to launch on macOS 26 and earlier with `Symbol not found: _swift_task_cancellationShieldPop`. Streaming cleanup no longer uses `withTaskCancellationShield`; its `chat.stopStream` again runs in an awaited task that does not inherit the cancellation (#287) - #PR
+* Fixed apps built with Swift 6.4 failing to launch on macOS 26 and earlier with `Symbol not found: _swift_task_cancellationShieldPop`. Streaming cleanup no longer uses `withTaskCancellationShield`; its `chat.stopStream` again runs in an awaited task that does not inherit the cancellation (#287) - #289
 
 ## [2027.1.0-beta.4] - 2026-11-07
 
