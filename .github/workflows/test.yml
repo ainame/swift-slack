@@ -32,6 +32,26 @@ jobs:
       - name: Build with SocketMode and HummingbirdHTTPAdapter only
         run: swift build --disable-default-traits --traits SocketMode,HummingbirdHTTPAdapter
 
+  # Development uses the toolchain in .swift-version, so build with the manifest's minimum to catch
+  # newer language or standard library features. Keep this in step with swift-tools-version.
+  build-minimum-swift:
+    runs-on: ubuntu-26.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Update apt package index
+        run: sudo apt-get update
+
+      - name: Setup Swiftly
+        uses: vapor/swiftly-action@v0.2.1
+        with:
+          toolchain: "6.2"
+
+      - name: Build with all traits
+        run: swift build --enable-all-traits
+
   test:
     runs-on: ubuntu-26.04
 

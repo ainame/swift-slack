@@ -266,56 +266,48 @@ struct StreamingMessageSenderTests {
         cleanupFails: Bool,
         path: InputPath,
     ) async {
-        for useShield in [false, true] {
-            let transport = FakeTransport(
-                failing: cleanupFails ? ["append", "stopOnce"] : ["append"],
-                pausing: "append",
-            )
-            let log = LogRecorder()
-            let input = ManualInput()
-            await input.yield(.markdown("first"))
-            let sending = Task { () -> (error: (any Error)?, isCancelled: Bool, isShielded: Bool) in
-                var error: (any Error)?
-                do {
-                    let delivery = makeDelivery(
-                        transport,
-                        blocks: blocks,
-                        useCancellationShield: useShield,
-                        logger: log.logger,
-                    )
-                    _ = try await send(delivery, input, through: path)
-                } catch let thrown {
-                    error = thrown
-                }
-                return (error, Task.isCancelled, taskHasCancellationShield())
+        let transport = FakeTransport(
+            failing: cleanupFails ? ["append", "stopOnce"] : ["append"],
+            pausing: "append",
+        )
+        let log = LogRecorder()
+        let input = ManualInput()
+        await input.yield(.markdown("first"))
+        let sending = Task { () -> (error: (any Error)?, isCancelled: Bool) in
+            var error: (any Error)?
+            do {
+                let delivery = makeDelivery(transport, blocks: blocks, logger: log.logger)
+                _ = try await send(delivery, input, through: path)
+            } catch let thrown {
+                error = thrown
             }
-            await transport.waitForCalls(1)
-            await input.yield(.markdown("second"))
-            await transport.waitForCalls(2)
-            // The append is in flight when the task is cancelled, and fails once it is answered.
-            sending.cancel()
-            await transport.release()
-            await transport.waitForCalls(3)
-            await input.finish()
-
-            let outcome = await sending.value
-            // The append's error, rather than `CancellationError` or the cleanup stop's error.
-            #expect(outcome.error as? StreamingMessage.Error == StreamingMessage.Error(
-                method: "chat.appendStream",
-                code: "failed",
-            ))
-            // After cleanup, the sending task still observes its cancellation.
-            #expect(outcome.isCancelled)
-            #expect(!outcome.isShielded)
-            // The stop is protected in both modes. Only the newer path uses a shield.
-            #expect(await transport.contexts == [
-                .init(method: "start", isCancelled: false, isShielded: false),
-                .init(method: "append", isCancelled: false, isShielded: false),
-                .init(method: "stopOnce", isCancelled: false, isShielded: useShield && cancellationShieldAvailable()),
-            ])
-            // Both ways of protecting the stop report its failure alike, and nothing when it succeeds.
-            #expect(await warnings(log) == (cleanupFails ? [cleanupWarning] : []))
+            return (error, Task.isCancelled)
         }
+        await transport.waitForCalls(1)
+        await input.yield(.markdown("second"))
+        await transport.waitForCalls(2)
+        // The append is in flight when the task is cancelled, and fails once it is answered.
+        sending.cancel()
+        await transport.release()
+        await transport.waitForCalls(3)
+        await input.finish()
+
+        let outcome = await sending.value
+        // The append's error, rather than `CancellationError` or the cleanup stop's error.
+        #expect(outcome.error as? StreamingMessage.Error == StreamingMessage.Error(
+            method: "chat.appendStream",
+            code: "failed",
+        ))
+        // After cleanup, the sending task still observes its cancellation.
+        #expect(outcome.isCancelled)
+        // The stop is protected from the cancellation.
+        #expect(await transport.contexts == [
+            .init(method: "start", isCancelled: false),
+            .init(method: "append", isCancelled: false),
+            .init(method: "stopOnce", isCancelled: false),
+        ])
+        // The stop's failure is reported, and nothing when it succeeds.
+        #expect(await warnings(log) == (cleanupFails ? [cleanupWarning] : []))
     }
 
     @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
@@ -513,14 +505,14 @@ struct StreamingMessageSenderTests {
         #expect(await transport.heldCallWasCancelled == false)
     }
 
-    @Test(.timeLimit(.minutes(1)), arguments: [false, true])
-    func `does not report a cleanup stop that fails after Slack ends the session`(useShield: Bool) async throws {
+    @Test(.timeLimit(.minutes(1)))
+    func `does not report a cleanup stop that fails after Slack ends the session`() async throws {
         // The cleanup stop is answered with a failure only once Slack has ended the session.
         let transport = FakeTransport(failing: ["append", "stopOnce"], holding: "stopOnce")
         let log = LogRecorder()
         let (parts, continuation) = AsyncThrowingStream.makeStream(of: Part.self)
         let sending = Task {
-            try await makeDelivery(transport, blocks: blocks, useCancellationShield: useShield, logger: log.logger)
+            try await makeDelivery(transport, blocks: blocks, logger: log.logger)
                 .send(parts)
         }
         continuation.yield(.markdown("first"))
@@ -561,7 +553,7 @@ struct StreamingMessageSenderTests {
         ])
         // The cleanup stop is protected from cancellation, even while it waits for the session stop.
         #expect(await transport.heldCallWasCancelled == false)
-        #expect(await transport.contexts.last == .init(method: "stopOnce", isCancelled: false, isShielded: cancellationShieldAvailable()))
+        #expect(await transport.contexts.last == .init(method: "stopOnce", isCancelled: false))
     }
 
     @Test(.timeLimit(.minutes(1)), arguments: InputPath.allCases)
@@ -975,7 +967,6 @@ struct StreamingMessageSenderTests {
         blocks: [Block]? = nil,
         minimumInterval: Duration = .zero,
         sleep: (@Sendable (Duration) async throws -> Void)? = nil,
-        useCancellationShield: Bool = true,
         logger: Logger = .discarding,
     ) -> StreamingMessage.Delivery {
         var sender = StreamingMessageSender(
@@ -987,7 +978,6 @@ struct StreamingMessageSenderTests {
         if let sleep {
             sender.sleep = sleep
         }
-        sender.useCancellationShield = useCancellationShield
         return StreamingMessage.Delivery(sender: sender)
     }
 
@@ -1015,20 +1005,6 @@ struct StreamingMessageSenderTests {
 /// The metadata of the warnings `log` recorded.
 private func warnings(_ log: LogRecorder) async -> [[String: String]] {
     await log.entries().filter { $0.level == .warning }.map(\.metadata)
-}
-
-private func cancellationShieldAvailable() -> Bool {
-    if #available(macOS 27, iOS 27, macCatalyst 27, tvOS 27, watchOS 27, visionOS 27, *) {
-        return true
-    }
-    return false
-}
-
-private func taskHasCancellationShield() -> Bool {
-    if #available(macOS 27, iOS 27, macCatalyst 27, tvOS 27, watchOS 27, visionOS 27, *) {
-        return Task.hasActiveCancellationShield
-    }
-    return false
 }
 
 private struct InputError: Error {}
@@ -1228,7 +1204,6 @@ actor FakeTransport: StreamingMessageTransport {
     struct Context: Equatable {
         var method: String
         var isCancelled: Bool
-        var isShielded: Bool
     }
 
     static let ts = "1700000000.000100"
@@ -1299,7 +1274,6 @@ actor FakeTransport: StreamingMessageTransport {
         contexts.append(Context(
             method: call.method,
             isCancelled: Task.isCancelled,
-            isShielded: taskHasCancellationShield(),
         ))
         // Refuse calls made from a cancelled task, like an HTTP transport, so the tests show that the cleanup stop
         // is protected from the cancellation.

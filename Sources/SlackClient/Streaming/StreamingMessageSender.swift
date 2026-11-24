@@ -52,8 +52,6 @@ struct StreamingMessageSender: Sendable {
     let logger: Logger
     /// Waits between calls and before retries. Tests replace it to observe the waits.
     var sleep: @Sendable (Duration) async throws -> Void = { try await Task.sleep(for: $0) }
-    /// Tests disable the shield to exercise the fallback on a newer OS.
-    var useCancellationShield = true
 
     /// Sendable inputs can be read by a child task. Delivery failures then cancel the reader even while its
     /// next element is suspended, rather than waiting for the producer to yield again.
@@ -265,26 +263,20 @@ struct StreamingMessageSender: Sendable {
     /// Ends delivery after a failed call or a cancellation, and leaves rethrowing the error to the caller.
     ///
     /// Once the message has a `ts`, it is stopped with one call that carries no parts or blocks: a call that failed
-    /// or was abandoned may already have delivered its parts. The call is protected from cancellation, because
-    /// HTTP transports abandon requests made from a cancelled task. On older Apple OS versions, an awaited task
-    /// provides that protection because cancellation shields are unavailable. Its failure is logged as a warning
+    /// or was abandoned may already have delivered its parts. The call runs in a task that does not inherit the
+    /// caller's cancellation, because HTTP transports abandon requests made from a cancelled task; the caller
+    /// awaits it, so it does not outlive the delivery. Its failure is logged as a warning
     /// rather than thrown, so the caller still rethrows the original error. Once Slack has ended the session, no
     /// call is made and ``StreamingMessage/SessionStopped`` is thrown instead. A failure is not logged if the
     /// session-stop signal is observed before logging.
     private func abandon(ts: String?, stopSignal: SessionStopSignal) async throws {
         try await stopSignal.check()
         guard let ts else { return }
-        let failure: (any Error)? = if #available(macOS 27, iOS 27, macCatalyst 27, tvOS 27, watchOS 27, visionOS 27, *),
-                                       useCancellationShield {
-            await withTaskCancellationShield {
-                await Self.cleanupStop(ts: ts, transport: transport, stopSignal: stopSignal)
-            }
-        } else {
-            // A new task does not inherit cancellation; awaiting it keeps cleanup within this operation's lifetime.
-            await Task { [transport] in
-                await Self.cleanupStop(ts: ts, transport: transport, stopSignal: stopSignal)
-            }.value
-        }
+        // `withTaskCancellationShield` would keep the stop in this task, but Swift 6.4 links its runtime entry points
+        // strongly, so a binary using it fails to launch below macOS 27 even behind `#available` (#287).
+        let failure = await Task { [transport] in
+            await Self.cleanupStop(ts: ts, transport: transport, stopSignal: stopSignal)
+        }.value
         // A failure is expected once Slack has ended the session, so the session stop takes precedence over it.
         try await stopSignal.check()
         if let failure {
@@ -292,8 +284,8 @@ struct StreamingMessageSender: Sendable {
         }
     }
 
-    /// Makes the cleanup stop and returns its error rather than throwing it, so that both ways of protecting it
-    /// from cancellation handle the outcome alike.
+    /// Makes the cleanup stop and returns its error rather than throwing it, so that the caller can log it after
+    /// checking for the session stop.
     private static func cleanupStop(
         ts: String,
         transport: any StreamingMessageTransport,
