@@ -51,7 +51,7 @@ Use two phases. Stop after Phase A unless the release metadata PR has already be
    - Include the PR number in every `CHANGELOG.md` release-note bullet using GitHub-native references such as `- #123`.
    - If one changelog bullet summarizes multiple PRs, include a `#123`-style reference for each PR covered by that bullet.
    - Prefer bare `#123` references over full Markdown links for same-repository PRs.
-   - Update README package dependency examples to the new release version.
+   - Update the package dependency examples in `README.md` and in the DocC articles under `Sources/*/*.docc` to the new release version. Find them with `git grep -n 'from: "20' -- README.md 'Sources/*.docc/*'`; an article left on an older version may lack the APIs it documents.
    - Keep `AGENTS.md` and this skill aligned with the CalVer policy if the policy changes.
    - Keep `scripts/release.rb` validating `YYYY.M.PATCH` and suggesting the next monthly release counter.
 4. Verify only when needed.
