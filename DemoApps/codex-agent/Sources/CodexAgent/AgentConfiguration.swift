@@ -11,9 +11,7 @@ struct AgentConfiguration {
         case unsafeWorkspace(String)
     }
 
-    let slackToken: String
-    let slackAppToken: String?
-    let signingSecret: String?
+    let slack: SlackApp.Configuration
     let host: String
     let port: Int
     let codexPath: String?
@@ -77,41 +75,36 @@ struct AgentConfiguration {
 
     static func load() async throws -> Self {
         let envFilePath = FileManager.default.currentDirectoryPath + "/.env"
-        let secrets: Set = ["SLACK_BOT_TOKEN", "SLACK_APP_TOKEN", "SLACK_SIGNING_SECRET"]
+        // The Slack keys are read as secrets by `SlackApp.Configuration(config:)`.
         let fileProvider = try await EnvironmentVariablesProvider(
             environmentFilePath: FilePath(envFilePath),
             allowMissing: true,
-            secretsSpecifier: .specific(secrets),
         )
-        let configuration = ConfigReader(providers: [
-            EnvironmentVariablesProvider(secretsSpecifier: .specific(secrets)),
+        let reader = ConfigReader(providers: [
+            EnvironmentVariablesProvider(),
             fileProvider,
         ])
 
-        return try Self(
-            slackToken: requiredString("SLACK_BOT_TOKEN", in: configuration),
-            slackAppToken: normalized(configuration.string(forKey: "SLACK_APP_TOKEN", isSecret: true)),
-            signingSecret: normalized(configuration.string(forKey: "SLACK_SIGNING_SECRET", isSecret: true)),
-            host: normalized(configuration.string(forKey: "HOST")) ?? "0.0.0.0",
-            port: configuration.int(forKey: "PORT", default: 8080),
-            codexPath: normalized(configuration.string(forKey: "CODEX_PATH")),
-            codexModel: normalized(configuration.string(forKey: "CODEX_MODEL")),
-            workspace: normalized(configuration.string(forKey: "CODEX_WORKSPACE")),
-            sessionWorkspaces: normalized(configuration.string(forKey: "CODEX_SESSION_WORKSPACES")),
+        let slack = SlackApp.Configuration(config: reader, userAgent: "CodexAgent/1.0")
+        guard slack.token != nil else {
+            throw Error.missingEnvironmentVariable("SLACK_BOT_TOKEN")
+        }
+
+        return Self(
+            slack: slack,
+            host: normalized(reader.string(forKey: "HOST")) ?? "0.0.0.0",
+            port: reader.int(forKey: "PORT", default: 8080),
+            codexPath: normalized(reader.string(forKey: "CODEX_PATH")),
+            codexModel: normalized(reader.string(forKey: "CODEX_MODEL")),
+            workspace: normalized(reader.string(forKey: "CODEX_WORKSPACE")),
+            sessionWorkspaces: normalized(reader.string(forKey: "CODEX_SESSION_WORKSPACES")),
             allowedUserIds: Set(
-                (configuration.string(forKey: "ALLOWED_USER_IDS") ?? "")
+                (reader.string(forKey: "ALLOWED_USER_IDS") ?? "")
                     .split(separator: ",")
                     .map { $0.trimmingCharacters(in: .whitespaces) }
                     .filter { !$0.isEmpty },
             ),
         )
-    }
-
-    private static func requiredString(_ key: String, in configuration: ConfigReader) throws -> String {
-        guard let value = normalized(configuration.string(forKey: ConfigKey(key), isSecret: true)) else {
-            throw Error.missingEnvironmentVariable(key)
-        }
-        return value
     }
 
     private static func normalized(_ value: String?) -> String? {
@@ -121,16 +114,15 @@ struct AgentConfiguration {
 
     static func configuration(from environment: Self) throws -> SlackApp.Configuration {
         #if HummingbirdHTTPAdapter
-        guard let signingSecret = environment.signingSecret else {
+        guard environment.slack.signingSecret != nil else {
             throw Error.missingEnvironmentVariable("SLACK_SIGNING_SECRET")
         }
-        return .init(userAgent: "CodexAgent/1.0", token: environment.slackToken, signingSecret: signingSecret)
         #else
-        guard let appToken = environment.slackAppToken else {
+        guard environment.slack.appToken != nil else {
             throw Error.missingEnvironmentVariable("SLACK_APP_TOKEN")
         }
-        return .init(userAgent: "CodexAgent/1.0", appToken: appToken, token: environment.slackToken)
         #endif
+        return environment.slack
     }
 
     static func runtimeMode(from environment: Self) -> SlackApp.Mode {

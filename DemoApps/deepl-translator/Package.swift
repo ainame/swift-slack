@@ -17,6 +17,7 @@ let package = Package(
                 "SocketMode",
                 "Events",
                 "HummingbirdHTTPAdapter",
+                "SwiftConfiguration",
                 "WebAPI_Chat",
                 "WebAPI_Views",
                 "WebAPI_Conversations"

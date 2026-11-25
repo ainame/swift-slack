@@ -12,13 +12,11 @@ struct DeepLTranslatorApp {
     }
 
     struct Environment {
-        let slackToken: String
+        let slack: SlackApp.Configuration
         let deepLAPIKey: String
         let isFreePlan: Bool
         let runnerLanguages: [String]
         let defaultLanguage: String
-        let slackAppToken: String?
-        let signingSecret: String?
         let host: String
         let port: Int
     }
@@ -163,19 +161,15 @@ struct DeepLTranslatorApp {
             logger.info("No .env file found, using environment variables")
         }
 
-        let secrets: Set<String> = [
-            "SLACK_BOT_TOKEN",
-            "SLACK_APP_TOKEN",
-            "SLACK_SIGNING_SECRET",
-            "DEEPL_API_KEY",
-        ]
+        // The Slack keys are read as secrets by `SlackApp.Configuration(config:)`.
+        let secrets: Set<String> = ["DEEPL_API_KEY"]
 
         let fileProvider = try await EnvironmentVariablesProvider(
             environmentFilePath: FilePath(envFilePath),
             allowMissing: true,
             secretsSpecifier: .specific(secrets),
         )
-        let configuration = ConfigReader(
+        let reader = ConfigReader(
             providers: [
                 EnvironmentVariablesProvider(secretsSpecifier: .specific(secrets)),
                 fileProvider,
@@ -183,24 +177,28 @@ struct DeepLTranslatorApp {
         )
 
         let runnerLanguages = Languages.getOrderedLanguages(
-            from: normalized(configuration.string(forKey: "DEEPL_RUNNER_LANGUAGES")),
+            from: normalized(reader.string(forKey: "DEEPL_RUNNER_LANGUAGES")),
         )
 
+        // `slack run` provides the development app's tokens as SLACK_BOT_TOKEN and SLACK_APP_TOKEN.
+        let slack = SlackApp.Configuration(config: reader, userAgent: "DeepLTranslator/1.0")
+        guard slack.token != nil else {
+            throw ConfigurationError.missingEnvironmentVariable("SLACK_BOT_TOKEN")
+        }
+
         return try Environment(
-            slackToken: requiredString("SLACK_BOT_TOKEN", in: configuration, isSecret: true),
-            deepLAPIKey: requiredString("DEEPL_API_KEY", in: configuration, isSecret: true),
-            isFreePlan: configuration.bool(forKey: "DEEPL_FREE_API_PLAN", default: false),
+            slack: slack,
+            deepLAPIKey: requiredString("DEEPL_API_KEY", in: reader, isSecret: true),
+            isFreePlan: reader.bool(forKey: "DEEPL_FREE_API_PLAN", default: false),
             runnerLanguages: runnerLanguages,
             defaultLanguage: runnerLanguages.first ?? "en",
-            slackAppToken: normalized(configuration.string(forKey: "SLACK_APP_TOKEN", isSecret: true)),
-            signingSecret: normalized(configuration.string(forKey: "SLACK_SIGNING_SECRET", isSecret: true)),
-            host: normalized(configuration.string(forKey: "HOST", default: "0.0.0.0")) ?? "0.0.0.0",
-            port: configuration.int(forKey: "PORT", default: 8080),
+            host: normalized(reader.string(forKey: "HOST", default: "0.0.0.0")) ?? "0.0.0.0",
+            port: reader.int(forKey: "PORT", default: 8080),
         )
     }
 
-    private static func requiredString(_ key: String, in configuration: ConfigReader, isSecret: Bool) throws -> String {
-        guard let value = normalized(configuration.string(forKey: ConfigKey(key), isSecret: isSecret)) else {
+    private static func requiredString(_ key: String, in reader: ConfigReader, isSecret: Bool) throws -> String {
+        guard let value = normalized(reader.string(forKey: ConfigKey(key), isSecret: isSecret)) else {
             throw ConfigurationError.missingEnvironmentVariable(key)
         }
         return value
@@ -216,30 +214,19 @@ struct DeepLTranslatorApp {
 
     private static func configuration(from environment: Environment) throws -> SlackApp.Configuration {
         #if HummingbirdHTTPAdapter
-        guard let signingSecret = environment.signingSecret else {
+        guard environment.slack.signingSecret != nil else {
             logger.error("SLACK_SIGNING_SECRET is required when HummingbirdHTTPAdapter trait is enabled")
             throw ConfigurationError.missingEnvironmentVariable("SLACK_SIGNING_SECRET")
         }
-
         logger.info("Using Hummingbird HTTP adapter")
-        return .init(
-            userAgent: "DeepLTranslator/1.0",
-            token: environment.slackToken,
-            signingSecret: signingSecret,
-        )
         #else
-        guard let appToken = environment.slackAppToken else {
+        guard environment.slack.appToken != nil else {
             logger.error("SLACK_APP_TOKEN is required when running in Socket Mode")
             throw ConfigurationError.missingEnvironmentVariable("SLACK_APP_TOKEN")
         }
-
         logger.info("Using Socket Mode")
-        return .init(
-            userAgent: "DeepLTranslator/1.0",
-            appToken: appToken,
-            token: environment.slackToken,
-        )
         #endif
+        return environment.slack
     }
 
     private static func runtimeMode(from environment: Environment) -> SlackApp.Mode {
