@@ -56,7 +56,7 @@ traits.append(.default(enabledTraits: Set(defaultTraitNames)))
 
 let package = Package(
     name: "swift-slack",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v15)],
     products: [
         .library(name: "SlackClient", targets: ["SlackClient"]),
         .library(name: "SlackApp", targets: ["SlackApp"]),
