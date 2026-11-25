@@ -34,7 +34,12 @@ Repository adaptations: swift-slack uses CalVer `YYYY.M.PATCH`, without `v`-pref
 tags; its PATCH counter does not signal API compatibility. Keep `**BREAKING**:`
 markers explicit. Keep a Changelog recommends six categories; our optional
 `Maintenance` section is a deliberate extension for notable contributor outcomes,
-placed last. Our required bare PR references also remain a repository convention.
+placed last. Each version also groups its entries under two `###` sections,
+`Library updates` then `Slack API updates`, which nest the standard categories as
+`####` headings; `Maintenance` stays a `###` section after them. Never use `##` for
+these groups: `##` is the version heading, and `scripts/release.rb` ends a
+version's notes at the next one. Our required bare PR references also remain a
+repository convention.
 
 ## Choose what belongs
 
@@ -50,6 +55,14 @@ placed last. Our required bare PR references also remain a repository convention
   even when implemented through tooling or CI.
 - A PR with no notable consumer or contributor effect needs no entry. Record its
   scope and validation in the PR description instead.
+- Sort by what changed, not by which PR changed it. Put changes that track upstream
+  Slack API schemas (Web API methods and request options, generated or handwritten
+  models and events, and Block Kit types that mirror upstream) under
+  `Slack API updates`. Put swift-slack's own runtime, client, platform, and toolchain
+  changes under `Library updates`, even when an upstream-sync PR made them.
+- Open `Slack API updates` with one line naming the upstream snapshots and listing
+  each sync PR with its snapshot date, such as `synced in #282 (2026-11-14)`. A sync
+  PR adds itself to that line.
 - Name the repository when discussing models or fields: `java-slack-sdk` fixtures
   and Java models, `slack-api-ref` schemas, or `swift-slack` generated/handwritten
   types. An upstream addition is not a downstream feature until swift-slack exposes
@@ -76,9 +89,10 @@ effects and references while changing the current PR's contribution.
 
 ## Write and check
 
-- Use the existing past tense, `*` bullets, and contiguous lists. Keep applicable
-  sections in Added, Changed, Deprecated, Removed, Fixed, Security, Maintenance
-  order, and omit empty sections.
+- Use the existing past tense, `*` bullets, and contiguous lists. Order a version's
+  sections as Library updates, Slack API updates, Maintenance. Inside each update
+  group, keep applicable categories in Added, Changed, Deprecated, Removed, Fixed,
+  Security order. Omit empty categories and groups.
 - Describe the reader-visible result. Use the repository's `**BREAKING**:` marker
   for compatibility breaks and explain what consumers must change.
 - End each bullet with its PR reference, for example `- #149`. Identify important
