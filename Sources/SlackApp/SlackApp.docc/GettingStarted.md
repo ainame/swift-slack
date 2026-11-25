@@ -24,7 +24,7 @@ The default traits include Socket Mode, Events API payloads, and every Web API g
 
 ## Socket Mode
 
-Socket Mode connects to Slack over a WebSocket, so your app doesn't need a public URL. It needs an app-level token with the `connections:write` scope and a bot token:
+Socket Mode connects to Slack over a WebSocket, so your app doesn't need a public URL. It needs an app-level token with the `connections:write` scope and a bot token. To read them from environment variables or swift-configuration, or to run with `slack run`, see <doc:Configuration>.
 
 ```swift
 import SlackKit

@@ -35,6 +35,6 @@ Depend on `SlackClient` alone when you only call the Web API, such as from a scr
 
 ### Next Steps
 
-- `SlackApp` documentation: Getting Started, examples, and the migration guide from 0.5.x
+- `SlackApp` documentation: Getting Started, configuration with environment variables, swift-configuration and the Slack CLI, examples, and the migration guide from 0.5.x
 - `SlackClient` documentation: Web API usage and package traits
 - `SlackBlockKitDSL` documentation: the Block Kit DSL guide and examples

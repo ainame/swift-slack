@@ -19,7 +19,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * Added Slackbot prompts and user visibility to `ButtonElement` and the Button DSL - #282
 * **BREAKING**: Added `.userConnection` and `.userConnectionStatusRequested`. Add both cases to exhaustive `Event` switches - #282
 * Added `Router.onUnmatched(_:)` to handle requests that no handler matches in place of the warning, including slash commands, which have no catch-all handler. The handler can acknowledge the request; if it returns without acknowledging, swift-slack sends the empty acknowledgement it sends today, and if it throws, the request fails as with any other handler - #285
-* Added `Slack.Configuration.fromEnvironment(userAgent:)`, which reads `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN` and `SLACK_SIGNING_SECRET`, the variables the Slack CLI sets for `slack run`. The DeepL translator demo can now run with `slack run`, and the README describes the setup - #290
+* Added `Slack.Configuration.fromEnvironment(userAgent:)`, which reads `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN` and `SLACK_SIGNING_SECRET`, the variables the Slack CLI sets for `slack run`. The DeepL translator demo can now run with `slack run`, and a new SlackApp configuration guide describes both readers and the `slack run` setup - #290
 * Added the `SwiftConfiguration` trait and `Slack.Configuration(config:userAgent:)`, which reads `slack.botToken`, `slack.appToken` and `slack.signingSecret` from a swift-configuration `ConfigReader`. Through environment variables these are the same variables as `fromEnvironment`. The trait is not enabled by default - #290
 
 ### Changed
