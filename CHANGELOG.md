@@ -22,6 +22,7 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ### Changed
 
+* **BREAKING**: Raised the macOS minimum from 14 to 15, the minimum of swift-configuration. Raise your app's macOS deployment target to 15 - #290
 * Reverted the Swift 6.4 minimum from 2027.1.0-beta.4 back to Swift 6.2. Beta.4 raised it to protect the streaming cleanup `chat.stopStream` with `withTaskCancellationShield`, but Swift 6.4 links that function so that apps fail to launch on macOS 26 and earlier with `Symbol not found: _swift_task_cancellationShieldPop` (#287). The cleanup stop again runs in an awaited task that does not inherit the cancellation, with the same behavior - #289
 
 ### Removed

@@ -16,7 +16,7 @@ targets.append(executable("viewFieldsCheck"))
 
 let package = Package(
     name: "Examples",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v15)],
     products: products(from: targets),
     dependencies: [
         .package(
