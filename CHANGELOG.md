@@ -9,10 +9,13 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 ## [Unreleased]
 
+## [2027.1.0-beta.5] - 2026-11-25
+
+This beta lowers the Swift minimum back to 6.2 and raises the macOS minimum to 15. It adds `slack run` support with configuration read from the environment or swift-configuration, `Router.onUnmatched(_:)`, and Slackbot skills and plan blocks from the upstream schema updates. APIs may still change before the January 2027 release.
+
 ### Added
 
 * Added swift-slack Web API operations for app icons (URL route), managed app permissions and assistant search, plus java-slack-sdk file skill/AI metadata, agent-session views and initiators, activity inputs, attachment thumbnails and app-level token rotation - #284
-
 * Added 15 Web API methods for Slackbot skills, admin MCP server management, and canvas content retrieval. Enable `WebAPI_Slackbot` when selecting traits manually for non-admin Slackbot skill methods - #282
 * Added request options for tabbing a new canvas into a channel, checking workspace Slackbot availability, and including archived items in a Slack Lists download. Added the java-slack-sdk conversation `is_file`, team `slackbot_availability`, and app manifest `user_connections` fields to the generated swift-slack models - #282
 * **BREAKING**: Added `PlanBlock` and plan DSL support. Add `.plan` to exhaustive `Block` switches - #282
@@ -34,7 +37,6 @@ An optional `Maintenance` section records notable contributor improvements as a 
 ### Fixed
 
 * **BREAKING**: Fixed swift-slack Slack Lists message cells to preserve message objects, permalink strings and mixed arrays. Replace direct message access with `ListRecordFieldMessage.message`, `.permalink` or `.messages` - #284
-
 * Fixed swift-slack Slack Lists response decoding to preserve link data sent with camelCase keys. Encoding continues to use snake_case - #282
 * Fixed form encoding that serialized numeric request values of 0 and 1 as booleans - #282
 
