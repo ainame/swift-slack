@@ -47,11 +47,12 @@ var traits: [Trait] = webAPITraits.map { .trait(name: $0) }
 traits.append(.trait(name: "SocketMode", enabledTraits: ["WebAPI_Apps"]))
 traits.append(.trait(name: "Events"))
 traits.append(.trait(name: "HummingbirdHTTPAdapter"))
+traits.append(.trait(name: "SwiftConfiguration"))
 
 // By default, enable all traits except optional integrations.
 let defaultTraitNames = traits
     .map(\.name)
-    .filter { $0 != "HummingbirdHTTPAdapter" }
+    .filter { !["HummingbirdHTTPAdapter", "SwiftConfiguration"].contains($0) }
 traits.append(.default(enabledTraits: Set(defaultTraitNames)))
 
 let package = Package(
@@ -66,6 +67,7 @@ let package = Package(
     ],
     traits: Set(traits),
     dependencies: [
+        .package(url: "https://github.com/apple/swift-configuration", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-crypto", from: "4.3.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.10.1"),
         .package(url: "https://github.com/apple/swift-nio", from: "2.94.1"),
@@ -90,6 +92,10 @@ let package = Package(
             dependencies: [
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "Logging", package: "swift-log"),
+                .product(
+                    name: "Configuration", package: "swift-configuration",
+                    condition: .when(traits: ["SwiftConfiguration"]),
+                ),
                 .target(name: "SlackBlockKit"),
             ],
             swiftSettings: [
@@ -102,6 +108,10 @@ let package = Package(
             dependencies: [
                 "SlackClient",
                 .product(name: "Logging", package: "swift-log"),
+                .product(
+                    name: "Configuration", package: "swift-configuration",
+                    condition: .when(traits: ["SwiftConfiguration"]),
+                ),
             ],
         ),
         .target(
