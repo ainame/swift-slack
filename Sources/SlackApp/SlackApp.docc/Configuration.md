@@ -42,7 +42,7 @@ Enable the trait alongside the default traits, and add swift-configuration for `
 dependencies: [
     .package(
         url: "https://github.com/ainame/swift-slack.git",
-        from: "2027.1.0-beta.4",
+        from: "2027.1.0-beta.5",
         traits: [.defaults, "SwiftConfiguration"]
     ),
     .package(url: "https://github.com/apple/swift-configuration.git", from: "1.0.0"),
