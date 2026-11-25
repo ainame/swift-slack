@@ -27,50 +27,10 @@ A Swift implementation of DeepL for Slack that enables users to translate messag
 ### 2. Create Slack App
 
 1. Go to [api.slack.com/apps](https://api.slack.com/apps) and create a new app
-2. Choose "From an app manifest" 
-3. Use this manifest:
-
-```yaml
-display_information:
-  name: DeepL Translation App
-  description: Translate messages with DeepL
-  background_color: "#4e6fcf"
-features:
-  app_home:
-    home_tab_enabled: false
-    messages_tab_enabled: false
-  bot_user:
-    display_name: deepl-translator
-    always_online: true
-  shortcuts:
-    - name: Open DeepL Tool
-      type: global
-      callback_id: deepl-translation
-      description: Translate text using DeepL
-    - name: Translate Message
-      type: message
-      callback_id: deepl-translate-message
-      description: Translate the selected message and reply in thread
-oauth_config:
-  scopes:
-    bot:
-      - channels:history
-      - chat:write
-      - groups:history
-      - reactions:read
-settings:
-  event_subscriptions:
-    bot_events:
-      - reaction_added
-  interactivity:
-    is_enabled: true
-  org_deploy_enabled: false
-  socket_mode_enabled: true
-```
-
-4. Install the app to your workspace
-5. Go to **Basic Information** and create an App-Level Token with `connections:write` scope
-6. Copy the **Bot User OAuth Token** (xoxb-...) and **App-Level Token** (xapp-...)
+2. Choose "From an app manifest" and paste the contents of [`manifest.json`](manifest.json)
+3. Install the app to your workspace
+4. Go to **Basic Information** and create an App-Level Token with `connections:write` scope
+5. Copy the **Bot User OAuth Token** (xoxb-...) and **App-Level Token** (xapp-...)
 
 ### 3. Configure Environment
 
@@ -132,6 +92,17 @@ swift run deepl-translator
 # Hummingbird HTTP adapter
 swift run --traits HummingbirdHTTPAdapter deepl-translator
 ```
+
+### Run with the Slack CLI
+
+Instead of creating the Slack app in step 2 and running it in step 4, you can let the [Slack CLI](https://docs.slack.dev/tools/slack-cli/) create a development app from `manifest.json` and run the bot with its tokens:
+
+```bash
+cd DemoApps/deepl-translator
+slack run
+```
+
+[`.slack/hooks.json`](.slack/hooks.json) tells the CLI to read `manifest.json` and start the app with `swift run deepl-translator`. The CLI sets `SLACK_BOT_TOKEN` and `SLACK_APP_TOKEN` to the development app's tokens unless they are already exported in your shell, so unset them first. Put `DEEPL_API_KEY` and the other DeepL settings in `.env` as above; the CLI's tokens take precedence over Slack tokens in `.env`.
 
 ## Usage
 

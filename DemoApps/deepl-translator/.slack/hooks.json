@@ -1,0 +1,9 @@
+{
+  "hooks": {
+    "get-manifest": "sh -c 'cat manifest.json' get-manifest",
+    "start": "sh -c 'swift run deepl-translator' start"
+  },
+  "config": {
+    "sdk-managed-connection-enabled": true
+  }
+}

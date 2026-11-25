@@ -279,6 +279,43 @@ Events API handlers are acknowledged automatically. Slash commands, block action
 - [Migration guide](Sources/SlackApp/SlackApp.docc/MigrationGuide.md): upgrade from 0.5.x to `SlackApp`.
 - [Migrating to Java-derived models](MIGRATING_TO_JAVA_DERIVED_MODELS.md): upgrade apps that used `SlackModels` or spell out Web API and event model types.
 
+## Develop with the Slack CLI
+
+[`slack run`](https://docs.slack.dev/tools/slack-cli/) creates a development app from a local manifest, installs it, and starts your app with that app's tokens in `SLACK_BOT_TOKEN` and `SLACK_APP_TOKEN`. Read them with `Slack.Configuration.fromEnvironment()`, which also reads `SLACK_SIGNING_SECRET`:
+
+```swift
+let app = SlackApp(
+    configuration: .fromEnvironment(userAgent: "EchoBot/1.0"),
+    router: router,
+    mode: .socketMode()
+)
+```
+
+With the `SwiftConfiguration` trait, `Slack.Configuration(config:)` reads the same values from a [swift-configuration](https://github.com/apple/swift-configuration) `ConfigReader`. Its keys `slack.botToken`, `slack.appToken`, and `slack.signingSecret` map to the same environment variables, so one reader serves `slack run` and production providers such as a JSON file or a secrets store:
+
+```swift
+let reader = ConfigReader(providers: [EnvironmentVariablesProvider(), /* production providers */])
+let app = SlackApp(
+    configuration: .init(config: reader, userAgent: "EchoBot/1.0"),
+    router: router,
+    mode: .socketMode()
+)
+```
+
+Then add a `manifest.json` with `"socket_mode_enabled": true`, and a `.slack/hooks.json` that prints it and runs your app:
+
+```json
+{
+  "hooks": {
+    "get-manifest": "sh -c 'cat manifest.json' get-manifest",
+    "start": "sh -c 'swift run EchoBot' start"
+  },
+  "config": { "sdk-managed-connection-enabled": true }
+}
+```
+
+The CLI appends flags such as `--source` to hook commands, so `sh -c` drops them. It sets `SLACK_BOT_TOKEN` and `SLACK_APP_TOKEN` only when they are not already set, so unset any you exported for another app before running `slack run`. The CLI also passes the variables in `.env`, but its tokens take precedence. An app that reads `.env` itself should let the process environment win, as the [DeepL translator demo](DemoApps/deepl-translator) does.
+
 ## Contributing
 
 Issues and pull requests are welcome. If a Web API method or event is missing or decodes incorrectly, [open an issue](https://github.com/ainame/swift-slack/issues) with the payload you received.
