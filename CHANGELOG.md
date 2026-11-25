@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
 and this project uses calendar versioning in the form `YYYY.M.PATCH`.
 The `PATCH` segment is a release counter within the month, not a SemVer compatibility signal.
 An optional `Maintenance` section records notable contributor improvements as a project-specific extension.
+Each release groups its entries under `Library updates`, for swift-slack's own runtime, client, platform and toolchain changes, and `Slack API updates`, for changes that track upstream Slack API schemas such as Web API methods, models, events and Block Kit types. Both nest the usual categories.
 
 ## [Unreleased]
 
@@ -13,7 +14,30 @@ An optional `Maintenance` section records notable contributor improvements as a 
 
 This beta lowers the Swift minimum back to 6.2 and raises the macOS minimum to 15. It adds `slack run` support with configuration read from the environment or swift-configuration, `Router.onUnmatched(_:)`, and Slackbot skills and plan blocks from the upstream schema updates. APIs may still change before the January 2027 release.
 
-### Added
+### Library updates
+
+Changes to swift-slack's own runtime, client, platform and toolchain support.
+
+#### Added
+
+* Added `Router.onUnmatched(_:)` to handle requests that no handler matches in place of the warning, including slash commands, which have no catch-all handler. The handler can acknowledge the request; if it returns without acknowledging, swift-slack sends the empty acknowledgement it sends today, and if it throws, the request fails as with any other handler - #285
+* Added `Slack.Configuration.fromEnvironment(userAgent:)`, which reads `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN` and `SLACK_SIGNING_SECRET`, the variables the Slack CLI sets for `slack run`. The DeepL translator demo can now run with `slack run`, and a new SlackApp configuration guide describes both readers and the `slack run` setup - #290
+* Added the `SwiftConfiguration` trait and `Slack.Configuration(config:userAgent:)`, which reads `slack.botToken`, `slack.appToken` and `slack.signingSecret` from a swift-configuration `ConfigReader`. Through environment variables these are the same variables as `fromEnvironment`. The trait is not enabled by default - #290
+
+#### Changed
+
+* **BREAKING**: Raised the macOS minimum from 14 to 15, the minimum of swift-configuration, so the `SwiftConfiguration` trait's API needs no availability annotations. Raise your app's macOS deployment target to 15 - #290
+* Reverted the Swift 6.4 minimum from 2027.1.0-beta.4 back to Swift 6.2. Beta.4 raised it to protect the streaming cleanup `chat.stopStream` with `withTaskCancellationShield`, but Swift 6.4 links that function so that apps fail to launch on macOS 26 and earlier with `Symbol not found: _swift_task_cancellationShieldPop` (#287). The cleanup stop again runs in an awaited task that does not inherit the cancellation, with the same behavior - #289
+
+#### Fixed
+
+* Fixed form encoding that serialized numeric request values of 0 and 1 as booleans - #282
+
+### Slack API updates
+
+Changes that follow the upstream java-slack-sdk and slack-api-ref snapshots, synced in #282 (2026-11-14) and #284 (2026-11-21).
+
+#### Added
 
 * Added swift-slack Web API operations for app icons (URL route), managed app permissions and assistant search, plus java-slack-sdk file skill/AI metadata, agent-session views and initiators, activity inputs, attachment thumbnails and app-level token rotation - #284
 * Added 15 Web API methods for Slackbot skills, admin MCP server management, and canvas content retrieval. Enable `WebAPI_Slackbot` when selecting traits manually for non-admin Slackbot skill methods - #282
@@ -21,24 +45,15 @@ This beta lowers the Swift minimum back to 6.2 and raises the macOS minimum to 1
 * **BREAKING**: Added `PlanBlock` and plan DSL support. Add `.plan` to exhaustive `Block` switches - #282
 * Added Slackbot prompts and user visibility to `ButtonElement` and the Button DSL - #282
 * **BREAKING**: Added `.userConnection` and `.userConnectionStatusRequested`. Add both cases to exhaustive `Event` switches - #282
-* Added `Router.onUnmatched(_:)` to handle requests that no handler matches in place of the warning, including slash commands, which have no catch-all handler. The handler can acknowledge the request; if it returns without acknowledging, swift-slack sends the empty acknowledgement it sends today, and if it throws, the request fails as with any other handler - #285
-* Added `Slack.Configuration.fromEnvironment(userAgent:)`, which reads `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN` and `SLACK_SIGNING_SECRET`, the variables the Slack CLI sets for `slack run`. The DeepL translator demo can now run with `slack run`, and a new SlackApp configuration guide describes both readers and the `slack run` setup - #290
-* Added the `SwiftConfiguration` trait and `Slack.Configuration(config:userAgent:)`, which reads `slack.botToken`, `slack.appToken` and `slack.signingSecret` from a swift-configuration `ConfigReader`. Through environment variables these are the same variables as `fromEnvironment`. The trait is not enabled by default - #290
 
-### Changed
-
-* **BREAKING**: Raised the macOS minimum from 14 to 15, the minimum of swift-configuration, so the `SwiftConfiguration` trait's API needs no availability annotations. Raise your app's macOS deployment target to 15 - #290
-* Reverted the Swift 6.4 minimum from 2027.1.0-beta.4 back to Swift 6.2. Beta.4 raised it to protect the streaming cleanup `chat.stopStream` with `withTaskCancellationShield`, but Swift 6.4 links that function so that apps fail to launch on macOS 26 and earlier with `Symbol not found: _swift_task_cancellationShieldPop` (#287). The cleanup stop again runs in an awaited task that does not inherit the cancellation, with the same behavior - #289
-
-### Removed
+#### Removed
 
 * **BREAKING**: Removed `prUrl` from `agents.conversations.setView`, `CodeChannel.View.pullRequest`, and `CodeChannel.CSP.connectDomains` following the slack-api-ref request changes. Choose an HTML, diff, Block Kit, or canvas view and use `resourceDomains` for HTML resource origins - #282
 
-### Fixed
+#### Fixed
 
 * **BREAKING**: Fixed swift-slack Slack Lists message cells to preserve message objects, permalink strings and mixed arrays. Replace direct message access with `ListRecordFieldMessage.message`, `.permalink` or `.messages` - #284
 * Fixed swift-slack Slack Lists response decoding to preserve link data sent with camelCase keys. Encoding continues to use snake_case - #282
-* Fixed form encoding that serialized numeric request values of 0 and 1 as booleans - #282
 
 ## [2027.1.0-beta.4] - 2026-11-07
 

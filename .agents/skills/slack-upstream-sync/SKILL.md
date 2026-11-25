@@ -113,7 +113,9 @@ explain any such authorized additions in the PR body.
   "Maintaining this record". Do not put hosted CI status in committed files.
   Use [update-changelog](../update-changelog/SKILL.md) for notable consumer and
   contributor changes; consolidate the complete PR's entries after follow-ups,
-  put significant contributor improvements in Maintenance, and omit housekeeping.
+  put schema-driven changes under `Slack API updates` and add this PR to its opening
+  line, put the PR's runtime or client fixes under `Library updates`, put
+  significant contributor improvements in Maintenance, and omit housekeeping.
   Update README only for user-facing scope changes.
 - Commit focused changes, push the branch, and open or update the sync PR. Use
   `gh pr create/edit --body-file` for multiline Markdown. Open the PR first to obtain
