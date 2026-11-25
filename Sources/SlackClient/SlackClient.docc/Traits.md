@@ -6,7 +6,7 @@ Choose which Web API groups and runtime features swift-slack compiles.
 
 swift-slack uses Swift package traits to make parts of the package optional. Each Web API method group is a trait, so you can compile only the operations your app calls and reduce build times.
 
-By default, every trait except `HummingbirdHTTPAdapter` is enabled. When you list traits explicitly, only the traits you list (and the traits they imply) are enabled:
+By default, every trait except `HummingbirdHTTPAdapter` and `SwiftConfiguration` is enabled. When you list traits explicitly, only the traits you list (and the traits they imply) are enabled:
 
 ```swift
 .package(
@@ -73,6 +73,7 @@ A method is generated only when java-slack-sdk has a recorded response for it, s
 - `SocketMode`: Enables Socket Mode in `SlackApp` and `SlackKit`. It also enables `WebAPI_Apps`, which Socket Mode uses to open connections.
 - `Events`: Enables Events API payload types and `Router.onEvent(_:handler:)` in `SlackApp` and `SlackKit`.
 - `HummingbirdHTTPAdapter`: Enables `HummingbirdAdapter` for serving HTTP apps with Hummingbird. It is not enabled by default.
+- `SwiftConfiguration`: Enables `Slack.Configuration(config:userAgent:)`, which reads the Slack tokens and signing secret from a [swift-configuration](https://github.com/apple/swift-configuration) `ConfigReader`. It adds swift-configuration as a dependency and is not enabled by default.
 
 ## Common Configurations
 

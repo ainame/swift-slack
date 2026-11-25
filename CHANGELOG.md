@@ -19,10 +19,12 @@ An optional `Maintenance` section records notable contributor improvements as a 
 * Added Slackbot prompts and user visibility to `ButtonElement` and the Button DSL - #282
 * **BREAKING**: Added `.userConnection` and `.userConnectionStatusRequested`. Add both cases to exhaustive `Event` switches - #282
 * Added `Router.onUnmatched(_:)` to handle requests that no handler matches in place of the warning, including slash commands, which have no catch-all handler. The handler can acknowledge the request; if it returns without acknowledging, swift-slack sends the empty acknowledgement it sends today, and if it throws, the request fails as with any other handler - #285
+* Added `Slack.Configuration.fromEnvironment(userAgent:)`, which reads `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN` and `SLACK_SIGNING_SECRET`, the variables the Slack CLI sets for `slack run`. The DeepL translator demo can now run with `slack run`, and the README describes the setup - #290
+* Added the `SwiftConfiguration` trait and `Slack.Configuration(config:userAgent:)`, which reads `slack.botToken`, `slack.appToken` and `slack.signingSecret` from a swift-configuration `ConfigReader`. Through environment variables these are the same variables as `fromEnvironment`. The trait is not enabled by default - #290
 
 ### Changed
 
-* **BREAKING**: Raised the macOS minimum from 14 to 15, the minimum of swift-configuration. Raise your app's macOS deployment target to 15 - #290
+* **BREAKING**: Raised the macOS minimum from 14 to 15, the minimum of swift-configuration, so the `SwiftConfiguration` trait's API needs no availability annotations. Raise your app's macOS deployment target to 15 - #290
 * Reverted the Swift 6.4 minimum from 2027.1.0-beta.4 back to Swift 6.2. Beta.4 raised it to protect the streaming cleanup `chat.stopStream` with `withTaskCancellationShield`, but Swift 6.4 links that function so that apps fail to launch on macOS 26 and earlier with `Symbol not found: _swift_task_cancellationShieldPop` (#287). The cleanup stop again runs in an awaited task that does not inherit the cancellation, with the same behavior - #289
 
 ### Removed
